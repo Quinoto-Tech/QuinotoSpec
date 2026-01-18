@@ -28,7 +28,9 @@
 > - **War Council:** Resolución de conflictos lógica y mediación estratégica entre equipos grandes.
 > - **Alliance Integration (Multi-Repo):** Contexto compartido federado para arquitecturas distribuidas de gran escala.
 
-![Quinoto Amok](amok.png)
+<div align="center">
+  <img src="amok.png" alt="Quinoto Amok" width="400" />
+</div>
 
 # Guía de Desarrollo Guiado por IA con QuinotoSpec
 
