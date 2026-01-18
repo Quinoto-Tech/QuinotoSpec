@@ -17,6 +17,16 @@
 > _Status: Concepto_
 > - **Battle Frenzy (Swarm Mode):** Ejecución de múltiples agentes en paralelo para tareas masivas.
 > - **Blood-Bond:** Predicción proactiva de User Stories e intenciones basada en el comportamiento del desarrollador.
+>
+> **🛡️ Warband: Falange Edition (TBA)**
+> _Status: Futuro_
+> - **Class System:** Roles de agentes especializados (Scout, Skald, Blacksmith) que trabajan en formación cerrada.
+> - **Shield Wall:** Testing defensivo y validación cruzada entre agentes antes de mergear.
+>
+> **⚔️ Warband: Hird Edition (TBA)**
+> _Status: Visionario_
+> - **War Council:** Resolución de conflictos lógica y mediación estratégica entre equipos grandes.
+> - **Alliance Integration (Multi-Repo):** Contexto compartido federado para arquitecturas distribuidas de gran escala.
 
 ![Quinoto Amok](amok.png)
 
