@@ -33,6 +33,7 @@ Cuando necesites actualizar el changelog, sigue ESTRICTAMENTE estas instruccione
     - Obtén la fecha actual.
     - Genera el bloque markdown incluyendo la línea de métricas.
     - Añádelo al final del archivo `docs/quinoto-spec-changelog.md`.
+    - **Orden**: El changelog se escribe de arriba hacia abajo; las entradas nuevas van al final del archivo.
 
 ### B. Compactar Changelog (Maintenance)
 

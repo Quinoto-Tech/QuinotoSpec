@@ -6,13 +6,48 @@ Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/
 El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
 PROPOSAL_NAME: inveta un nombre a partir de PROPOSAL_DESCRIPTION
 Tu objetivo es generar una Propuesta Técnica específica para este tema, INTEGRADA con el resto del sistema.
-Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar dentro de ella el archivo `proposal.md`:
+Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar dentro de ella el archivo `proposal.md` con el siguiente formato esperado:
 
 1. **proposal.md**:
-    - **Título**: Propuesta Técnica: {{PROPOSAL_NAME}}.
-    - **Resumen Ejecutivo**: Descripción de esta iniciativa específica.
-    - **Arquitectura/Diseño**: Detalles técnicos de cómo implementar esta propuesta.
-    - **Riesgos y Mitigaciones**.
+    - **Título**: `# Propuesta Técnica: {{PROPOSAL_NAME}}`
+    - **Metadatos iniciales (en este orden)**:
+        - `**Prefijo:** {{PREFIX}}`
+        - `**Fecha de Creación**: YYYY-MM-DD`
+        - `**Estado**: 🟡 Propuesta`
+        - `**Prioridad**: P1 | P2 | P3`
+        - `**Complejidad**: Baja | Media | Alta`
+    - **Separador**: `---`
+    - **Resumen Ejecutivo**: Contexto, objetivo y valor.
+    - **Problema Actual**: Lista concreta de fricciones actuales.
+    - **Solución Propuesta**: Descripción clara de la iniciativa.
+    - **Beneficios**: Impacto en tiempo, calidad, UX/DX o negocio.
+    - **Alineación con Producto y Acuerdos**:
+        - Visión de Producto.
+        - KPIs Impactados.
+        - Cumplimiento de DoR con checklist.
+    - **Arquitectura y Diseño Técnico**:
+        - Diagrama `mermaid` del flujo.
+        - Estructura/variables principales.
+        - Flujo de ejecución paso a paso.
+    - **Especificación Técnica Detallada**:
+        - Bloques de código relevantes.
+        - Ubicaciones de archivos y permisos.
+    - **Riesgos y Mitigaciones**:
+        - Tabla de riesgos + estrategias de mitigación.
+    - **Plan de Implementación**:
+        - Fases con tiempos estimados.
+    - **Criterios de Aceptación (DoD)**:
+        - Checklist por implementación, testing y documentación.
+    - **Plan de Verificación**:
+        - Tests manuales con pasos y resultados esperados.
+    - **Impacto en el Sistema**:
+        - Archivos nuevos/modificados.
+        - Dependencias y tooling requerido.
+    - **Roadmap Futuro (Opcional)**:
+        - Mejoras potenciales.
+    - **Conclusión**:
+        - Síntesis y próximos pasos.
+        - `**Aprobación Requerida**`, `**Estimación Total**`, `**Prioridad**`, `**Fecha Límite Sugerida**`.
 
 **Instrucciones de Ejecución:**
 - Crea los directorios necesarios.
