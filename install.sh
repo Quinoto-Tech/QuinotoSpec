@@ -4,6 +4,17 @@
 
 echo "Installing QuinotoSpec..."
 
+# 0. Argument Parsing
+CONFIG_DIR_NAME=".agent"
+CURSOR_MODE=false
+
+for arg in "$@"; do
+    if [ "$arg" == "--cursor" ]; then
+        CONFIG_DIR_NAME=".cursor"
+        CURSOR_MODE=true
+    fi
+done
+
 # 1. Location Check
 # We assume the user is running this from inside the package directory, 
 # or copying the files to their root.
@@ -53,18 +64,26 @@ fi
 
 echo "Target Project Root: $TARGET_ROOT"
 
-# 3. Copy .agent folder
-echo "Copying .agent configuration..."
-
-# Create .agent directory if it doesn't exist
-if [ ! -d "$TARGET_ROOT/.agent" ]; then
-    mkdir -p "$TARGET_ROOT/.agent"
+# Create $CONFIG_DIR_NAME directory if it doesn't exist
+if [ ! -d "$TARGET_ROOT/$CONFIG_DIR_NAME" ]; then
+    mkdir -p "$TARGET_ROOT/$CONFIG_DIR_NAME"
 fi
 
-# Copy contents of agent-dist into .agent, overwriting existing files
+# Copy contents of agent-dist into the config folder, overwriting existing files
 # We use cp -rf to force overwrite and recursive copy.
 # The 'slash-dot' notation "$SOURCE_AGENT/." ensures we copy contents, not the directory itself.
-cp -rf "$SOURCE_AGENT/." "$TARGET_ROOT/.agent/"
+cp -rf "$SOURCE_AGENT/." "$TARGET_ROOT/$CONFIG_DIR_NAME/"
+
+# 4. Handle Cursor Mode Specifics
+if [ "$CURSOR_MODE" = true ]; then
+    echo "Cursor mode: Renaming workflows to commands..."
+    if [ -d "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" ]; then
+        # If commands already exists, we might want to merge or remove it. 
+        # For simplicity, we remove if exists and rename workflows.
+        rm -rf "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
+        mv "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
+    fi
+fi
 
 
 echo "Installation complete!"

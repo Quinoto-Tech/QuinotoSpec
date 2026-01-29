@@ -53,6 +53,17 @@ Esta guía explica cómo utilizar la metodología **QuinotoSpec** y sus agentes 
     - Puedes presionar `Enter` para instalar en el directorio actual.
     - O escribir una ruta específica (ej. `~/proyectos/mi-nuevo-app`) y el script la creará si no existe.
 
+### Soporte para Cursor
+Si utilizas el editor **Cursor**, puedes usar el parámetro `--cursor` para que la instalación sea compatible con la estructura de Cursor:
+
+```bash
+./quinotospec-package/install.sh --cursor
+```
+
+**¿Qué cambia con este parámetro?**
+- Instala la configuración en la carpeta `.cursor/` en lugar de `.agent/`.
+- Renombra la subcarpeta `workflows` a `commands` para que Cursor la reconozca automáticamente como [custom commands](https://docs.cursor.com/context/rules-for-ai#custom-commands).
+
 ## Filosofía: "Proposal First" & "Context Slicing"
 
 La metodología se basa en dos pilares fundamentales para maximizar la eficacia de la IA:
