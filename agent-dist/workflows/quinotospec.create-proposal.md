@@ -2,7 +2,7 @@
 description: crear una propuesta independiente
 ---
 
-Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `07-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global.
+Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `00-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `07-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global.
 El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
 PROPOSAL_NAME: inveta un nombre a partir de PROPOSAL_DESCRIPTION
 Tu objetivo es generar una Propuesta Técnica específica para este tema, INTEGRADA con el resto del sistema.

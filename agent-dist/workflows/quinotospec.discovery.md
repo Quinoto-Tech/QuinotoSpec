@@ -3,6 +3,7 @@ description: Generar documentación de descubrimiento del proyecto en .quinoto-s
 ---
 
 Explora el proyecto completo y genera 7 archivos Markdown independientes dentro de .quinoto-spec/discovery con los siguientes nombres EXACTOS:
+- 00-stack-profile.md
 - 01-overview.md
 - 02-architecture.md
 - 03-endpoints-and-openapi.md
@@ -21,6 +22,11 @@ Instrucciones generales (aplican a todos los archivos):
 - Detecta y documenta frameworks, librerías y versiones (package.json, requirements, etc.).
 - Detecta y documenta pruebas automatizadas y cómo ejecutarlas.
 Contenido por archivo:
+
+0) 00-stack-profile.md
+- **Skill Requerida**: Ejecuta primero la skill `quinotospec-stack-detect`.
+- Identificación precisa del stack tecnológico (Lenguaje, Frameworks, Package Manager, Test Runner).
+- Detalla los Coding Standards detectados (ej. Service Layer, Hooks, etc.).
 
 1) 01-overview.md
 - Resumen ejecutivo del proyecto (qué hace, contexto, lenguaje/plataforma).
