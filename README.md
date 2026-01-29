@@ -128,12 +128,12 @@ Ejecuta las tareas una por una.
 
 ### 6. Utilidades Adicionales
 
-#### Archive Propuesta
-Mueve una propuesta finalizada a un estado de "archivo" para limpiar el workspace.
+#### Archive (Limpieza)
+Mueve elementos finalizados a un estado de "archivo" para limpiar el workspace.
 
 - **Comando**: `@quinotospec.archive`
-- **Parámetro**: Nombre de la carpeta de la propuesta (ej. `auth-module`).
-- **Acción**: Renombra la carpeta de la propuesta agregándole un prefijo (ej. `__auth-module`) para indicarla como completada/archivada.
+- **Parámetro**: `TARGET` (Slug de propuesta, nombre de archivo de historias o tareas).
+- **Acción**: Renombra el elemento agregándole un prefijo `__` (ej. `__auth-module`, `__user-histories.md`, `__US-AUTH-001_tasks.md`) para indicarlo como archivado.
 
 #### Read PDF
 Ingesta documentación externa en formato PDF para darle contexto al agente.
@@ -142,7 +142,14 @@ Ingesta documentación externa en formato PDF para darle contexto al agente.
 - **Parámetros**:
     - `DOCUMENT_PATH`: Ruta al archivo PDF.
     - `NOMBRE_DEL_ARCHIVO`: Nombre del archivo de salida (sin extensión).
-- **Acción**: Lee el PDF, extrae el texto, lo formatea y guarda el contenido en un archivo Markdown markdown.
+- **Acción**: Lee el PDF, extrae el texto, lo formatea y guarda el contenido en un archivo Markdown.
+
+#### Dashbord de Proyecto (Status)
+Mantén una visión clara del progreso y el valor generado.
+
+- **Comando**: `@quinotospec.status`
+- **Output**: Genera/Actualiza `PROJECT_STATUS.md` en la raíz.
+- **Acción**: Escanea las propuestas y el changelog para calcular el progreso porcentual y el tiempo total ahorrado por la IA.
 
 ### 7. Habilidades (Skills)
 

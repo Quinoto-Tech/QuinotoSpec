@@ -1,20 +1,20 @@
 ---
 name: Quinotospec Update Changelog
-description: Automates updating the docs/quinoto-spec-changelog.md file with a consistent format.
+description: Automates updating the docs/quinoto-spec-changelog.md file with entries appearing from top to bottom (newest first).
 ---
 
 # Quinotospec Update Changelog
 
-Esta skill se encarga de estandarizar la actualización del archivo de changelog del proyecto.
+Esta skill se encarga de estandarizar la actualización del archivo de changelog del proyecto, asegurando que las entradas más recientes aparezcan siempre en la parte superior.
 
 ## Uso
 
-### A. Agregar Nueva Entrada (Default)
+### A. Agregar Nueva Entrada (Newest First)
 
-Cuando necesites actualizar el changelog, sigue ESTRICTAMENTE estas instrucciones:
+Cuando necesites actualizar el changelog, sigue ESTRICTAMENTE estas instrucciones para mantener el orden "de arriba hacia abajo" (lo más nuevo arriba):
 
 1.  **Identificar Archivo**: El archivo objetivo es siempre `docs/quinoto-spec-changelog.md`.
-2.  **Leer Contenido**: Lee el archivo actual para no sobrescribir entradas recientes si no es necesario.
+2.  **Leer Contenido**: Lee el archivo actual para identificar la posición de inserción (justo debajo del título principal `# QuinotoSpec Changelog`).
 3.  **Formato de Entrada**:
     
     ```markdown
@@ -22,37 +22,31 @@ Cuando necesites actualizar el changelog, sigue ESTRICTAMENTE estas instruccione
     ### Resumen
     - [Detalle 1]
     - [Detalle 2]
+    **Time Saved**: ~{Human Time} (AI: {AI Time} vs Human: {Human Time})
     ```
 
-4.  **Cálculo de Métricas (Time Saved)**:
-    - **AI Time**: Estima el tiempo que te tomó ejecutar esta tarea (ej. "30s", "2m").
-    - **Human Time**: Estima el tiempo que le hubiera tomado a un desarrollador senior manual (ej. "1h", "4h"). *Regla general: Tareas simples = 10x AI, Tareas complejas = 20-50x AI.*
-    - **Calculo**: Añade una línea que diga `**Time Saved**: ~{Human Time} (AI: {AI Time} vs Human: {Human Time})`.
+4.  **Cálculo de Métricas**:
+    - **AI Time**: Tiempo real de ejecución.
+    - **Human Time**: Estimación del tiempo manual (10x-50x AI Time).
+    - Añade la línea `**Time Saved**: ...`.
 
-5.  **Ejecución**:
-    - Obtén la fecha actual.
-    - Genera el bloque markdown incluyendo la línea de métricas.
-    - Añádelo al final del archivo `docs/quinoto-spec-changelog.md`.
-    - **Orden**: El changelog se escribe de arriba hacia abajo; las entradas nuevas van al final del archivo.
+5.  **Inserción**:
+    - Inserta la nueva entrada al INICIO del archivo, pero SIEMPRE debajo del título h1 `# QuinotoSpec Changelog` y cualquier descripción introductoria.
+    - Esto garantiza que al abrir el archivo, el usuario vea lo último que se hizo inmediatamente.
 
-### B. Compactar Changelog (Maintenance)
+### B. Mantenimiento y Orden
 
-Cuando el changelog sea demasiado extenso o el usuario lo solicite explícitamente:
+- Si el archivo no tiene el título `# QuinotoSpec Changelog`, créalo al inicio.
+- Asegúrate de dejar una línea en blanco entre entradas.
 
-1.  **Analizar**: Lee todo el contenido de `docs/quinoto-spec-changelog.md`.
-2.  **Resumir**:
-    - Agrupa hitos antiguos (más de 1 mes o hitos menores) en bloques consolidados.
-    - Mantén las entradas recientes (últimas 24-48h o tareas activas) con todo su detalle.
-    - Elimina redundancias.
-3.  **Sobrescribir**: Reemplaza el contenido del archivo con la versión optimizada.
-
-## Ejemplo
-
-Si la acción fue "Discovery Executed":
+## Ejemplo de Orden Correcto
 
 ```markdown
-## [Fecha: 2024-05-20] - Discovery Executed
-### Resumen
-- Se exploró el proyecto y se generaron los archivos de especificación en .quinoto-spec/discovery/
-- **Time Saved**: ~4h (AI: 2m vs Human: 4h)
+# QuinotoSpec Changelog
+
+## [Fecha: 2026-01-30] - Acción Reciente (Nueva)
+...
+
+## [Fecha: 2026-01-29] - Acción Anterior
+...
 ```

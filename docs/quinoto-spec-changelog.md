@@ -1,5 +1,14 @@
 # QuinotoSpec Changelog
 
+## [Fecha: 2026-01-29] - Expanded Archive & Project Dashboard
+### Resumen
+- **Archive Workflow Evolution**: Ahora permite archivar no solo propuestas completas (carpetas), sino también archivos individuales de Historias de Usuario y Tareas usando el prefijo `__`.
+- **Nuevo Workflow `@quinotospec.status`**: Implementación de un dashboard automático (`PROJECT_STATUS.md`) que resume el progreso, prioridades y el valor total generado (Time Saved).
+- **Estandarización de Workflows**: Ajuste masivo en todos los workflows para asegurar que el reporte al changelog sea obligatorio y consistente.
+- **Optimización de Changelog**: Se cambió el orden de escritura a "Newest First" para facilitar la lectura de arriba hacia abajo.
+**Time Saved**: ~2h (AI: 10m vs Human: 2h)
+
+
 ## [Fecha: 2026-01-29] - Cursor Support Added
 ### Resumen
 - Se añadió el parámetro `--cursor` al script `install.sh`.
