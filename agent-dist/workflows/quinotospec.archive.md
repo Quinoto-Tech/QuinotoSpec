@@ -25,6 +25,9 @@ Este workflow permite archivar elementos de la especificación técnica que han 
 3. **Verificación**:
     - Asegúrate de que los enlaces internos no se rompan o deja una nota de que el archivo ha sido archivado si es necesario.
 
+**Actualización de Memoria (RUN)**:
+- Tras archivar el elemento, DEBES ejecutar la skill `quinotospec-runic-index` sobre el proyecto para actualizar el estado de los archivos (ahora marcados como archivados) en la memoria semántica.
+
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completada la acción, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Element Archived: {{TARGET}}

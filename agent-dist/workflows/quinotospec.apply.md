@@ -18,6 +18,7 @@ Antes de realizar cualquier cambio:
 1. Genera un branch feature/{{TASK_DESCRIPTION}} con generate_github_branch
 2. Analiza el código actual y realiza los cambios necesarios para cumplir con la tarea descrita.
 3. Verifica que el código modificado compile/funcione (si aplica).
+4. **Actualización de Memoria (RUN)**: DEBES ejecutar la skill `quinotospec-runic-index` sobre los archivos modificados para mantener la coherencia semántica en la base de datos vectorial.
 
 **Instrucciones de Documentación (Changelog):**
 Una vez aplicados los cambios, DEBES ejecutar la skill `quinotospec-update-changelog`.

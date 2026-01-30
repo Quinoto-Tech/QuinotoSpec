@@ -75,6 +75,9 @@ Al final del prompt:
 - Especifica que cada archivo se guarde exactamente en .quinoto-spec/discovery/ con los nombres arriba indicados.
 - Si faltan datos que solo pueden obtenerse ejecutando la app o leyendo archivos, anotar claramente qué comandos o permisos se necesitan para completar la documentación.
 
+**Actualización de Memoria (RUN)**:
+- Una vez generada la documentación, DEBES ejecutar la skill `quinotospec-runic-index` sobre todo el proyecto para inicializar/actualizar la memoria semántica rúnica.
+
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completada la generación de archivos, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Discovery Executed
