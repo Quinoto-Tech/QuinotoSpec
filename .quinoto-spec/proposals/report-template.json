@@ -1,0 +1,13 @@
+{
+  "prefix": "",
+  "name": "",
+  "slug": "",
+  "date": "",
+  "priority": "P2",
+  "complexity": "Media",
+  "dry_run": false,
+  "actions": [],
+  "backup_paths": [],
+  "changelog_entry": "",
+  "notes": "Template report.json for Mjolnir proposals"
+}
