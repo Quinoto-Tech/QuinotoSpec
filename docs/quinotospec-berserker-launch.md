@@ -53,6 +53,36 @@ Imagina que **Engram** es el diario de vida técnico de tu proyecto. En lugar de
 
 ---
 
+## 🎨 Un Ejemplo Real
+
+La "personalidad" de tus expertos se define mediante **Skills Especializadas**. Aquí te mostramos cómo podrías crear un experto en UI para que QuinotoSpec trabaje con rigor visual:
+
+**Archivo:** `agent-dist/skills/expert-ui/SKILL.md`
+
+```yaml
+---
+name: UI-Visual-Expert
+description: Experto en diseño premium, animaciones y accesibilidad.
+trigger: ["componente", "estilo", "css", "layout", "visual"]
+scope: ["src/components/**", "src/styles/**"]
+tools: ["view_file", "edit_file"]
+---
+
+# Reglas del Experto UI
+1. **Estética Premium**: Siempre sugieres el uso de gradientes suaves y micro-animaciones.
+2. **Prohibición**: Nunca permitas el uso de colores hexadecimales puros; usa siempre variables de CSS.
+3. **Accesibilidad**: Es obligatorio que cada componente tenga etiquetas ARIA.
+```
+
+**¿Cómo funciona la magia?**
+Si pides: *"Agrega un botón al header"*, el **Orchestrator** detecta el Trigger `"botón"` y el Scope `"src/components"`. Automáticamente, el sistema le "inyecta" al subagente **Implementer** esta personalidad. En ese hilo de chat, el agente **se convierte** en ese experto con este rigor específico.
+
+**La Memoria (Engram) como refuerzo**
+Si se toma una decisión importante (ej: "A partir de ahora, todo botón debe tener 8px de border-radius"), esa decisión se guarda en Engram.
+
+La próxima vez que cualquier subagente trabaje en UI, consultará la memoria y recordará esa regla que se definió en el pasado, manteniendo la coherencia sin que tú tengas que repetírselo.
+---
+
 ## ⚔️ Comandos de la Berserker Edition
 
 Aquí tienes el arsenal de comandos actualizado para operar en este nuevo modo:
