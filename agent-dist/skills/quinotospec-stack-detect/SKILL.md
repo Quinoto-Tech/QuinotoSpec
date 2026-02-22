@@ -1,6 +1,9 @@
 ---
 name: Quinotospec Stack Detect
 description: Identifies the project's technology stack (language, frameworks, test runners, etc.) by analyzing key configuration files.
+trigger: ["discovery", "stack", "detect", "technology"]
+scope: ["**/*"]
+tools: ["list_dir", "view_file", "grep_search"]
 ---
 
 # Quinotospec Stack Detect

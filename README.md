@@ -1,17 +1,16 @@
-# QuinotoSpec: Amok Edition (BETA)
+# QuinotoSpec: Berserker Edition (ALPHA)
 
 > [!WARNING]
-> **BETA VERSION FOR ANTIGRAVITY**
-> Esta es una versión experimental diseñada para entornos de agentes avanzados. Úsela con precaución.
->
-> **Nota:** Estamos trabajando activamente en la integración nativa con GitHub Copilot.
+> **ARCHITECTURE EVOLUTION**
+> Esta versión implementa los nuevos patrones de orquestación y memoria persistente descritos en la guía técnica.
 >
 > ### 🗺️ Roadmap
 >
-> **🪓 Berserker Edition (Mayo 2026)**
-> _Status: En Desarrollo_
-> - **Runic Memory:** Memoria semántica del proyecto usando bases de datos vectoriales.
-> - **Mjolnir Refactor:** Capacidad de reescribir módulos enteros bajo demanda para limpiar deuda técnica.
+> **🪓 Berserker Edition (Q2 2026)**
+> _Status: En Implementación (Fase 1: Estructura)_
+> - **Orchestrator-Workers:** Delegación quirúrgica a subagentes.
+> - **Engram Memory:** Persistencia de decisiones técnica via SQLite/MCP.
+> - **Lazy Skills:** Inyección dinámica de conocimiento especializado.
 >
 > **👻 Posesion Edition (TBA)**
 > _Status: Concepto_

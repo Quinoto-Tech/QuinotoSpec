@@ -1,6 +1,9 @@
 ---
 name: Generate GitHub Branch
 description: Creates a new feature branch.
+trigger: ["branch", "git", "new feature", "fix"]
+scope: ["**/*"]
+tools: ["run_command"]
 ---
 
 # Generate GitHub Branch

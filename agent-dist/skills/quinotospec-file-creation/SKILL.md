@@ -1,6 +1,9 @@
 ---
 name: File Creation
 description: Standards and guidelines for creating files, specifically temporary scripts.
+trigger: ["script", "temp", "create file", "new file"]
+scope: [".quinoto-spec/scripts/**"]
+tools: ["write_to_file", "list_dir"]
 ---
 
 # File Creation & Scripts

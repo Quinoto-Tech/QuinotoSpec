@@ -1,6 +1,9 @@
 ---
 name: Mark Done
 description: Automates marking tasks as done, including recursive renaming of files and folders when all sub-tasks are completed.
+trigger: ["done", "complete", "finish", "task completed"]
+scope: [".quinoto-spec/proposals/**"]
+tools: ["run_command", "view_file", "multi_replace_file_content"]
 ---
 
 # Mark Done Skill

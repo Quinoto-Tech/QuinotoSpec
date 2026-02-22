@@ -1,6 +1,9 @@
 ---
 name: Quinotospec Update Changelog
 description: Automates updating the docs/quinoto-spec-changelog.md file with entries appearing from top to bottom (newest first).
+trigger: ["implement", "apply", "update", "fix"]
+scope: ["**/*"]
+tools: ["read_file", "edit_file", "multi_replace_file_content", "write_to_file"]
 ---
 
 # Quinotospec Update Changelog
