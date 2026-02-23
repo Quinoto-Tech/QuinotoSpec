@@ -14,6 +14,7 @@ Ahora, tu asistente no es un "generalista" que se marea con archivos grandes, si
 - **Ahora puede enfocar su atención**: Los subagentes operan con "contexto quirúrgico", leyendo solo lo que necesitan para su tarea específica (cero ruido, cero alucinaciones).
 - **Ahora puede recordar**: Gracias a **Engram**, las decisiones que tomaste hace tres semanas no se pierden cuando se limpia el historial del chat.
 - **Ahora es reactivo**: Las habilidades (Skills) se activan solas mediante **Triggers** y **Scopes**; si tocas el frontend, se cargan las reglas de UI; si tocas el backend, se cargan las de API.
+- **Ahora es transparente**: Al final de cada intervención, el Orquestador te listará exactamente qué **Expertos** (Skills) participaron en la tarea para que sepas qué criterios se aplicaron.
 - **Ahora es auditable**: Cada decisión técnica queda registrada en un sistema de búsqueda de texto completo.
 
 ---
