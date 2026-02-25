@@ -12,12 +12,11 @@ El workflow debe ser ejecutado pasando como comando otro archivo con los siguien
 ### si faltara alguna de esta informacion, no proseguir con el workflow.
 
 ## paso 1
-genera un archivo con el nombre .quinotospec/{nombre_del_modulo_a_refactorizar}/quinotospec.mjolnir-refactor.yml con los Datos para ejecucion del workflow
+genera un archivo con el nombre .quinoto-spec/{nombre_del_modulo_a_refactorizar}/mjolnir-refactor.yml con los Datos para ejecucion del workflow (pedir verificacion humana)
 
 ## paso 2
-- hacer un discovery del modulo actual a refactorizar de la misma manera que se realiza con 
-- /quinotospec.discovery pero dejar los archivos en .quinotospec/{nombre_del_modulo_a_refactorizar}
+- hacer un discovery del modulo actual a refactorizar de la misma manera que se realiza con /quinotospec.discovery pero dejar los archivos en .quinotospec/{nombre_del_modulo_a_refactorizar
 - el archivo 07-product-and-agreements.md generalo con su contenido que sea relevante para el contexto.
 
 ## paso 3 
-- Se debe ejecutar el workflow #quinotospec.create-proposal.md con los archivos generados en el discovery discovery + Datos para ejecucion del workflow
+- Se debe ejecutar el workflow #quinotospec.create-proposal.md con los archivos generados en el discovery discovery + Datos para ejecucion del workflow (archivo yml generado en el paso 1)
