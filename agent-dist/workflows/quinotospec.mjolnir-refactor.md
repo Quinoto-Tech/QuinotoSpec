@@ -19,4 +19,4 @@ genera un archivo con el nombre .quinoto-spec/{nombre_del_modulo_a_refactorizar}
 - el archivo 07-product-and-agreements.md generalo con su contenido que sea relevante para el contexto.
 
 ## paso 3 
-- Se debe ejecutar el workflow #quinotospec.create-proposal.md con los archivos generados en el discovery discovery + Datos para ejecucion del workflow (archivo yml generado en el paso 1)
+- Se debe ejecutar el workflow #quinotospec.create-proposal.md con los archivos generados en el discovery discovery + Datos para ejecucion del workflow (vuleve a leer el archivo yml generado en el paso 1 -.quinoto-spec/{nombre_del_modulo_a_refactorizar}/mjolnir-refactor.yml - por si el usuario le realizo cambios)
