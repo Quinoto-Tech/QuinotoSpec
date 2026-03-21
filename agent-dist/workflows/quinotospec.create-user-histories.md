@@ -16,18 +16,19 @@ Requiere que la propuesta (`proposal.md`) ya haya sido creada.
 5. **Merge inteligente**: Si `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` ya existe, **no sobreescribas**. Revisa las historias existentes y realiza un merge: agrega solo las historias nuevas y actualiza las que hayan cambiado.
 6. Genera el archivo en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` con el siguiente formato:
     - **Título**: Historias de Usuario ({{PROPOSAL_NAME}}).
-    - Tabla con columnas: ID, Historia de Usuario, Criterios de Aceptación, Prioridad, Estimación.
+    - Tabla con columnas: ID, Historia de Usuario, Criterios de Aceptación, Prioridad, Estimación, Servicio.
     - **IDs**: Busca el `**Prefijo:** {{PREFIX}}` en el archivo `proposal.md`. Usa ese prefijo para los IDs: `US-{{PREFIX}}-001`.
     - **Prioridad**: `P1` (alta) / `P2` (media) / `P3` (baja), según la fase y relevancia en la propuesta.
     - **Estimación**: Talla de camiseta (`XS` / `S` / `M` / `L` / `XL`) según la complejidad estimada de la historia.
+    - **Servicio**: El sub-proyecto o servicio donde se implementa esta historia, inferido de `**Servicios Afectados:**` en `proposal.md`. Si la historia aplica a todos los servicios, usar `todos`.
     - **Template**:
       ```markdown
       # Historias de Usuario ({{PROPOSAL_NAME}})
 
-      | ID | Historia de Usuario | Criterios de Aceptación | Prioridad | Estimación |
-      | --- | --- | --- | --- | --- |
-      | US-{{PREFIX}}-001 | Como **[rol]**, quiero **[acción]**, para **[beneficio/valor]**. | - [Criterio 1]<br>- [Criterio 2] | P1 | M |
-      | US-{{PREFIX}}-002 | Como **[rol]**, quiero **[acción]**, para **[beneficio/valor]**. | - [Criterio 1]<br>- [Criterio 2] | P2 | S |
+      | ID | Historia de Usuario | Criterios de Aceptación | Prioridad | Estimación | Servicio |
+      | --- | --- | --- | --- | --- | --- |
+      | US-{{PREFIX}}-001 | Como **[rol]**, quiero **[acción]**, para **[beneficio/valor]**. | - [Criterio 1]<br>- [Criterio 2] | P1 | M | auth-service |
+      | US-{{PREFIX}}-002 | Como **[rol]**, quiero **[acción]**, para **[beneficio/valor]**. | - [Criterio 1]<br>- [Criterio 2] | P2 | S | user-service |
       ```
 
 **Instrucción Final OBLIGATORIA (Changelog):**

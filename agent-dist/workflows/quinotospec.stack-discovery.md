@@ -10,11 +10,19 @@ Este workflow consolida los discoveries de múltiples sub-proyectos en un único
 
 ## Paso 0 — Inventario de servicios
 
-Antes de comenzar, escanea el root y lista todas las carpetas que contienen `/.quinoto-spec/discovery`. Genera un listado con:
+Antes de comenzar, escanea el root y lista todas las carpetas que contienen `/.quinoto-spec/discovery`. Para cada una, lee el campo `**Discovery Date:**` en su `00-stack-profile.md`. Genera el inventario:
 
-| Servicio | Ruta | Stack Principal |
-| --- | --- | --- |
-| [nombre] | [ruta relativa] | [lenguaje/framework detectado en `00-stack-profile.md`] |
+| Servicio | Ruta | Stack Principal | Discovery Date | Estado |
+| --- | --- | --- | --- | --- |
+| [nombre] | [ruta relativa] | [lenguaje/framework] | [YYYY-MM-DD] | ✅ Fresco / ⚠️ Viejo |
+
+Marcar como **⚠️ Viejo** si el `Discovery Date` tiene más de **30 días** de antigüedad (o si el campo no existe).
+
+**Si hay servicios con discovery ⚠️ Viejo:**
+- Notificar al usuario: *"Los siguientes servicios tienen un discovery desactualizado: [lista]. Se recomienda ejecutar `@quinotospec.refresh-discovery` para cada uno antes de consolidar."*
+- Esperar confirmación del usuario:
+  - **Opción A — Refrescar primero (recomendado)**: Para cada servicio viejo, ejecutar el workflow `quinotospec.refresh-discovery` pasando el `SERVICE_PATH` correspondiente. Continuar con la consolidación una vez que todos estén frescos.
+  - **Opción B — Consolidar de todas formas**: Continuar con los datos actuales y documentar en `01-overview.md` qué servicios tienen discovery potencialmente desactualizado.
 
 Este inventario queda documentado al inicio de los archivos consolidados y en el changelog.
 
@@ -50,6 +58,7 @@ Explora el proyecto completo y genera 7 archivos Markdown independientes en `.qu
 | --- | --- | --- | --- | --- | --- |
 
 - Detecta y documenta **inconsistencias**: versiones distintas del mismo lenguaje, herramientas incompatibles, falta de estandarización entre servicios.
+- **Auto-estandarización**: Si se detectan 2 o más inconsistencias de stack entre servicios, notifica al usuario y sugiere ejecutar `@quinotospec.create-proposal` con la descripción: *"Stack Standardization — [detalle de inconsistencia]"* para generar automáticamente una propuesta de estandarización.
 
 ### 1) 01-overview.md
 - Lee todos los `*/.quinoto-spec/discovery/01-overview.md`.
@@ -90,6 +99,12 @@ Explora el proyecto completo y genera 7 archivos Markdown independientes en `.qu
 ### 7) 07-product-and-agreements.md
 - Lee todos los `*/.quinoto-spec/discovery/07-product-and-agreements.md`.
 - Consolidar la visión de producto global: objetivos comunes, KPIs compartidos y acuerdos transversales.
+
+---
+
+## Paso Final — Dependency Graph
+
+Una vez generados los 7 archivos, ejecuta el workflow `quinotospec.dependency-graph` para generar `.quinoto-spec/discovery/00-dependency-graph.md` con el mapa de dependencias inter-servicio y la detección de contract drift.
 
 ---
 

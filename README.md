@@ -15,6 +15,8 @@
 > - ✅ **Code Review Workflow** (`@quinotospec.review`): Revisión de branches contra criterios de aceptación, tests y convenciones del stack. _(Completado: 2026-03-21)_
 > - ✅ **Sprint Planning Workflow** (`@quinotospec.sprint`): Generación de sprint plans con capacidad, prioridades y dependencias. _(Completado: 2026-03-21)_
 > - ✅ **Validate Skill** (`quinotospec-validate`): Checks de sistema reutilizables como precondición para workflows críticos. _(Completado: 2026-03-21)_
+> - ✅ **Refresh Discovery** (`@quinotospec.refresh-discovery`): Discovery incremental — detecta cambios y actualiza solo los archivos afectados. _(Completado: 2026-03-21)_
+> - ✅ **Dependency Graph** (`@quinotospec.dependency-graph`): Mapa de dependencias inter-servicio con detección de contract drift. _(Completado: 2026-03-21)_
 >
 > **👻 Posesion Edition (TBA)**
 > _Status: Concepto_
@@ -100,7 +102,7 @@ Define la solución a alto nivel.
 - **Acción**:
     1.  El agente te pedirá la descripcion de la propuesta. (puedes inyectar documentcion en formato markdown)
     2.  Registrará automáticamente un **Prefijo Único** (ej. `AUTH`, `TPGO`) en `.quinoto-spec/prefix-registry.md`.
-    3.  Generará el archivo base de la propuesta.
+    3.  Generará el archivo base de la propuesta, incluyendo el campo `Servicios Afectados` para arquitecturas distribuidas.
 
 ### 3. Generar Historias de Usuario
 Desglosa la propuesta en requerimientos de valor.
@@ -108,7 +110,7 @@ Desglosa la propuesta en requerimientos de valor.
 - **Comando**: `@quinotospec.create-user-histories`
 - **Parámetro**: Nombre de la carpeta de la propuesta (slug).
 - **Output**: `.quinoto-spec/proposals/{slug}/user-histories.md`.
-- **Detalle**: Crea items funcionales con IDs basados en el prefijo (ej. `US-AUTH-01`).
+- **Detalle**: Crea items funcionales con su correspondiente columna `Servicio` para trazabilidad multi-repositorio.
 
 ### 4. Generar Tareas Técnicas
 Convierte historias en pasos ejecutables para el desarrollador (o el agente).
@@ -116,7 +118,7 @@ Convierte historias en pasos ejecutables para el desarrollador (o el agente).
 - **Comando**: `@quinotospec.create-tasks`
 - **Parámetro**: ID de la Historia de Usuario (ej. `US-AUTH-01`).
 - **Output**: `.quinoto-spec/proposals/{slug}/{US_ID}_tasks.md`.
-- **Detalle**: Crea una lista de chequeo técnica (ej. `TSK-AUTH-001: Crear modelo User`).
+- **Detalle**: Crea una lista de chequeo técnica con columna `Servicio` heredada de la historia de usuario.
 
 ### 5. Implementación (Apply)
 Ejecuta las tareas una por una.
@@ -152,7 +154,20 @@ Mantén una visión clara del progreso y el valor generado.
 
 - **Comando**: `@quinotospec.status`
 - **Output**: Genera/Actualiza `PROJECT_STATUS.md` en la raíz.
-- **Acción**: Escanea las propuestas y el changelog para calcular el progreso porcentual y el tiempo total ahorrado por la IA. Incluye alertas de bloqueos y próximos pasos sugeridos.
+- **Acción**: Escanea las propuestas y el changelog para calcular el progreso porcentual y el tiempo total ahorrado por la IA. Incluye alertas de bloqueos, descubrimientos caducados y próximos pasos sugeridos.
+
+#### Refresh Discovery
+Actualiza solo los archivos de discovery afectados por cambios recientes, sin regenerar todo.
+
+- **Comando**: `@quinotospec.refresh-discovery`
+- **Acción**: Detecta qué archivos cambiaron desde el `**Discovery Date:**` del último discovery y actualiza únicamente las secciones impactadas.
+
+#### Dependency Graph
+Mapea las dependencias inter-servicio y detecta contratos de API inconsistentes.
+
+- **Comando**: `@quinotospec.dependency-graph`
+- **Output**: Genera `.quinoto-spec/discovery/00-dependency-graph.md`.
+- **Acción**: Analiza llamadas HTTP entre servicios, detecta contract drift y recursos compartidos (databases, auth, queues).
 
 #### Code Review
 Revisa un branch contra los criterios de aceptación de la tarea antes de mergear.
@@ -165,7 +180,14 @@ Revisa un branch contra los criterios de aceptación de la tarea antes de mergea
 Genera una propuesta de sprint basada en el estado actual del proyecto.
 
 - **Comando**: `@quinotospec.sprint`
-- **Acción**: Analiza propuestas activas, prioridades y estimaciones. Genera `.quinoto-spec/sprint-plan.md` respetando capacidad y dependencias.
+- **Acción**: Analiza propuestas y dependencias. Alimenta la capacidad desde `sprint-config.yml` y genera `.quinoto-spec/sprint-plan.md` asignando integrantes por rol.
+
+#### Distribute Proposal
+Explota los artefactos de una propuesta centralizada hacia los sub-proyectos correspondientes.
+
+- **Comando**: `@quinotospec.distribute`
+- **Parámetro**: Nombre de la carpeta de la propuesta (slug).
+- **Acción**: Lee la columna `Servicio` de historias y tareas, y copia los archivos relevantes a la carpeta `.quinoto-spec/proposals/` local de cada microservicio.
 
 ### 7. Habilidades (Skills)
 

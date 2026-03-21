@@ -17,6 +17,7 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar d
         - `**Estado**: 🟡 Propuesta`
         - `**Prioridad**: P1 | P2 | P3`
         - `**Complejidad**: Baja | Media | Alta`
+        - `**Servicios Afectados**: [lista de servicios/sub-proyectos impactados, separados por comas. Ej: auth-service, user-service, gateway]`
     - **Separador**: `---`
     - **Resumen Ejecutivo**: Contexto, objetivo y valor.
     - **Problema Actual**: Lista concreta de fricciones actuales.

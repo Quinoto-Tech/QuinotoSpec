@@ -11,6 +11,7 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
     - Clasifica propuestas activas: 🟡 Propuesta, 🟢 En Curso, ✅ Completada.
     - Extrae prioridad y complejidad de cada `proposal.md`.
     - Registra el conteo total: activas vs archivadas.
+    - Lee `**Discovery Date:**` en `.quinoto-spec/discovery/00-stack-profile.md`. Si han pasado más de 30 días desde esa fecha → marcarlo como alerta en la sección `🚨 Alertas y Bloqueos` con el mensaje: *"⏰ El discovery tiene [N] días de antigüedad. Considera ejecutar `@quinotospec.refresh-discovery`."*
 
 2. **Cálculo de Progreso y Velocidad**:
     - Para cada propuesta activa, busca archivos de tareas (`*_tasks.md`).
