@@ -4,17 +4,19 @@ description: Distribuye las tareas de una propuesta centralizada hacia los sub-p
 
 Este workflow toma una propuesta centralizada (normalmente generada desde un `stack-discovery` o `create-proposal`) y distribuye sus tareas hacia los `.quinoto-spec/` de cada sub-proyecto afectado.
 
-**Parámetro Requerido:**
+**Parámetros Requeridos:**
 - `PROPOSAL_SLUG`: El slug de la propuesta centralizada a distribuir (ej. `stack-standardization`).
+- `SPRINT_ID`: El ID del sprint al que pertenecen las tareas (ej. `1`).
 
 ---
 
-## Paso 1 — Leer la propuesta y sus artefactos
+## Paso 1 — Leer el plan de sprint y la propuesta
 
-1. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md` y extrae:
+1. Lee `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-plan.md` para identificar qué tareas de la propuesta `{{PROPOSAL_SLUG}}` han sido asignadas a este sprint.
+2. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md` y extrae:
     - `**Servicios Afectados:**` → lista de sub-proyectos destino.
-2. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` y agrupa las historias por su columna `Servicio`.
-3. Lee todos los archivos `*_tasks.md` de la propuesta y agrupa las tareas por su columna `Servicio`.
+3. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` y agrupa las historias por su columna `Servicio`.
+4. Lee todos los archivos `*_tasks.md` de la propuesta y agrupa las tareas por su columna `Servicio`, filtrando solo aquellas que están en el `sprint-plan.md`.
 
 ---
 
@@ -27,19 +29,19 @@ Para cada servicio en `Servicios Afectados`:
 
 ---
 
-## Paso 3 — Distribuir artefactos por servicio
+## Paso 3 — Distribuir artefactos por servicio (Contexto Sprint)
 
-Para cada sub-proyecto destino, crear o actualizar los siguientes archivos dentro de `<servicio>/.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/`:
+Para cada sub-proyecto destino, crear o actualizar los siguientes archivos dentro de `<servicio>/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/`:
 
-### `user-histories.md` (filtrado por servicio)
-Solo las historias donde `Servicio = <nombre-del-servicio>` (o `todos`).
+### `user-histories.md` (filtrado por servicio y sprint)
+Solo las historias donde `Servicio = <nombre-del-servicio>` (o `todos`) que tengan tareas en este sprint.
 
-### `<US_ID>_tasks.md` (filtrado por servicio)
-Solo las tareas donde `Servicio = <nombre-del-servicio>`.
+### `<US_ID>_tasks.md` (filtrado por servicio y sprint)
+Solo las tareas asignadas en el `sprint-plan.md` donde `Servicio = <nombre-del-servicio>`.
 
 **Agregar encabezado de trazabilidad** en cada archivo distribuido:
 ```markdown
-> 📎 Este archivo es una distribución de la propuesta centralizada [`{{PROPOSAL_SLUG}}`](.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md).
+> 📎 Este archivo es una distribución del Sprint {{SPRINT_ID}} de la propuesta centralizada [`{{PROPOSAL_SLUG}}`](.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md).
 > Las modificaciones deben hacerse en la propuesta central y redistribuirse con `@quinotospec.distribute`.
 ```
 
@@ -53,10 +55,10 @@ Al finalizar, generar un resumen:
 
 | Servicio | Historias distribuidas | Tareas distribuidas | Ruta destino |
 | --- | --- | --- | --- |
-| auth-service | 3 | 8 | `./auth-service/.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` |
-| user-service | 2 | 5 | `./user-service/.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` |
+| auth-service | 3 | 8 | `./auth-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
+| user-service | 2 | 5 | `./user-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
 
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completada la distribución, DEBES ejecutar la skill `quinotospec-update-changelog`.
-- **Título de la Acción**: Proposal Distributed: {{PROPOSAL_SLUG}}
-- **Resumen**: Se distribuyeron los artefactos de '{{PROPOSAL_SLUG}}' hacia [N] servicios: [lista de servicios].
+- **Título de la Acción**: Proposal Distributed to Sprint {{SPRINT_ID}}: {{PROPOSAL_SLUG}}
+- **Resumen**: Se distribuyeron los artefactos de '{{PROPOSAL_SLUG}}' para el Sprint {{SPRINT_ID}} hacia [N] servicios: [lista de servicios].

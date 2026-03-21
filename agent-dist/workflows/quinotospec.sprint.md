@@ -8,20 +8,19 @@ Este workflow analiza el estado del proyecto y genera una propuesta de Sprint Pl
 
 ## Paso 1 — Configuración del Sprint (YAML)
 
-Verifica si existe el archivo `.quinoto-spec/sprint-config.yml`. 
+Este workflow utiliza dos niveles de configuración:
 
-- **Si NO existe**: créalo con el siguiente schema y solicita verificación humana antes de continuar:
+### A. Configuración Base (`.quinoto-spec/sprints/base-config.yml`)
+Verifica si existe el archivo. Si NO existe, créalo con el siguiente esquema (datos estables del equipo) y **solicita verificación humana antes de avanzar**:
 
 ```yaml
-# Configuración del Sprint
-duracion_semanas: 2
-fecha_inicio: YYYY-MM-DD  # Fecha de inicio del sprint
-
-# Capacidad del equipo
+# Capacidad del equipo (Base)
 equipo:
   - nombre: ""
     rol: ""          # Backend | Frontend | FullStack | DevOps | QA
-    disponibilidad: 1.0  # Factor de 0.0 a 1.0 (ej: 0.5 = medio tiempo)
+    disponibilidad: 1.0
+    componentes_permitidos: []  # ej: ["api", "ui"]
+    componente_owner: ""        # Prioridad de asignación
 
 # Conversión de tallas a puntos
 puntos_por_talla:
@@ -31,19 +30,30 @@ puntos_por_talla:
   L: 5
   XL: 8
 
-# Velocidad histórica (opcional, para ajustar capacidad real)
-velocidad_promedio_puntos: null  # Si se conoce, sobreescribe el cálculo por tallas
+velocidad_promedio_puntos: null
 ```
 
-> **⚠️ Verificación humana requerida**: El usuario debe revisar y completar el `.quinoto-spec/sprint-config.yml` antes de que el agente continúe al Paso 2.
+> **⚠️ Verificación humana requerida**: El usuario debe revisar y completar el `.quinoto-spec/sprints/base-config.yml` antes de que el agente continúe.
 
-- **Si YA existe**: leerlo y usar sus valores para los cálculos.
+### B. Configuración del Sprint (`.quinoto-spec/sprints/sprint-{{ID}}/sprint-config.yml`)
+Solicita al usuario el **ID del Sprint** (ej: `1`). Verifica si existe la carpeta y el archivo. Si NO existe, créalo:
+
+```yaml
+# Detalles del Sprint específico
+id_sprint: {{ID}}
+duracion_semanas: 2
+fecha_inicio: YYYY-MM-DD
+
+# Prioridad de propuestas (slugs en orden de importancia)
+prioridad_propuestas:
+  - ""
+```
 
 ---
 
 ## Paso 2 — Cálculo de capacidad real
 
-Con base en el `sprint-config.yml`:
+Con base en la unión de `base-config.yml` y el `sprint-config.yml` específico:
 
 1. Calcula la capacidad total del sprint:
    - Si `velocidad_promedio_puntos` tiene valor → usarlo directamente.
@@ -63,18 +73,19 @@ Con base en el `sprint-config.yml`:
 ## Paso 4 — Selección de ítems para el sprint
 
 - Prioriza en este orden:
-    1. Tareas P1 de propuestas en estado 🟢 (En Curso).
-    2. Tareas P1 de propuestas en estado 🟡 (Propuesta).
-    3. Tareas P2 si queda capacidad.
+    1. Tareas de propuestas listadas en `prioridad_propuestas` (en el orden especificado).
+    2. Tareas P1 de propuestas en estado 🟢 (En Curso) no listadas arriba.
+    3. Tareas P1 de propuestas en estado 🟡 (Propuesta) no listadas arriba.
+    4. Tareas P2 si queda capacidad.
 - Respeta las **Dependencias** declaradas en los archivos de tareas.
-- Al asignar tareas, considera el `rol` de cada integrante del equipo declarado en el YAML.
+- Al asignar tareas, considera el `rol`, `componentes_permitidos` y `componente_owner` de cada integrante del equipo.
 - No exceder la capacidad total calculada en el Paso 2.
 
 ---
 
 ## Paso 5 — Generación del Sprint Plan
 
-Genera el archivo `.quinoto-spec/sprint-plan.md` con el siguiente formato:
+Genera el archivo `.quinoto-spec/sprints/sprint-{{id_sprint}}/sprint-plan.md` con el siguiente formato:
 
 ```markdown
 # 🏃 Sprint Plan — [Fecha inicio] al [Fecha fin]
@@ -97,4 +108,4 @@ Genera el archivo `.quinoto-spec/sprint-plan.md` con el siguiente formato:
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez generado el sprint plan, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Sprint Plan Generated
-- **Resumen**: Se generó el plan de sprint en `.quinoto-spec/sprint-plan.md` con [N] tareas, [N] puntos comprometidos de [N] disponibles. Equipo: [N] integrantes.
+- **Resumen**: Se generó el plan de sprint en `.quinoto-spec/sprints/sprint-{{id_sprint}}/sprint-plan.md` con [N] tareas, [N] puntos comprometidos de [N] disponibles. Equipo: [N] integrantes.

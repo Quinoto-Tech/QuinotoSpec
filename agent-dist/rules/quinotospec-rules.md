@@ -29,3 +29,10 @@ trigger: always_on
 # Convención de Nombrado de Branches
 - Los branches siempre deben seguir el formato: `feature/{{TASK_ID}}-descripcion-en-kebab-case`.
 - Nunca crear un branch sin el `TASK_ID` o `US_ID` al inicio del nombre.
+
+# Aprobación de Configuración Crítica
+- **NUNCA** modifiques los siguientes archivos de configuración sin explicitar los cambios al usuario y obtener su aceptación:
+    - `.quinoto-spec/sprints/base-config.yml`
+    - `.quinoto-spec/sprints/sprint-{{ID}}/sprint-config.yml`
+    - `.quinoto-spec/*/mjolnir-refactor.yml`
+- Esta regla aplica tanto para la creación inicial (si requiere datos del usuario) como para modificaciones posteriores.

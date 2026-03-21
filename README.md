@@ -200,18 +200,22 @@ Revisa un branch contra los criterios de aceptación.
 - **Ejemplo**: `"Haz un code review a la rama 'feature/TSK-STRP-001' usando @quinotospec.review."`
 
 #### Sprint Planning
-Genera un plan de acción a corto plazo.
+Genera un plan de acción a corto plazo y lo organiza en carpetas dedicadas.
 
 - **Comando**: `@quinotospec.sprint`
-- **Acción**: Asigna tareas desde propuestas activas según `sprint-config.yml`, respetando dependencias e integrantes del equipo.
+- **Acción**: 
+    1. Genera un folder `.quinoto-spec/sprints/sprint-{{ID}}/` para aislar el plan.
+    2. Asigna tareas desde propuestas activas según `sprint-config.yml`.
+    3. Soporta **priorización de propuestas**, **componentes permitidos** por desarrollador y **ownership** de componentes para una asignación precisa.
 - **Ejemplo**: `"Arma el sprint para las próximas 2 semanas con @quinotospec.sprint."`
 
 #### Distribute Proposal
-Explota los artefactos de una propuesta central hacia submódulos.
+Explota los artefactos de una propuesta central hacia los microservicios, ahora organizado por sprints.
 
 - **Comando**: `@quinotospec.distribute`
-- **Acción**: Lee la columna `Servicio` de historias y tareas, y copia los archivos a la carpeta `.quinoto-spec/` de cada microservicio.
-- **Ejemplo**: `"Distribuye las tareas de 'auth-standardization' a sus respectivos microservicios usando @quinotospec.distribute."`
+- **Parámetros**: `SPRINT_ID`, `PROPOSAL_SLUG`.
+- **Acción**: Lee la columna `Servicio` de historias y tareas filtradas por el sprint indicado, y copia los archivos a `<servicio>/.quinoto-spec/sprints/sprint-{{ID}}/proposals/{{SLUG}}/`.
+- **Ejemplo**: `"Distribuye las tareas de 'auth-standardization' para el sprint 1 usando @quinotospec.distribute."`
 
 ### 7. Habilidades (Skills)
 
