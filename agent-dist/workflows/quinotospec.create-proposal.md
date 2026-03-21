@@ -2,9 +2,10 @@
 description: crear una propuesta independiente
 ---
 
-Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `00-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `07-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global.
+Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `00-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `07-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global y **detectar posibles conflictos o solapamientos** de alcance (mismos archivos, dominios o flujos afectados); si detectas alguno, documéntalo al inicio de la propuesta bajo `**⚠️ Conflictos Detectados:**`.
 El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
-PROPOSAL_NAME: inveta un nombre a partir de PROPOSAL_DESCRIPTION
+PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
+PROPOSAL_SLUG: derivar de PROPOSAL_NAME en lowercase con palabras separadas por guión (ej. `rewards-stabilization`, `payment-timeout-fix`).
 Tu objetivo es generar una Propuesta Técnica específica para este tema, INTEGRADA con el resto del sistema.
 Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar dentro de ella el archivo `proposal.md` con el siguiente formato esperado:
 
@@ -19,14 +20,15 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar d
     - **Separador**: `---`
     - **Resumen Ejecutivo**: Contexto, objetivo y valor.
     - **Problema Actual**: Lista concreta de fricciones actuales.
-    - **Solución Propuesta**: Descripción clara de la iniciativa.
+    - **Alternativas Consideradas**: Tabla con al menos 2 alternativas evaluadas, sus pros/contras y el motivo por el que se descartaron.
+    - **Solución Propuesta**: Descripción clara de la iniciativa y por qué es la opción elegida.
     - **Beneficios**: Impacto en tiempo, calidad, UX/DX o negocio.
     - **Alineación con Producto y Acuerdos**:
         - Visión de Producto.
         - KPIs Impactados.
         - Cumplimiento de DoR con checklist.
     - **Arquitectura y Diseño Técnico**:
-        - Diagrama `mermaid` del flujo.
+        - **Diagrama de secuencia obligatorio en Mermaid** (`sequenceDiagram`) mostrando el flujo principal de la funcionalidad propuesta (actores, servicios, base de datos e integraciones externas involucradas).
         - Estructura/variables principales.
         - Flujo de ejecución paso a paso.
     - **Especificación Técnica Detallada**:
@@ -39,7 +41,9 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar d
     - **Criterios de Aceptación (DoD)**:
         - Checklist por implementación, testing y documentación.
     - **Plan de Verificación**:
-        - Tests manuales con pasos y resultados esperados.
+        - Tests manuales: pasos detallados y resultados esperados.
+        - Tests automatizados sugeridos: tipo (unit/integration/e2e), qué cubrir y comando de ejecución.
+        - Criterio de éxito medible vinculado al KPI impactado (ej. "Reducción del tiempo de respuesta de X a Y ms").
     - **Impacto en el Sistema**:
         - Archivos nuevos/modificados.
         - Dependencias y tooling requerido.

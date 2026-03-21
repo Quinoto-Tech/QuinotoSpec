@@ -10,8 +10,11 @@
 >
 > **🪓 Berserker Edition (Mayo 2026)**
 > _Status: En Desarrollo_
-> - **Runic Memory:** Memoria semántica del proyecto usando bases de datos vectoriales.
-> - **Mjolnir Refactor:** Capacidad de reescribir módulos enteros bajo demanda para limpiar deuda técnica.
+> - ⏸️ **Runic Memory:** Memoria semántica del proyecto usando bases de datos vectoriales. _(Standby)_
+> - ✅ **Mjolnir Refactor:** Capacidad de reescribir módulos enteros bajo demanda para limpiar deuda técnica. _(Completado: 2026-03-21)_
+> - ✅ **Code Review Workflow** (`@quinotospec.review`): Revisión de branches contra criterios de aceptación, tests y convenciones del stack. _(Completado: 2026-03-21)_
+> - ✅ **Sprint Planning Workflow** (`@quinotospec.sprint`): Generación de sprint plans con capacidad, prioridades y dependencias. _(Completado: 2026-03-21)_
+> - ✅ **Validate Skill** (`quinotospec-validate`): Checks de sistema reutilizables como precondición para workflows críticos. _(Completado: 2026-03-21)_
 >
 > **👻 Posesion Edition (TBA)**
 > _Status: Concepto_
@@ -133,7 +136,7 @@ Mueve elementos finalizados a un estado de "archivo" para limpiar el workspace.
 
 - **Comando**: `@quinotospec.archive`
 - **Parámetro**: `TARGET` (Slug de propuesta, nombre de archivo de historias o tareas).
-- **Acción**: Renombra el elemento agregándole un prefijo `__` (ej. `__auth-module`, `__user-histories.md`, `__US-AUTH-001_tasks.md`) para indicarlo como archivado.
+- **Acción**: Mueve el elemento a la carpeta `_archived/` correspondiente (ej. `.quinoto-spec/proposals/_archived/auth-module/`, `.quinoto-spec/proposals/auth-module/_archived/user-histories.md`). Verifica que el estado sea `✅ Completada` antes de proceder.
 
 #### Read PDF
 Ingesta documentación externa en formato PDF para darle contexto al agente.
@@ -144,22 +147,36 @@ Ingesta documentación externa en formato PDF para darle contexto al agente.
     - `NOMBRE_DEL_ARCHIVO`: Nombre del archivo de salida (sin extensión).
 - **Acción**: Lee el PDF, extrae el texto, lo formatea y guarda el contenido en un archivo Markdown.
 
-#### Dashbord de Proyecto (Status)
+#### Dashboard de Proyecto (Status)
 Mantén una visión clara del progreso y el valor generado.
 
 - **Comando**: `@quinotospec.status`
 - **Output**: Genera/Actualiza `PROJECT_STATUS.md` en la raíz.
-- **Acción**: Escanea las propuestas y el changelog para calcular el progreso porcentual y el tiempo total ahorrado por la IA.
+- **Acción**: Escanea las propuestas y el changelog para calcular el progreso porcentual y el tiempo total ahorrado por la IA. Incluye alertas de bloqueos y próximos pasos sugeridos.
+
+#### Code Review
+Revisa un branch contra los criterios de aceptación de la tarea antes de mergear.
+
+- **Comando**: `@quinotospec.review`
+- **Parámetros**: `TASK_ID`, `BRANCH_NAME`.
+- **Acción**: Valida el diff del branch contra el DoD, cobertura de tests y convenciones del stack. Genera un informe de aprobación o lista de correcciones.
+
+#### Sprint Planning
+Genera una propuesta de sprint basada en el estado actual del proyecto.
+
+- **Comando**: `@quinotospec.sprint`
+- **Acción**: Analiza propuestas activas, prioridades y estimaciones. Genera `.quinoto-spec/sprint-plan.md` respetando capacidad y dependencias.
 
 ### 7. Habilidades (Skills)
 
 El agente cuenta con "Skills" especializadas que ejecutan tareas complejas de forma autónoma:
 
-- **Generate Github Branch**: Crea branches siguiendo el estándar de nombrado del equipo automáticamente.
+- **Generate Github Branch**: Crea branches siguiendo el estándar `feature/{{TASK_ID}}-descripcion-kebab-case` automáticamente, detectando la rama base y haciendo push.
 - **File Creation**: Estandariza la creación de archivos, asegurando que scripts temporales y documentos sigan las normas.
-- **Mark Done**: Automatiza el cierre de tareas. Cuando una tarea se completa, renombra recursivamente archivos y carpetas para reflejar su estado final.
-- **Read PDF**: Motor de extracción de texto para documentos PDF, usado por el workflow `readpdf`.
-- **Update Changelog**: Mantiene el `docs/quinoto-spec-changelog.md` actualizado con cada cambio relevante, calculando tiempos (si están disponibles) y categorizando cambios.
+- **Mark Done**: Automatiza el cierre de tareas. Marca el checkbox `[x]`, mueve artefactos completados a `_archived/`, y actualiza el changelog automáticamente.
+- **Read PDF**: Motor de extracción de texto para documentos PDF. Genera un script temporal, extrae el contenido y lo guarda en `.quinoto-spec/docs/`.
+- **Update Changelog**: Mantiene el `docs/quinoto-spec-changelog.md` actualizado con cada cambio relevante, calculando tiempos y categorizando cambios.
+- **Validate**: Ejecuta checks de sistema (discovery, prefix-registry, changelog, propuestas) como precondición antes de workflows críticos.
 
 ## Mantenimiento y Reglas
 
