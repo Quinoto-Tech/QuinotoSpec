@@ -1,22 +1,22 @@
-# QuinotoSpec: Amok Edition (BETA)
+# QuinotoSpec: Berserker Edition 🪓
 
-> [!WARNING]
-> **BETA VERSION FOR ANTIGRAVITY**
-> Esta es una versión experimental diseñada para entornos de agentes avanzados. Úsela con precaución.
+> [!NOTE]
+> **ESTADO: PRODUCCIÓN / ESTABLE**
+> Esta es la versión oficial diseñada para entornos de agentes avanzados y equipos de alto rendimiento.
 >
 > **Nota:** Estamos trabajando activamente en la integración nativa con GitHub Copilot.
 >
 > ### 🗺️ Roadmap
 >
-> **🪓 Berserker Edition (Mayo 2026)**
-> _Status: En Desarrollo_
+> **🪓 Berserker Edition (Actual)**
+> _Status: 🟢 Estable / Producción_
 > - ⏸️ **Runic Memory:** Memoria semántica del proyecto usando bases de datos vectoriales. _(Standby)_
-> - ✅ **Mjolnir Refactor:** Capacidad de reescribir módulos enteros bajo demanda para limpiar deuda técnica. _(Completado: 2026-03-21)_
-> - ✅ **Code Review Workflow** (`@quinotospec.review`): Revisión de branches contra criterios de aceptación, tests y convenciones del stack. _(Completado: 2026-03-21)_
-> - ✅ **Sprint Planning Workflow** (`@quinotospec.sprint`): Generación de sprint plans con capacidad, prioridades y dependencias. _(Completado: 2026-03-21)_
-> - ✅ **Validate Skill** (`quinotospec-validate`): Checks de sistema reutilizables como precondición para workflows críticos. _(Completado: 2026-03-21)_
-> - ✅ **Refresh Discovery** (`@quinotospec.refresh-discovery`): Discovery incremental — detecta cambios y actualiza solo los archivos afectados. _(Completado: 2026-03-21)_
-> - ✅ **Dependency Graph** (`@quinotospec.dependency-graph`): Mapa de dependencias inter-servicio con detección de contract drift. _(Completado: 2026-03-21)_
+> - ✅ **Mjolnir Refactor:** Capacidad de reescribir módulos enteros bajo demanda para limpiar deuda técnica. _(Completado)_
+> - ✅ **Code Review Workflow** (`@quinotospec.review`): Revisión de branches contra criterios de aceptación, tests y convenciones del stack. _(Completado)_
+> - ✅ **Sprint Planning Workflow** (`@quinotospec.sprint`): Generación de sprint plans con capacidad, prioridades y dependencias. _(Completado)_
+> - ✅ **Validate Skill** (`quinotospec-validate`): Checks de sistema reutilizables como precondición para workflows críticos. _(Completado)_
+> - ✅ **Refresh Discovery** (`@quinotospec.refresh-discovery`): Discovery incremental — detecta cambios y actualiza solo los archivos afectados. _(Completado)_
+> - ✅ **Dependency Graph** (`@quinotospec.dependency-graph`): Mapa de dependencias inter-servicio con detección de contract drift. _(Completado)_
 >
 > **👻 Posesion Edition (TBA)**
 > _Status: Concepto_
@@ -34,7 +34,7 @@
 > - **Alliance Integration (Multi-Repo):** Contexto compartido federado para arquitecturas distribuidas de gran escala.
 
 <div align="center">
-  <img src="amok.png" alt="Quinoto Amok" width="400" />
+  <img src="berserker.png" alt="Quinoto Berserker" width="400" />
 </div>
 
 # Guía de Desarrollo Guiado por IA con QuinotoSpec
