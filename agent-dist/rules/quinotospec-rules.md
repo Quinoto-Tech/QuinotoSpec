@@ -36,3 +36,10 @@ trigger: always_on
     - `.quinoto-spec/sprints/sprint-{{ID}}/sprint-config.yml`
     - `.quinoto-spec/*/mjolnir-refactor.yml`
 - Esta regla aplica tanto para la creación inicial (si requiere datos del usuario) como para modificaciones posteriores.
+
+# Aprobación de Transiciones y Tareas (Shield Wall)
+- **BLOQUEANTE**: Ningún agente puede pasar de un rol a otro (ej. Scout -> Skald) ni iniciar una tarea técnica sin la aprobación explícita del usuario.
+- **Procedimiento**: 
+    1.  Muestra los resultados de la fase actual (ej. Mapa de Impacto).
+    2.  Explica qué se propone para la siguiente fase.
+    3.  **DETÉN LA EJECUCIÓN** y solicita confirmación: "¿Deseas proceder con la siguiente fase/tarea?".

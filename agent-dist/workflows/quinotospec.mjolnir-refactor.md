@@ -39,7 +39,7 @@ Una vez confirmado, ejecuta `quinotospec-update-changelog`:
 
 > Actualiza `ultimo_paso_completado: 1` en el `.yml` al iniciar este paso. Si falla, el proceso puede reanudarse desde aquí.
 
-1. **Mapa de impacto previo al discovery**: Antes de analizar el módulo, identificar qué otros módulos, archivos o servicios del proyecto **importan o dependen** del módulo a refactorizar. Documentar este mapa en `.quinoto-spec/{nombre}/00-impact-map.md`.
+1. **Mapa de impacto previo al discovery**: Antes de analizar el módulo, identificar qué otros módulos, archivos o servicios del proyecto **importan o dependen** del módulo a refactorizar. Documentar este mapa en `.quinoto-spec/{nombre}/impact-map.md`.
 2. Realiza un discovery completo del módulo actual siguiendo las mismas instrucciones del workflow `quinotospec.discovery`, pero guarda todos los archivos en `.quinoto-spec/{nombre}/` en lugar de `.quinoto-spec/discovery/`.
 3. El archivo `07-product-and-agreements.md` debe generarse con contenido real y relevante para el contexto del refactor (no dejarlo vacío).
 
