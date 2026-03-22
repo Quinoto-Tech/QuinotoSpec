@@ -12,11 +12,11 @@ Este workflow toma una propuesta centralizada (normalmente generada desde un `st
 
 ## Paso 1 — Leer el plan de sprint y la propuesta
 
-1. Lee `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-plan.md` para identificar qué tareas de la propuesta `{{PROPOSAL_SLUG}}` han sido asignadas a este sprint.
+1. Lee `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-plan.md` para identificar qué tareas de la propuesta `{{PROPOSAL_SLUG}}` han sido asignadas a este sprint y a qué **Componente** (sub-proyecto) pertenecen.
 2. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md` y extrae:
     - `**Servicios Afectados:**` → lista de sub-proyectos destino.
-3. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` y agrupa las historias por su columna `Servicio`.
-4. Lee todos los archivos `*_tasks.md` de la propuesta y agrupa las tareas por su columna `Servicio`, filtrando solo aquellas que están en el `sprint-plan.md`.
+3. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` y agrupa las historias por la columna que coincida con el **Componente** (o `Servicio`).
+4. Lee todos los archivos `*_tasks.md` de la propuesta y agrupa las tareas por su columna **Componente** (o `Servicio`), filtrando solo aquellas que están presentes en el `sprint-plan.md`.
 
 ---
 
@@ -33,11 +33,11 @@ Para cada servicio en `Servicios Afectados`:
 
 Para cada sub-proyecto destino, crear o actualizar los siguientes archivos dentro de `<servicio>/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/`:
 
-### `user-histories.md` (filtrado por servicio y sprint)
-Solo las historias donde `Servicio = <nombre-del-servicio>` (o `todos`) que tengan tareas en este sprint.
+### `user-histories.md` (filtrado por componente y sprint)
+Solo las historias donde **Componente** (o `Servicio`) `<nombre-del-componente>` (o `todos`) que tengan tareas en este sprint.
 
-### `<US_ID>_tasks.md` (filtrado por servicio y sprint)
-Solo las tareas asignadas en el `sprint-plan.md` donde `Servicio = <nombre-del-servicio>`.
+### `<US_ID>_tasks.md` (filtrado por componente y sprint)
+Solo las tareas asignadas en el `sprint-plan.md` donde **Componente** (o `Servicio`) `<nombre-del-componente>`.
 
 **Agregar encabezado de trazabilidad** en cada archivo distribuido:
 ```markdown
@@ -53,7 +53,7 @@ Solo las tareas asignadas en el `sprint-plan.md` donde `Servicio = <nombre-del-s
 
 Al finalizar, generar un resumen:
 
-| Servicio | Historias distribuidas | Tareas distribuidas | Ruta destino |
+| Componente | Historias distribuidas | Tareas distribuidas | Ruta destino |
 | --- | --- | --- | --- |
 | auth-service | 3 | 8 | `./auth-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
 | user-service | 2 | 5 | `./user-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |

@@ -11,8 +11,18 @@ Este workflow analiza el estado del proyecto y genera una propuesta de Sprint Pl
 Este workflow utiliza dos niveles de configuración:
 
 ### A. Configuración Base (`.quinoto-spec/sprints/base-config.yml`)
-Verifica si existe el archivo. Si NO existe, créalo con el siguiente esquema (datos estables del equipo) y **solicita verificación humana antes de avanzar**:
 
+1. Verifica si existe el archivo `.quinoto-spec/sprints/base-config.yml`.
+2. **SI EL ARCHIVO NO EXISTE**:
+   - Créalo con el esquema de referencia (valores en `null` o vacíos).
+   - **DETÉN LA EJECUCIÓN INMEDIATAMENTE**.
+   - **Notifica al usuario**: "Se ha creado el archivo de configuración base `.quinoto-spec/sprints/base-config.yml`. Por favor, complétalo con la definición del equipo y sus capacidades antes de intentar ejecutar este workflow de nuevo."
+3. **SI EL ARCHIVO EXISTE PERO TIENE VALORES EN `null` O VACÍOS** (ej: `equipo` vacío o `velocidad_promedio_puntos` es `null`):
+   - **DETÉN LA EJECUCIÓN INMEDIATAMENTE**.
+   - **Notifica al usuario**: "El archivo `.quinoto-spec/sprints/base-config.yml` contiene valores incompletos. Por favor, asegúrate de definir al menos un integrante del equipo y la velocidad promedio antes de continuar."
+4. **SI EL ARCHIVO TIENE DATOS VÁLIDOS**: Procede al siguiente paso.
+
+**Esquema de referencia para `base-config.yml`**:
 ```yaml
 # Capacidad del equipo (Base)
 equipo:
@@ -33,14 +43,13 @@ puntos_por_talla:
 velocidad_promedio_puntos: null
 ```
 
-> **⚠️ Verificación humana requerida**: El usuario debe revisar y completar el `.quinoto-spec/sprints/base-config.yml` antes de que el agente continúe.
-
 ### B. Configuración del Sprint (`.quinoto-spec/sprints/sprint-{{ID}}/sprint-config.yml`)
-Solicita al usuario el **ID del Sprint** (ej: `1`). Verifica si existe la carpeta y el archivo. Si NO existe, créalo:
+Solicita al usuario el **ID del Sprint** (ej: `1`) y el **Nombre del Sprint** (ej: `Integración Rapiboy`). Verifica si existe la carpeta y el archivo. Si NO existe, créalo:
 
 ```yaml
 # Detalles del Sprint específico
 id_sprint: {{ID}}
+nombre_sprint: "{{NOMBRE}}"
 duracion_semanas: 2
 fecha_inicio: YYYY-MM-DD
 
@@ -88,15 +97,15 @@ Con base en la unión de `base-config.yml` y el `sprint-config.yml` específico:
 Genera el archivo `.quinoto-spec/sprints/sprint-{{id_sprint}}/sprint-plan.md` con el siguiente formato:
 
 ```markdown
-# 🏃 Sprint Plan — [Fecha inicio] al [Fecha fin]
+# 🏃 Sprint Plan — {{id_sprint}}: {{nombre_sprint}} ([Fecha inicio] al [Fecha fin])
 
 **Equipo:** [N] integrantes | **Capacidad total:** [N] puntos | **Puntos comprometidos:** [N] puntos
 
 ## 📋 Ítems del Sprint
 
-| ID | Historia | Tarea | Tipo | Estimación | Puntos | Asignado a | Propuesta |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| TSK-XXX-001 | US-XXX-001 | [Título] | Backend | M | 3 | [nombre] | [slug] |
+| ID | Historia | Tarea | Tipo | Componente | Estimación | Puntos | Asignado a | Propuesta |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TSK-XXX-001 | US-XXX-001 | [Título] | Backend | [nombre_componente] | M | 3 | [nombre] | [slug] |
 
 ## 🎯 Objetivo del Sprint
 [Descripción en 1-2 oraciones de qué se espera lograr al finalizar el sprint]
