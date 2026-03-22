@@ -2,6 +2,10 @@
 description: [SCOUT] Reconoce el terreno, analiza impacto y detecta riesgos antes de iniciar un cambio.
 ---
 
+<div align="center">
+  <img src="../../assets/visuals/scout.png" alt="Quinoto Scout" width="400" />
+</div>
+
 Este workflow activa al agente en modo **Scout**. Su objetivo es el reconocimiento profundo y la validación de contexto.
 
 ---

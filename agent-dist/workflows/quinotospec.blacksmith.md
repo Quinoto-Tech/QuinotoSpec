@@ -2,6 +2,9 @@
 description: [BLACKSMITH] Traduce historias en tareas técnicas y ejecuta la implementación (código y tests).
 ---
 
+<div align="center">
+  <img src="../../assets/visuals/blacksmith.png" alt="Quinoto Blacksmith" width="400" />
+</div>
 
 Este workflow activa al agente en modo **Blacksmith**. Su objetivo es la ejecución técnica de alta calidad y el cumplimiento de los estándares de forja.
 

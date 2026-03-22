@@ -2,6 +2,10 @@
 description: [WARBAND] Ejecuta la "Formación Falange" coordinando al Scout, Skald y Blacksmith en secuencia.
 ---
 
+<div align="center">
+  <img src="../../assets/visuals/warband.png" alt="Quinoto Warband" width="400" />
+</div>
+
 Este workflow activa la **Formación Falange**. El agente operará pasando por los tres roles especializados para completar una iniciativa de inicio a fin.
 
 ---

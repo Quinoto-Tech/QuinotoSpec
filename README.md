@@ -34,7 +34,7 @@
 > - **Alliance Integration (Multi-Repo):** Contexto compartido federado para arquitecturas distribuidas de gran escala.
 
 <div align="center">
-  <img src="berserker.png" alt="Quinoto Berserker" width="400" />
+  <img src="assets/visuals/berserker.png" alt="Quinoto Berserker" width="400" />
 </div>
 
 # Guía de Desarrollo Guiado por IA con QuinotoSpec

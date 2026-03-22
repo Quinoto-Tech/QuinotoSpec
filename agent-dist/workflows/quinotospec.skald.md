@@ -2,6 +2,9 @@
 description: [SKALD] Define la estrategia, redacta la propuesta y asegura la comunicación de producto.
 ---
 
+<div align="center">
+  <img src="../../assets/visuals/skald.png" alt="Quinoto Skald" width="400" />
+</div>
 
 Este workflow activa al agente en modo **Skald**. Su objetivo es la especificación técnica y la alineación con el valor de negocio.
 
