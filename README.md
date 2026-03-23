@@ -59,6 +59,17 @@ Esta guía explica cómo utilizar la metodología **QuinotoSpec** y sus agentes 
     - Puedes presionar `Enter` para instalar en el directorio actual.
     - O escribir una ruta específica (ej. `~/proyectos/mi-nuevo-app`) y el script la creará si no existe.
 
+### Soporte para OpenCode
+Si utilizas **OpenCode**, puedes usar el parámetro `--opencode` para que la instalación sea compatible:
+
+```bash
+./quinotospec-package/install.sh --opencode
+```
+
+**¿Qué cambia con este parámetro?**
+- Instala la configuración en la carpeta `.opencode/` en lugar de `.agent/`.
+- Ajusta la estructura para que OpenCode reconozca los workflows automáticamente.
+
 ### Soporte para Cursor
 Si utilizas el editor **Cursor**, puedes usar el parámetro `--cursor` para que la instalación sea compatible con la estructura de Cursor:
 
