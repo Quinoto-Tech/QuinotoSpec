@@ -96,8 +96,15 @@ Si no conoces el estado actual del proyecto o vas a tocar un área compleja.
 - **Objetivo**: Que el agente tenga contexto real antes de proponer nada.
 - **Ejemplo**: `"Ejecuta @quinotospec.discovery en este directorio para entender la arquitectura base de datos."`
 
-### 1.b Stack Discovery (Multi-Servicio)
-Consolida múltiples discoveries independientes en una vista unificada a nivel raíz.
+### 1.b Stack Detect
+Identifica automáticamente el technology stack del proyecto (lenguajes, frameworks, testing, DevOps) archivos de configuración.
+
+- **Comando**: `@quinotospec-stack-detect`
+- **Acción**: Escanea package.json, go.mod, requirements.txt, etc. y genera perfil de stack.
+- **Detalle**: Detecta Python, JS/TS, Go, Rust, PHP, Java y sus frameworks asociados.
+- **Ejemplo**: `"Ejecuta @quinotospec-stack-detect para identificar las tecnologías de este proyecto."`
+
+### 1.c Stack Discovery (Multi-Servicio)
 
 - **Comando**: `@quinotospec.stack-discovery`
 - **Acción**: Lee los sub-proyectos, detecta inconsistencias tecnológicas y genera un discovery global consolidado.
@@ -256,12 +263,49 @@ Distribuye los artefactos de una propuesta central hacia los microservicios corr
 
 El agente cuenta con "Skills" especializadas que ejecutan tareas complejas de forma autónoma:
 
+#### Skills Básicas
+
 - **Generate Github Branch**: Crea branches siguiendo el estándar `feature/{{TASK_ID}}-descripcion-kebab-case` automáticamente, detectando la rama base y haciendo push.
 - **File Creation**: Estandariza la creación de archivos, asegurando que scripts temporales y documentos sigan las normas.
+- **Stack Detect**: Identifica el technology stack del proyecto (lenguajes, frameworks, testing) analizando archivos de configuración.
 - **Mark Done**: Automatiza el cierre de tareas. Marca el checkbox `[x]`, mueve artefactos completados a `_archived/`, y actualiza el changelog automáticamente.
+  - Soporta modo **bulk** (`--bulk`) para múltiples tareas
+  - Soporta modo **force** (`--force`) para forzar archive
 - **Read PDF**: Motor de extracción de texto para documentos PDF. Genera un script temporal, extrae el contenido y lo guarda en `.quinoto-spec/docs/`.
 - **Update Changelog**: Mantiene el `.quinoto-spec/quinoto-spec-changelog.md` actualizado con cada cambio relevante, calculando tiempos y categorizando cambios.
 - **Validate**: Ejecuta checks de sistema (discovery, prefix-registry, changelog, propuestas) como precondición antes de workflows críticos.
+
+#### Skills Avanzadas (Gobernanza)
+
+- **Rules Enforce**: Ejecuta y hace cumplir las reglas de `quinotospec-rules.md`. Detiene workflows que violen las reglas.
+  - Modo `strict`: Detiene si regla crítica falla
+  - Modo `warning`: Solo advierte
+  - Uso: `/rules-enforce --mode strict --check changelog,prefix,product-agreement`
+- **Metrics**: Calcula métricas de compliance y productividad del proyecto.
+  - Changelog compliance, prefix usage, branch naming, etc.
+  - Uso: `/quinotospec-metrics --dashboard` o `/metrics --period month`
+- **Syntax Validate**: Valida sintaxis y estructura de archivos QuinotoSpec antes de ejecutar workflows.
+  - Valida proposals, user-stories, tasks, changelog, discovery, config
+  - Uso: `/syntax-validate --type proposal --slug auth-jwt` o `--type all --strict`
+- **Rollback**: Deshace cambios realizados por workflows cuando la validación falla o el usuario lo solicita.
+  - Tipos: `changelog`, `proposal`, `user-story`, `task`, `full`
+  - Uso: `/rollback --type proposal --slug auth-jwt --dry-run`
+
+#### Integración Recomendada
+
+```bash
+# Pre-condición antes de workflows críticos
+@quinotospec-validate --full
+
+# Antes de aplicar código
+@quinotospec-syntax-validate --type proposal --slug {{SLUG}}
+
+# Después de completar tarea
+@mark-done --task-id TSK-AUTH-001 --bulk TSK-AUTH-002,TSK-AUTH-003
+
+# Métricas para retrospectives
+@quinotospec-metrics --dashboard
+```
 
 ## Mantenimiento y Reglas
 
@@ -285,12 +329,21 @@ El sistema impone reglas estrictas para garantizar la calidad. El agente tiene i
 - **Regla**: Todo trabajo debe estar trazado bajo una Propuesta con un Prefijo registrado.
 - **Acción**: Antes de crear historias o tareas, el agente verificará `.quinoto-spec/prefix-registry.md`. Si el prefijo no existe, no se permite avanzar.
 
-#### 3. Product Agreement Check (BLOQUEANTE)
-- **Regla**: No se arranca una propuesta sin definición de producto.
-- **Acción**: Antes de crear una propuesta, el agente **lee** `.quinoto-spec/discovery/07-product-and-agreements.md`.
-    - Si el archivo está vacío o tiene placeholders -> **STOP**.
-    - El agente te dirá: *"No puedo crear la propuesta porque no se han definido los Acuerdos de Producto"*.
-    - **Solución**: Debes llenar ese archivo con la Visión, DoR y DoD antes de pedir la propuesta.
+#### 4. Validación de Estado Antes de Archivar
+- **Regla**: Antes de archivar, el estado debe ser `✅ Completada`.
+- **Acción**: Verificar `**Estado:**` en proposal.md antes de mover a `_archived/`.
+
+#### 5. Convención de Archivado
+- **Regla**: Usar siempre carpeta `_archived/`, nunca prefijo `__`.
+- **Acción**: Mover a `.quinoto-spec/proposals/{{SLUG}}/_archived/` o `.quinoto-spec/proposals/_archived/{{SLUG}}/`.
+
+#### 6. Branch Naming Convention
+- **Regla**: Formato `feature/{{TASK_ID}}-descripcion`.
+- **Acción**: Crear branch solo si sigue este formato.
+
+#### 7. Aprobación de Config Crítica
+- **Regla**: Nunca modificar sin consentimiento explícito.
+- **Archivos protegidos**: `base-config.yml`, `sprint-{{ID}}/sprint-config.yml`, `mjolnir-refactor.yml`.
 
 ---
 
