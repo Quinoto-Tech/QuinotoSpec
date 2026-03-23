@@ -29,9 +29,12 @@ Para cada servicio en `Servicios Afectados`:
 
 ---
 
-## Paso 3 — Distribuir artefactos por servicio (Contexto Sprint)
+## Paso 3 — Distribuir artefactos por servicio
 
 Para cada sub-proyecto destino, crear o actualizar los siguientes archivos dentro de `<servicio>/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/`:
+
+### `proposal.md` (propuesta filtrada)
+Distribución de la propuesta centralizada con las secciones relevantes para este componente.
 
 ### `user-histories.md` (filtrado por componente y sprint)
 Solo las historias donde **Componente** (o `Servicio`) `<nombre-del-componente>` (o `todos`) que tengan tareas en este sprint.
@@ -53,12 +56,16 @@ Solo las tareas asignadas en el `sprint-plan.md` donde **Componente** (o `Servic
 
 Al finalizar, generar un resumen:
 
-| Componente | Historias distribuidas | Tareas distribuidas | Ruta destino |
-| --- | --- | --- | --- |
-| auth-service | 3 | 8 | `./auth-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
-| user-service | 2 | 5 | `./user-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
+| Componente | Propuesta | Historias distribuidas | Tareas distribuidas | Ruta destino |
+| --- | --- | --- | --- | --- |
+| auth-service | ✅ | 3 | 8 | `./auth-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
+| user-service | ✅ | 2 | 5 | `./user-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
 
-**Instrucción Final OBLIGATORIA (Changelog):**
+---
+
+## Paso 5 — Actualizar Changelog
+
 Una vez completada la distribución, DEBES ejecutar la skill `quinotospec-update-changelog`.
+
 - **Título de la Acción**: Proposal Distributed to Sprint {{SPRINT_ID}}: {{PROPOSAL_SLUG}}
 - **Resumen**: Se distribuyeron los artefactos de '{{PROPOSAL_SLUG}}' para el Sprint {{SPRINT_ID}} hacia [N] servicios: [lista de servicios].

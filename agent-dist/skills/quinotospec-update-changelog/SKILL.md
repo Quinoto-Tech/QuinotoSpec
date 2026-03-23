@@ -1,6 +1,6 @@
 ---
 name: Quinotospec Update Changelog
-description: Automates updating the docs/quinoto-spec-changelog.md file with entries appearing from top to bottom (newest first).
+description: Automates updating the `.quinoto-spec/quinoto-spec-changelog.md` file with entries appearing from top to bottom (newest first).
 ---
 
 # Quinotospec Update Changelog
@@ -13,7 +13,7 @@ Esta skill se encarga de estandarizar la actualización del archivo de changelog
 
 Cuando necesites actualizar el changelog, sigue ESTRICTAMENTE estas instrucciones para mantener el orden "de arriba hacia abajo" (lo más nuevo arriba):
 
-1.  **Identificar Archivo**: El archivo objetivo es siempre `docs/quinoto-spec-changelog.md`.
+1.  **Identificar Archivo**: El archivo objetivo es siempre `.quinoto-spec/quinoto-spec-changelog.md`.
 2.  **Leer Contenido**: Lee el archivo actual para identificar la posición de inserción (justo debajo del título principal `# QuinotoSpec Changelog`).
 3.  **Formato de Entrada**:
     

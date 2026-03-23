@@ -14,6 +14,7 @@
 > - ✅ **Mjolnir Refactor:** Capacidad de reescribir módulos enteros bajo demanda para limpiar deuda técnica. _(Completado)_
 > - ✅ **Code Review Workflow** (`@quinotospec.review`): Revisión de branches contra criterios de aceptación, tests y convenciones del stack. _(Completado)_
 > - ✅ **Sprint Planning Workflow** (`@quinotospec.sprint`): Generación de sprint plans con capacidad, prioridades y dependencias. _(Completado)_
+>     - Separado en 3 workflows: init, create, plan
 > - ✅ **Validate Skill** (`quinotospec-validate`): Checks de sistema reutilizables como precondición para workflows críticos. _(Completado)_
 > - ✅ **Refresh Discovery** (`@quinotospec.refresh-discovery`): Discovery incremental — detecta cambios y actualiza solo los archivos afectados. _(Completado)_
 > - ✅ **Dependency Graph** (`@quinotospec.dependency-graph`): Mapa de dependencias inter-servicio con detección de contract drift. _(Completado)_
@@ -200,21 +201,55 @@ Revisa un branch contra los criterios de aceptación.
 - **Ejemplo**: `"Haz un code review a la rama 'feature/TSK-STRP-001' usando @quinotospec.review."`
 
 #### Sprint Planning
-Genera un plan de acción a corto plazo y lo organiza en carpetas dedicadas.
+Genera un plan de acción a corto plazo y lo organiza en carpetas dedicadas. El flujo de sprints se divide en 3 pasos:
 
-- **Comando**: `@quinotospec.sprint`
-- **Acción**: 
-    1. Genera un folder `.quinoto-spec/sprints/sprint-{{ID}}/` para aislar el plan.
-    2. Asigna tareas desde propuestas activas según `sprint-config.yml`.
-    3. Soporta **priorización de propuestas**, **componentes permitidos** por desarrollador y **ownership** de componentes para una asignación precisa.
-- **Ejemplo**: `"Arma el sprint para las próximas 2 semanas con @quinotospec.sprint."`
+- **Paso 1 - Inicializar**: `@quinotospec.sprints.init`
+    - Crea la carpeta `.quinoto-spec/sprints/` si no existe.
+    - Genera `base-config.yml` con la configuración del equipo (miembros, roles, velocidad).
+    - **Detiene ejecución** si la configuración está incompleta hasta que el usuario la complete.
+
+- **Paso 2 - Crear Sprint**: `@quinotospec.sprint.create`
+    - **Parámetros**: `SPRINT_ID` (ej. `1`), `NOMBRE_SPRINT` (ej. `Integración API`)
+    - Crea la carpeta `.quinoto-spec/sprints/sprint-{{ID}}/`.
+    - Genera `sprint-config.yml` con fechas, duración y prioridad de propuestas.
+
+- **Paso 3 - Planificar**: `@quinotospec.sprint.plan`
+    - **Parámetro**: `SPRINT_ID`
+    - Lee la configuración base y del sprint.
+    - Calcula capacidad del equipo y selecciona tareas según prioridad.
+    - Genera `sprint-plan.md` con las tareas asignadas.
+
+- **Orquestador**: `@quinotospec.sprint`
+    - Ejecuta los 3 pasos anteriores en secuencia.
+    - **Parámetros**: `SPRINT_ID`, `NOMBRE_SPRINT`
+    - Ejemplo: `"Arma el sprint 1 'Integración API' con @quinotospec.sprint."`
+
+**Estructura de archivos generada:**
+```
+.quinoto-spec/sprints/
+├── base-config.yml                    # Configuración del equipo
+└── sprint-{{ID}}/
+    ├── sprint-config.yml               # Configuración del sprint
+    ├── sprint-plan.md                  # Plan de tareas
+    └── proposals/                     # Propuestas distribuidas
+```
 
 #### Distribute Proposal
-Explota los artefactos de una propuesta central hacia los microservicios, ahora organizado por sprints.
+Distribuye los artefactos de una propuesta central hacia los microservicios correspondientes.
 
 - **Comando**: `@quinotospec.distribute`
 - **Parámetros**: `SPRINT_ID`, `PROPOSAL_SLUG`.
-- **Acción**: Lee la columna `Servicio` de historias y tareas filtradas por el sprint indicado, y copia los archivos a `<servicio>/.quinoto-spec/sprints/sprint-{{ID}}/proposals/{{SLUG}}/`.
+- **Acción**: Lee la columna `Servicio` de historias y tareas filtradas por el sprint indicado, y copia los archivos a cada sub-proyecto:
+    - `proposal.md` - Propuesta filtrada para el componente
+    - `user-histories.md` - Historias de usuario del componente
+    - `<US_ID>_tasks.md` - Tareas técnicas del componente
+- **Estructura por servicio**:
+  ```
+  <servicio>/.quinoto-spec/sprints/sprint-{{ID}}/proposals/{{SLUG}}/
+  ├── proposal.md
+  ├── user-histories.md
+  └── US-XXX_tasks.md
+  ```
 - **Ejemplo**: `"Distribuye las tareas de 'auth-standardization' para el sprint 1 usando @quinotospec.distribute."`
 
 ### 7. Habilidades (Skills)
@@ -225,13 +260,13 @@ El agente cuenta con "Skills" especializadas que ejecutan tareas complejas de fo
 - **File Creation**: Estandariza la creación de archivos, asegurando que scripts temporales y documentos sigan las normas.
 - **Mark Done**: Automatiza el cierre de tareas. Marca el checkbox `[x]`, mueve artefactos completados a `_archived/`, y actualiza el changelog automáticamente.
 - **Read PDF**: Motor de extracción de texto para documentos PDF. Genera un script temporal, extrae el contenido y lo guarda en `.quinoto-spec/docs/`.
-- **Update Changelog**: Mantiene el `docs/quinoto-spec-changelog.md` actualizado con cada cambio relevante, calculando tiempos y categorizando cambios.
+- **Update Changelog**: Mantiene el `.quinoto-spec/quinoto-spec-changelog.md` actualizado con cada cambio relevante, calculando tiempos y categorizando cambios.
 - **Validate**: Ejecuta checks de sistema (discovery, prefix-registry, changelog, propuestas) como precondición antes de workflows críticos.
 
 ## Mantenimiento y Reglas
 
 ### Integridad de la Especificación (Agent Only)
-**CRÍTICO**: El contenido de la carpeta `.quinoto-spec/` y el archivo `docs/quinoto-spec-changelog.md` son administrados **EXCLUSIVAMENTE** por el agente.
+**CRÍTICO**: El contenido de la carpeta `.quinoto-spec/` y el archivo `.quinoto-spec/quinoto-spec-changelog.md` son administrados **EXCLUSIVAMENTE** por el agente.
 - **NUNCA** edites estos archivos manualmente.
 - Si necesitas corregir o actualizar algo en la especificación, pídeselo al agente (ej. "Actualiza el changelog", "Refina la propuesta").
 - Esto garantiza que la "memoria" del sistema no se corrompa por intervenciones humanas no registradas.

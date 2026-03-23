@@ -21,7 +21,7 @@ Ejecuta los siguientes checks en orden y reporta el resultado de cada uno con �
 - ✅ No hay filas duplicadas (dos propuestas con el mismo prefijo).
 
 ### 3. Changelog
-- ✅ El archivo `docs/quinoto-spec-changelog.md` existe.
+- ✅ El archivo `.quinoto-spec/quinoto-spec-changelog.md` existe.
 
 ### 4. Propuestas Activas (si aplica)
 - ✅ No hay propuestas con `**Estado:** 🟢 En Curso` sin ninguna tarea iniciada.
