@@ -16,10 +16,10 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
 2. **Cálculo de Progreso y Velocidad**:
     - Para cada propuesta activa, busca archivos de tareas (`*_tasks.md`).
     - Calcula el porcentaje de completitud basado en los checkboxes `[x]` vs `[ ]`.
-    - Lee `docs/quinoto-spec-changelog.md` para estimar la velocidad del equipo: cuántas tareas se completaron en los últimos 7 días y en los últimos 30 días.
+    - Lee `.quinoto-spec/quinoto-spec-changelog.md` para estimar la velocidad del equipo: cuántas tareas se completaron en los últimos 7 días y en los últimos 30 días.
 
 3. **Métricas de Valor**:
-    - Lee `docs/quinoto-spec-changelog.md`.
+    - Lee `.quinoto-spec/quinoto-spec-changelog.md`.
     - Suma todos los valores de `Human Time` ahorrados para dar un total de "Valor Generado por IA". Si el campo no existe en alguna entrada, registrar `N/D` y continuar sin interrumpir el proceso.
 
 4. **Alertas y Bloqueos**:

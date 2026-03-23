@@ -21,14 +21,49 @@ Ejecuta los siguientes checks en orden y reporta el resultado de cada uno con �
 - ✅ No hay filas duplicadas (dos propuestas con el mismo prefijo).
 
 ### 3. Changelog
-- ✅ El archivo `docs/quinoto-spec-changelog.md` existe.
+- ✅ El archivo `.quinoto-spec/quinoto-spec-changelog.md` existe.
+- ✅ El changelog tiene entradas (no está vacío).
 
 ### 4. Propuestas Activas (si aplica)
 - ✅ No hay propuestas con `**Estado:** 🟢 En Curso` sin ninguna tarea iniciada.
 - ✅ No hay archivos de tareas con checkboxes mezclados inconsistentemente (ej. tareas completadas sin historia completada).
+
+### 5. Branch Naming Convention (para workflows apply)
+- ✅ El branch actual sigue el formato `feature/{{TASK_ID}}-descripcion` o `bugfix/{{TASK_ID}}-descripcion`.
+- ⚠️ Si no hay branch o es main/master, advertencia nomás.
+
+### 6. Archivo Config Crítico (para workflows de config)
+- ✅ Al modificar `base-config.yml` o `sprint-config.yml`, verificar que se obtuvo confirmación del usuario.
+- ⚠️ Si no hay confirmación registrada, DETENER.
+
+### 7. Estado de Archive
+- ✅ Al archivar, verificar que el estado en proposal.md sea `✅ Completada`.
+- ⚠️ Si no está completada, Advertir antes de proceder.
+
+### 8. Discovery Freshness
+- ✅ Archivos de discovery tienen menos de 30 días.
+- ⚠️ Si > 30 días, sugerir `@quinotospec.refresh-discovery`.
 
 ## Comportamiento
 
 - Si **todos los checks pasan** → reportar `✅ Sistema válido. Puedes continuar.`
 - Si **algún check falla** → reportar los checks fallidos con su causa y sugerir la acción correctiva antes de continuar.
 - El agente que invoca esta skill **decide si detener o continuar** según el contexto. Para workflows bloqueantes (como `create-proposal`), un fallo en el check de `07-product-and-agreements.md` debe detener la ejecución.
+
+## Flags de Uso
+
+```bash
+/validate --strict  # Detiene en cualquier fallo
+/validate --quick   # Solo checks básicos (discovery + prefix)
+/validate --full    # Todos los checks
+```
+
+##进阶 Checks (modo full)
+
+### 9. Consistencia de Tareas
+- ✅ Cada US en user-histories.md tiene archivo de tareas correspondiente.
+- ✅ No hay orphan tasks (tasks sin US padre).
+
+### 10. Sprint Consistency
+- ✅ Si hay sprints activos, las tareas asignadas existen.
+- ✅ No hay tareas duplicadas entre sprints.

@@ -12,11 +12,11 @@ Este workflow toma una propuesta centralizada (normalmente generada desde un `st
 
 ## Paso 1 — Leer el plan de sprint y la propuesta
 
-1. Lee `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-plan.md` para identificar qué tareas de la propuesta `{{PROPOSAL_SLUG}}` han sido asignadas a este sprint.
+1. Lee `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-plan.md` para identificar qué tareas de la propuesta `{{PROPOSAL_SLUG}}` han sido asignadas a este sprint y a qué **Componente** (sub-proyecto) pertenecen.
 2. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md` y extrae:
     - `**Servicios Afectados:**` → lista de sub-proyectos destino.
-3. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` y agrupa las historias por su columna `Servicio`.
-4. Lee todos los archivos `*_tasks.md` de la propuesta y agrupa las tareas por su columna `Servicio`, filtrando solo aquellas que están en el `sprint-plan.md`.
+3. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` y agrupa las historias por la columna que coincida con el **Componente** (o `Servicio`).
+4. Lee todos los archivos `*_tasks.md` de la propuesta y agrupa las tareas por su columna **Componente** (o `Servicio`), filtrando solo aquellas que están presentes en el `sprint-plan.md`.
 
 ---
 
@@ -29,15 +29,18 @@ Para cada servicio en `Servicios Afectados`:
 
 ---
 
-## Paso 3 — Distribuir artefactos por servicio (Contexto Sprint)
+## Paso 3 — Distribuir artefactos por servicio
 
 Para cada sub-proyecto destino, crear o actualizar los siguientes archivos dentro de `<servicio>/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/`:
 
-### `user-histories.md` (filtrado por servicio y sprint)
-Solo las historias donde `Servicio = <nombre-del-servicio>` (o `todos`) que tengan tareas en este sprint.
+### `proposal.md` (propuesta filtrada)
+Distribución de la propuesta centralizada con las secciones relevantes para este componente.
 
-### `<US_ID>_tasks.md` (filtrado por servicio y sprint)
-Solo las tareas asignadas en el `sprint-plan.md` donde `Servicio = <nombre-del-servicio>`.
+### `user-histories.md` (filtrado por componente y sprint)
+Solo las historias donde **Componente** (o `Servicio`) `<nombre-del-componente>` (o `todos`) que tengan tareas en este sprint.
+
+### `<US_ID>_tasks.md` (filtrado por componente y sprint)
+Solo las tareas asignadas en el `sprint-plan.md` donde **Componente** (o `Servicio`) `<nombre-del-componente>`.
 
 **Agregar encabezado de trazabilidad** en cada archivo distribuido:
 ```markdown
@@ -53,12 +56,16 @@ Solo las tareas asignadas en el `sprint-plan.md` donde `Servicio = <nombre-del-s
 
 Al finalizar, generar un resumen:
 
-| Servicio | Historias distribuidas | Tareas distribuidas | Ruta destino |
-| --- | --- | --- | --- |
-| auth-service | 3 | 8 | `./auth-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
-| user-service | 2 | 5 | `./user-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
+| Componente | Propuesta | Historias distribuidas | Tareas distribuidas | Ruta destino |
+| --- | --- | --- | --- | --- |
+| auth-service | ✅ | 3 | 8 | `./auth-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
+| user-service | ✅ | 2 | 5 | `./user-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
 
-**Instrucción Final OBLIGATORIA (Changelog):**
+---
+
+## Paso 5 — Actualizar Changelog
+
 Una vez completada la distribución, DEBES ejecutar la skill `quinotospec-update-changelog`.
+
 - **Título de la Acción**: Proposal Distributed to Sprint {{SPRINT_ID}}: {{PROPOSAL_SLUG}}
 - **Resumen**: Se distribuyeron los artefactos de '{{PROPOSAL_SLUG}}' para el Sprint {{SPRINT_ID}} hacia [N] servicios: [lista de servicios].
