@@ -1,5 +1,5 @@
 ---
-description: [BLACKSMITH] Traduce historias en tareas técnicas y ejecuta la implementación (código y tests).
+description: BLACKSMITH - Traduce historias en tareas técnicas y ejecuta la implementación (código y tests).
 ---
 
 <div align="center">

@@ -1,5 +1,5 @@
 ---
-description: [SCOUT] Reconoce el terreno, analiza impacto y detecta riesgos antes de iniciar un cambio.
+description: SCOUT - Reconoce el terreno, analiza impacto y detecta riesgos antes de iniciar un cambio.
 ---
 
 <div align="center">

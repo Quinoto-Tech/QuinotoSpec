@@ -1,5 +1,5 @@
 ---
-description: [SKALD] Define la estrategia, redacta la propuesta y asegura la comunicación de producto.
+description: SKALD - Define la estrategia, redacta la propuesta y asegura la comunicación de producto.
 ---
 
 <div align="center">
