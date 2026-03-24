@@ -37,3 +37,25 @@ Una vez completado y documentado el changelog, DEBES ejecutar la skill `quinotos
 Esto actualizará el estado de la tarea, la historia y la propuesta correspondiente.
 
 IMPORTANTE: Los pasos de documentación y mark-done son OBLIGATORIOS. No termines la ejecución sin completarlos.
+
+---
+
+## Sugerencia de Siguiente Tarea
+
+Después de completar una tarea y ejecutar `quinotospec-mark-done`, DEBES buscar y sugerir la siguiente tarea a ejecutar:
+
+1. **Lee el archivo de tareas**: `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{US_ID}}_tasks.md` (deriva el `US_ID` del `{{TASK_ID}}` dado, ej. si TASK_ID es `TSK-AUTH-001`, la historia es `US-AUTH-XXX`)
+
+2. **Encuentra la siguiente tarea**:
+   - Recorre las tareas en orden (por su ID numérico)
+   - Una tarea está lista para ejecutar si:
+     - No está marcada como completada (`[ ]` en lugar de `[x]`)
+     - Todas sus tareas dependientes están completadas
+   - La primera tarea que cumpla estas condiciones es la siguiente
+
+3. **Formula la sugerencia**:
+   - Si hay una siguiente tarea: *"¿Deseas continuar con la tarea `{{NEXT_TASK_ID}}` — {{NEXT_TASK_TITLE}}?"*
+   - Si no hay más tareas en esa historia: *"No hay más tareas pendientes en esta historia. ¿Deseas continuar con otra historia de usuario de la propuesta?"*
+   - Si todas las tareas de la propuesta están completas: *"¡Felicidades! Todas las tareas de la propuesta '{{PROPOSAL_SLUG}}' han sido completadas."*
+
+**Nota**: Si el archivo de tareas no existe o no se puede determinar la siguiente tarea, omite esta sugerencia silenciosamente.

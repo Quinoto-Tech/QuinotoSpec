@@ -7,15 +7,32 @@ Requiere que las historias (`user-histories.md`) ya hayan sido creadas.
 
 **Parámetros Requeridos:**
 - `PROPOSAL_SLUG`: El nombre de la carpeta de la propuesta (ej. `refactor-proposal-workflows`).
-- `USER_STORY_ID`: El ID de la historia de usuario objetivo (ej. `US-REF-123`).
+- `USER_STORY_ID`: (Requerido si se usa `--single`) El ID de la historia de usuario objetivo (ej. `US-REF-123`).
+
+**Flags:**
+- `--single` `-s`: Genera tareas solo para una historia de usuario específica (contrario al comportamiento por defecto).
+- Si no se especifica `--single`, se genera tareas para TODAS las historias de usuario pendientes de la propuesta.
 
 **Instrucciones:**
+
+### Modo Individual (una historia) — Usar `--single`
+(Por defecto se procesan todas las historias. Usa `--single` para procesar solo una.)
 1. Lee el archivo `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md`.
 2. Lee también `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md` para obtener la **Especificación Técnica Detallada** y la **Arquitectura**, que son críticas para identificar qué archivos, servicios o módulos debe tocar cada tarea.
 3. Extrae la historia cuya ID coincida con `{{USER_STORY_ID}}`. Si no existe, fallar con mensaje claro.
 4. **Merge inteligente**: Si `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{USER_STORY_ID}}_tasks.md` ya existe, **no sobreescribas**. Revisa las tareas existentes y realiza un merge: agrega solo las tareas nuevas y actualiza las que hayan cambiado.
 5. Basado en ESA única historia, genera un desglose de tareas técnicas en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{USER_STORY_ID}}_tasks.md`.
-6. El formato de las tareas debe ser:
+
+### Modo Bulk (todas las historias) — Comportamiento por defecto
+1. Lee el archivo `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md`.
+2. Lee también `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md` para obtener la **Especificación Técnica Detallada** y la **Arquitectura**.
+3. Extrae TODAS las historias de usuario del archivo. Ignora las que ya tienen tareas completadas (marcadas con `[x]` en el archivo de tareas existente).
+4. Para cada historia pendiente:
+   - **Merge inteligente**: Si `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{USER_STORY_ID}}_tasks.md` ya existe, NO sobreescribas. Revisa las tareas existentes y realiza un merge: agrega solo las tareas nuevas.
+   - Genera el desglose de tareas técnicas en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{USER_STORY_ID}}_tasks.md`.
+5. Genera un archivo consolidado `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/all_tasks.md` que contenga TODAS las tareas de todas las historias (solo si no existe o si se solicita explícitamente).
+
+### Formato de las tareas (aplica a ambos modos)
     - **Título**: Plan de Tareas ({{PROPOSAL_NAME}} — {{USER_STORY_ID}}).
     - Tabla con columnas: ID, Tipo, Título, Descripción, Historia Relacionada, Servicio, Archivos a Modificar, Estimación, Prioridad, Dependencias.
     - **IDs**: Extrae el prefijo de la historia de usuario (ej. si la historia es `US-{{PREFIX}}-XXX`) y úsalo para las tareas: `TSK-{{PREFIX}}-001`, `TSK-{{PREFIX}}-002`, etc.
@@ -33,5 +50,11 @@ Requiere que las historias (`user-histories.md`) ya hayan sido creadas.
 
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completada, DEBES ejecutar la skill `quinotospec-update-changelog`.
-- **Título de la Acción**: Tasks Generated: {{PROPOSAL_NAME}} ({{USER_STORY_ID}})
-- **Resumen**: Se generó el plan de tareas para la propuesta '{{PROPOSAL_NAME}}', enfocadas en la historia '{{USER_STORY_ID}}', en .quinoto-spec/proposals/{{PROPOSAL_SLUG}}/
+
+- **Modo Bulk (por defecto, sin flags)**:
+  - **Título de la Acción**: Tasks Generated: {{PROPOSAL_NAME}} (All User Stories)
+  - **Resumen**: Se generaron tareas para todas las historias de usuario pendientes de la propuesta '{{PROPOSAL_SLUG}}'. Historias procesadas: {{LISTA_DE_US_IDS}}.
+
+- **Modo Single (`--single`)**:
+  - **Título de la Acción**: Tasks Generated: {{PROPOSAL_NAME}} ({{USER_STORY_ID}})
+  - **Resumen**: Se generó el plan de tareas para la propuesta '{{PROPOSAL_NAME}}', enfocadas en la historia '{{USER_STORY_ID}}'.

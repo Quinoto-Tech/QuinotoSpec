@@ -150,10 +150,17 @@ Desglosa la propuesta en requerimientos de valor.
 Convierte historias en pasos ejecutables para el desarrollador (o el agente).
 
 - **Comando**: `@quinotospec.create-tasks`
-- **Parámetro**: ID de la Historia de Usuario (ej. `US-AUTH-01`).
+- **Parámetros**: 
+    - `PROPOSAL_SLUG`: Nombre de la carpeta de la propuesta.
+    - `USER_STORY_ID`: (Opcional) ID de la historia de usuario (ej. `US-AUTH-01`). Solo requerido si se usa `--single`.
+- **Flags**:
+    - `--single` `-s`: Genera tareas solo para una historia específica (contrario al comportamiento por defecto).
+    - Por defecto: Genera tareas para TODAS las historias de usuario pendientes de la propuesta.
 - **Output**: `.quinoto-spec/proposals/{slug}/{US_ID}_tasks.md`.
-- **Detalle**: Crea una lista de chequeo técnica con columna `Servicio` heredada de la historia de usuario.
-- **Ejemplo**: `"Genera las tareas técnicas para la historia 'US-STRP-001' usando el workflow @quinotospec.create-tasks."`
+- **Detalle**: Crea una lista de chequeo técnica con columna `Servicio` heredada de la historia de usuario. Soporta merge inteligente: no sobreescribe tareas existentes, solo agrega las nuevas.
+- **Ejemplos**: 
+    - `"Genera las tareas técnicas para todas las historias de la propuesta 'stripe-migration' usando @quinotospec.create-tasks."`
+    - `"Genera solo la tarea para 'US-STRP-001' usando @quinotospec.create-tasks --single."`
 
 ### 5. Implementación (Apply)
 Ejecuta las tareas una por una.
@@ -165,6 +172,7 @@ Ejecuta las tareas una por una.
     2.  **Confirmación requerida**: Antes de crear un branch, pregunta al usuario si desea crear uno nuevo. Si no quiere, se trabaja en la rama actual.
     3.  Escribe el código y los tests.
     4.  **Actualiza el Changelog automáticamente**.
+    5.  **Sugiere la siguiente tarea**: Después de completar, busca la próxima tarea pendiente según orden y dependencias, y pregunta al usuario si desea continuar.
 - **Ejemplo**: `"Aplica la tarea 'TSK-STRP-001' usando @quinotospec.apply. Asegúrate de actualizar los tests de integración."`
 
 ### 6. Utilidades Adicionales
