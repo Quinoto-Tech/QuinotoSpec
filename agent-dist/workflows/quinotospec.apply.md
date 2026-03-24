@@ -16,7 +16,8 @@ Antes de realizar cualquier cambio:
 4. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
 
 **Instrucciones de Ejecución:**
-1. Crea un branch con el nombre `feature/{{TASK_ID}}-slug-descriptivo` en kebab-case (ej. `feature/US-ABC-001-add-login-endpoint`) usando la skill `generate_github_branch`.
+1. **Confirmación requerida**: Antes de crear un branch, pregunta al usuario si desea crear uno nuevo. Si el usuario no quiere crear un branch, omite este paso y continúa trabajando en la rama actual.
+2. Si el usuario confirma, crea un branch con el nombre `feature/{{TASK_ID}}-slug-descriptivo` en kebab-case (ej. `feature/US-ABC-001-add-login-endpoint`) usando la skill `generate_github_branch`.
 2. Analiza el código actual y realiza los cambios necesarios para cumplir con la tarea descrita.
 3. **Verificación de Criterios de Aceptación (DoD)**: Antes de finalizar, revisa uno a uno los criterios de aceptación definidos en la tarea/historia y confirma que cada uno está cumplido. Si alguno no está cubierto, impleméntalo o documenta la excepción.
 4. **Ejecuta los tests del stack**: Usa el comando de tests detectado en `00-stack-profile.md` (ej. `npm test`, `pytest`, `bundle exec rspec`) y verifica que no haya regresiones. Si los tests fallan, corrígelos antes de continuar.

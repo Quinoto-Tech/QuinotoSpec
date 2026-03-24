@@ -18,6 +18,7 @@
 > - ✅ **Validate Skill** (`quinotospec-validate`): Checks de sistema reutilizables como precondición para workflows críticos. _(Completado)_
 > - ✅ **Refresh Discovery** (`@quinotospec.refresh-discovery`): Discovery incremental — detecta cambios y actualiza solo los archivos afectados. _(Completado)_
 > - ✅ **Dependency Graph** (`@quinotospec.dependency-graph`): Mapa de dependencias inter-servicio con detección de contract drift. _(Completado)_
+> - ✅ **Agent Train** (`@quinotospec.agent-train`): Asistencia para crear agentes abstractos especializados con sugerencias basadas en discovery y estructura del proyecto. _(Completado)_
 >
 > **👻 Posesion Edition (TBA)**
 > _Status: Concepto_
@@ -161,7 +162,7 @@ Ejecuta las tareas una por una.
 - **Input**: Descripción de la tarea o ID (ej. "Implementar TSK-AUTH-001").
 - **Acción**:
     1.  El agente lee el contexto (Discovery + Propuesta).
-    2.  Genera un branch (si aplica).
+    2.  **Confirmación requerida**: Antes de crear un branch, pregunta al usuario si desea crear uno nuevo. Si no quiere, se trabaja en la rama actual.
     3.  Escribe el código y los tests.
     4.  **Actualiza el Changelog automáticamente**.
 - **Ejemplo**: `"Aplica la tarea 'TSK-STRP-001' usando @quinotospec.apply. Asegúrate de actualizar los tests de integración."`
@@ -211,7 +212,21 @@ Mapea las dependencias inter-servicio y detecta contract drift.
 - **Acción**: Analiza llamadas HTTP cross-servicio y recursos compartidos. Genera un mapa Mermaid y alerta sobre endpoints desalineados.
 - **Ejemplo**: `"Corre @quinotospec.dependency-graph para ver qué servicios dependen todavía del viejo MS de usuarios."`
 
-#### Code Review
+#### Agent Train
+Ayuda al desarrollador a crear agentes abstractos especializados basándose en el discovery y estructura del proyecto.
+
+- **Comando**: `@quinotospec.agent-train`
+- **Parámetros**:
+    - `AGENT_NAME`: Nombre del agente a crear (opcional)
+    - `--suggest`: Modo de sugerencias basadas en análisis
+- **Acción**:
+    1. Refresca el discovery automáticamente.
+    2. Analiza la estructura del proyecto (directorios, stack, sub-módulos).
+    3. Genera sugerencias de agentes potenciales.
+    4. Guía al usuario para definir el propósito y responsabilidades del agente.
+    5. Opcionalmente guarda el perfil en `.quinoto-spec/agents/`.
+- **Nota**: No genera perfiles automáticamente, ayuda al usuario a crearlos con sugerencias basadas en código real.
+- **Ejemplo**: `"Ayúdame a crear un agente para el área de autenticación usando @quinotospec.agent-train --suggest"`
 Revisa un branch contra los criterios de aceptación.
 
 - **Comando**: `@quinotospec.review`
@@ -276,7 +291,7 @@ El agente cuenta con "Skills" especializadas que ejecutan tareas complejas de fo
 
 #### Skills Básicas
 
-- **Generate Github Branch**: Crea branches siguiendo el estándar `feature/{{TASK_ID}}-descripcion-kebab-case` automáticamente, detectando la rama base y haciendo push.
+- **Generate Github Branch**: Crea branches siguiendo el estándar `feature/{{TASK_ID}}-descripcion-kebab-case` automáticamente, detectando la rama base y haciendo push. **Requiere confirmación del usuario antes de ejecutar**.
 - **File Creation**: Estandariza la creación de archivos, asegurando que scripts temporales y documentos sigan las normas.
 - **Stack Detect**: Identifica el technology stack del proyecto (lenguajes, frameworks, testing) analizando archivos de configuración.
 - **Mark Done**: Automatiza el cierre de tareas. Marca el checkbox `[x]`, mueve artefactos completados a `_archived/`, y actualiza el changelog automáticamente.
