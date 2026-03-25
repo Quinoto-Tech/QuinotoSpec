@@ -60,7 +60,12 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar d
 3. Añade una nueva fila a la tabla en `.quinoto-spec/prefix-registry.md`: `| {{PREFIX}} | {{PROPOSAL_NAME}} | {{DATE}} |`.
 4. En el `proposal.md` generado, incluye una línea al inicio (después del título) que diga: `**Prefijo:** {{PREFIX}}`.
 
-**Instrucción Final OBLIGATORIA (Changelog):**
-Una vez completada, DEBES ejecutar la skill `quinotospec-update-changelog`.
-- **Título de la Acción**: Proposal Generated: {{PROPOSAL_NAME}}
-- **Resumen**: Se generó la propuesta base '{{PROPOSAL_NAME}}' en .quinoto-spec/proposals/{{PROPOSAL_SLUG}}/
+**Instrucción Final OBLIGATORIA (Changelog y Memoria):**
+Una vez completada, DEBES:
+1.  Ejecutar la skill `quinotospec-update-changelog`.
+    - **Título de la Acción**: Proposal Generated: {{PROPOSAL_NAME}}
+    - **Resumen**: Se generó la propuesta base '{{PROPOSAL_NAME}}' en .quinoto-spec/proposals/{{PROPOSAL_SLUG}}/
+2.  **Grabar en Memoria (Engram)**:
+    ```bash
+    python agent-dist/skills/quinotospec-memory-search/record_memory.py --type "decision" --prefix "{{PREFIX}}" --content "Se creó la propuesta técnica: {{PROPOSAL_NAME}}. Objetivo: {{PROPOSAL_DESCRIPTION}}"
+    ```

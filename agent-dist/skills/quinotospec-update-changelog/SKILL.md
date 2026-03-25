@@ -37,6 +37,10 @@ Cuando necesites actualizar el changelog, sigue ESTRICTAMENTE estas instruccione
     - Inserta la nueva entrada al INICIO del archivo, pero SIEMPRE debajo del título h1 `# QuinotoSpec Changelog` y cualquier descripción introductoria.
     - Esto garantiza que al abrir el archivo, el usuario vea lo último que se hizo inmediatamente.
 
+6.  **Memoria (Engram) OBLIGATORIO**:
+    - Después de actualizar el changelog, DEBES grabar la acción en la base de datos de memoria técnica (Engram) usando `record_memory.py`.
+    - Esto asegura la persistencia de la decisión técnica fuera del historial del chat.
+
 ### B. Mantenimiento y Orden
 
 - Si el archivo no tiene el título `# QuinotoSpec Changelog`, créalo al inicio.

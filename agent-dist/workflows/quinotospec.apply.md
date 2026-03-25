@@ -19,13 +19,19 @@ Antes de realizar cualquier cambio:
 2. Analiza el código actual y realiza los cambios necesarios para cumplir con la tarea descrita.
 3. Verifica que el código modificado compile/funcione (si aplica).
 
-**Instrucciones de Documentación (Changelog):**
-Una vez aplicados los cambios, DEBES ejecutar la skill `quinotospec-update-changelog`.
-- **Título de la Acción**: Tarea: {{TASK_DESCRIPTION}}
-- **Resumen**: 
-  - [Listar archivos modificados]
-  - Resumen técnico de la solución implementada.
+**Instrucciones de Documentación (Changelog y Memoria):**
+Una vez aplicados los cambios, DEBES realizar los siguientes pasos de forma AUTOMÁTICA y OBLIGATORIA:
 
-IMPORTANTE: El paso de documentación es OBLIGATORIO. No termines la ejecución sin escribir en el changelog.
+1.  **Actualizar el Changelog**: Ejecuta la skill `quinotospec-update-changelog`.
+    - **Título de la Acción**: Tarea: {{TASK_DESCRIPTION}}
+    - **Resumen**: 
+      - [Listar archivos modificados]
+      - Resumen técnico de la solución implementada.
+
+2.  **Persistencia de Conocimiento (Engram)**: Evalúa la implementación y graba automáticamente las decisiones de diseño tomadas y su justificación.
+    ```bash
+    python agent-dist/skills/quinotospec-memory-search/record_memory.py --type "decision" --content "Implementada tarea: {{TASK_DESCRIPTION}}. Archivos clave: [archivos]. Decisiones clave: [Explica el QUÉ y el POR QUÉ]" --prefix "TAREA_O_CONTEXTO"
+    ```
+    *Este paso es fundamental para cumplir con el Definition of Done.*
 
 Verifica estado de las Tareas, Historias y Propuestas -- Mark Done Skill
