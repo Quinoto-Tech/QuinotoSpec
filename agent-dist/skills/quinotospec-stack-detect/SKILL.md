@@ -40,6 +40,8 @@ Genera un resumen en formato Markdown (será guardado en `.quinoto-spec/discover
 ```markdown
 # 🛠️ Stack Profile: [Nombre del Proyecto]
 
+**Discovery Date:** YYYY-MM-DD
+
 ## 🏗️ Core Technologies
 - **Language:** [e.g. Python 3.10+]
 - **Primary Framework:** [e.g. Django 4.2]

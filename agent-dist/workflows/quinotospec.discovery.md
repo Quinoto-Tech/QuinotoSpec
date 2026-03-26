@@ -17,10 +17,10 @@ Instrucciones generales (aplican a todos los archivos):
 - Cada archivo debe comenzar con un título H1, una breve descripción y una "ruta de guardado" al inicio, por ejemplo: "Guardar en: .quinoto-spec/discovery/01-overview.md".
 - Usar subsecciones (H2/H3) para organizar hallazgos: Resumen, Detalle, Pasos para reproducir/ejecutar, Recomendaciones.
 - Incluir listings de archivos/carpetas relevantes con rutas relativas, comandos para ejecutar la aplicación (dev/build/test), y ejemplos de salida cuando aplique.
-- Incluir placeholders para diagramas en Mermaid cuando corresponda (ej.: flujo, arquitectura, ER) y notas sobre qué debería contener cada diagrama.
+- **Generar siempre diagramas de secuencia en Mermaid** (`sequenceDiagram`) para los flujos principales del sistema (ej. request/response de endpoints, flujos de autenticación, integraciones externas). Para diagramas de arquitectura o ER que no se puedan inferir con certeza, usar un placeholder indicando qué debe contener.
 - Generar contenido accionable y conciso: checklists, comandos sugeridos, y prioridades (alta/media/baja).
 - Detecta y documenta frameworks, librerías y versiones (package.json, requirements, etc.).
-- Detecta y documenta pruebas automatizadas y cómo ejecutarlas.
+- Detecta y documenta pruebas automatizadas: **tipos detectados** (unit, integration, e2e), **cómo ejecutarlas**, **cobertura actual** si es medible (ej. `--coverage`), y **qué áreas críticas no tienen tests**.
 Contenido por archivo:
 
 0) 00-stack-profile.md
@@ -37,7 +37,7 @@ Contenido por archivo:
 2) 02-architecture.md
 - Diagrama conceptual (Mermaid placeholder) y descripción de la arquitectura (capas, módulos, responsabilidades).
 - Patrón(es) de diseño observados.
-- Flujo de datos entre componentes (placeholder de diagrama de secuencia).
+- **Diagrama de secuencia real en Mermaid** (`sequenceDiagram`) mostrando el flujo de datos entre los componentes principales: cliente → controlador/router → servicio → repositorio/DB. Si hay integraciones externas, incluirlas.
 - Componentes reutilizables e integraciones internas.
 
 3) 03-endpoints-and-openapi.md
@@ -57,6 +57,7 @@ Contenido por archivo:
 - Pipelines de CI/CD detectados (GitHub Actions, GitLab CI, etc.) y pasos de despliegue.
 - Scripts de automatización y cron jobs detectados.
 - Revisión rápida de prácticas de seguridad (gestión de secretos, políticas CORS, validaciones).
+- **Auditoría de dependencias**: ejecutar o documentar el comando de auditoría correspondiente al stack (`npm audit`, `pip-audit`, `bundle audit`, etc.) y listar las vulnerabilidades críticas o altas encontradas con su CVE si está disponible.
 - Estrategias de backup, versionado y recuperación respecto a datos y despliegues.
 
 6) 06-findings-and-recommendations.md

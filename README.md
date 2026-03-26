@@ -1,16 +1,24 @@
-# QuinotoSpec: Berserker Edition (ALPHA)
+# QuinotoSpec: Berserker Edition 🪓
 
-> [!WARNING]
-> **ARCHITECTURE EVOLUTION**
-> Esta versión implementa los nuevos patrones de orquestación y memoria persistente descritos en la guía técnica.
+> [!NOTE]
+> **ESTADO: PRODUCCIÓN / ESTABLE**
+> Esta es la versión oficial diseñada para entornos de agentes avanzados y equipos de alto rendimiento.
+>
+> **Nota:** Estamos trabajando activamente en la integración nativa con GitHub Copilot.
 >
 > ### 🗺️ Roadmap
 >
-> **🪓 Berserker Edition (Q2 2026)**
-> _Status: En Implementación (Fase 1: Estructura)_
-> - **Orchestrator-Workers:** Delegación quirúrgica a subagentes.
-> - **Engram Memory:** Persistencia de decisiones técnica via SQLite/MCP.
-> - **Lazy Skills:** Inyección dinámica de conocimiento especializado.
+> **🪓 Berserker Edition (Actual)**
+> _Status: 🟢 Estable / Producción_
+> - ⏸️ **Runic Memory:** Memoria semántica del proyecto usando bases de datos vectoriales. _(Standby)_
+> - ✅ **Mjolnir Refactor:** Capacidad de reescribir módulos enteros bajo demanda para limpiar deuda técnica. _(Completado)_
+> - ✅ **Code Review Workflow** (`@quinotospec.review`): Revisión de branches contra criterios de aceptación, tests y convenciones del stack. _(Completado)_
+> - ✅ **Sprint Planning Workflow** (`@quinotospec.sprint`): Generación de sprint plans con capacidad, prioridades y dependencias. _(Completado)_
+>     - Separado en 3 workflows: init, create, plan
+> - ✅ **Validate Skill** (`quinotospec-validate`): Checks de sistema reutilizables como precondición para workflows críticos. _(Completado)_
+> - ✅ **Refresh Discovery** (`@quinotospec.refresh-discovery`): Discovery incremental — detecta cambios y actualiza solo los archivos afectados. _(Completado)_
+> - ✅ **Dependency Graph** (`@quinotospec.dependency-graph`): Mapa de dependencias inter-servicio con detección de contract drift. _(Completado)_
+> - ✅ **Agent Train** (`@quinotospec.agent-train`): Asistencia para crear agentes abstractos especializados con sugerencias basadas en discovery y estructura del proyecto. _(Completado)_
 >
 > **👻 Posesion Edition (TBA)**
 > _Status: Concepto_
@@ -28,7 +36,7 @@
 > - **Alliance Integration (Multi-Repo):** Contexto compartido federado para arquitecturas distribuidas de gran escala.
 
 <div align="center">
-  <img src="amok.png" alt="Quinoto Amok" width="400" />
+  <img src="berserker.png" alt="Quinoto Berserker" width="400" />
 </div>
 
 # Guía de Desarrollo Guiado por IA con QuinotoSpec
@@ -51,6 +59,17 @@ Esta guía explica cómo utilizar la metodología **QuinotoSpec** y sus agentes 
     El script te pedirá **dónde quieres instalar el agente**.
     - Puedes presionar `Enter` para instalar en el directorio actual.
     - O escribir una ruta específica (ej. `~/proyectos/mi-nuevo-app`) y el script la creará si no existe.
+
+### Soporte para OpenCode
+Si utilizas **OpenCode**, puedes usar el parámetro `--opencode` para que la instalación sea compatible:
+
+```bash
+./quinotospec-package/install.sh --opencode
+```
+
+**¿Qué cambia con este parámetro?**
+- Instala la configuración en la carpeta `.opencode/` en lugar de `.agent/`.
+- Ajusta la estructura para que OpenCode reconozca los workflows automáticamente.
 
 ### Soporte para Cursor
 Si utilizas el editor **Cursor**, puedes usar el parámetro `--cursor` para que la instalación sea compatible con la estructura de Cursor:
@@ -87,6 +106,25 @@ Si no conoces el estado actual del proyecto o vas a tocar un área compleja.
 - **Comando**: `@quinotospec.discovery`
 - **Output**: Genera documentación fresca en `.quinoto-spec/discovery/` (Arquitectura, Endpoints, etc.).
 - **Objetivo**: Que el agente tenga contexto real antes de proponer nada.
+- **Ejemplo**: `"Ejecuta @quinotospec.discovery en este directorio para entender la arquitectura base de datos."`
+
+### 1.b Stack Detect
+Identifica automáticamente el technology stack del proyecto (lenguajes, frameworks, testing, DevOps) archivos de configuración.
+
+- **Comando**: `@quinotospec-stack-detect`
+- **Acción**: Escanea package.json, go.mod, requirements.txt, etc. y genera perfil de stack.
+- **Detalle**: Detecta Python, JS/TS, Go, Rust, PHP, Java y sus frameworks asociados.
+- **Ejemplo**: `"Ejecuta @quinotospec-stack-detect para identificar las tecnologías de este proyecto."`
+
+### 1.c Stack Discovery (Multi-Servicio)
+
+- **Comando**: `@quinotospec.stack-discovery`
+- **Acción**: Lee los sub-proyectos, detecta inconsistencias tecnológicas y genera un discovery global consolidado.
+- **Detalle**: Funciona como un "Discovery de Discoveries" en 3 pasos clave:
+    1. **Gatekeeper de Frescura**: Verifica el `Discovery Date` de cada servicio. Si alguno tiene >30 días, bloquea y sugiere actualizarlo con `@quinotospec.refresh-discovery`.
+    2. **Consolidación Inteligente**: No solo une archivos, sino que cruza datos: detecta inconsistencias de versión entre stacks, unifica la arquitectura en un solo diagrama Mermaid, y busca modelos de datos duplicados entre servicios.
+    3. **Dependency Graph**: Invoca automáticamente el análisis de dependencias para mapear llamadas HTTP cruzadas y alertar sobre Contract Drift.
+- **Ejemplo**: `"Ejecuta @quinotospec.stack-discovery para unificar la documentación de todos los microservicios del proyecto."`
 
 ### 2. Crear Propuesta Técnica
 Define la solución a alto nivel.
@@ -96,7 +134,8 @@ Define la solución a alto nivel.
 - **Acción**:
     1.  El agente te pedirá la descripcion de la propuesta. (puedes inyectar documentcion en formato markdown)
     2.  Registrará automáticamente un **Prefijo Único** (ej. `AUTH`, `TPGO`) en `.quinoto-spec/prefix-registry.md`.
-    3.  Generará el archivo base de la propuesta.
+    3.  Generará el archivo base de la propuesta, incluyendo el campo `Servicios Afectados` para arquitecturas distribuidas.
+- **Ejemplo**: `"Crea una propuesta técnica con @quinotospec.create-proposal. El objetivo es migrar la pasarela de pagos a Stripe."`
 
 ### 3. Generar Historias de Usuario
 Desglosa la propuesta en requerimientos de valor.
@@ -104,15 +143,24 @@ Desglosa la propuesta en requerimientos de valor.
 - **Comando**: `@quinotospec.create-user-histories`
 - **Parámetro**: Nombre de la carpeta de la propuesta (slug).
 - **Output**: `.quinoto-spec/proposals/{slug}/user-histories.md`.
-- **Detalle**: Crea items funcionales con IDs basados en el prefijo (ej. `US-AUTH-01`).
+- **Detalle**: Crea items funcionales con su correspondiente columna `Servicio` para trazabilidad multi-repositorio.
+- **Ejemplo**: `"Genera historias de usuario con @quinotospec.create-user-histories referenciando la propuesta 'stripe-migration'."`
 
 ### 4. Generar Tareas Técnicas
 Convierte historias en pasos ejecutables para el desarrollador (o el agente).
 
 - **Comando**: `@quinotospec.create-tasks`
-- **Parámetro**: ID de la Historia de Usuario (ej. `US-AUTH-01`).
+- **Parámetros**: 
+    - `PROPOSAL_SLUG`: Nombre de la carpeta de la propuesta.
+    - `USER_STORY_ID`: (Opcional) ID de la historia de usuario (ej. `US-AUTH-01`). Solo requerido si se usa `--single`.
+- **Flags**:
+    - `--single` `-s`: Genera tareas solo para una historia específica (contrario al comportamiento por defecto).
+    - Por defecto: Genera tareas para TODAS las historias de usuario pendientes de la propuesta.
 - **Output**: `.quinoto-spec/proposals/{slug}/{US_ID}_tasks.md`.
-- **Detalle**: Crea una lista de chequeo técnica (ej. `TSK-AUTH-001: Crear modelo User`).
+- **Detalle**: Crea una lista de chequeo técnica con columna `Servicio` heredada de la historia de usuario. Soporta merge inteligente: no sobreescribe tareas existentes, solo agrega las nuevas.
+- **Ejemplos**: 
+    - `"Genera las tareas técnicas para todas las historias de la propuesta 'stripe-migration' usando @quinotospec.create-tasks."`
+    - `"Genera solo la tarea para 'US-STRP-001' usando @quinotospec.create-tasks --single."`
 
 ### 5. Implementación (Apply)
 Ejecuta las tareas una por una.
@@ -121,49 +169,182 @@ Ejecuta las tareas una por una.
 - **Input**: Descripción de la tarea o ID (ej. "Implementar TSK-AUTH-001").
 - **Acción**:
     1.  El agente lee el contexto (Discovery + Propuesta).
-    2.  Genera un branch (si aplica).
+    2.  **Confirmación requerida**: Antes de crear un branch, pregunta al usuario si desea crear uno nuevo. Si no quiere, se trabaja en la rama actual.
     3.  Escribe el código y los tests.
     4.  **Actualiza el Changelog automáticamente**.
+    5.  **Sugiere la siguiente tarea**: Después de completar, busca la próxima tarea pendiente según orden y dependencias, y pregunta al usuario si desea continuar.
+- **Ejemplo**: `"Aplica la tarea 'TSK-STRP-001' usando @quinotospec.apply. Asegúrate de actualizar los tests de integración."`
 
 ### 6. Utilidades Adicionales
+
+#### Mjolnir Refactor
+Estrategia agresiva para reescribir módulos enteros con alta deuda técnica.
+
+- **Comando**: `@quinotospec.mjolnir-refactor`
+- **Acción**: Mapea impacto, analiza código legacy, genera propuesta de refactor, user stories y tareas de reemplazo paso a paso.
+- **Ejemplo**: `"Aplica @quinotospec.mjolnir-refactor sobre la carpeta src/legacy-billing para migrarla a arquitectura hexagonal."`
 
 #### Archive (Limpieza)
 Mueve elementos finalizados a un estado de "archivo" para limpiar el workspace.
 
 - **Comando**: `@quinotospec.archive`
 - **Parámetro**: `TARGET` (Slug de propuesta, nombre de archivo de historias o tareas).
-- **Acción**: Renombra el elemento agregándole un prefijo `__` (ej. `__auth-module`, `__user-histories.md`, `__US-AUTH-001_tasks.md`) para indicarlo como archivado.
+- **Acción**: Mueve el elemento a la carpeta `_archived/`.
+- **Ejemplo**: `"Ejecuta @quinotospec.archive sobre la propuesta 'stripe-migration' porque ya se verificó en PROD."`
 
 #### Read PDF
 Ingesta documentación externa en formato PDF para darle contexto al agente.
 
 - **Comando**: `@quinotospec.readpdf`
-- **Parámetros**:
-    - `DOCUMENT_PATH`: Ruta al archivo PDF.
-    - `NOMBRE_DEL_ARCHIVO`: Nombre del archivo de salida (sin extensión).
-- **Acción**: Lee el PDF, extrae el texto, lo formatea y guarda el contenido en un archivo Markdown.
+- **Acción**: Lee un PDF, extrae el texto usando Python/pdfplumber, y lo guarda en `.quinoto-spec/docs/`.
+- **Ejemplo**: `"Lee el archivo ./docs/api-guide.pdf con @quinotospec.readpdf y guárdalo como 'guia-api'."`
 
-#### Dashbord de Proyecto (Status)
+#### Dashboard de Proyecto (Status)
 Mantén una visión clara del progreso y el valor generado.
 
 - **Comando**: `@quinotospec.status`
-- **Output**: Genera/Actualiza `PROJECT_STATUS.md` en la raíz.
-- **Acción**: Escanea las propuestas y el changelog para calcular el progreso porcentual y el tiempo total ahorrado por la IA.
+- **Acción**: Escanea propuestas y changelog, calculando velocidad de IA, alertas de bloqueos y descubrimientos caducados.
+- **Ejemplo**: `"Muestra cómo venimos ejecutando @quinotospec.status para ver la velocidad del último sprint."`
+
+#### Refresh Discovery
+Actualiza solo los archivos de discovery afectados por cambios recientes.
+
+- **Comando**: `@quinotospec.refresh-discovery`
+- **Acción**: Detecta qué archivos cambiaron desde la `Discovery Date` y actualiza únicamente las partes impactadas.
+- **Ejemplo**: `"Actualiza el discovery de la arquitectura porque metimos cambios en la BD, usa @quinotospec.refresh-discovery."`
+
+#### Dependency Graph
+Mapea las dependencias inter-servicio y detecta contract drift.
+
+- **Comando**: `@quinotospec.dependency-graph`
+- **Acción**: Analiza llamadas HTTP cross-servicio y recursos compartidos. Genera un mapa Mermaid y alerta sobre endpoints desalineados.
+- **Ejemplo**: `"Corre @quinotospec.dependency-graph para ver qué servicios dependen todavía del viejo MS de usuarios."`
+
+#### Agent Train
+Ayuda al desarrollador a crear agentes abstractos especializados basándose en el discovery y estructura del proyecto.
+
+- **Comando**: `@quinotospec.agent-train`
+- **Parámetros**:
+    - `AGENT_NAME`: Nombre del agente a crear (opcional)
+    - `--suggest`: Modo de sugerencias basadas en análisis
+- **Acción**:
+    1. Refresca el discovery automáticamente.
+    2. Analiza la estructura del proyecto (directorios, stack, sub-módulos).
+    3. Genera sugerencias de agentes potenciales.
+    4. Guía al usuario para definir el propósito y responsabilidades del agente.
+    5. Opcionalmente guarda el perfil en `.quinoto-spec/agents/`.
+- **Nota**: No genera perfiles automáticamente, ayuda al usuario a crearlos con sugerencias basadas en código real.
+- **Ejemplo**: `"Ayúdame a crear un agente para el área de autenticación usando @quinotospec.agent-train --suggest"`
+Revisa un branch contra los criterios de aceptación.
+
+- **Comando**: `@quinotospec.review`
+- **Acción**: Verifica alineación con el DoD, tests, convenciones de stack (archivos permitidos) antes de mergear.
+- **Ejemplo**: `"Haz un code review a la rama 'feature/TSK-STRP-001' usando @quinotospec.review."`
+
+#### Sprint Planning
+Genera un plan de acción a corto plazo y lo organiza en carpetas dedicadas. El flujo de sprints se divide en 3 pasos:
+
+- **Paso 1 - Inicializar**: `@quinotospec.sprints.init`
+    - Crea la carpeta `.quinoto-spec/sprints/` si no existe.
+    - Genera `base-config.yml` con la configuración del equipo (miembros, roles, velocidad).
+    - **Detiene ejecución** si la configuración está incompleta hasta que el usuario la complete.
+
+- **Paso 2 - Crear Sprint**: `@quinotospec.sprint.create`
+    - **Parámetros**: `SPRINT_ID` (ej. `1`), `NOMBRE_SPRINT` (ej. `Integración API`)
+    - Crea la carpeta `.quinoto-spec/sprints/sprint-{{ID}}/`.
+    - Genera `sprint-config.yml` con fechas, duración y prioridad de propuestas.
+
+- **Paso 3 - Planificar**: `@quinotospec.sprint.plan`
+    - **Parámetro**: `SPRINT_ID`
+    - Lee la configuración base y del sprint.
+    - Calcula capacidad del equipo y selecciona tareas según prioridad.
+    - Genera `sprint-plan.md` con las tareas asignadas.
+
+- **Orquestador**: `@quinotospec.sprint`
+    - Ejecuta los 3 pasos anteriores en secuencia.
+    - **Parámetros**: `SPRINT_ID`, `NOMBRE_SPRINT`
+    - Ejemplo: `"Arma el sprint 1 'Integración API' con @quinotospec.sprint."`
+
+**Estructura de archivos generada:**
+```
+.quinoto-spec/sprints/
+├── base-config.yml                    # Configuración del equipo
+└── sprint-{{ID}}/
+    ├── sprint-config.yml               # Configuración del sprint
+    ├── sprint-plan.md                  # Plan de tareas
+    └── proposals/                     # Propuestas distribuidas
+```
+
+#### Distribute Proposal
+Distribuye los artefactos de una propuesta central hacia los microservicios correspondientes.
+
+- **Comando**: `@quinotospec.distribute`
+- **Parámetros**: `SPRINT_ID`, `PROPOSAL_SLUG`.
+- **Acción**: Lee la columna `Servicio` de historias y tareas filtradas por el sprint indicado, y copia los archivos a cada sub-proyecto:
+    - `proposal.md` - Propuesta filtrada para el componente
+    - `user-histories.md` - Historias de usuario del componente
+    - `<US_ID>_tasks.md` - Tareas técnicas del componente
+- **Estructura por servicio**:
+  ```
+  <servicio>/.quinoto-spec/sprints/sprint-{{ID}}/proposals/{{SLUG}}/
+  ├── proposal.md
+  ├── user-histories.md
+  └── US-XXX_tasks.md
+  ```
+- **Ejemplo**: `"Distribuye las tareas de 'auth-standardization' para el sprint 1 usando @quinotospec.distribute."`
 
 ### 7. Habilidades (Skills)
 
 El agente cuenta con "Skills" especializadas que ejecutan tareas complejas de forma autónoma:
 
-- **Generate Github Branch**: Crea branches siguiendo el estándar de nombrado del equipo automáticamente.
+#### Skills Básicas
+
+- **Generate Github Branch**: Crea branches siguiendo el estándar `feature/{{TASK_ID}}-descripcion-kebab-case` automáticamente, detectando la rama base y haciendo push. **Requiere confirmación del usuario antes de ejecutar**.
 - **File Creation**: Estandariza la creación de archivos, asegurando que scripts temporales y documentos sigan las normas.
-- **Mark Done**: Automatiza el cierre de tareas. Cuando una tarea se completa, renombra recursivamente archivos y carpetas para reflejar su estado final.
-- **Read PDF**: Motor de extracción de texto para documentos PDF, usado por el workflow `readpdf`.
-- **Update Changelog**: Mantiene el `docs/quinoto-spec-changelog.md` actualizado con cada cambio relevante, calculando tiempos (si están disponibles) y categorizando cambios.
+- **Stack Detect**: Identifica el technology stack del proyecto (lenguajes, frameworks, testing) analizando archivos de configuración.
+- **Mark Done**: Automatiza el cierre de tareas. Marca el checkbox `[x]`, mueve artefactos completados a `_archived/`, y actualiza el changelog automáticamente.
+  - Soporta modo **bulk** (`--bulk`) para múltiples tareas
+  - Soporta modo **force** (`--force`) para forzar archive
+- **Read PDF**: Motor de extracción de texto para documentos PDF. Genera un script temporal, extrae el contenido y lo guarda en `.quinoto-spec/docs/`.
+- **Update Changelog**: Mantiene el `.quinoto-spec/quinoto-spec-changelog.md` actualizado con cada cambio relevante, calculando tiempos y categorizando cambios.
+- **Validate**: Ejecuta checks de sistema (discovery, prefix-registry, changelog, propuestas) como precondición antes de workflows críticos.
+
+#### Skills Avanzadas (Gobernanza)
+
+- **Rules Enforce**: Ejecuta y hace cumplir las reglas de `quinotospec-rules.md`. Detiene workflows que violen las reglas.
+  - Modo `strict`: Detiene si regla crítica falla
+  - Modo `warning`: Solo advierte
+  - Uso: `/rules-enforce --mode strict --check changelog,prefix,product-agreement`
+- **Metrics**: Calcula métricas de compliance y productividad del proyecto.
+  - Changelog compliance, prefix usage, branch naming, etc.
+  - Uso: `/quinotospec-metrics --dashboard` o `/metrics --period month`
+- **Syntax Validate**: Valida sintaxis y estructura de archivos QuinotoSpec antes de ejecutar workflows.
+  - Valida proposals, user-stories, tasks, changelog, discovery, config
+  - Uso: `/syntax-validate --type proposal --slug auth-jwt` o `--type all --strict`
+- **Rollback**: Deshace cambios realizados por workflows cuando la validación falla o el usuario lo solicita.
+  - Tipos: `changelog`, `proposal`, `user-story`, `task`, `full`
+  - Uso: `/rollback --type proposal --slug auth-jwt --dry-run`
+
+#### Integración Recomendada
+
+```bash
+# Pre-condición antes de workflows críticos
+@quinotospec-validate --full
+
+# Antes de aplicar código
+@quinotospec-syntax-validate --type proposal --slug {{SLUG}}
+
+# Después de completar tarea
+@mark-done --task-id TSK-AUTH-001 --bulk TSK-AUTH-002,TSK-AUTH-003
+
+# Métricas para retrospectives
+@quinotospec-metrics --dashboard
+```
 
 ## Mantenimiento y Reglas
 
 ### Integridad de la Especificación (Agent Only)
-**CRÍTICO**: El contenido de la carpeta `.quinoto-spec/` y el archivo `docs/quinoto-spec-changelog.md` son administrados **EXCLUSIVAMENTE** por el agente.
+**CRÍTICO**: El contenido de la carpeta `.quinoto-spec/` y el archivo `.quinoto-spec/quinoto-spec-changelog.md` son administrados **EXCLUSIVAMENTE** por el agente.
 - **NUNCA** edites estos archivos manualmente.
 - Si necesitas corregir o actualizar algo en la especificación, pídeselo al agente (ej. "Actualiza el changelog", "Refina la propuesta").
 - Esto garantiza que la "memoria" del sistema no se corrompa por intervenciones humanas no registradas.
@@ -182,12 +363,21 @@ El sistema impone reglas estrictas para garantizar la calidad. El agente tiene i
 - **Regla**: Todo trabajo debe estar trazado bajo una Propuesta con un Prefijo registrado.
 - **Acción**: Antes de crear historias o tareas, el agente verificará `.quinoto-spec/prefix-registry.md`. Si el prefijo no existe, no se permite avanzar.
 
-#### 3. Product Agreement Check (BLOQUEANTE)
-- **Regla**: No se arranca una propuesta sin definición de producto.
-- **Acción**: Antes de crear una propuesta, el agente **lee** `.quinoto-spec/discovery/07-product-and-agreements.md`.
-    - Si el archivo está vacío o tiene placeholders -> **STOP**.
-    - El agente te dirá: *"No puedo crear la propuesta porque no se han definido los Acuerdos de Producto"*.
-    - **Solución**: Debes llenar ese archivo con la Visión, DoR y DoD antes de pedir la propuesta.
+#### 4. Validación de Estado Antes de Archivar
+- **Regla**: Antes de archivar, el estado debe ser `✅ Completada`.
+- **Acción**: Verificar `**Estado:**` en proposal.md antes de mover a `_archived/`.
+
+#### 5. Convención de Archivado
+- **Regla**: Usar siempre carpeta `_archived/`, nunca prefijo `__`.
+- **Acción**: Mover a `.quinoto-spec/proposals/{{SLUG}}/_archived/` o `.quinoto-spec/proposals/_archived/{{SLUG}}/`.
+
+#### 6. Branch Naming Convention
+- **Regla**: Formato `feature/{{TASK_ID}}-descripcion`.
+- **Acción**: Crear branch solo si sigue este formato.
+
+#### 7. Aprobación de Config Crítica
+- **Regla**: Nunca modificar sin consentimiento explícito.
+- **Archivos protegidos**: `base-config.yml`, `sprint-{{ID}}/sprint-config.yml`, `mjolnir-refactor.yml`.
 
 ---
 

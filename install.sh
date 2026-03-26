@@ -6,12 +6,15 @@ echo "Installing QuinotoSpec..."
 
 # 0. Argument Parsing
 CONFIG_DIR_NAME=".agent"
-CURSOR_MODE=false
+RENAME_WORKFLOWS=false
 
 for arg in "$@"; do
     if [ "$arg" == "--cursor" ]; then
         CONFIG_DIR_NAME=".cursor"
-        CURSOR_MODE=true
+        RENAME_WORKFLOWS=true
+    elif [ "$arg" == "--opencode" ]; then
+        CONFIG_DIR_NAME=".opencode"
+        RENAME_WORKFLOWS=true
     fi
 done
 
@@ -74,12 +77,10 @@ fi
 # The 'slash-dot' notation "$SOURCE_AGENT/." ensures we copy contents, not the directory itself.
 cp -rf "$SOURCE_AGENT/." "$TARGET_ROOT/$CONFIG_DIR_NAME/"
 
-# 4. Handle Cursor Mode Specifics
-if [ "$CURSOR_MODE" = true ]; then
-    echo "Cursor mode: Renaming workflows to commands..."
+# 4. Handle Cursor/Opencode Mode Specifics
+if [ "$RENAME_WORKFLOWS" = true ]; then
+    echo "Mode: Renaming workflows to commands..."
     if [ -d "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" ]; then
-        # If commands already exists, we might want to merge or remove it. 
-        # For simplicity, we remove if exists and rename workflows.
         rm -rf "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
         mv "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
     fi
