@@ -4,32 +4,6 @@
 
 echo "Installing QuinotoSpec..."
 
-# 0. Argument Parsing
-CONFIG_DIR_NAME=".agent"
-RENAME_WORKFLOWS=false
-
-for arg in "$@"; do
-    if [ "$arg" == "--cursor" ]; then
-        CONFIG_DIR_NAME=".cursor"
-        RENAME_WORKFLOWS=true
-    elif [ "$arg" == "--opencode" ]; then
-        CONFIG_DIR_NAME=".opencode"
-        RENAME_WORKFLOWS=true
-    fi
-done
-
-# 1. Location Check
-# We assume the user is running this from inside the package directory, 
-# or copying the files to their root.
-# Let's try to copy things to the current directory's parent if we are inside the package folder,
-# OR to the current directory if we are at root.
-
-# Simple approach: The user should copy the contents of this folder to their project root 
-# OR run this script from the package folder and it installs to relative paths.
-
-# Let's assume the user runs `./quinotospec-package/install.sh` FROM the project root
-# OR runs `./install.sh` FROM inside `quinotospec-package`.
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$(pwd)"
 
@@ -43,17 +17,11 @@ else
     exit 1
 fi
 
-
 # 2. Ask for Target Directory
 echo -n "Enter the installation path (default: current directory '$PROJECT_ROOT'): "
 read USER_PATH
 
 if [ -n "$USER_PATH" ]; then
-    # Resolve relative paths relative to where the script is run (which might be confusing)
-    # or just treat it as absolute/relative. Ideally we want absolute.
-    # Let's simple check if directory exists or try to create it.
-    
-    # Expand tilde if present (basic handling)
     USER_PATH="${USER_PATH/\~/$HOME}"
     
     if [ ! -d "$USER_PATH" ]; then
@@ -67,28 +35,133 @@ fi
 
 echo "Target Project Root: $TARGET_ROOT"
 
-# Create $CONFIG_DIR_NAME directory if it doesn't exist
-if [ ! -d "$TARGET_ROOT/$CONFIG_DIR_NAME" ]; then
-    mkdir -p "$TARGET_ROOT/$CONFIG_DIR_NAME"
-fi
+# IDE Selection
+IDE_CHOICE=""
 
-# Copy contents of agent-dist into the config folder, overwriting existing files
-# We use cp -rf to force overwrite and recursive copy.
-# The 'slash-dot' notation "$SOURCE_AGENT/." ensures we copy contents, not the directory itself.
-cp -rf "$SOURCE_AGENT/." "$TARGET_ROOT/$CONFIG_DIR_NAME/"
-
-# 4. Handle Cursor/Opencode Mode Specifics
-if [ "$RENAME_WORKFLOWS" = true ]; then
-    echo "Mode: Renaming workflows to commands..."
-    if [ -d "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" ]; then
-        rm -rf "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
-        mv "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
+# Check for command line arguments first
+for arg in "$@"; do
+    if [ "$arg" == "--cursor" ]; then
+        IDE_CHOICE="cursor"
+    elif [ "$arg" == "--opencode" ]; then
+        IDE_CHOICE="opencode"
+    elif [ "$arg" == "--cline" ]; then
+        IDE_CHOICE="cline"
     fi
+done
+
+# If no argument provided, show menu
+if [ -z "$IDE_CHOICE" ]; then
+    echo ""
+    echo "Select your IDE/AI Assistant:"
+    echo "  1) OpenAI (default)"
+    echo "  2) Cursor"
+    echo "  3) OpenCode"
+    echo "  4) Cline"
+    echo ""
+    echo -n "Enter your choice [1-4]: "
+    read IDE_CHOICE
+    
+    case "$IDE_CHOICE" in
+        1) IDE_CHOICE="openai" ;;
+        2) IDE_CHOICE="cursor" ;;
+        3) IDE_CHOICE="opencode" ;;
+        4) IDE_CHOICE="cline" ;;
+        *) IDE_CHOICE="openai" ;;
+    esac
 fi
 
+# Execute installation based on IDE choice
+case "$IDE_CHOICE" in
+    cursor)
+        echo "Installing for Cursor..."
+        CONFIG_DIR_NAME=".cursor"
+        
+        if [ ! -d "$TARGET_ROOT/$CONFIG_DIR_NAME" ]; then
+            mkdir -p "$TARGET_ROOT/$CONFIG_DIR_NAME"
+        fi
+        
+        cp -rf "$SOURCE_AGENT/." "$TARGET_ROOT/$CONFIG_DIR_NAME/"
+        
+        if [ -d "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" ]; then
+            rm -rf "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
+            mv "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
+        fi
+        ;;
+        
+    opencode)
+        echo "Installing for OpenCode..."
+        CONFIG_DIR_NAME=".opencode"
+        
+        if [ ! -d "$TARGET_ROOT/$CONFIG_DIR_NAME" ]; then
+            mkdir -p "$TARGET_ROOT/$CONFIG_DIR_NAME"
+        fi
+        
+        cp -rf "$SOURCE_AGENT/." "$TARGET_ROOT/$CONFIG_DIR_NAME/"
+        
+        if [ -d "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" ]; then
+            rm -rf "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
+            mv "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
+        fi
+        ;;
+        
+    cline)
+        echo "Installing for Cline..."
+        
+        if [ ! -d "$TARGET_ROOT/.cline" ]; then
+            mkdir -p "$TARGET_ROOT/.cline"
+        fi
+        
+        if [ ! -d "$TARGET_ROOT/.clinerules" ]; then
+            mkdir -p "$TARGET_ROOT/.clinerules"
+        fi
+        
+        if [ -d "$SOURCE_AGENT/skills" ]; then
+            mkdir -p "$TARGET_ROOT/.cline/skills"
+            cp -rf "$SOURCE_AGENT/skills/." "$TARGET_ROOT/.cline/skills/"
+        fi
+        
+        if [ -d "$SOURCE_AGENT/rules" ]; then
+            cp -rf "$SOURCE_AGENT/rules/." "$TARGET_ROOT/.clinerules/"
+        fi
+        
+        if [ -d "$SOURCE_AGENT/workflows" ]; then
+            mkdir -p "$TARGET_ROOT/.clinerules/workflows"
+            cp -rf "$SOURCE_AGENT/workflows/." "$TARGET_ROOT/.clinerules/workflows/"
+        fi
+        ;;
+        
+    *)
+        echo "Installing for OpenAI (default)..."
+        CONFIG_DIR_NAME=".agent"
+        
+        if [ ! -d "$TARGET_ROOT/$CONFIG_DIR_NAME" ]; then
+            mkdir -p "$TARGET_ROOT/$CONFIG_DIR_NAME"
+        fi
+        
+        cp -rf "$SOURCE_AGENT/." "$TARGET_ROOT/$CONFIG_DIR_NAME/"
+        ;;
+esac
 
-echo "Installation complete!"
-echo "----------------------------------------------------------------"
-echo "You can now use @quinotospec workflows."
-echo "Read the guide at docs/quinotospec-guide.md to get started."
-echo "----------------------------------------------------------------"
+echo ""
+echo "======================================================================"
+case "$IDE_CHOICE" in
+    cursor)
+        echo "Installation complete for Cursor!"
+        echo "Use @quinotospec commands."
+        ;;
+    opencode)
+        echo "Installation complete for OpenCode!"
+        echo "Use @quinotospec commands."
+        ;;
+    cline)
+        echo "Installation complete for Cline!"
+        echo "Skills: .cline/skills/"
+        echo "Rules: .clinerules/"
+        echo "Workflows: .clinerules/workflows/"
+        ;;
+    *)
+        echo "Installation complete!"
+        echo "Use @quinotospec workflows."
+        ;;
+esac
+echo "======================================================================"

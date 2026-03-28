@@ -133,7 +133,7 @@ Define la solución a alto nivel.
 - **Output**: Crea `.quinoto-spec/proposals/{slug}/proposal.md`.
 - **Acción**:
     1.  El agente te pedirá la descripcion de la propuesta. (puedes inyectar documentcion en formato markdown)
-    2.  Registrará automáticamente un **Prefijo Único** (ej. `AUTH`, `TPGO`) en `.quinoto-spec/prefix-registry.md`.
+    2.  Registrará automáticamente un **Prefijo Numérico** secuencial (ej. `001`, `002`, `010`) en `.quinoto-spec/prefix-registry.md`.
     3.  Generará el archivo base de la propuesta, incluyendo el campo `Servicios Afectados` para arquitecturas distribuidas.
 - **Ejemplo**: `"Crea una propuesta técnica con @quinotospec.create-proposal. El objetivo es migrar la pasarela de pagos a Stripe."`
 

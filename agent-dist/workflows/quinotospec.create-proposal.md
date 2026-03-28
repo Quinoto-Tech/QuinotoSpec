@@ -60,10 +60,15 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar d
 - SOLO genera el archivo `proposal.md`. No generes historias ni tareas.
 
 **Gestión de Prefijos (CRÍTICO):**
-1. Lee el archivo `.quinoto-spec/prefix-registry.md`.
-2. Genera un prefijo único de 3-4 letras (ej. `ABC`, `PROJ`) que NO exista en la tabla.
-3. Añade una nueva fila a la tabla en `.quinoto-spec/prefix-registry.md`: `| {{PREFIX}} | {{PROPOSAL_NAME}} | {{DATE}} |`.
-4. En el `proposal.md` generado, incluye una línea al inicio (después del título) que diga: `**Prefijo:** {{PREFIX}}`.
+1. Lee el archivo `.quinoto-spec/prefix-registry.md` si existe.
+2. Determina el siguiente número secuencial:
+   - Busca todas las filas que contengan un número en la columna de prefijo (formato `001`, `002`, etc.)
+   - Extrae el número más alto y suma 1
+   - Formatea el resultado con ceros a la izquierda (ej. 1 → `001`, 10 → `010`, 100 → `100`)
+   - Si no existe ningún prefijo numérico, usa `001`
+3. Usa ese número como `{{PREFIX}}` (ej. `001`, `002`, `010`)
+4. Añade una nueva fila a la tabla en `.quinoto-spec/prefix-registry.md`: `| {{PREFIX}} | {{PROPOSAL_NAME}} | {{DATE}} |`.
+5. En el `proposal.md` generado, incluye una línea al inicio (después del título) que diga: `**Prefijo:** {{PREFIX}}`.
 
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completada, DEBES ejecutar la skill `quinotospec-update-changelog`.
