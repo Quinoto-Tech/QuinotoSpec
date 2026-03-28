@@ -1,9 +1,9 @@
 ---
-name: Quinotospec Update Changelog
+name: quinotospec-update-changelog
 description: Automates updating the `.quinoto-spec/quinoto-spec-changelog.md` file with entries appearing from top to bottom (newest first).
 ---
 
-# Quinotospec Update Changelog
+# Skill: quinotospec-update-changelog
 
 Esta skill se encarga de estandarizar la actualización del archivo de changelog del proyecto, asegurando que las entradas más recientes aparezcan siempre en la parte superior.
 
