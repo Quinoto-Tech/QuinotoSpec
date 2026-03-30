@@ -6,8 +6,9 @@ Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/
 El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
 PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
 PROPOSAL_SLUG: derivar de PROPOSAL_NAME en lowercase con palabras separadas por guión (ej. `rewards-stabilization`, `payment-timeout-fix`).
+DATE_PREFIX: fecha actual en formato YYYYMMDD.
 Tu objetivo es generar una Propuesta Técnica específica para este tema, INTEGRADA con el resto del sistema.
-Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar dentro de ella el archivo `proposal.md` con el siguiente formato esperado:
+Debes crear una carpeta `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/` y generar dentro de ella el archivo `proposal.md` con el siguiente formato esperado:
 
 1. **proposal.md**:
     - **Título**: `# Propuesta Técnica: {{PROPOSAL_NAME}}`
@@ -61,16 +62,13 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/` y generar d
 
 **Gestión de Prefijos (CRÍTICO):**
 1. Lee el archivo `.quinoto-spec/prefix-registry.md` si existe.
-2. Determina el siguiente número secuencial:
-   - Busca todas las filas que contengan un número en la columna de prefijo (formato `001`, `002`, etc.)
-   - Extrae el número más alto y suma 1
-   - Formatea el resultado con ceros a la izquierda (ej. 1 → `001`, 10 → `010`, 100 → `100`)
-   - Si no existe ningún prefijo numérico, usa `001`
-3. Usa ese número como `{{PREFIX}}` (ej. `001`, `002`, `010`)
-4. Añade una nueva fila a la tabla en `.quinoto-spec/prefix-registry.md`: `| {{PREFIX}} | {{PROPOSAL_NAME}} | {{DATE}} |`.
-5. En el `proposal.md` generado, incluye una línea al inicio (después del título) que diga: `**Prefijo:** {{PREFIX}}`.
+2. Determina un prefijo de 4 letras que represente la propuesta (ej. `REWA` para Rewards, `AUTH` para Auth, `PAYF` para Payment Fix).
+   - Debe ser mnemotécnico y estar relacionado con el nombre de la propuesta.
+   - Si hay conflicto con un prefijo existente, añade una letra adicional para diferenciarlo (ej. `AUT2`).
+3. Añade una nueva fila a la tabla en `.quinoto-spec/prefix-registry.md`: `| {{PREFIX}} | {{PROPOSAL_NAME}} | {{DATE}} |`.
+4. En el `proposal.md` generado, incluye una línea al inicio (después del título) que diga: `**Prefijo:** {{PREFIX}}`.
 
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completada, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Proposal Generated: {{PROPOSAL_NAME}}
-- **Resumen**: Se generó la propuesta base '{{PROPOSAL_NAME}}' en .quinoto-spec/proposals/{{PROPOSAL_SLUG}}/
+- **Resumen**: Se generó la propuesta base '{{PROPOSAL_NAME}}' en .quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/
