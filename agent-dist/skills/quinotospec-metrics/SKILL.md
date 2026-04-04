@@ -35,7 +35,7 @@ Calcula métricas de compliance del equipo respecto a las reglas de QuinotoSpec.
 
 ### 5. Archive Convention Compliance
 
-- **Metría**: ¿Los archivosarchivados usan `_archived/` no `__`?
+- **Métrica**: ¿Los archivos archivados usan `_archived/` no `__`?
 - **Cálculo**: Archivos en `_archived/` / Archivos con prefijo `__` * 100
 - **Target**: 100%
 

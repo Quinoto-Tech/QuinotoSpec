@@ -14,7 +14,7 @@ Usa esta skill para deshacer cambios realizados durante la ejecución de un work
 
 ### 1. Rollback de Changelog
 
- deshace la última entrada del changelog.
+Deshace la última entrada del changelog.
 
 ```bash
 /rollback --type changelog
