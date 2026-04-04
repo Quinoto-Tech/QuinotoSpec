@@ -2,7 +2,7 @@
 description: Distribuye las tareas de una propuesta centralizada hacia los sub-proyectos correspondientes según el campo Servicio
 ---
 
-Este workflow toma una propuesta centralizada (normalmente generada desde un `stack-discovery` o `create-proposal`) y distribuye sus tareas hacia los `.quinoto-spec/` de cada sub-proyecto afectado.
+Este workflow toma una propuesta centralizada (normalmente generada desde un `stack-discovery` o `create-proposal`) y distribuye sus artefactos hacia los `.quinoto-spec/` de cada sub-proyecto afectado.
 
 **Parámetros Requeridos:**
 - `PROPOSAL_SLUG`: El slug de la propuesta centralizada a distribuir (ej. `stack-standardization`).
@@ -31,24 +31,38 @@ Para cada servicio en `Servicios Afectados`:
 
 ## Paso 3 — Distribuir artefactos por servicio
 
-Para cada sub-proyecto destino, crear o actualizar los siguientes archivos dentro de `<servicio>/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/`:
+Para cada sub-proyecto destino, crear la siguiente estructura dentro de `<servicio>/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/`:
 
-### `proposal.md` (propuesta filtrada)
-Distribución de la propuesta centralizada con las secciones relevantes para este componente.
+### Archivos a distribuir (copia literal)
 
-### `user-histories.md` (filtrado por componente y sprint)
-Solo las historias donde **Componente** (o `Servicio`) `<nombre-del-componente>` (o `todos`) que tengan tareas en este sprint.
+Estos archivos se distribuyen **sin modificación**, haciendo copy-paste directo del original:
 
-### `<US_ID>_tasks.md` (filtrado por componente y sprint)
-Solo las tareas asignadas en el `sprint-plan.md` donde **Componente** (o `Servicio`) `<nombre-del-componente>`.
+- `proposal.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md`
+- `user-histories.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md`
+- `all_tasks.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/all_tasks.md` (si existe)
+- Cada archivo `*_tasks.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{US_ID}}_tasks.md`
 
-**Agregar encabezado de trazabilidad** en cada archivo distribuido:
+**Importante**: NO filtrar contenido. NO modificar nada. Distribuir el archivo completo como existe en la propuesta central.
+
+### Merge inteligente para archivos existentes
+
+Si el archivo de destino ya existe:
+1. **NO sobreescribir el archivo existente**
+2. **Comparar el contenido existente con el nuevo**
+3. Si el nuevo archivo tiene tareas/historias que no están en el destino, agregarlas al final
+4. Mantener siempre el contenido original intacto
+
+### Encabezado de trazabilidad
+
+Agregar al INICIO de cada archivo distribuido (antes del contenido original):
 ```markdown
 > 📎 Este archivo es una distribución del Sprint {{SPRINT_ID}} de la propuesta centralizada [`{{PROPOSAL_SLUG}}`](.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md).
-> Las modificaciones deben hacerse en la propuesta central y redistribuirse con `@quinotospec.distribute`.
+> Las modificaciones deben hacerse en la propuesta central y redistribuirse con `/quinotospec.distribute`.
+> 
+---
 ```
 
-**Merge inteligente**: Si el archivo de destino ya existe, no sobreescribir — hacer merge de tareas nuevas solamente.
+**Nota**: El encabezado se agrega SIN modificar el contenido original del archivo.
 
 ---
 
@@ -56,10 +70,10 @@ Solo las tareas asignadas en el `sprint-plan.md` donde **Componente** (o `Servic
 
 Al finalizar, generar un resumen:
 
-| Componente | Propuesta | Historias distribuidas | Tareas distribuidas | Ruta destino |
-| --- | --- | --- | --- | --- |
-| auth-service | ✅ | 3 | 8 | `./auth-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
-| user-service | ✅ | 2 | 5 | `./user-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
+| Componente | Propuesta | Archivos distribuidos | Ruta destino |
+| --- | --- | --- | --- |
+| auth-service | ✅ | 5 | `./auth-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
+| user-service | ✅ | 5 | `./user-service/.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/{{PROPOSAL_SLUG}}/` |
 
 ---
 

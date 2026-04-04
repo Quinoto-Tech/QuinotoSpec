@@ -86,6 +86,8 @@ case "$IDE_CHOICE" in
             rm -rf "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
             mv "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
         fi
+
+        cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
         ;;
         
     opencode)
@@ -102,6 +104,8 @@ case "$IDE_CHOICE" in
             rm -rf "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
             mv "$TARGET_ROOT/$CONFIG_DIR_NAME/workflows" "$TARGET_ROOT/$CONFIG_DIR_NAME/commands"
         fi
+
+        cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
         ;;
         
     cline)
@@ -128,6 +132,8 @@ case "$IDE_CHOICE" in
             mkdir -p "$TARGET_ROOT/.clinerules/workflows"
             cp -rf "$SOURCE_AGENT/workflows/." "$TARGET_ROOT/.clinerules/workflows/"
         fi
+
+        cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
         ;;
         
     *)
@@ -139,6 +145,8 @@ case "$IDE_CHOICE" in
         fi
         
         cp -rf "$SOURCE_AGENT/." "$TARGET_ROOT/$CONFIG_DIR_NAME/"
+
+        cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
         ;;
 esac
 
