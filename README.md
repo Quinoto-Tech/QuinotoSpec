@@ -59,6 +59,7 @@ Esta guía explica cómo utilizar la metodología **QuinotoSpec** y sus agentes 
     El script te pedirá **dónde quieres instalar el agente**.
     - Puedes presionar `Enter` para instalar en el directorio actual.
     - O escribir una ruta específica (ej. `~/proyectos/mi-nuevo-app`) y el script la creará si no existe.
+    - Además, copia `AGENTS.md` a la raíz del proyecto para que el agente tenga acceso a las instrucciones.
 
 ### Soporte para OpenCode
 Si utilizas **OpenCode**, puedes usar el parámetro `--opencode` para que la instalación sea compatible:
@@ -70,6 +71,7 @@ Si utilizas **OpenCode**, puedes usar el parámetro `--opencode` para que la ins
 **¿Qué cambia con este parámetro?**
 - Instala la configuración en la carpeta `.opencode/` en lugar de `.agent/`.
 - Ajusta la estructura para que OpenCode reconozca los workflows automáticamente.
+- Copia `AGENTS.md` a la raíz del proyecto.
 
 ### Soporte para Cursor
 Si utilizas el editor **Cursor**, puedes usar el parámetro `--cursor` para que la instalación sea compatible con la estructura de Cursor:
@@ -81,6 +83,20 @@ Si utilizas el editor **Cursor**, puedes usar el parámetro `--cursor` para que 
 **¿Qué cambia con este parámetro?**
 - Instala la configuración en la carpeta `.cursor/` en lugar de `.agent/`.
 - Renombra la subcarpeta `workflows` a `commands` para que Cursor la reconozca automáticamente como [custom commands](https://docs.cursor.com/context/rules-for-ai#custom-commands).
+- Copia `AGENTS.md` a la raíz del proyecto.
+
+### Soporte para Cline
+Si utilizas **Cline**, puedes usar el parámetro `--cline` para que la instalación sea compatible:
+
+```bash
+./quinotospec-package/install.sh --cline
+```
+
+**¿Qué cambia con este parámetro?**
+- Instala Skills en `.cline/skills/`
+- Instala Rules en `.clinerules/`
+- Instala Workflows en `.clinerules/workflows/`
+- Copia `AGENTS.md` a la raíz del proyecto
 
 ## Filosofía: "Proposal First" & "Context Slicing"
 
