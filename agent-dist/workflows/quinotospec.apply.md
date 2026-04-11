@@ -36,6 +36,11 @@ Una vez completado y documentado el changelog, DEBES ejecutar la skill `quinotos
 - `TASK_ID`: el ID de la tarea completada.
 Esto actualizará el estado de la tarea, la historia y la propuesta correspondiente.
 
+**Blood-Bond Monitor:**
+Después de `quinotospec-mark-done`, ejecutar skill `quinotospec-blood-bond-monitor --check-only`:
+- Si `should_remind: true` (inactivo >=14 días), mostrar recordatorio pasivo con suggestions
+- Si `should_remind: false`, no mostrar nada
+
 IMPORTANTE: Los pasos de documentación y mark-done son OBLIGATORIOS. No termines la ejecución sin completarlos.
 
 ---

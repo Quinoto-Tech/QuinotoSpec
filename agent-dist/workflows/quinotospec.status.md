@@ -33,8 +33,11 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
         - ✅/❌ `07-product-and-agreements.md` tiene contenido más allá de los encabezados.
         - ✅/❌ `.quinoto-spec/prefix-registry.md` está actualizado y sin duplicados.
 
-6. **Próximos Pasos Sugeridos**:
-    - Basado en propuestas activas de mayor prioridad (P1) y menor porcentaje de completitud, sugiere las 3 acciones más importantes que el equipo debería atacar a continuación.
+6. **Próximos Pasos Sugeridos** (Blood-Bond):
+    - Invocar skill `quinotospec-blood-bond-analyzer --force`
+    - Invocar skill `quinotospec-blood-bond-predictor --force`
+    - Leer `.quinoto-spec/blood-bond/suggestions.md` y mostrar las sugerencias en la sección `⏭️ Próximos Pasos Sugeridos`
+    - Si `suggestions.md` no existe o proyecto está en cold start (< 5 entradas en changelog): fallback a предложения basadas en prioridad P1 y menor completitud
 
 7. **Generación del Dashboard**:
     - Crea o actualiza `PROJECT_STATUS.md` con las siguientes secciones en orden:
