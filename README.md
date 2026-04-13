@@ -45,7 +45,7 @@ Esta guía explica cómo utilizar la metodología **QuinotoSpec** y sus agentes 
 
 ## Instalación
 
-1.  **Obtén el paquete**: Asegúrate de tener la carpeta `quinotospec-package` disponible.
+1.  **Obtén el paquete**: Asegúrate de tener la carpeta `quinotospec-package` disponible (clonar el master en tu local).
 2.  **Ejecuta el instalador**: Desde una terminal, corre el script.
     
     ```bash
