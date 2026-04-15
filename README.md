@@ -1,11 +1,11 @@
-# QuinotoSpec: Posesion Edition
+# QuinotoSpec: Possessed Edition
 
 > **ESTADO: PRODUCCIÓN / ESTABLE**
 > Metodología y sistema de configuración de agentes para desarrollo asistido por IA.
 > Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precisión y minimizar alucinaciones.
 
 <div align="center">
-  <img src="posesion.png" alt="Quinoto Posesion" width="400" />
+  <img src="possessed.png" alt="Quinoto Possessed" width="400" />
 </div>
 
 ## Tabla de Contenido
@@ -478,7 +478,7 @@ graph LR
 
 ## Roadmap
 
-**Posesion Edition (Actual)** — Estable / Producción
+**Possessed Edition (Actual)** — Estable / Producción
 - ✅ Blood-Bond: Predicción proactiva
 - ✅ Battle Frenzy: Ejecución paralela
 

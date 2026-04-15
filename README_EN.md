@@ -1,11 +1,11 @@
-# QuinotoSpec: Posesion Edition
+# QuinotoSpec: Possessed Edition
 
 > **STATUS: PRODUCTION / STABLE**
 > Methodology and agent configuration system for AI-assisted development.
 > "Proposal First" / "Context Slicing" workflow to maximize accuracy and minimize hallucinations.
 
 <div align="center">
-  <img src="posesion.png" alt="Quinoto Posesion" width="400" />
+  <img src="possessed.png" alt="Quinoto Possessed" width="400" />
 </div>
 
 ## Table of Contents
@@ -478,7 +478,7 @@ graph LR
 
 ## Roadmap
 
-**Posesion Edition (Current)** — Stable / Production
+**Possessed Edition (Current)** — Stable / Production
 - ✅ Blood-Bond: Proactive prediction
 - ✅ Battle Frenzy: Parallel execution
 
