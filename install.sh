@@ -8,6 +8,8 @@ echo "Installing QuinotoSpec..."
 CONFIG_DIR_NAME=".agent"
 RENAME_WORKFLOWS=false
 
+INSTALL_GLOBAL=false
+
 for arg in "$@"; do
     if [ "$arg" == "--cursor" ]; then
         CONFIG_DIR_NAME=".cursor"
@@ -15,6 +17,8 @@ for arg in "$@"; do
     elif [ "$arg" == "--opencode" ]; then
         CONFIG_DIR_NAME=".opencode"
         RENAME_WORKFLOWS=true
+    elif [ "$arg" == "--global" ]; then
+        INSTALL_GLOBAL=true
     fi
 done
 
@@ -45,15 +49,15 @@ fi
 
 
 # 2. Ask for Target Directory
-echo -n "Enter the installation path (default: current directory '$PROJECT_ROOT'): "
+if [ "$INSTALL_GLOBAL" = true ]; then
+    echo "Note: You are in Global Setup mode."
+fi
+
+echo -n "Enter the installation path for workflows (press Enter to use current directory '$PROJECT_ROOT'): "
 read USER_PATH
 
 if [ -n "$USER_PATH" ]; then
-    # Resolve relative paths relative to where the script is run (which might be confusing)
-    # or just treat it as absolute/relative. Ideally we want absolute.
-    # Let's simple check if directory exists or try to create it.
-    
-    # Expand tilde if present (basic handling)
+    # Expand tilde if present
     USER_PATH="${USER_PATH/\~/$HOME}"
     
     if [ ! -d "$USER_PATH" ]; then
@@ -62,6 +66,7 @@ if [ -n "$USER_PATH" ]; then
     fi
     TARGET_ROOT="$USER_PATH"
 else
+    # If global and no path, we can skip the workflow copy if we are in the source repo
     TARGET_ROOT="$PROJECT_ROOT"
 fi
 
@@ -89,6 +94,18 @@ fi
 
 echo "Installation complete!"
 echo "----------------------------------------------------------------"
+
+if [ "$INSTALL_GLOBAL" = true ]; then
+    echo "Registering 'quinotospec' command globally..."
+    # Create symlink in /usr/local/bin
+    if sudo ln -sf "$DIR/quinotospec.py" /usr/local/bin/quinotospec; then
+        sudo chmod +x /usr/local/bin/quinotospec
+        echo "✅ Global command 'quinotospec' installed!"
+    else
+        echo "❌ Failed to create global symlink. You might need sudo permissions."
+    fi
+fi
+
 echo "You can now use @quinotospec workflows."
 echo "Read the guide at docs/quinotospec-guide.md to get started."
 echo "----------------------------------------------------------------"
