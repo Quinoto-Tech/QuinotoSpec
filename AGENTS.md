@@ -53,7 +53,7 @@ cat .quinoto-spec/discovery/00-stack-profile.md
 - **Workflows**: `quinotospec.<workflow-name>.md`
 - **Skills**: `quinotospec-<skill-name>/SKILL.md`
 - **Rules**: `quinotospec-rules.md`
-- **Scripts Temporales**: `./quinoto-spec/scripts/temp_*.{py,sh,js}` (NUNCA en raíz del proyecto)
+- **Scripts Temporales**: `.quinoto-spec/scripts/temp_*.{py,sh,js}` (NUNCA en raíz del proyecto)
 
 ### Convenciones de Nombrado de Branches (CRÍTICO)
 ```
