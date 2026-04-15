@@ -17,6 +17,8 @@ Este workflow ayuda al desarrollador a crear agentes abstractos especializados, 
 | `AGENT_NAME` | Nombre del agente a crear (opcional) | Nombre especificado por el usuario |
 | `--suggest` | Modo de sugerencias | Genera sugerencias basadas en análisis |
 | `--edit` | Modo edición | Editar un agente existente |
+| `--model` | Forzar modelo específico (opcional) | `opencode/big-pickle`, `opencode-go/mimo-v2-pro`, `opencode-go/mimo-v2-omni`, `opencode-go/glm-5.1` |
+| `--type` | Forzar tipo de agente (opcional) | `primary`, `subagent` |
 
 ---
 
@@ -24,7 +26,7 @@ Este workflow ayuda al desarrollador a crear agentes abstractos especializados, 
 
 ### Paso 0 — Refrescar Discovery
 
-**OBLIGATORIO**: Ejecutar `quinotospec.refresh-discovery.md` para asegurar datos actualizados.
+**OBLIGATORIO**: Ejecutar `quinotospec.refresh-discovery.md` para asegurar datos actualizadas.
 
 1. Ejecutar el workflow `quinotospec.refresh-discovery.md`
 2. Si no existe discovery, informar al usuario y ofrecer crear uno primero.
@@ -46,7 +48,12 @@ Escanear la estructura del proyecto para detectar áreas potenciales:
 3. **Detectar stack tecnológico**:
    - Buscar: `package.json`, `go.mod`, `requirements.txt`, `pyproject.toml`, `Cargo.toml`, `pom.xml`
 
-4. **Presentar análisis al usuario**:
+4. **Analizar complejidad**:
+   - Cantidad de archivos y líneas de código
+   - Número de integraciones externas
+   - Complejidad de lógica de negocio
+
+5. **Presentar análisis al usuario**:
    ```
    Análisis del proyecto:
 
@@ -58,6 +65,7 @@ Escanear la estructura del proyecto para detectar áreas potenciales:
    [Estructura]
    - Directorios principales: {lista}
    - Sub-módulos: {lista}
+   - Complejidad: {baja/media/alta}
 
    [Sugerencias de agentes]
    1. {suggestion 1}
@@ -67,7 +75,48 @@ Escanear la estructura del proyecto para detectar áreas potenciales:
 
 ---
 
-### Paso 2 — Definir Agente Abstracto
+### Paso 2 — Sugerir Modelo y Tipo de Agente
+
+**OBLIGATORIO**: Basado en el análisis, proporcionar recomendaciones concretas:
+
+#### 2.1 Criterios para Selección de Modelo
+
+| Complejidad | Modelo Sugerido |
+|-------------|-----------------|
+| Baja (proyecto simple, < 20 archivos) | `opencode/big-pickle` |
+| Media (proyecto medio, 20-100 archivos) | `opencode-go/mimo-v2-pro` |
+| Alta (proyecto complejo, > 100 archivos) | `opencode-go/mimo-v2-pro` |
+| Requiere visión multimodal | `opencode-go/mimo-v2-omni` |
+
+#### 2.2 Criterios para Selección de Tipo
+
+| Uso | Tipo Sugerido |
+|-----|---------------|
+| Tareas específicas dentro de workflows | subagent |
+| Orquestador de múltiples workflows | primary |
+| Tareas generales del proyecto | subagent |
+| Análisis profundo y planificación | subagent |
+
+#### 2.3 Presentar Sugerencias al Usuario
+
+```
+### Sugerencia de Configuración
+
+**Modelo recomendado**: `opencode-go/mimo-v2-pro`
+- Justificación: {razón basada en complejidad del proyecto}
+
+**Tipo recomendado**: subagent
+- Justición: {razón basada en uso previsto}
+
+**Alternativas**:
+- Si necesitas visión multimodal: `opencode-go/mimo-v2-omni`
+- Si quieres modelo gratuito: `opencode/big-pickle`
+- Si necesitas el mejor modelo: `opencode-go/glm-5.1`
+```
+
+---
+
+### Paso 3 — Definir Agente Abstracto
 
 Ayudar al usuario a definir el agente preguntando:
 
@@ -108,7 +157,7 @@ Ayudar al usuario a definir el agente preguntando:
 
 ---
 
-### Paso 3 — Generar Sugerencias
+### Paso 4 — Generar Sugerencias
 
 Basado en el análisis, ofrecer sugerencias concretas:
 
@@ -132,9 +181,7 @@ Para cada sub-módulo o capa detectada:
 - Bases de datos usadas
 - Servicios internos
 
----
-
-### Paso 4 — Crear Perfil (Opcional)
+### Paso 5 — Crear Perfil (Opcional)
 
 Si el usuario desea guardar el agente:
 
@@ -144,8 +191,50 @@ Si el usuario desea guardar el agente:
    - Propósito definido por el usuario
    - Áreas asignadas
    - Convenciones detectadas
+   - **Modelo sugerido**: `{modelo recomendado}`
+   - **Tipo sugerido**: `primary` o `subagent`
    - Comandos útiles
    - Ejemplos de código
+
+#### Plantilla de Archivo
+
+```yaml
+---
+name: {AGENT_NAME}
+description: {descripción del propósito}
+model: {modelo sugerido}
+mode: {primary | subagent}
+tools:
+  read: true
+  edit: true
+  bash: false
+---
+
+# Agente: {AGENT_NAME}
+
+## Propósito
+{descripción}
+
+## Modelo Recomendado
+- **Modelo**: `{modelo}`
+- **Justificación**: {razón basada en análisis}
+
+## Tipo
+- **Modo**: `{primary | subagent}`
+- **Justificación**: {razón basada en uso previsto}
+
+## Áreas de conocimiento
+- {área 1}
+- {área 2}
+
+## Convenciones (basadas en análisis)
+- Naming: {patrón detectado}
+- Estructura: {patrón detectado}
+
+## Comandos sugeridos
+- {comando 1}: {descripción}
+- {comando 2}: {descripción}
+```
 
 ---
 
@@ -157,12 +246,14 @@ Si se invoca con `--edit AGENT_NAME`, el workflow permitirá editar un agente ex
 
 1. Buscar archivo: `.quinoto-spec/agents/{AGENT_NAME}.md`
 2. Si no existe, informar al usuario y ofrecer crear uno nuevo
-3. Si existe, mostrar el contenido actual al usuario
+3. Si existe, mostrar el contenido actual al usuario (incluyendo modelo y tipo actuales)
 
 ### Paso 2 — Loop de Edición
 
 1. **Preguntar qué desea modificar**:
    - Propósito del agente
+   - Modelo (sugerir cambio si es necesario)
+   - Tipo (primary/subagent)
    - Áreas de conocimiento
    - Convenciones
    - Comandos
@@ -198,6 +289,14 @@ Si se invoca con `--edit AGENT_NAME`, el workflow permitirá editar un agente ex
 # Editar un agente existente
 @quinotospec.agent-train --edit auth-expert
 
+# Forzar modelo específico
+@quinotospec.agent-train --agent payment-expert --model opencode-go/mimo-v2-pro
+
+# Forzar tipo de agente
+@quinotospec.agent-train --agent orchestrator --type primary
+
+# Forzar modelo y tipo
+@quinotospec.agent-train --agent vision-analyzer --model opencode-go/mimo-v2-omni --type subagent
 ```
 
 ---

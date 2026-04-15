@@ -56,7 +56,6 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 ### Technical Details
 - **Workflows**: 20 archivos en `agent-dist/workflows/`
 - **Skills**: 19 skills en `agent-dist/skills/`
-- **Agents**: 9 definiciones en `agent-dist/agents/`
 - **Rules**: 1 archivo de reglas globales en `agent-dist/rules/`
 - **Install Script**: Soporte para múltiples IDEs con `install.sh`
 
