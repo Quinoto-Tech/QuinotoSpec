@@ -1,5 +1,5 @@
 ---
-name: File Creation
+name: quinotospec-file-creation
 description: Standards and guidelines for creating files, specifically temporary scripts.
 ---
 

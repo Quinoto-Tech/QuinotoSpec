@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Validate
+name: quinotospec-validate
 description: Ejecuta checks de validación del estado del sistema QuinotoSpec antes de ejecutar workflows críticos.
 ---
 
@@ -53,9 +53,9 @@ Ejecuta los siguientes checks en orden y reporta el resultado de cada uno con �
 ## Flags de Uso
 
 ```bash
-/validate --strict  # Detiene en cualquier fallo
-/validate --quick   # Solo checks básicos (discovery + prefix)
-/validate --full    # Todos los checks
+/quinotospec-validate --strict  # Detiene en cualquier fallo
+/quinotospec-validate --quick   # Solo checks básicos (discovery + prefix)
+/quinotospec-validate --full    # Todos los checks
 ```
 
 ## Checks Avanzados (modo full)

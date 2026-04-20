@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Swarm Task Splitter
+name: quinotospec-swarm-task-splitter
 description: Divide tareas masivas en chunks paralelizables para ejecución en paralelo
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Metrics
+name: quinotospec-metrics
 description: Calcula y reporta métricas de compliance y productividad del proyecto QuinotoSpec.
 ---
 

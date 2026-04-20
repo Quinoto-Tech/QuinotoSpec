@@ -160,8 +160,8 @@ Genera documentación del estado actual del proyecto.
 
 ```bash
 @quinotospec.discovery                          # Discovery completo (8 archivos)
-@quinotospec-stack-detect                       # Detectar stack tecnológico
-@quinOTOSpec.stack-discovery                    # Discovery multi-servicio
+@quinotospec.stack-detect                       # Detectar stack tecnológico
+@quinotospec.stack-discovery                    # Discovery multi-servicio
 @quinotospec.refresh-discovery                  # Actualizar solo archivos cambiados
 ```
 
@@ -215,7 +215,7 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | Workflow | Comando | Descripción |
 |----------|---------|-------------|
 | **Discovery** | `@quinotospec.discovery` | Genera 8 archivos de documentación del proyecto |
-| **Stack Detect** | `@quinotospec-stack-detect` | Identifica stack tecnológico (lenguajes, frameworks, tests) |
+| **Stack Detect** | `@quinotospec.stack-detect` | Identifica stack tecnológico (lenguajes, frameworks, tests) |
 | **Stack Discovery** | `@quinotospec.stack-discovery` | Discovery consolidado para proyectos multi-servicio |
 | **Refresh Discovery** | `@quinotospec.refresh-discovery` | Actualiza solo archivos de discovery afectados |
 | **Create Proposal** | `@quinotospec.create-proposal` | Crea propuesta técnica con prefijo secuencial |
@@ -309,7 +309,7 @@ Analiza patrones de trabajo y predice siguientes acciones.
 
 | Skill | Comando | Descripción |
 |-------|---------|-------------|
-| **Generate GitHub Branch** | `/generate-github-branch` | Crea branches con convención `feature/{TASK_ID}-descripcion` |
+| **Generate GitHub Branch** | `/quinotospec-generate-github-branch` | Crea branches con convención `feature/{TASK_ID}-descripcion` |
 | **File Creation** | `/quinotospec-file-creation` | Estandariza creación de archivos y scripts temporales |
 | **Stack Detect** | `/quinotospec-stack-detect` | Identifica stack desde archivos de configuración |
 | **Mark Done** | `/quinotospec-mark-done` | Marca tareas completadas y archiva artefactos |

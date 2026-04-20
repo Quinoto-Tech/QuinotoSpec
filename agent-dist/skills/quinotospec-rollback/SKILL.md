@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Rollback
+name: quinotospec-rollback
 description: Deshace cambios realizados por workflows de QuinotoSpec cuando la validación falla o el usuario lo solicita.
 ---
 
@@ -17,7 +17,7 @@ Usa esta skill para deshacer cambios realizados durante la ejecución de un work
 Deshace la última entrada del changelog.
 
 ```bash
-/rollback --type changelog
+/quinotospec-rollback --type changelog
 ```
 
 **Acciones**:
@@ -30,7 +30,7 @@ Deshace la última entrada del changelog.
 Deshace la creación de una propuesta completa.
 
 ```bash
-/rollback --type proposal --slug stripe-migration
+/quinotospec-rollback --type proposal --slug stripe-migration
 ```
 
 **Acciones**:
@@ -43,7 +43,7 @@ Deshace la creación de una propuesta completa.
 Deshace la creación de una user story.
 
 ```bash
-/rollback --type user-story --slug stripe-migration --us-id US-STRP-001
+/quinotospec-rollback --type user-story --slug stripe-migration --us-id US-STRP-001
 ```
 
 **Acciones**:
@@ -56,7 +56,7 @@ Deshace la creación de una user story.
 Deshace el marcado de una tarea como completada.
 
 ```bash
-/rollback --type task --slug stripe-migration --task-id TSK-STRP-001
+/quinotospec-rollback --type task --slug stripe-migration --task-id TSK-STRP-001
 ```
 
 **Acciones**:
@@ -69,7 +69,7 @@ Deshace el marcado de una tarea como completada.
 Deshace todo lo realizado en una sesión/fecha específica.
 
 ```bash
-/rollback --type full --since "2024-01-15"
+/quinotospec-rollback --type full --since "2024-01-15"
 ```
 
 **Acciones**:
@@ -99,13 +99,13 @@ Deshace todo lo realizado en una sesión/fecha específica.
 
 ```bash
 # Ver qué se revertirá sin hacer cambios
-/rollback --type proposal --slug auth-jwt --dry-run
+/quinotospec-rollback --type proposal --slug auth-jwt --dry-run
 
 # Revertir una propuesta
-/rollback --type proposal --slug auth-jwt --confirm
+/quinotospec-rollback --type proposal --slug auth-jwt --confirm
 
 # Rollback de múltiples tareas
-/rollback --type task --slug auth-jwt --task-id TSK-AUTH-001,TSK-AUTH-002 --confirm
+/quinotospec-rollback --type task --slug auth-jwt --task-id TSK-AUTH-001,TSK-AUTH-002 --confirm
 ```
 
 ## Validación Post-Rollback

@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Syntax Validate
+name: quinotospec-syntax-validate
 description: Valida la sintaxis y estructura de archivos QuinotoSpec antes de ejecutar workflows.
 ---
 
@@ -66,16 +66,16 @@ Verifica:
 
 ```bash
 # Validar una propuesta específica
-/syntax-validate --type proposal --slug auth-jwt
+/quinotospec-syntax-validate --type proposal --slug auth-jwt
 
 # Validar todas las propuestas
-/syntax-validate --type all
+/quinotospec-syntax-validate --type all
 
 # Validar solo changelog
-/syntax-validate --type changelog
+/quinotospec-syntax-validate --type changelog
 
 # Validación estricta (falla en warnings)
-/syntax-validate --strict
+/quinotospec-syntax-validate --strict
 ```
 
 ## Output

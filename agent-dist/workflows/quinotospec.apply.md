@@ -17,7 +17,7 @@ Antes de realizar cualquier cambio:
 
 **Instrucciones de Ejecución:**
 1. **Confirmación requerida**: Antes de crear un branch, pregunta al usuario si desea crear uno nuevo. Si el usuario no quiere crear un branch, omite este paso y continúa trabajando en la rama actual.
-2. Si el usuario confirma, crea un branch con el nombre `feature/{{TASK_ID}}-slug-descriptivo` en kebab-case (ej. `feature/US-ABC-001-add-login-endpoint`) usando la skill `generate-github-branch`.
+2. Si el usuario confirma, crea un branch con el nombre `feature/{{TASK_ID}}-slug-descriptivo` en kebab-case (ej. `feature/US-ABC-001-add-login-endpoint`) usando la skill `quinotospec-generate-github-branch`.
 3. Analiza el código actual y realiza los cambios necesarios para cumplir con la tarea descrita.
 3. **Verificación de Criterios de Aceptación (DoD)**: Antes de finalizar, revisa uno a uno los criterios de aceptación definidos en la tarea/historia y confirma que cada uno está cumplido. Si alguno no está cubierto, impleméntalo o documenta la excepción.
 4. **Ejecuta los tests del stack**: Usa el comando de tests detectado en `01-stack-profile.md` (ej. `npm test`, `pytest`, `bundle exec rspec`) y verifica que no haya regresiones. Si los tests fallan, corrígelos antes de continuar.

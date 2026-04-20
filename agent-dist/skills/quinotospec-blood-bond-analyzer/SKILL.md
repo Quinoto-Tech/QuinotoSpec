@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Blood-Bond Analyzer
+name: quinotospec-blood-bond-analyzer
 description: Analiza patrones históricos del desarrollador para Blood-Bond
 ---
 

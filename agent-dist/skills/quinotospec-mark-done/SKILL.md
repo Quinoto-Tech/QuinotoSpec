@@ -1,5 +1,5 @@
 ---
-name: Mark Done
+name: quinotospec-mark-done
 description: Automatiza el marcado de tareas como completadas, actualizando archivos de seguimiento y moviendo artefactos completados a la carpeta _archived/.
 ---
 
@@ -43,7 +43,7 @@ Ejecuta la skill `quinotospec-update-changelog` con:
 Usa `--bulk` o `-b` para marcar múltiples tareas a la vez:
 
 ```bash
-/mark-done TSK-AUTH-001,TSK-AUTH-002,TSK-AUTH-003 --bulk
+/quinotospec-mark-done TSK-AUTH-001,TSK-AUTH-002,TSK-AUTH-003 --bulk
 ```
 
 #### Paso 1 — Procesar lista de tareas
@@ -70,7 +70,7 @@ Después de procesar todas las tareas:
 Usa `--force` para mover a archive aunque no esté 100% completo:
 
 ```bash
-/mark-done US-AUTH-001 --force
+/quinotospec-mark-done US-AUTH-001 --force
 ```
 
 ⚠️ **Advertencia**: Esto archivará el archivo de tareas aunque tenga tareas pendientes.

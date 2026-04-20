@@ -1,6 +1,5 @@
-```skill
 ---
-name: Onboard — Desarrollador
+name: quinotospec-onboard-developer
 description: Especificaciones para generar el documento de onboarding orientado a desarrolladores (frontend, backend o fullstack). Foco en setup técnico, arquitectura, código y flujo de trabajo.
 ---
 
@@ -67,4 +66,3 @@ Incluir siempre esta sección para desarrolladores:
 - Visión de producto o roadmap de negocio (no es relevante para el día 1).
 - Detalle de CI/CD más allá de cómo correr tests localmente.
 - Información de soporte o tickets.
-```

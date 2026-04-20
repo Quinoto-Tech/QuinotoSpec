@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Stack Detect
+name: quinotospec-stack-detect
 description: Identifies the project's technology stack (language, frameworks, test runners, etc.) by analyzing key configuration files.
 ---
 

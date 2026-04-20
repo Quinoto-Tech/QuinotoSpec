@@ -164,7 +164,7 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 | `quinotospec-update-changelog` | Escribir en changelog |
 | `quinotospec-mark-done` | Completar tareas y archivar |
 | `quinotospec-rules-enforce` | Bloquear workflows que violen reglas |
-| `generate-github-branch` | Crear branches con nombres correctos |
+| `quinotospec-generate-github-branch` | Crear branches con nombres correctos |
 
 ---
 

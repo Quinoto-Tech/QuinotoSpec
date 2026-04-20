@@ -1,5 +1,5 @@
 ---
-name: Generate GitHub Branch
+name: quinotospec-generate-github-branch
 description: Crea un nuevo branch feature siguiendo la convención de nombrado del sistema QuinotoSpec.
 ---
 

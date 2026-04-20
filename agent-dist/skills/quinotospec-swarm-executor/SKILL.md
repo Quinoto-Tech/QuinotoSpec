@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Swarm Executor
+name: quinotospec-swarm-executor
 description: Ejecuta múltiples subagentes en paralelo para tareas masivas
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Blood-Bond Predictor
+name: quinotospec-blood-bond-predictor
 description: Genera predicciones proactivas basándose en análisis de Blood-Bond
 ---
 

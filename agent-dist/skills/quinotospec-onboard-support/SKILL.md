@@ -1,6 +1,5 @@
-```skill
 ---
-name: Onboard — Soporte
+name: quinotospec-onboard-support
 description: Especificaciones para generar el documento de onboarding orientado a equipos de soporte técnico, help desk o atención al cliente técnica. Foco en comportamiento observable del sistema, endpoints relevantes, servicios externos e identificación de puntos de falla comunes.
 ---
 
@@ -74,4 +73,3 @@ Incluir siempre esta sección para soporte, generándola a partir de lo que se p
 - Arquitectura interna detallada o patrones de diseño.
 - Acuerdos del equipo de desarrollo (DoR/DoD).
 - Detalles de implementación de modelos de datos más allá de los campos identificadores.
-```

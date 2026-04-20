@@ -1,6 +1,5 @@
-```skill
 ---
-name: Onboard — Simple (Explicación Clara)
+name: quinotospec-onboard-simple
 description: Especificaciones para generar el documento de onboarding en lenguaje extremadamente simple, sin jerga técnica, con analogías cotidianas y paso a paso. Para personas que se incorporan a un equipo de tecnología sin background técnico previo.
 ---
 
@@ -84,4 +83,3 @@ El documento debe comenzar con esta introducción antes de cualquier sección:
 - Siglas sin definición.
 - Más de 3 niveles de anidamiento en listas.
 - Cualquier bloque de código que no sea absolutamente esencial.
-```

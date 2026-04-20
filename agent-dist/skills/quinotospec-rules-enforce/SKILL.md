@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Rules Enforce
+name: quinotospec-rules-enforce
 description: Ejecuta y hace cumplir las reglas definidas en quinotospec-rules.md. Detiene workflows que violen las reglas.
 ---
 

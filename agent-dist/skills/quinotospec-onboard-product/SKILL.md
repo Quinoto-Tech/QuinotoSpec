@@ -1,6 +1,5 @@
-```skill
 ---
-name: Onboard — Producto / Negocio
+name: quinotospec-onboard-product
 description: Especificaciones para generar el documento de onboarding orientado a perfiles de producto, negocio o management. Foco en qué hace el sistema, por qué, para quién y en qué estado está el roadmap.
 ---
 
@@ -72,4 +71,3 @@ Incluir siempre esta sección para perfiles de producto, ubicada después de "Es
 - Detalles de implementación técnica.
 - Modelos de datos, endpoints o arquitectura de software.
 - Referencias a skills o workflows del agente (salvo `@quinotospec.status` que es de lectura pura).
-```

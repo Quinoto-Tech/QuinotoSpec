@@ -1,6 +1,5 @@
-```skill
 ---
-name: Onboard — General
+name: quinotospec-onboard-general
 description: Especificaciones para generar el documento de onboarding en modo General. Audiencia mixta, cobertura equilibrada de todas las áreas del proyecto.
 ---
 
@@ -51,4 +50,3 @@ Generar esta lista adaptada al contexto real del proyecto:
 - Scripts de migración o seeds.
 - Configuración avanzada de CI/CD.
 - Detalles de vulnerabilidades de seguridad.
-```

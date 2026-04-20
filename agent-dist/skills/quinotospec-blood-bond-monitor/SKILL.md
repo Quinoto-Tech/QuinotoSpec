@@ -1,5 +1,5 @@
 ---
-name: Quinotospec Blood-Bond Monitor
+name: quinotospec-blood-bond-monitor
 description: Detecta inactividad y activa Blood-Bond proactivamente
 ---
 
