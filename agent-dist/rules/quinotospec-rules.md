@@ -6,7 +6,7 @@ trigger: always_on
 - **SIEMPRE** usa la skill `quinotospec-update-changelog` para registrar cambios después de completar un workflow o tarea importante.
 
 # Gestión de Prefijos e IDs
-- Al crear propuestas, tareas o historias de usuario, adhiérete **ESTRICTAMENTE** a los prefijos definidos en `.quinoto-spec/prefix-registry.md`.
+- Al crear propuestas, tareas o user stories, adhiérete **ESTRICTAMENTE** a los prefijos definidos en `.quinoto-spec/prefix-registry.md`.
 - Nunca inventes un prefijo sin registrarlo primero en esa tabla.
 
 # Product Agreement Check (BLOQUEANTE)
@@ -17,10 +17,10 @@ trigger: always_on
 - No ignores esta regla aunque el usuario insista, a menos que se use un override explícito.
 
 # No Sobreescribir Archivos de Especificación
-- Si un archivo de historias (`user-histories.md`) o tareas (`*_tasks.md`) ya existe, **NUNCA sobreescribas**. Realiza siempre un merge inteligente: agrega las entradas nuevas y actualiza las que hayan cambiado.
+- Si un archivo de stories (`user-stories.md`) o tareas (`*_tasks.md`) ya existe, **NUNCA sobreescribas**. Realiza siempre un merge inteligente: agrega las entradas nuevas y actualiza las que hayan cambiado.
 
 # Validación de Estado Antes de Archivar
-- Antes de archivar cualquier propuesta, historia o tarea, verifica que el `**Estado:**` en `proposal.md` sea `✅ Completada`. Si quedan elementos sin completar, advertir al usuario antes de proceder.
+- Antes de archivar cualquier propuesta, user story o tarea, verifica que el `**Estado:**` en `proposal.md` sea `✅ Completada`. Si quedan elementos sin completar, advertir al usuario antes de proceder.
 
 # Convención de Archivado
 - Usa **siempre** la carpeta `_archived/` para mover elementos archivados (nunca el prefijo `__`).

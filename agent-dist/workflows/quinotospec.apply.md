@@ -60,7 +60,7 @@ Después de completar una tarea y ejecutar `quinotospec-mark-done`, DEBES buscar
 
 3. **Formula la sugerencia**:
    - Si hay una siguiente tarea: *"¿Deseas continuar con la tarea `{{NEXT_TASK_ID}}` — {{NEXT_TASK_TITLE}}?"*
-   - Si no hay más tareas en esa historia: *"No hay más tareas pendientes en esta historia. ¿Deseas continuar con otra historia de usuario de la propuesta?"*
+   - Si no hay más tareas en esa story: *"No hay más tareas pendientes en esta story. ¿Deseas continuar con otra user story de la propuesta?"*
    - Si todas las tareas de la propuesta están completas: *"¡Felicidades! Todas las tareas de la propuesta '{{PROPOSAL_SLUG}}' han sido completadas."*
 
 **Nota**: Si el archivo de tareas no existe o no se puede determinar la siguiente tarea, omite esta sugerencia silenciosamente.

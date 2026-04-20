@@ -29,7 +29,7 @@ Usa esta skill para verificar cumplimiento de reglas antes de ejecutar acciones 
 
 ### 4. No Sobreescribir Specs
 
-- **Verificación**: Al escribir en archivos `user-histories.md` o `*_tasks.md`
+- **Verificación**: Al escribir en archivos `user-stories.md` o `*_tasks.md`
 - **Check**: ¿El archivo ya existe?
 - **Acción si falla**: Usar merge inteligente, nunca overwrite
 

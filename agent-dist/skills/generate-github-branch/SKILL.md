@@ -5,7 +5,7 @@ description: Crea un nuevo branch feature siguiendo la convención de nombrado d
 
 # Skill: Generate GitHub Branch
 
-Usa esta skill para crear un branch de Git vinculado a una tarea técnica (`TSK-XXX`) o historia de usuario (`US-XXX`).
+Usa esta skill para crear un branch de Git vinculado a una tarea técnica (`TSK-XXX`) o user story (`US-XXX`).
 
 **IMPORTANTE**: Antes de ejecutar esta skill, DEBES confirmar con el usuario que está de acuerdo en crear un nuevo branch. Si el usuario no confirma, no ejecutes la skill.
 

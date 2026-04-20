@@ -38,9 +38,9 @@ Deshace la creación de una propuesta completa.
 2. Elimina el prefijo del `prefix-registry.md`
 3. Ejecuta rollback de changelog
 
-### 3. Rollback de Historia de Usuario
+### 3. Rollback de User Story
 
-Deshace la creación de una historia de usuario.
+Deshace la creación de una user story.
 
 ```bash
 /rollback --type user-story --slug stripe-migration --us-id US-STRP-001
@@ -48,7 +48,7 @@ Deshace la creación de una historia de usuario.
 
 **Acciones**:
 1. Elimina `{{US_ID}}_tasks.md`
-2. Elimina la entrada en `user-histories.md`
+2. Elimina la entrada en `user-stories.md`
 3. Ejecuta rollback de changelog
 
 ### 4. Rollback de Tarea
@@ -83,7 +83,7 @@ Deshace todo lo realizado en una sesión/fecha específica.
 |------|-------------|
 | `--type` | Tipo: `changelog`, `proposal`, `user-story`, `task`, `full` |
 | `--slug` | Slug de la propuesta |
-| `--us-id` | ID de la historia de usuario |
+| `--us-id` | ID de la user story |
 | `--task-id` | ID de la tarea |
 | `--since` | Fecha para rollback full |
 | `--dry-run` | Mostrar qué se revertirá sin hacer cambios |

@@ -25,11 +25,11 @@ Usa esta skill cuando el usuario indica que una tarea técnica (`TSK-XXX`) ha si
   2. Ve al Paso 3.
 - Si aún quedan tareas pendientes, ir directo al Paso 4.
 
-#### Paso 3 — Verificar completitud de la Historia de Usuario
+#### Paso 3 — Verificar completitud de la User Story
 
-- Busca el `{{US_ID}}` correspondiente en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md`.
-- Si **todas las historias de usuario de la propuesta están completadas**:
-  1. Mueve `user-histories.md` a `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/_archived/user-histories.md`.
+- Busca el `{{US_ID}}` correspondiente en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-stories.md`.
+- Si **todas las user stories de la propuesta están completadas**:
+  1. Mueve `user-stories.md` a `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/_archived/user-stories.md`.
   2. Actualiza el `**Estado:**` en `proposal.md` a `✅ Completada`.
 
 #### Paso 4 — Registrar en el Changelog

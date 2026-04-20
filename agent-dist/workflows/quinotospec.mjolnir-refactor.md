@@ -65,15 +65,15 @@ Una vez completado, ejecuta `quinotospec-update-changelog`:
 
 ---
 
-## Paso 4 — Generación de Historias de Usuario
+## Paso 4 — Generación de User Stories
 
 > Actualiza `ultimo_paso_completado: 3` en el `.yml` al iniciar este paso.
 
-Ejecuta el workflow `quinotospec.create-user-histories` sobre la propuesta generada en el paso 3, completando así el ciclo: propuesta → historias → listo para `create-tasks`.
+Ejecuta el workflow `quinotospec.create-user-stories` sobre la propuesta generada en el paso 3, completando así el ciclo: propuesta → stories → listo para `create-tasks`.
 
 Una vez completado, ejecuta `quinotospec-update-changelog`:
-- **Título**: Mjolnir User Histories: {nombre}
-- **Resumen**: Historias de usuario generadas para el refactor del módulo '{nombre}'.
+- **Título**: Mjolnir User Stories: {nombre}
+- **Resumen**: User stories generadas para el refactor del módulo '{nombre}'.
 
 ---
 

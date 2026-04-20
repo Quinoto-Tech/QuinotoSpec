@@ -32,7 +32,7 @@ Con base en la unión de `base-config.yml` y `sprint-config.yml`:
 
 - Lee `PROJECT_STATUS.md` si existe.
 - Escanea `.quinoto-spec/proposals/` para identificar todas las propuestas activas y su porcentaje de completitud.
-- Para cada propuesta activa, lista las historias de usuario pendientes y sus tareas con prioridad y estimación.
+- Para cada propuesta activa, lista las user stories pendientes y sus tareas con prioridad y estimación.
 
 ---
 

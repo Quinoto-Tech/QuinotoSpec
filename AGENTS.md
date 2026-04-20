@@ -45,7 +45,7 @@ cat .quinoto-spec/discovery/00-stack-profile.md
 
 ### Principios Fundamentales
 - **Proposal First**: Siempre crear una propuesta técnica antes de escribir código
-- **Context Slicing**: Discovery → Propuesta → Historias de Usuario → Tareas
+- **Context Slicing**: Discovery → Propuesta → User Stories → Tareas
 - **Nunca editar archivos de especificación manualmente**: Usar skills como `quinotospec-update-changelog`
 - **Toda edición del agente debe registrarse**: Después de cualquier cambio significativo, ejecutar `/quinotospec-update-changelog` para documentar la acción en el historial
 
@@ -73,7 +73,7 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 ```
 1. Discovery (/quinotospec.discovery)           → Entender contexto del proyecto
 2. Propuesta (/quinotospec.create-proposal)     → Definir solución técnica
-3. Historias de Usuario (/quinotospec.create-user-histories) → Desglosar en historias de valor
+3. User Stories (/quinotospec.create-user-stories) → Desglosar en stories de valor
 4. Tareas (/quinotospec.create-tasks)           → Convertir en tareas atómicas
 5. Aplicar (/quinotospec.apply)                → Implementar tarea
 6. Marcar Completado (/quinotospec-mark-done)   → Actualizar specs y archivar
@@ -117,7 +117,7 @@ Una vez ejecutado el `/quinotospec.discovery`, los 8 archivos en `.quinoto-spec/
 │   └── 07-product-and-agreements.md  # DoR/DoD, visión de producto
 ├── proposals/{DATE}-{slug}/       # Propuestas técnicas
 │   ├── proposal.md
-│   ├── user-histories.md
+│   ├── user-stories.md
 │   ├── {US_ID}_tasks.md
 │   └── _archived/
 ├── prefix-registry.md            # Seguimiento de prefijos

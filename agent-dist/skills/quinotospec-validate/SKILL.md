@@ -61,7 +61,7 @@ Ejecuta los siguientes checks en orden y reporta el resultado de cada uno con �
 ##进阶 Checks (modo full)
 
 ### 9. Consistencia de Tareas
-- ✅ Cada US en user-histories.md tiene archivo de tareas correspondiente.
+- ✅ Cada US en user-stories.md tiene archivo de tareas correspondiente.
 - ✅ No hay orphan tasks (tasks sin US padre).
 
 ### 10. Sprint Consistency

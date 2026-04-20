@@ -23,7 +23,7 @@ Verifica:
 - Estado inválido (no es 🟢, 🔴, ✅)
 - Falta prefijo en registry
 
-### 2. User Stories (.quinoto-spec/proposals/{slug}/user-histories.md)
+### 2. User Stories (.quinoto-spec/proposals/{slug}/user-stories.md)
 
 Verifica:
 - ✅ Cada US tiene formato `## US-XXX-NN: Título`

@@ -15,7 +15,7 @@ Este workflow toma una propuesta centralizada (normalmente generada desde un `st
 1. Lee `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-plan.md` para identificar qué tareas de la propuesta `{{PROPOSAL_SLUG}}` han sido asignadas a este sprint y a qué **Componente** (sub-proyecto) pertenecen.
 2. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md` y extrae:
     - `**Servicios Afectados:**` → lista de sub-proyectos destino.
-3. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md` y agrupa las historias por la columna que coincida con el **Componente** (o `Servicio`).
+3. Lee `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-stories.md` y agrupa las user stories por la columna que coincida con el **Componente** (o `Servicio`).
 4. Lee todos los archivos `*_tasks.md` de la propuesta y agrupa las tareas por su columna **Componente** (o `Servicio`), filtrando solo aquellas que están presentes en el `sprint-plan.md`.
 
 ---
@@ -38,7 +38,7 @@ Para cada sub-proyecto destino, crear la siguiente estructura dentro de `<servic
 Estos archivos se distribuyen **sin modificación**, haciendo copy-paste directo del original:
 
 - `proposal.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md`
-- `user-histories.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-histories.md`
+- `user-stories.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-stories.md`
 - `all_tasks.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/all_tasks.md` (si existe)
 - Cada archivo `*_tasks.md` → copia literal de `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{US_ID}}_tasks.md`
 
