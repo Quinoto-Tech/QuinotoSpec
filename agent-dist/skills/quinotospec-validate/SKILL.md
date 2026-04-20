@@ -13,8 +13,8 @@ Ejecuta los siguientes checks en orden y reporta el resultado de cada uno con �
 
 ### 1. Discovery
 - ✅ La carpeta `.quinoto-spec/discovery/` existe.
-- ✅ Están presentes los 8 archivos esperados: `00-stack-profile.md`, `01-overview.md`, `02-architecture.md`, `03-endpoints-and-openapi.md`, `04-data-and-services.md`, `05-devops-ci-security.md`, `06-findings-and-recommendations.md`, `07-product-and-agreements.md`.
-- ✅ `07-product-and-agreements.md` tiene contenido más allá de los encabezados (DoR/DoD definidos).
+- ✅ Están presentes los 8 archivos esperados: `01-stack-profile.md`, `02-overview.md`, `03-architecture.md`, `04-endpoints-and-openapi.md`, `05-data-and-services.md`, `06-devops-ci-security.md`, `07-findings-and-recommendations.md`, `08-product-and-agreements.md`.
+- ✅ `08-product-and-agreements.md` tiene contenido más allá de los encabezados (DoR/DoD definidos).
 
 ### 2. Prefix Registry
 - ✅ El archivo `.quinoto-spec/prefix-registry.md` existe.
@@ -48,7 +48,7 @@ Ejecuta los siguientes checks en orden y reporta el resultado de cada uno con �
 
 - Si **todos los checks pasan** → reportar `✅ Sistema válido. Puedes continuar.`
 - Si **algún check falla** → reportar los checks fallidos con su causa y sugerir la acción correctiva antes de continuar.
-- El agente que invoca esta skill **decide si detener o continuar** según el contexto. Para workflows bloqueantes (como `create-proposal`), un fallo en el check de `07-product-and-agreements.md` debe detener la ejecución.
+- El agente que invoca esta skill **decide si detener o continuar** según el contexto. Para workflows bloqueantes (como `create-proposal`), un fallo en el check de `08-product-and-agreements.md` debe detener la ejecución.
 
 ## Flags de Uso
 
@@ -58,7 +58,7 @@ Ejecuta los siguientes checks en orden y reporta el resultado de cada uno con �
 /validate --full    # Todos los checks
 ```
 
-##进阶 Checks (modo full)
+## Checks Avanzados (modo full)
 
 ### 9. Consistencia de Tareas
 - ✅ Cada US en user-stories.md tiene archivo de tareas correspondiente.

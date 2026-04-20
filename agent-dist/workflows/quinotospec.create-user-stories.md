@@ -11,7 +11,7 @@ Requiere que la propuesta (`proposal.md`) ya haya sido creada.
 **Instrucciones:**
 1. Lee el archivo `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md`.
 2. **Validación previa**: Verifica que el `**Estado:**` de la propuesta NO sea `Archivada`. Si lo es, notifica al usuario y detén el proceso.
-3. **Inferencia de roles**: Identifica los roles involucrados a partir del contenido de la propuesta y de `00-stack-profile.md` en el discovery (ej. usuario, admin, sistema, operador). Úsalos en las stories en lugar de `[rol]` genérico.
+3. **Inferencia de roles**: Identifica los roles involucrados a partir del contenido de la propuesta y de `01-stack-profile.md` en el discovery (ej. usuario, admin, sistema, operador). Úsalos en las stories en lugar de `[rol]` genérico.
 4. **Cantidad de stories**: Genera una story por cada funcionalidad o cambio sustancial de la propuesta. Ordénalas según las fases del **Plan de Implementación** definido en la propuesta.
 5. **Merge inteligente**: Si `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-stories.md` ya existe, **no sobreescribas**. Revisa las stories existentes y realiza un merge: agrega solo las stories nuevas y actualiza las que hayan cambiado.
 6. Genera el archivo en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-stories.md` con el siguiente formato:

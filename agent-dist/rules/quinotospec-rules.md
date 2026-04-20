@@ -11,9 +11,9 @@ trigger: always_on
 
 # Product Agreement Check (BLOQUEANTE)
 - **ANTES** de ejecutar cualquier workflow de creación de propuestas (ej. `quinotospec.create-proposal`):
-    - Verifica el archivo `.quinoto-spec/discovery/07-product-and-agreements.md`.
+    - Verifica el archivo `.quinoto-spec/discovery/08-product-and-agreements.md`.
     - SI el archivo contiene solo los títulos/placeholders originales o está vacío → **DETÉN LA EJECUCIÓN**.
-    - **Notifica al usuario**: "No puedo crear la propuesta porque no se han definido los Acuerdos de Producto (DoR/DoD) en `.quinoto-spec/discovery/07-product-and-agreements.md`. Por favor complétalo primero."
+    - **Notifica al usuario**: "No puedo crear la propuesta porque no se han definido los Acuerdos de Producto (DoR/DoD) en `.quinoto-spec/discovery/08-product-and-agreements.md`. Por favor complétalo primero."
 - No ignores esta regla aunque el usuario insista, a menos que se use un override explícito.
 
 # No Sobreescribir Archivos de Especificación

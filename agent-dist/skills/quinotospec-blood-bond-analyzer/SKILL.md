@@ -18,7 +18,7 @@ Lee los siguientes archivos para construir el análisis:
 | Proposals | `.quinoto-spec/proposals/*/proposal.md` |
 | User Stories | `.quinoto-spec/proposals/*/user-stories.md` |
 | Tasks | `.quinoto-spec/proposals/*/*_tasks.md` |
-| Discovery | `.quinoto-spec/discovery/00-stack-profile.md` |
+| Discovery | `.quinoto-spec/discovery/01-stack-profile.md` |
 
 ## Patrones a Detectar
 

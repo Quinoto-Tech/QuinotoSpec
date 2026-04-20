@@ -182,10 +182,10 @@ Defines the high-level solution.
 Breaks down the proposal into value requirements.
 
 ```bash
-@quinotospec.create-user-histories --slug {SLUG}
+@quinotospec.create-user-stories --slug {SLUG}
 ```
 
-**Output**: `.quinoto-spec/proposals/{slug}/user-histories.md`
+**Output**: `.quinoto-spec/proposals/{slug}/user-stories.md`
 
 ### 4. Generate Technical Tasks
 
@@ -219,7 +219,7 @@ Actions: Reads context → Confirms branch → Implements → Runs tests → Upd
 | **Stack Discovery** | `@quinotospec.stack-discovery` | Consolidated discovery for multi-service projects |
 | **Refresh Discovery** | `@quinotospec.refresh-discovery` | Updates only affected discovery files |
 | **Create Proposal** | `@quinotospec.create-proposal` | Creates technical proposal with sequential prefix |
-| **Create User Stories** | `@quinotospec.create-user-histories` | Generates user stories from proposal |
+| **Create User Stories** | `@quinotospec.create-user-stories` | Generates user stories from proposal |
 | **Create Tasks** | `@quinotospec.create-tasks` | Generates technical tasks from user stories |
 | **Apply** | `@quinotospec.apply` | Implements a specific technical task |
 | **Review** | `@quinotospec.review` | Reviews branch/PR against acceptance criteria |
@@ -363,17 +363,18 @@ Analyzes work patterns and predicts next actions.
 
 ## Rules
 
-QuinotoSpec enforces 7 strict rules (defined in `agent-dist/rules/quinotospec-rules.md`):
+QuinotoSpec enforces 8 strict rules (defined in `agent-dist/rules/quinotospec-rules.md`):
 
 | # | Rule | Description |
 |---|------|-------------|
 | 1 | **Changelog** | Never edit manually. Always use `quinotospec-update-changelog` |
 | 2 | **Prefixes & IDs** | All work must be tracked under a prefix registered in `prefix-registry.md` |
-| 3 | **Product Agreements** | Blocking: check `07-product-and-agreements.md` before creating proposals |
-| 4 | **No Overwrite** | Never overwrite `user-histories.md` or `*_tasks.md`. Use smart merge |
+| 3 | **Product Agreements** | Blocking: check `08-product-and-agreements.md` before creating proposals |
+| 4 | **No Overwrite** | Never overwrite `user-stories.md` or `*_tasks.md`. Use smart merge |
 | 5 | **Archive Validation** | Verify `Status: Completed` before archiving |
 | 6 | **Archive Convention** | Use `_archived/` folder, never `__` prefix |
-| 7 | **Critical Config** | Never modify `base-config.yml`, `sprint-config.yml`, or `mjolnir-refactor.yml` without approval |
+| 7 | **Branch Naming** | Always use format `feature/{{TASK_ID}}-description-in-kebab-case` |
+| 8 | **Critical Config** | Never modify `base-config.yml`, `sprint-config.yml`, or `mjolnir-refactor.yml` without approval |
 
 ---
 
@@ -385,18 +386,18 @@ After running `@quinotospec.discovery`:
 .your-project/
 ├── .quinoto-spec/
 │   ├── discovery/                    # 8 documentation files
-│   │   ├── 00-stack-profile.md
-│   │   ├── 01-overview.md
-│   │   ├── 02-architecture.md
-│   │   ├── 03-endpoints-and-openapi.md
-│   │   ├── 04-data-and-services.md
-│   │   ├── 05-devops-ci-security.md
-│   │   ├── 06-findings-and-recommendations.md
-│   │   └── 07-product-and-agreements.md
+│   │   ├── 01-stack-profile.md
+│   │   ├── 02-overview.md
+│   │   ├── 03-architecture.md
+│   │   ├── 04-endpoints-and-openapi.md
+│   │   ├── 05-data-and-services.md
+│   │   ├── 06-devops-ci-security.md
+│   │   ├── 07-findings-and-recommendations.md
+│   │   └── 08-product-and-agreements.md
 │   ├── proposals/                    # Technical proposals
 │   │   └── 2024-04-15-auth-jwt/
 │   │       ├── proposal.md
-│   │       ├── user-histories.md
+│   │       ├── user-stories.md
 │   │       ├── US-AUTH-001_tasks.md
 │   │       └── _archived/
 │   ├── sprints/                      # Planning
@@ -422,11 +423,11 @@ After running `@quinotospec.discovery`:
 
 | File | Purpose |
 |------|---------|
-| `00-stack-profile.md` | Detected tech stack |
-| `07-product-and-agreements.md` | Team DoR/DoD |
+| `01-stack-profile.md` | Detected tech stack |
+| `08-product-and-agreements.md` | Team DoR/DoD |
 | `prefix-registry.md` | Prefix registry (`AUTH`, `PAY`, `USER`) |
 | `proposal.md` | Technical proposal |
-| `user-histories.md` | User stories |
+| `user-stories.md` | User stories |
 | `*_tasks.md` | Technical tasks |
 
 ### File Flow

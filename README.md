@@ -182,10 +182,10 @@ Define la solución a alto nivel.
 Desglosa la propuesta en requerimientos de valor.
 
 ```bash
-@quinotospec.create-user-histories --slug {SLUG}
+@quinotospec.create-user-stories --slug {SLUG}
 ```
 
-**Output**: `.quinoto-spec/proposals/{slug}/user-histories.md`
+**Output**: `.quinoto-spec/proposals/{slug}/user-stories.md`
 
 ### 4. Generar Tareas Técnicas
 
@@ -219,7 +219,7 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | **Stack Discovery** | `@quinotospec.stack-discovery` | Discovery consolidado para proyectos multi-servicio |
 | **Refresh Discovery** | `@quinotospec.refresh-discovery` | Actualiza solo archivos de discovery afectados |
 | **Create Proposal** | `@quinotospec.create-proposal` | Crea propuesta técnica con prefijo secuencial |
-| **Create User Histories** | `@quinotospec.create-user-histories` | Genera historias de usuario desde propuesta |
+| **Create User Stories** | `@quinotospec.create-user-stories` | Genera historias de usuario desde propuesta |
 | **Create Tasks** | `@quinotospec.create-tasks` | Genera tareas técnicas desde historias de usuario |
 | **Apply** | `@quinotospec.apply` | Implementa una tarea técnica específica |
 | **Review** | `@quinotospec.review` | Revisa branch/PR contra criterios de aceptación |
@@ -363,17 +363,18 @@ Analiza patrones de trabajo y predice siguientes acciones.
 
 ## Reglas
 
-QuinotoSpec impone 7 reglas estrictas (definidas en `agent-dist/rules/quinotospec-rules.md`):
+QuinotoSpec impone 8 reglas estrictas (definidas en `agent-dist/rules/quinotospec-rules.md`):
 
 | # | Regla | Descripción |
 |---|-------|-------------|
 | 1 | **Changelog** | Nunca editar manualmente. Usar siempre `quinotospec-update-changelog` |
 | 2 | **Prefijos e IDs** | Todo trabajo debe estar trazado bajo un prefijo registrado en `prefix-registry.md` |
-| 3 | **Acuerdos de Producto** | Bloqueante: verificar `07-product-and-agreements.md` antes de crear propuestas |
-| 4 | **No Sobreescribir** | Nunca sobreescribir `user-histories.md` o `*_tasks.md`. Usar merge inteligente |
+| 3 | **Acuerdos de Producto** | Bloqueante: verificar `08-product-and-agreements.md` antes de crear propuestas |
+| 4 | **No Sobreescribir** | Nunca sobreescribir `user-stories.md` o `*_tasks.md`. Usar merge inteligente |
 | 5 | **Validación de Archive** | Verificar `Estado: Completada` antes de archivar |
 | 6 | **Convención de Archivado** | Usar carpeta `_archived/`, nunca prefijo `__` |
-| 7 | **Config Crítica** | Nunca modificar `base-config.yml`, `sprint-config.yml` o `mjolnir-refactor.yml` sin aprobación |
+| 7 | **Nombrado de Branches** | Siempre usar formato `feature/{{TASK_ID}}-descripcion-en-kebab-case` |
+| 8 | **Config Crítica** | Nunca modificar `base-config.yml`, `sprint-config.yml` o `mjolnir-refactor.yml` sin aprobación |
 
 ---
 
@@ -385,18 +386,18 @@ Después de ejecutar `@quinotospec.discovery`:
 .tu-proyecto/
 ├── .quinoto-spec/
 │   ├── discovery/                    # 8 archivos de documentación
-│   │   ├── 00-stack-profile.md
-│   │   ├── 01-overview.md
-│   │   ├── 02-architecture.md
-│   │   ├── 03-endpoints-and-openapi.md
-│   │   ├── 04-data-and-services.md
-│   │   ├── 05-devops-ci-security.md
-│   │   ├── 06-findings-and-recommendations.md
-│   │   └── 07-product-and-agreements.md
+│   │   ├── 01-stack-profile.md
+│   │   ├── 02-overview.md
+│   │   ├── 03-architecture.md
+│   │   ├── 04-endpoints-and-openapi.md
+│   │   ├── 05-data-and-services.md
+│   │   ├── 06-devops-ci-security.md
+│   │   ├── 07-findings-and-recommendations.md
+│   │   └── 08-product-and-agreements.md
 │   ├── proposals/                    # Propuestas técnicas
 │   │   └── 2024-04-15-auth-jwt/
 │   │       ├── proposal.md
-│   │       ├── user-histories.md
+│   │       ├── user-stories.md
 │   │       ├── US-AUTH-001_tasks.md
 │   │       └── _archived/
 │   ├── sprints/                      # Planificación
@@ -422,11 +423,11 @@ Después de ejecutar `@quinotospec.discovery`:
 
 | Archivo | Propósito |
 |---------|-----------|
-| `00-stack-profile.md` | Stack tecnológico detectado |
-| `07-product-and-agreements.md` | DoR/DoD del equipo |
+| `01-stack-profile.md` | Stack tecnológico detectado |
+| `08-product-and-agreements.md` | DoR/DoD del equipo |
 | `prefix-registry.md` | Registro de prefijos (`AUTH`, `PAY`, `USER`) |
 | `proposal.md` | Propuesta técnica |
-| `user-histories.md` | Historias de usuario |
+| `user-stories.md` | Historias de usuario |
 | `*_tasks.md` | Tareas técnicas |
 
 ### Flujo de Archivos

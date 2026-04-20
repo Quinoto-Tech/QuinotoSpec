@@ -41,7 +41,7 @@ Una vez confirmado, ejecuta `quinotospec-update-changelog`:
 
 1. **Mapa de impacto previo al discovery**: Antes de analizar el módulo, identificar qué otros módulos, archivos o servicios del proyecto **importan o dependen** del módulo a refactorizar. Documentar este mapa en `.quinoto-spec/{nombre}/00-impact-map.md`.
 2. Realiza un discovery completo del módulo actual siguiendo las mismas instrucciones del workflow `quinotospec.discovery`, pero guarda todos los archivos en `.quinoto-spec/{nombre}/` en lugar de `.quinoto-spec/discovery/`.
-3. El archivo `07-product-and-agreements.md` debe generarse con contenido real y relevante para el contexto del refactor (no dejarlo vacío).
+3. El archivo `08-product-and-agreements.md` debe generarse con contenido real y relevante para el contexto del refactor (no dejarlo vacío).
 
 Una vez completado, ejecuta `quinotospec-update-changelog`:
 - **Título**: Mjolnir Discovery: {nombre}
@@ -57,7 +57,7 @@ Una vez completado, ejecuta `quinotospec-update-changelog`:
 2. Ejecuta el workflow `quinotospec.create-proposal` usando como contexto:
     - Los archivos del discovery generados en `.quinoto-spec/{nombre}/`.
     - Los datos del `.yml` como `PROPOSAL_DESCRIPTION`.
-    - El archivo `07-product-and-agreements.md` generado en el paso 2 debe ser la base para la sección **Alineación con Producto y Acuerdos** de la propuesta.
+    - El archivo `08-product-and-agreements.md` generado en el paso 2 debe ser la base para la sección **Alineación con Producto y Acuerdos** de la propuesta.
 
 Una vez completado, ejecuta `quinotospec-update-changelog`:
 - **Título**: Mjolnir Proposal: {nombre}

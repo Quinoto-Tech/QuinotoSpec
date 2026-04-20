@@ -40,8 +40,8 @@ Adaptar al contexto real, pero respetar este orden:
 
 1. [ ] Clonar el repo y levantar el proyecto localmente (`[comando dev]`).
 2. [ ] Correr la suite de tests completa y verificar que pasen (`[comando test]`).
-3. [ ] Leer `02-architecture.md` para entender el mapa del código.
-4. [ ] Leer los DoD en `07-product-and-agreements.md` — aplican a cada tarea que cierres.
+3. [ ] Leer `03-architecture.md` para entender el mapa del código.
+4. [ ] Leer los DoD en `08-product-and-agreements.md` — aplican a cada tarea que cierres.
 5. [ ] Revisar la convención de branches: `feature/{{TASK_ID}}-descripcion-kebab-case`.
 6. [ ] Leer la propuesta activa de mayor prioridad — te da el "por qué" detrás del código que vas a tocar.
 7. [ ] Elegir una tarea `[ ]` pendiente de baja complejidad como primera contribución y ejecutar `@quinotospec.apply`.

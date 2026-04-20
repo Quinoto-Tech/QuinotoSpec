@@ -132,7 +132,7 @@ Genera `.quinoto-spec/blood-bond/suggestions.md`:
 
 ---
 
-*💡 Blood-Bond analiza tu historial para predecir qué necesitas接下来.*
+*💡 Blood-Bond analiza tu historial para predecir qué necesitas a continuación.*
 *Para re-generar: `@quinotospec.blood-bond --suggest`*
 ```
 

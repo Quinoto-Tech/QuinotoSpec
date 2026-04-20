@@ -78,9 +78,9 @@ Esperar la respuesta del usuario antes de continuar.
 1. Verificar que exista el directorio `.quinoto-spec/discovery/`. Si no existe → **detener ejecución** y notificar al usuario:
    > "No se encontró el directorio `.quinoto-spec/discovery/`. Ejecuta primero `@quinotospec.discovery` para generar el contexto del proyecto."
 
-2. Verificar que existan al mínimo los archivos `00-stack-profile.md` y `01-overview.md` dentro de `.quinoto-spec/discovery/`. Si falta alguno → advertir, pero continuar con lo disponible.
+2. Verificar que existan al mínimo los archivos `01-stack-profile.md` y `02-overview.md` dentro de `.quinoto-spec/discovery/`. Si falta alguno → advertir, pero continuar con lo disponible.
 
-3. Leer la `Discovery Date` en `00-stack-profile.md`. Si tiene más de 30 días de antigüedad → incluir advertencia visible en el documento generado:
+3. Leer la `Discovery Date` en `01-stack-profile.md`. Si tiene más de 30 días de antigüedad → incluir advertencia visible en el documento generado:
    > "⏰ **Advertencia**: El discovery tiene más de 30 días de antigüedad. Algunos datos pueden estar desactualizados. Considera ejecutar `@quinotospec.refresh-discovery`."
 
 ---
@@ -93,13 +93,13 @@ Leer los archivos de discovery disponibles. El skill del rol seleccionado indica
 
 | Archivo | Qué extraer |
 |---|---|
-| `00-stack-profile.md` | Lenguaje, frameworks, package manager, test runner, comandos de dev/build/test |
-| `01-overview.md` | Qué hace el proyecto, estructura de carpetas, pre-requisitos de entorno |
-| `02-architecture.md` | Descripción de arquitectura, componentes principales, patrones de diseño |
-| `03-endpoints-and-openapi.md` | Endpoints principales, autenticación |
-| `04-data-and-services.md` | Modelos de datos clave, servicios externos integrados |
-| `05-devops-ci-security.md` | Variables de entorno requeridas, pipeline CI/CD, comandos de despliegue |
-| `07-product-and-agreements.md` | DoR/DoD del equipo, visión de producto |
+| `01-stack-profile.md` | Lenguaje, frameworks, package manager, test runner, comandos de dev/build/test |
+| `02-overview.md` | Qué hace el proyecto, estructura de carpetas, pre-requisitos de entorno |
+| `03-architecture.md` | Descripción de arquitectura, componentes principales, patrones de diseño |
+| `04-endpoints-and-openapi.md` | Endpoints principales, autenticación |
+| `05-data-and-services.md` | Modelos de datos clave, servicios externos integrados |
+| `06-devops-ci-security.md` | Variables de entorno requeridas, pipeline CI/CD, comandos de despliegue |
+| `08-product-and-agreements.md` | DoR/DoD del equipo, visión de producto |
 
 **Fuentes de estado del proyecto:**
 
@@ -131,23 +131,23 @@ Estructura base del documento (el skill puede ampliar, reducir u omitir seccione
 
 > **Rol**: [ROL seleccionado]
 > **Generado**: [FECHA]
-> **Discovery base**: [Discovery Date del 00-stack-profile.md]
+> **Discovery base**: [Discovery Date del 01-stack-profile.md]
 
 ---
 
 ## 🗺️ ¿Qué es este proyecto?
 
-[Resumen ejecutivo de 3-5 oraciones extraído de 01-overview.md: qué hace el sistema, para quién, en qué lenguaje/plataforma corre.]
+[Resumen ejecutivo de 3-5 oraciones extraído de 02-overview.md: qué hace el sistema, para quién, en qué lenguaje/plataforma corre.]
 
 ---
 
 ## 🛠️ Cómo levantar el proyecto
 
 ### Pre-requisitos
-[Lista de herramientas, versiones y accesos necesarios, extraídos de 01-overview.md y 05-devops-ci-security.md]
+[Lista de herramientas, versiones y accesos necesarios, extraídos de 02-overview.md y 06-devops-ci-security.md]
 
 ### Variables de entorno requeridas
-[Lista de variables sensibles detectadas en 05-devops-ci-security.md. Indicar cuáles son obligatorias y dónde conseguirlas.]
+[Lista de variables sensibles detectadas en 06-devops-ci-security.md. Indicar cuáles son obligatorias y dónde conseguirlas.]
 
 ```bash
 # Copiar el archivo de ejemplo
@@ -174,7 +174,7 @@ cp .env.example .env
 
 ## 🏗️ Arquitectura del Sistema
 
-[Descripción de 2-4 párrafos extraída de 02-architecture.md: capas, módulos principales, patrón de diseño, responsabilidades.]
+[Descripción de 2-4 párrafos extraída de 03-architecture.md: capas, módulos principales, patrón de diseño, responsabilidades.]
 
 ### Componentes clave
 
@@ -182,13 +182,13 @@ cp .env.example .env
 |---|---|---|
 | [nombre] | [qué hace] | [tech] |
 
-[Incluir el diagrama Mermaid de 02-architecture.md si existe.]
+[Incluir el diagrama Mermaid de 03-architecture.md si existe.]
 
 ---
 
 ## 📡 Endpoints Principales
 
-[Tabla resumida con los endpoints más importantes de 03-endpoints-and-openapi.md. No más de 10 filas; priorizar los de uso más frecuente.]
+[Tabla resumida con los endpoints más importantes de 04-endpoints-and-openapi.md. No más de 10 filas; priorizar los de uso más frecuente.]
 
 | Método | Ruta | Descripción | Auth requerida |
 |---|---|---|---|
@@ -198,7 +198,7 @@ cp .env.example .env
 
 ## 🗄️ Modelos de Datos Clave
 
-[Descripción de los modelos/tablas/colecciones más importantes de 04-data-and-services.md. Máximo 5 modelos, con sus campos principales.]
+[Descripción de los modelos/tablas/colecciones más importantes de 05-data-and-services.md. Máximo 5 modelos, con sus campos principales.]
 
 ---
 
@@ -223,7 +223,7 @@ cp .env.example .env
 ## 📋 Acuerdos del Equipo
 
 ### Definition of Ready (DoR)
-[Extraído de 07-product-and-agreements.md. Si está vacío, indicar: "⚠️ El equipo aún no definió estos acuerdos. Ver `.quinoto-spec/discovery/07-product-and-agreements.md`".]
+[Extraído de 08-product-and-agreements.md. Si está vacío, indicar: "⚠️ El equipo aún no definió estos acuerdos. Ver `.quinoto-spec/discovery/08-product-and-agreements.md`".]
 
 ### Definition of Done (DoD)
 [Ídem DoR.]
@@ -246,7 +246,7 @@ cp .env.example .env
 
 1. [ ] Levantar el proyecto localmente y correr los tests (`[comando test]`).
 2. [ ] Leer la propuesta activa de mayor prioridad en `.quinoto-spec/proposals/`.
-3. [ ] Revisar los acuerdos del equipo en `.quinoto-spec/discovery/07-product-and-agreements.md`.
+3. [ ] Revisar los acuerdos del equipo en `.quinoto-spec/discovery/08-product-and-agreements.md`.
 4. [ ] Ejecutar `@quinotospec.status` para ver el dashboard del proyecto.
 5. [tareas adicionales basadas en el ROL y propuestas activas]
 
@@ -265,7 +265,7 @@ cp .env.example .env
 
 ---
 
-_Generado por `@quinotospec.onboard` · QuinotoSpec Berserker Edition_
+_Generado por `@quinotospec.onboard` · QuinotoSpec Possessed Edition_
 ```
 
 ---

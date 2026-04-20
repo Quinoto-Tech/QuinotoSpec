@@ -2,7 +2,7 @@
 description: crear una propuesta independiente
 ---
 
-Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `00-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `07-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global y **detectar posibles conflictos o solapamientos** de alcance (mismos archivos, dominios o flujos afectados); si detectas alguno, documéntalo al inicio de la propuesta bajo `**⚠️ Conflictos Detectados:**`.
+Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `01-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `08-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global y **detectar posibles conflictos o solapamientos** de alcance (mismos archivos, dominios o flujos afectados); si detectas alguno, documéntalo al inicio de la propuesta bajo `**⚠️ Conflictos Detectados:**`.
 El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
 PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
 PROPOSAL_SLUG: derivar de PROPOSAL_NAME en lowercase con palabras separadas por guión (ej. `rewards-stabilization`, `payment-timeout-fix`).

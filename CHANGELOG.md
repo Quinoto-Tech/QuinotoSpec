@@ -1,12 +1,12 @@
 # Changelog - QuinotoSpec
 
-Todas las cambios notables en el paquete QuinotoSpec serán documentados en este archivo.
+Todos los cambios notables en el paquete QuinotoSpec serán documentados en este archivo.
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [2.0.0] - 2026-04-15 - Berserker Edition
+## [2.0.0] - 2026-04-15 - Possessed Edition
 
 ### Resumen
 - Versión estable de producción con todas las features completadas
@@ -75,7 +75,7 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 - Estructura de `.quinoto-spec/` para proyectos objetivo
 - Workflow de Discovery (`@quinotospec.discovery`)
 - Workflow de Create Proposal (`@quinotospec.create-proposal`)
-- Workflow de Create User Stories (`@quinotospec.create-user-histories`)
+- Workflow de Create User Stories (`@quinotospec.create-user-stories`)
 - Workflow de Create Tasks (`@quinotospec.create-tasks`)
 - Workflow de Apply (`@quinotospec.apply`)
 - Skill de Update Changelog
@@ -94,9 +94,9 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 
 ## Versiones Futuras (Roadmap)
 
-### [2.1.0] - Posesion Edition (TBA)
-- **Battle Frenzy (Swarm Mode)**: Ejecución de múltiples agentes en paralelo
-- **Blood-Bond**: Predicción proactiva mejorada
+### [2.1.0] - Berserker Edition (TBA)
+- **Battle Frenzy (Swarm Mode)**: Mejoras en ejecución de múltiples agentes en paralelo
+- **Blood-Bond**: Predicción proactiva mejorada con métricas avanzadas
 
 ### [3.0.0] - Warband: Falange Edition (TBA)
 - **Class System**: Roles de agentes especializados (Scout, Skald, Blacksmith)

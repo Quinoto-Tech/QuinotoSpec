@@ -13,7 +13,7 @@ Este workflow guía al agente para realizar una revisión técnica de código an
 1. **Contexto de la revisión**:
     - Lee el archivo de tareas correspondiente al `{{TASK_ID}}` en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{US_ID}}_tasks.md`.
     - Lee la propuesta en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/proposal.md`, en especial las secciones de **Criterios de Aceptación (DoD)** y **Especificación Técnica Detallada**.
-    - Lee `00-stack-profile.md` para conocer los estándares de código del proyecto.
+    - Lee `01-stack-profile.md` para conocer los estándares de código del proyecto.
 
 2. **Análisis del branch**:
     - Obtén el diff del branch contra la rama base:
@@ -30,7 +30,7 @@ Este workflow guía al agente para realizar una revisión técnica de código an
 
     - [ ] **Criterios de Aceptación (DoD)**: ¿Cada criterio definido en la tarea está cubierto por el código?
     - [ ] **Cobertura de tests**: ¿Se agregaron tests para la lógica nueva? ¿Pasan correctamente?
-    - [ ] **Convenciones del stack**: ¿El código sigue los patrones detectados en `00-stack-profile.md`?
+    - [ ] **Convenciones del stack**: ¿El código sigue los patrones detectados en `01-stack-profile.md`?
     - [ ] **Archivos declarados**: ¿Los archivos modificados coinciden con los declarados en la columna "Archivos a Modificar" de la tarea?
     - [ ] **Sin regresiones**: ¿La suite de tests completa pasa sin errores?
     - [ ] **Sin deuda técnica obvia**: ¿No hay TODOs sin resolver, console.logs, o código comentado que no debería estar?

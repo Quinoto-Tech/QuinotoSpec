@@ -80,7 +80,7 @@ Usa `--force` para mover a archive aunque no esté 100% completo:
 - Si el archivo de tareas no existe → notificar: *"No se encontró el archivo de tareas para {{US_ID}} en la propuesta {{PROPOSAL_SLUG}}."*
 - Si el ID de tarea no existe en el archivo → notificar: *"El ID {{TSK_ID}} no fue encontrado en el archivo de tareas."*
 - Si `_archived/` no existe, créalo antes de mover archivos.
-- Si bulk y parcial falla → reportar qué tareas fallaron y cuáles succeedieron
+- Si bulk y parcial falla → reportar qué tareas fallaron y cuáles se completaron exitosamente
 
 ## Flags
 

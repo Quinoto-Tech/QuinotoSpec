@@ -39,7 +39,7 @@ Cualquier persona que necesite una visión completa del proyecto sin un foco té
 Generar esta lista adaptada al contexto real del proyecto:
 
 1. [ ] Levantar el proyecto localmente y correr los tests.
-2. [ ] Leer el `README.md` y la visión del producto en `07-product-and-agreements.md`.
+2. [ ] Leer el `README.md` y la visión del producto en `08-product-and-agreements.md`.
 3. [ ] Revisar el dashboard del proyecto con `@quinotospec.status`.
 4. [ ] Leer la propuesta activa de mayor prioridad en `.quinoto-spec/proposals/`.
 5. [ ] Conocer los acuerdos del equipo (DoR/DoD).

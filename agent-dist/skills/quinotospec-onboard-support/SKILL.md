@@ -52,11 +52,11 @@ Incluir siempre esta sección para soporte, generándola a partir de lo que se p
 
 | Servicio | Propósito | Síntoma de falla | Acción |
 |---|---|---|---|
-| [servicio detectado en 04-data-and-services.md] | [qué hace] | [cómo se manifiesta] | [escalar a / verificar] |
+| [servicio detectado en 05-data-and-services.md] | [qué hace] | [cómo se manifiesta] | [escalar a / verificar] |
 
 ### Variables de entorno críticas para producción
 
-[Listar de 05-devops-ci-security.md las variables más críticas cuya ausencia causa fallas catastróficas. No incluir valores, solo nombres y consecuencia de su ausencia.]
+[Listar de 06-devops-ci-security.md las variables más críticas cuya ausencia causa fallas catastróficas. No incluir valores, solo nombres y consecuencia de su ausencia.]
 ```
 
 ## Primeros Pasos — Plantilla para Soporte

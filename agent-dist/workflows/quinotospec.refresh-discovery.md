@@ -13,7 +13,7 @@ Este workflow detecta qué ha cambiado en el proyecto desde el último discovery
 
 ## Paso 1 — Verificar fecha del último discovery
 
-1. Lee `.quinoto-spec/discovery/00-stack-profile.md` y extrae el campo `**Discovery Date:**`.
+1. Lee `.quinoto-spec/discovery/01-stack-profile.md` y extrae el campo `**Discovery Date:**`.
 2. Calcula cuántos días han pasado desde esa fecha.
 3. Reporta: *"Último discovery: [fecha] ([N] días atrás)"*.
 
@@ -33,11 +33,11 @@ Clasifica los cambios por área de impacto:
 
 | Archivo modificado | Discovery afectado |
 | --- | --- |
-| `package.json`, `requirements.txt`, `go.mod`, etc. | `00-stack-profile.md` |
-| Archivos de rutas/controllers/views | `03-endpoints-and-openapi.md` |
-| Archivos de modelos/migrations/schemas | `04-data-and-services.md` |
-| `.github/workflows/`, `Dockerfile`, `.env.example` | `05-devops-ci-security.md` |
-| Cualquier archivo con bugs/refactors significativos | `06-findings-and-recommendations.md` |
+| `package.json`, `requirements.txt`, `go.mod`, etc. | `01-stack-profile.md` |
+| Archivos de rutas/controllers/views | `04-endpoints-and-openapi.md` |
+| Archivos de modelos/migrations/schemas | `05-data-and-services.md` |
+| `.github/workflows/`, `Dockerfile`, `.env.example` | `06-devops-ci-security.md` |
+| Cualquier archivo con bugs/refactors significativos | `07-findings-and-recommendations.md` |
 
 ---
 
@@ -47,7 +47,7 @@ Para cada archivo de discovery identificado como impactado:
 1. Leer el archivo actual de discovery.
 2. Analizar los cambios en el código fuente relacionados.
 3. Actualizar **solo las secciones afectadas** del archivo discovery, manteniendo el resto intacto.
-4. Actualizar el campo `**Discovery Date:**` al día de hoy en `00-stack-profile.md`.
+4. Actualizar el campo `**Discovery Date:**` al día de hoy en `01-stack-profile.md`.
 
 Si no hay cambios relevantes → reportar: *"No se detectaron cambios que requieran actualizar el discovery."*
 

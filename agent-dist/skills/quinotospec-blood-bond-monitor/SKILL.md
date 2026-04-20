@@ -5,7 +5,7 @@ description: Detecta inactividad y activa Blood-Bond proactivamente
 
 # Skill: Quinotospec Blood-Bond Monitor
 
-Monitorea la actividad del proyecto y detecta when el usuario needs a proaktif suggestion.
+Monitorea la actividad del proyecto y detecta cuándo el usuario necesita una sugerencia proactiva.
 
 ## Responsabilidad
 
@@ -41,7 +41,7 @@ ENTONCES: activo = true
 🩸 **Blood-Bond: Hey!** Hace {N} días que no hay actividad en el proyecto.
 
 Propuesta más reciente: {nombre}
-¿Querés que te sugiera qué hacer接下来?
+¿Querés que te sugiera qué hacer a continuación?
 
 {display 3 suggestions}
 ```

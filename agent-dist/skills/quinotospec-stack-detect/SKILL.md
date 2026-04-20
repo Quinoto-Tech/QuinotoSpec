@@ -32,7 +32,7 @@ Para detectar el stack técnico, busca y analiza los siguientes archivos en la r
 
 ## Formato de Salida Esperado
 
-Genera un resumen en formato Markdown (será guardado en `.quinoto-spec/discovery/00-stack-profile.md`) con la siguiente estructura:
+Genera un resumen en formato Markdown (será guardado en `.quinoto-spec/discovery/01-stack-profile.md`) con la siguiente estructura:
 
 ```markdown
 # 🛠️ Stack Profile: [Nombre del Proyecto]

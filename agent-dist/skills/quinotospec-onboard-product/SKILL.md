@@ -33,7 +33,7 @@ Product Managers, Product Owners, stakeholders de negocio, managers, analistas f
 | Acuerdos del Equipo (DoR/DoD) | Máximo | Este es el corazón del documento para este perfil. Explicar el DoR como "qué necesita estar listo para que el equipo pueda empezar a trabajar en algo" y el DoD como "qué condiciones deben cumplirse para considerar algo terminado". |
 | Actividad Reciente | Alto | Últimos 10 registros del changelog en lenguaje de negocio (el generador debe traducir los títulos técnicos al impacto funcional cuando sea posible). |
 | Primeros Pasos Sugeridos | Máximo | 6 pasos orientados a entender el contexto de producto y participar en el proceso. |
-| Recursos y Documentación | Medio | Solo los recursos relevantes para producto: `07-product-and-agreements.md`, `PROJECT_STATUS.md`, propuestas activas. Omitir referencias técnicas. |
+| Recursos y Documentación | Medio | Solo los recursos relevantes para producto: `08-product-and-agreements.md`, `PROJECT_STATUS.md`, propuestas activas. Omitir referencias técnicas. |
 
 ## Sección Extra: Roadmap y Valor Entregado
 
@@ -59,7 +59,7 @@ Incluir siempre esta sección para perfiles de producto, ubicada después de "Es
 
 ## Primeros Pasos — Plantilla para Producto/Negocio
 
-1. [ ] Leer la visión del producto en `.quinoto-spec/discovery/07-product-and-agreements.md`.
+1. [ ] Leer la visión del producto en `.quinoto-spec/discovery/08-product-and-agreements.md`.
 2. [ ] Revisar las propuestas activas en `.quinoto-spec/proposals/` para entender qué está en construcción.
 3. [ ] Ejecutar `@quinotospec.status` para ver el dashboard actualizado del estado del proyecto.
 4. [ ] Leer el DoR y DoD del equipo — son los acuerdos que hacen que el trabajo fluya correctamente.

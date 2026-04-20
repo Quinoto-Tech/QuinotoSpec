@@ -106,7 +106,7 @@ Escanear la estructura del proyecto para detectar áreas potenciales:
 - Justificación: {razón basada en complejidad del proyecto}
 
 **Tipo recomendado**: subagent
-- Justición: {razón basada en uso previsto}
+- Justificación: {razón basada en uso previsto}
 
 **Alternativas**:
 - Si necesitas visión multimodal: `opencode-go/mimo-v2-omni`
@@ -133,7 +133,7 @@ Ayudar al usuario a definir el agente preguntando:
    - Esperar confirmación o modificación
    - **SOLO DETENER** cuando el usuario exprese explícitamente que no quiere seguir editando, por ejemplo:
      - "ya está bien", "asÍ está bien", "listo", "no quiero más", "terminado", "ya no"
-   - Si el usuario no responde o да una respuesta abierta, continuar ofreciendo sugerencias
+    - Si el usuario no responde o da una respuesta abierta, continuar ofreciendo sugerencias
 
 4. **Plantilla de definición**:
    ```
@@ -161,21 +161,21 @@ Ayudar al usuario a definir el agente preguntando:
 
 Basado en el análisis, ofrecer sugerencias concretas:
 
-#### 3.1 Sugerencias por Área Detectada
+#### 4.1 Sugerencias por Área Detectada
 
 Para cada sub-módulo o capa detectada:
 - **Nombre sugerido**: `{nombre del área}`
 - **Responsabilidades**: Basadas en la estructura de archivos
 - **Convenciones**: Extraer naming patterns de archivos existentes
 
-#### 3.2 Sugerencias por Stack
+#### 4.2 Sugerencias por Stack
 
 - **Frontend**: Componentes, hooks, estilos
 - **Backend**: Controllers, services, models
 - **API**: Endpoints, schemas, validators
 - **Database**: Models, migrations, queries
 
-#### 3.3 Sugerencias por Integraciones
+#### 4.3 Sugerencias por Integraciones
 
 - APIs externas detectadas
 - Bases de datos usadas

@@ -4,7 +4,7 @@ description: Analiza patrones de trabajo y predice siguientes acciones proactiva
 
 # Blood-Bond: Sistema de Predicción Proactiva
 
-Blood-Bond analiza tu historial de trabajo y predice qué necesitas hacer接下来, sugiriendo proactivamente cuando detecta inactividad.
+Blood-Bond analiza tu historial de trabajo y predice qué necesitas hacer a continuación, sugiriendo proactivamente cuando detecta inactividad.
 
 ---
 

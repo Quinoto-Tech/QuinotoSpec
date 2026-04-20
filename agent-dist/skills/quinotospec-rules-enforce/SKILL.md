@@ -23,7 +23,7 @@ Usa esta skill para verificar cumplimiento de reglas antes de ejecutar acciones 
 
 ### 3. Product Agreement Check (BLOQUEANTE)
 
-- **Verificación**: Lee `.quinoto-spec/discovery/07-product-and-agreements.md`
+- **Verificación**: Lee `.quinoto-spec/discovery/08-product-and-agreements.md`
 - **Check**: ¿Tiene contenido más allá de headers?
 - **Acción si falla**: **DETENER** ejecución - no se puede proceder sin DoR/DoD
 

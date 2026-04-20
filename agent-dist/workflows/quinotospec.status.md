@@ -11,7 +11,7 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
     - Clasifica propuestas activas: 🟡 Propuesta, 🟢 En Curso, ✅ Completada.
     - Extrae prioridad y complejidad de cada `proposal.md`.
     - Registra el conteo total: activas vs archivadas.
-    - Lee `**Discovery Date:**` en `.quinoto-spec/discovery/00-stack-profile.md`. Si han pasado más de 30 días desde esa fecha → marcarlo como alerta en la sección `🚨 Alertas y Bloqueos` con el mensaje: *"⏰ El discovery tiene [N] días de antigüedad. Considera ejecutar `@quinotospec.refresh-discovery`."*
+    - Lee `**Discovery Date:**` en `.quinoto-spec/discovery/01-stack-profile.md`. Si han pasado más de 30 días desde esa fecha → marcarlo como alerta en la sección `🚨 Alertas y Bloqueos` con el mensaje: *"⏰ El discovery tiene [N] días de antigüedad. Considera ejecutar `@quinotospec.refresh-discovery`."*
 
 2. **Cálculo de Progreso y Velocidad**:
     - Para cada propuesta activa, busca archivos de tareas (`*_tasks.md`).
@@ -30,14 +30,14 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
 5. **Salud de la Metodología**:
     - Verifica la existencia y contenido de los siguientes artefactos:
         - ✅/❌ `.quinoto-spec/discovery/` existe y tiene los 8 archivos esperados.
-        - ✅/❌ `07-product-and-agreements.md` tiene contenido más allá de los encabezados.
+        - ✅/❌ `08-product-and-agreements.md` tiene contenido más allá de los encabezados.
         - ✅/❌ `.quinoto-spec/prefix-registry.md` está actualizado y sin duplicados.
 
 6. **Próximos Pasos Sugeridos** (Blood-Bond):
     - Invocar skill `quinotospec-blood-bond-analyzer --force`
     - Invocar skill `quinotospec-blood-bond-predictor --force`
     - Leer `.quinoto-spec/blood-bond/suggestions.md` y mostrar las sugerencias en la sección `⏭️ Próximos Pasos Sugeridos`
-    - Si `suggestions.md` no existe o proyecto está en cold start (< 5 entradas en changelog): fallback a предложения basadas en prioridad P1 y menor completitud
+    - Si `suggestions.md` no existe o proyecto está en cold start (< 5 entradas en changelog): fallback a sugerencias basadas en prioridad P1 y menor completitud
 
 7. **Generación del Dashboard**:
     - Crea o actualiza `PROJECT_STATUS.md` con las siguientes secciones en orden:

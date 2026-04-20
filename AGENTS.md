@@ -32,7 +32,7 @@ Dado que este es un **paquete de configuración de agentes** (no una aplicación
 ### Ejecutar Tests en Proyectos Objetivo
 ```bash
 # Leer el perfil de stack para encontrar el comando de test correcto
-cat .quinoto-spec/discovery/00-stack-profile.md
+cat .quinoto-spec/discovery/01-stack-profile.md
 
 # Patrones comunes: npm test, pytest, bundle exec rspec, go test ./..., cargo test
 ```
@@ -86,7 +86,7 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 
 ### Verificación de Acuerdo de Producto (BLOQUEANTE)
 Antes de `/quinotospec.create-proposal`:
-1. Verificar `.quinoto-spec/discovery/07-product-and-agreements.md`
+1. Verificar `.quinoto-spec/discovery/08-product-and-agreements.md`
 2. Si solo tiene placeholders o está vacío → DETENER y notificar al usuario para completar DoR/DoD
 
 ---
@@ -107,14 +107,14 @@ Una vez ejecutado el `/quinotospec.discovery`, los 8 archivos en `.quinoto-spec/
 ```
 .quinoto-spec/
 ├── discovery/                    # 8 archivos de especificación del proyecto
-│   ├── 00-stack-profile.md       # Stack tecnológico, frameworks, test runners
-│   ├── 01-overview.md            # Resumen ejecutivo, estructura de carpetas
-│   ├── 02-architecture.md       # Diagrama de arquitectura, patrones de diseño
-│   ├── 03-endpoints-and-openapi.md  # Endpoints REST/GraphQL, OpenAPI spec
-│   ├── 04-data-and-services.md   # Modelos de datos, servicios externos
-│   ├── 05-devops-ci-security.md  # CI/CD, auditoría de dependencias, seguridad
-│   ├── 06-findings-and-recommendations.md  # Deuda técnica, vulnerabilidades
-│   └── 07-product-and-agreements.md  # DoR/DoD, visión de producto
+│   ├── 01-stack-profile.md       # Stack tecnológico, frameworks, test runners
+│   ├── 02-overview.md            # Resumen ejecutivo, estructura de carpetas
+│   ├── 03-architecture.md       # Diagrama de arquitectura, patrones de diseño
+│   ├── 04-endpoints-and-openapi.md  # Endpoints REST/GraphQL, OpenAPI spec
+│   ├── 05-data-and-services.md   # Modelos de datos, servicios externos
+│   ├── 06-devops-ci-security.md  # CI/CD, auditoría de dependencias, seguridad
+│   ├── 07-findings-and-recommendations.md  # Deuda técnica, vulnerabilidades
+│   └── 08-product-and-agreements.md  # DoR/DoD, visión de producto
 ├── proposals/{DATE}-{slug}/       # Propuestas técnicas
 │   ├── proposal.md
 │   ├── user-stories.md

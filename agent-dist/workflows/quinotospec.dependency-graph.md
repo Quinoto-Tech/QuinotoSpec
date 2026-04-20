@@ -10,7 +10,7 @@ Este workflow analiza cómo los servicios del sistema se comunican entre sí, de
 
 ## Paso 1 — Inventario de servicios
 
-Escanea el root y lista todos los servicios con `/.quinoto-spec/discovery/`. Para cada uno, extrae de `03-endpoints-and-openapi.md` la lista de endpoints expuestos.
+Escanea el root y lista todos los servicios con `/.quinoto-spec/discovery/`. Para cada uno, extrae de `04-endpoints-and-openapi.md` la lista de endpoints expuestos.
 
 ---
 
@@ -29,7 +29,7 @@ Construye la tabla de dependencias:
 ## Paso 3 — Contract Drift Detection
 
 Para cada dependencia identificada en el paso anterior:
-1. Busca el endpoint consumido en el `03-endpoints-and-openapi.md` del servicio proveedor.
+1. Busca el endpoint consumido en el `04-endpoints-and-openapi.md` del servicio proveedor.
 2. Compara el contrato esperado (método, parámetros, respuesta) contra lo que el consumidor asume.
 3. Si hay discrepancia → marcar como `⚠️ CONTRACT DRIFT`.
 

@@ -53,7 +53,7 @@ Verifica:
 Verifica:
 - ✅ Cada archivo tiene `# Título` como H1
 - ✅ No está vacío (mínimo 100 caracteres)
-- ✅ Si es `07-product-and-agreements.md`, tiene contenido DoR/DoD
+- ✅ Si es `08-product-and-agreements.md`, tiene contenido DoR/DoD
 
 ### 6. Config Files (base-config.yml, sprint-config.yml)
 
