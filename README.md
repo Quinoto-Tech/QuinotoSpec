@@ -218,7 +218,7 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | **Stack Detect** | `@quinotospec.stack-detect` | Identifica stack tecnológico (lenguajes, frameworks, tests) |
 | **Stack Discovery** | `@quinotospec.stack-discovery` | Discovery consolidado para proyectos multi-servicio |
 | **Refresh Discovery** | `@quinotospec.refresh-discovery` | Actualiza solo archivos de discovery afectados |
-| **Create Proposal** | `@quinotospec.create-proposal` | Crea propuesta técnica con prefijo secuencial |
+| **Create Proposal** | `@quinotospec.create-proposal` | Crea propuesta técnica con prefijo único e idempotente |
 | **Create User Stories** | `@quinotospec.create-user-stories` | Genera historias de usuario desde propuesta |
 | **Create Tasks** | `@quinotospec.create-tasks` | Genera tareas técnicas desde historias de usuario |
 | **Apply** | `@quinotospec.apply` | Implementa una tarea técnica específica |
@@ -368,7 +368,7 @@ QuinotoSpec impone 8 reglas estrictas (definidas en `agent-dist/rules/quinotospe
 | # | Regla | Descripción |
 |---|-------|-------------|
 | 1 | **Changelog** | Nunca editar manualmente. Usar siempre `quinotospec-update-changelog` |
-| 2 | **Prefijos e IDs** | Todo trabajo debe estar trazado bajo un prefijo registrado en `prefix-registry.md` |
+| 2 | **Prefijos e IDs** | Todo trabajo debe estar trazado bajo un prefijo único (MNEMONICO-UUID, ej. `AUTH-a1b2`) registrado en `prefix-registry.md` |
 | 3 | **Acuerdos de Producto** | Bloqueante: verificar `08-product-and-agreements.md` antes de crear propuestas |
 | 4 | **No Sobreescribir** | Nunca sobreescribir `user-stories.md` o `*_tasks.md`. Usar merge inteligente |
 | 5 | **Validación de Archive** | Verificar `Estado: Completada` antes de archivar |

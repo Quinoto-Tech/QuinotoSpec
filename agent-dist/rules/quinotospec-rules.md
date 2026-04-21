@@ -6,8 +6,8 @@ trigger: always_on
 - **SIEMPRE** usa la skill `quinotospec-update-changelog` para registrar cambios después de completar un workflow o tarea importante.
 
 # Gestión de Prefijos e IDs
-- Al crear propuestas, tareas o user stories, adhiérete **ESTRICTAMENTE** a los prefijos definidos en `.quinoto-spec/prefix-registry.md`.
-- Nunca inventes un prefijo sin registrarlo primero en esa tabla.
+- Al crear propuestas, tareas o user stories, adhiérete **ESTRICTAMENTE** a los prefijos únicos definidos en `.quinoto-spec/prefix-registry.md` (formato `MNEMONICO-UUID`, ej. `AUTH-a1b2`).
+- Nunca inventes un prefijo sin registrarlo primero en esa tabla ni uses formatos que no garanticen la idempotencia.
 
 # Product Agreement Check (BLOQUEANTE)
 - **ANTES** de ejecutar cualquier workflow de creación de propuestas (ej. `quinotospec.create-proposal`):

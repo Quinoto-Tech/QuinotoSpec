@@ -80,9 +80,9 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 ```
 
 ### Regla del Registro de Prefijos
-- Cada propuesta necesita un prefijo mnemotécnico de 4 letras (ej. `AUTH`, `REWA`)
+- Cada propuesta necesita un prefijo único que combine un mnemónico de 4 letras + un sufijo de 4 caracteres (ej. `AUTH-a1b2`)
 - Registrar en `.quinoto-spec/prefix-registry.md`
-- NUNCA inventar prefijos que no estén en el registro
+- NUNCA inventar prefijos que no estén en el registro o que no sigan el formato de idempotencia
 
 ### Verificación de Acuerdo de Producto (BLOQUEANTE)
 Antes de `/quinotospec.create-proposal`:

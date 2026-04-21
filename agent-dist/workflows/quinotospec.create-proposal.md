@@ -62,9 +62,9 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG
 
 **Gestión de Prefijos (CRÍTICO):**
 1. Lee el archivo `.quinoto-spec/prefix-registry.md` si existe.
-2. Determina un prefijo de 4 letras que represente la propuesta (ej. `REWA` para Rewards, `AUTH` para Auth, `PAYF` para Payment Fix).
-   - Debe ser mnemotécnico y estar relacionado con el nombre de la propuesta.
-   - Si hay conflicto con un prefijo existente, añade una letra adicional para diferenciarlo (ej. `AUT2`).
+2. Determina un prefijo que combine un mnemónico de 4 letras + un sufijo único de 4 caracteres alfanuméricos (ej. `AUTH-a1b2`, `REWA-c3d4`, `PAYF-x9y0`).
+   - El mnemónico debe representar la propuesta (ej. `REWA` para Rewards).
+   - El sufijo garantiza la idempotencia y evita colisiones en entornos multi-usuario.
 3. Añade una nueva fila a la tabla en `.quinoto-spec/prefix-registry.md`: `| {{PREFIX}} | {{PROPOSAL_NAME}} | {{DATE}} |`.
 4. En el `proposal.md` generado, incluye una línea al inicio (después del título) que diga: `**Prefijo:** {{PREFIX}}`.
 
