@@ -114,16 +114,33 @@ chmod +x quinotospec-package/install.sh
 
 # Ejecutar (modo interactivo)
 ./quinotospec-package/install.sh
+
+# Instalación global (en ~/.config/)
+./quinotospec-package/install.sh --opencode --global
 ```
 
 El instalador pregunta la ruta de destino y el IDE:
 
 | Flag | IDE | Destino |
 |------|-----|---------|
-| `--opencode` | OpenCode | `.opencode/` |
-| `--cursor` | Cursor | `.cursor/` |
-| `--cline` | Cline | `.cline/` + `.clinerules/` |
+| `--opencode` | OpenCode | `.opencode/` o `~/.config/opencode/` (global) |
+| `--cursor` | Cursor | `.cursor/` o `~/.config/cursor/` (global) |
+| `--global`, `--root` | - | Instala en `~/.config/` ignorando el directorio del proyecto |
 | (default) | Genérico | `.agent/` |
+
+### Instalación Global
+
+Para instalar una vez y disponible en todos tus proyectos:
+
+```bash
+# OpenCode global
+./quinotospec-package/install.sh --opencode --global
+
+# Cursor global
+./quinotospec-package/install.sh --cursor --global
+```
+
+Esto crea la configuración en `~/.config/opencode/` o `~/.config/cursor/` según el IDE.
 
 ### Dependencias
 
@@ -235,6 +252,7 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | **Sprint Init** | `@quinotospec.sprints.init` | Inicializa estructura de sprints |
 | **Sprint Create** | `@quinotospec.sprint.create` | Crea un nuevo sprint con configuración |
 | **Sprint Plan** | `@quinotospec.sprint.plan` | Genera plan de sprint óptimo |
+| **Heimdallr** | `@quinotospec.heimdallr` | Análisis de amenazas STRIDE + DREAD con mitigaciones |
 
 ### Detalle de Workflows Especiales
 
@@ -300,6 +318,24 @@ Analiza patrones de trabajo y predice siguientes acciones.
 @quinotospec.onboard general      # Vista balanceada
 @quinotospec.onboard simple       # Lenguaje simple, sin jerga
 ```
+
+#### Heimdallr (Análisis de Amenazas)
+
+<div align="center">
+  <img src="Heimdallr.png" alt="Heimdallr" width="400" />
+</div>
+
+Ejecuta un análisis exhaustivo de seguridad usando metodología STRIDE + DREAD.
+
+```bash
+@quinotospec.heimdallr --system "Descripción del sistema"
+```
+
+**Salida:**
+- Matriz de riesgos priorizada (DREAD)
+- Identificación de activos críticos y límites de confianza
+- Detalle de amenazas críticas con mitigaciones accionables
+- Reporte guardado en `.quinoto-spec/threat-analysis/`
 
 ---
 

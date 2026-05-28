@@ -114,16 +114,33 @@ chmod +x quinotospec-package/install.sh
 
 # Run (interactive mode)
 ./quinotospec-package/install.sh
+
+# Global installation (in ~/.config/)
+./quinotospec-package/install.sh --opencode --global
 ```
 
 The installer prompts for destination path and IDE:
 
 | Flag | IDE | Destination |
 |------|-----|-------------|
-| `--opencode` | OpenCode | `.opencode/` |
-| `--cursor` | Cursor | `.cursor/` |
-| `--cline` | Cline | `.cline/` + `.clinerules/` |
+| `--opencode` | OpenCode | `.opencode/` or `~/.config/opencode/` (global) |
+| `--cursor` | Cursor | `.cursor/` or `~/.config/cursor/` (global) |
+| `--global`, `--root` | - | Install in `~/.config/`, ignoring project directory |
 | (default) | Generic | `.agent/` |
+
+### Global Installation
+
+Install once and available in all your projects:
+
+```bash
+# OpenCode global
+./quinotospec-package/install.sh --opencode --global
+
+# Cursor global
+./quinotospec-package/install.sh --cursor --global
+```
+
+This creates the config in `~/.config/opencode/` or `~/.config/cursor/` depending on the IDE.
 
 ### Dependencies
 
@@ -235,6 +252,7 @@ Actions: Reads context → Confirms branch → Implements → Runs tests → Upd
 | **Sprint Init** | `@quinotospec.sprints.init` | Initializes sprint structure |
 | **Sprint Create** | `@quinotospec.sprint.create` | Creates a new sprint with configuration |
 | **Sprint Plan** | `@quinotospec.sprint.plan` | Generates optimal sprint plan |
+| **Heimdallr** | `@quinotospec.heimdallr` | STRIDE + DREAD threat analysis with mitigations |
 
 ### Special Workflows Detail
 
@@ -300,6 +318,24 @@ Analyzes work patterns and predicts next actions.
 @quinotospec.onboard general       # Balanced view
 @quinotospec.onboard simple        # Simple language, no jargon
 ```
+
+#### Heimdallr (Threat Analysis)
+
+<div align="center">
+  <img src="Heimdallr.png" alt="Heimdallr" width="400" />
+</div>
+
+Executes exhaustive security analysis using STRIDE + DREAD methodology.
+
+```bash
+@quinotospec.heimdallr --system "System description"
+```
+
+**Output:**
+- Prioritized risk matrix (DREAD)
+- Critical assets and trust boundaries identification
+- Critical threats detail with actionable mitigations
+- Report saved in `.quinoto-spec/threat-analysis/`
 
 ---
 
