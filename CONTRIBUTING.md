@@ -40,7 +40,7 @@ Este proyecto adhiere a un código de conducta que esperamos que todos los contr
 
 Si encuentras un bug, por favor:
 
-1. **Verifica que no haya sido reportado** en [GitHub Issues](https://github.com/anomalyco/opencode/issues)
+1. **Verifica que no haya sido reportado** en [GitHub Issues](https://github.com/Quinoto-Tech/QuinotoSpec/issues)
 2. **Crea un nuevo issue** con:
    - Título descriptivo
    - Pasos para reproducir
@@ -86,7 +86,7 @@ git clone https://github.com/tu-usuario/quinotospec-package.git
 cd quinotospec-package
 
 # 2. Agrega el remote upstream
-git remote add upstream https://github.com/anomalyco/opencode.git
+git remote add upstream https://github.com/Quinoto-Tech/QuinotoSpec.git
 
 # 3. Crea un branch para tu contribución
 git checkout -b feature/TSK-CONTRIB-001-tu-contribucion
@@ -461,8 +461,8 @@ Normalmente revisamos PRs en 3-7 días hábiles. Los PRs grandes pueden tomar m�
 
 ## Contacto
 
-- **Issues**: [GitHub Issues](https://github.com/anomalyco/opencode/issues)
-- **Discusiones**: [GitHub Discussions](https://github.com/anomalyco/opencode/discussions)
+- **Issues**: [GitHub Issues](https://github.com/Quinoto-Tech/QuinotoSpec/issues)
+- **Discusiones**: [GitHub Discussions](https://github.com/Quinoto-Tech/QuinotoSpec/discussions)
 - **Email**: [team@quinotospec.dev](mailto:team@quinotospec.dev)
 
 ¡Gracias por contribuir a QuinotoSpec! 🪓

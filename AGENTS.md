@@ -70,14 +70,30 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 
 ## 3. Flujo de Trabajo QuinotoSpec
 
+### Ciclo Principal
 ```
-1. Discovery (/quinotospec.discovery)           → Entender contexto del proyecto
-2. Propuesta (/quinotospec.create-proposal)     → Definir solución técnica
-3. User Stories (/quinotospec.create-user-stories) → Desglosar en stories de valor
-4. Tareas (/quinotospec.create-tasks)           → Convertir en tareas atómicas
-5. Aplicar (/quinotospec.apply)                → Implementar tarea
-6. Marcar Completado (/quinotospec-mark-done)   → Actualizar specs y archivar
+1. Init (/quinotospec.init)                      → Inicializar estructura (nuevo proyecto)
+2. Discovery (/quinotospec.discovery)             → Entender contexto del proyecto
+3. Propuesta (/quinotospec.create-proposal)       → Definir solución técnica
+4. User Stories (/quinotospec.create-user-stories) → Desglosar en stories de valor
+5. Tareas (/quinotospec.create-tasks)             → Convertir en tareas atómicas
+6. Aplicar (/quinotospec.apply)                   → Implementar tarea
+7. Marcar Completado (/quinotospec-mark-done)     → Actualizar specs y archivar
 ```
+
+### Workflows Complementarios
+| Workflow | Propósito |
+|----------|-----------|
+| `/quinotospec.create-prd` | Product Requirements Document |
+| `/quinotospec.create-rfc` | RFC interactivo con proposal seed |
+| `/quinotospec.review` | Revisar branch/PR contra criterios |
+| `/quinotospec.archive` | Archivar propuestas completadas |
+| `/quinotospec.status` | Dashboard de proyecto |
+| `/quinotospec.pre-commit` | Check pre-commit (test + validate + rules) |
+| `/quinotospec.release` | Version bump, changelog, tagging |
+| `/quinotospec.retrospective` | Retrospectiva con métricas y patrones |
+| `/quinotospec.health` | Detectar archivos huérfanos e inconsistencias |
+| `/quinotospec.cleanup` | Limpiar branches stale y scripts temporales |
 
 ### Regla del Registro de Prefijos
 - Cada propuesta necesita un prefijo único que combine un mnemónico de 4 letras + un sufijo de 4 caracteres (ej. `AUTH-a1b2`)
@@ -154,8 +170,9 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 
 ---
 
-## 8. Referencia de Skills Clave
+## 8. Referencia de Skills
 
+### Skills Básicas
 | Skill | Propósito |
 |-------|-----------|
 | `quinotospec-stack-detect` | Identificar stack tecnológico desde archivos de configuración |
@@ -163,8 +180,45 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 | `quinotospec-syntax-validate` | Validar estructura de archivos spec |
 | `quinotospec-update-changelog` | Escribir en changelog |
 | `quinotospec-mark-done` | Completar tareas y archivar |
-| `quinotospec-rules-enforce` | Bloquear workflows que violen reglas |
 | `quinotospec-generate-github-branch` | Crear branches con nombres correctos |
+| `quinotospec-file-creation` | Estandarizar creación de archivos y scripts temporales |
+| `quinotospec-rollback` | Deshacer cambios de workflows fallidos |
+
+### Skills de Gobernanza
+| Skill | Propósito |
+|-------|-----------|
+| `quinotospec-rules-enforce` | Bloquear workflows que violen reglas |
+| `quinotospec-metrics` | Métricas de compliance y productividad |
+
+### Skills de Blood-Bond
+| Skill | Propósito |
+|-------|-----------|
+| `quinotospec-blood-bond-analyzer` | Analizar patrones históricos del desarrollador |
+| `quinotospec-blood-bond-monitor` | Detectar inactividad y activar predicción |
+| `quinotospec-blood-bond-predictor` | Generar predicciones proactivas |
+
+### Skills de Swarm (Battle Frenzy)
+| Skill | Propósito |
+|-------|-----------|
+| `quinotospec-swarm-executor` | Ejecutar múltiples subagentes en paralelo |
+| `quinotospec-swarm-task-splitter` | Dividir tareas masivas en chunks paralelizables |
+
+### Skills de Onboarding
+| Skill | Propósito |
+|-------|-----------|
+| `quinotospec-onboard-developer` | Onboarding orientado a desarrolladores |
+| `quinotospec-onboard-product` | Onboarding orientado a producto/negocio |
+| `quinotospec-onboard-support` | Onboarding orientado a soporte/help desk |
+| `quinotospec-onboard-general` | Onboarding con vista balanceada |
+| `quinotospec-onboard-simple` | Onboarding en lenguaje simple sin jerga |
+
+### Skills de Extensión
+| Skill | Propósito |
+|-------|-----------|
+| `quinotospec-pre-commit` | Check pre-commit (test + validate + rules) |
+| `quinotospec-suggest-next` | Sugerir siguiente tarea a ejecutar |
+| `quinotospec-conflict-detector` | Detectar conflictos entre propuestas activas |
+| `quinotospec-estimate` | Estimar complejidad de propuestas |
 
 ---
 

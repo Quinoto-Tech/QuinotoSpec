@@ -64,7 +64,7 @@ if [ -z "$IDE_CHOICE" ]; then
     echo "  1) OpenAI (default)"
     echo "  2) Cursor"
     echo "  3) OpenCode"
-    echo "  3) Cline"
+    echo "  4) Cline"
     echo ""
     echo -n "Enter your choice [1-4]: "
     read IDE_CHOICE
@@ -72,7 +72,8 @@ if [ -z "$IDE_CHOICE" ]; then
     case "$IDE_CHOICE" in
         1) IDE_CHOICE="openai" ;;
         2) IDE_CHOICE="cursor" ;;
-        3) IDE_CHOICE="cline" ;;
+        3) IDE_CHOICE="opencode" ;;
+        4) IDE_CHOICE="cline" ;;
         *) IDE_CHOICE="openai" ;;
     esac
 fi

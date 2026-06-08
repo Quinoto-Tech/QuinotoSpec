@@ -23,6 +23,7 @@
   - [5. Implementación](#5-implementación-apply)
 - [Workflows](#workflows)
 - [Skills](#skills)
+- [Mapa de Dependencias Skills ↔ Workflows](#mapa-de-dependencias-skills--workflows)
 - [Reglas](#reglas)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Solución de Problemas](#solución-de-problemas)
@@ -98,7 +99,7 @@ Cada cambio queda registrado en un changelog inmutable (regla #1: nunca editar m
 
 ### Gobernanza, no solo ejecución
 
-QuinotoSpec no es un archivo de prompts — es un **sistema de reglas**. 7 reglas estrictas que el agente debe cumplir, validables con `@quinotospec-validate` y `/quinotospec-rules-enforce`. Si un acuerdo de producto está vacío, el workflow se bloquea. Si un prefijo no está registrado, no se avanza.
+QuinotoSpec no es un archivo de prompts — es un **sistema de reglas**. 8 reglas estrictas que el agente debe cumplir, validables con `@quinotospec-validate` y `/quinotospec-rules-enforce`. Si un acuerdo de producto está vacío, el workflow se bloquea. Si un prefijo no está registrado, no se avanza.
 
 ### Funciona con tu agente, no en lugar de tu agente
 
@@ -148,8 +149,6 @@ Esto crea la configuración en `~/.config/opencode/` o `~/.config/cursor/` segú
 |-------------|-----------|-----------|
 | Bash 4.0+ | Sí | Ejecutar instalador |
 | Git | Sí | Control de versiones |
-| Python 3.8+ | Opcional | Skills avanzadas (pdfplumber) |
-| pip | Opcional | Paquetes Python |
 
 ---
 
@@ -236,6 +235,8 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | **Stack Discovery** | `@quinotospec.stack-discovery` | Discovery consolidado para proyectos multi-servicio |
 | **Refresh Discovery** | `@quinotospec.refresh-discovery` | Actualiza solo archivos de discovery afectados |
 | **Create Proposal** | `@quinotospec.create-proposal` | Crea propuesta técnica con prefijo único e idempotente |
+| **Create PRD** | `@quinotospec.create-prd` | Crea un Product Requirements Document |
+| **Create RFC** | `@quinotospec.create-rfc` | Crea un RFC interactivo con proposal seed (compatible con create-tasks) |
 | **Create User Stories** | `@quinotospec.create-user-stories` | Genera historias de usuario desde propuesta |
 | **Create Tasks** | `@quinotospec.create-tasks` | Genera tareas técnicas desde historias de usuario |
 | **Apply** | `@quinotospec.apply` | Implementa una tarea técnica específica |
@@ -253,6 +254,12 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | **Sprint Create** | `@quinotospec.sprint.create` | Crea un nuevo sprint con configuración |
 | **Sprint Plan** | `@quinotospec.sprint.plan` | Genera plan de sprint óptimo |
 | **Heimdallr** | `@quinotospec.heimdallr` | Análisis de amenazas STRIDE + DREAD con mitigaciones |
+| **Pre-commit** | `@quinotospec.pre-commit` | Check rápido pre-commit (tests + validate + rules) |
+| **Release** | `@quinotospec.release` | Automatiza version bump, consolidación de changelog y tagging |
+| **Init** | `@quinotospec.init` | Inicializa estructura `.quinoto-spec/` desde cero |
+| **Retrospective** | `@quinotospec.retrospective` | Retrospectiva con métricas y patrones de propuestas completadas |
+| **Health** | `@quinotospec.health` | Detecta archivos huérfanos e inconsistencias en `.quinoto-spec/` |
+| **Cleanup** | `@quinotospec.cleanup` | Limpia branches stale, scripts temporales y propuestas inactivas |
 
 ### Detalle de Workflows Especiales
 
@@ -386,6 +393,15 @@ Ejecuta un análisis exhaustivo de seguridad usando metodología STRIDE + DREAD.
 | **Onboard General** | Onboarding con vista balanceada |
 | **Onboard Simple** | Onboarding en lenguaje simple sin jerga |
 
+### Skills de Extensión
+
+| Skill | Comando | Descripción |
+|-------|---------|-------------|
+| **Pre-commit** | `/quinotospec-pre-commit` | Check rápido pre-commit (tests + validate + rules) |
+| **Suggest Next** | `/quinotospec-suggest-next` | Sugiere la siguiente tarea a ejecutar |
+| **Conflict Detector** | `/quinotospec-conflict-detector` | Detecta conflictos entre propuestas activas |
+| **Estimate** | `/quinotospec-estimate` | Estima complejidad de propuestas |
+
 ### Integración Recomendada
 
 ```bash
@@ -394,6 +410,46 @@ Ejecuta un análisis exhaustivo de seguridad usando metodología STRIDE + DREAD.
 @quinotospec-mark-done --task-id TSK-AUTH-001                       # Después de completar tarea
 @quinotospec-metrics --dashboard                                    # Métricas para retrospectives
 ```
+
+---
+
+---
+
+## Mapa de Dependencias Skills ↔ Workflows
+
+| Workflow | Skills que invoca |
+|----------|-------------------|
+| **discovery** | `stack-detect`, `update-changelog` |
+| **create-proposal** | `update-changelog` |
+| **create-prd** | `mark-done` |
+| **create-rfc** | *(ninguna)* |
+| **create-user-stories** | `update-changelog` |
+| **create-tasks** | `update-changelog` |
+| **apply** | `generate-github-branch`, `update-changelog`, `mark-done`, `blood-bond-monitor` |
+| **review** | `update-changelog` |
+| **archive** | `update-changelog` |
+| **status** | `blood-bond-analyzer`, `blood-bond-predictor`, `update-changelog` |
+| **onboard** | `onboard-{role}`, `update-changelog` |
+| **agent-train** | *(ninguna)* |
+| **blood-bond** | `blood-bond-analyzer`, `blood-bond-predictor` |
+| **battle-frenzy** | `swarm-task-splitter`, `swarm-executor` |
+| **mjolnir-refactor** | `update-changelog` |
+| **dependency-graph** | `update-changelog` |
+| **distribute** | `update-changelog` |
+| **refresh-discovery** | `update-changelog` |
+| **stack-discovery** | `update-changelog` |
+| **sprints.init** | *(ninguna)* |
+| **sprint.create** | *(ninguna)* |
+| **sprint.plan** | `update-changelog` |
+| **heimdallr** | `update-changelog`, `blood-bond-monitor` |
+| **pre-commit** | `syntax-validate`, `rules-enforce` |
+| **release** | `update-changelog` |
+| **init** | `update-changelog` |
+| **retrospective** | `update-changelog` |
+| **health** | `update-changelog` |
+| **cleanup** | `update-changelog` |
+
+La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 24 de 29 workflows la invocan para documentar sus acciones.
 
 ---
 
@@ -515,21 +571,23 @@ graph LR
 
 ## Roadmap
 
-**Possessed Edition (Actual)** — Estable / Producción
+**Possessed Edition (v2.0.0)** — Estable / Producción
 - ✅ Blood-Bond: Predicción proactiva
 - ✅ Battle Frenzy: Ejecución paralela
-
-**Berserker Edition** — Estable / Producción
 - ✅ Mjolnir Refactor: Reescritura de módulos
 - ✅ Code Review Workflow
 - ✅ Sprint Planning
 - ✅ Validate / Syntax Validate
 - ✅ Refresh Discovery / Dependency Graph
 - ✅ Agent Train
+- ✅ Create PRD / Create RFC
+- ✅ Pre-commit / Release / Init / Retrospective / Health / Cleanup
 
 **Warband: Falange (TBA)**
 - Class System: Roles especializados
 - Shield Wall: Testing defensivo
+- Integración con PMs externos (Jira, Linear, GitHub Issues)
+- JSON Schema para validación de propuestas y tasks
 
 **Warband: Hird (TBA)**
 - War Council: Resolución de conflictos

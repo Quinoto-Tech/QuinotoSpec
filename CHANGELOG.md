@@ -128,4 +128,4 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 - [Documentación Principal](README.md)
 - [Guía para Agentes](AGENTS.md)
 - [Licencia MIT](LICENSE)
-- [Repositorio GitHub](https://github.com/anomalyco/opencode)
+- [Repositorio GitHub](https://github.com/Quinoto-Tech/QuinotoSpec)
