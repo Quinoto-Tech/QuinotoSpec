@@ -55,6 +55,10 @@ The root cause is not the model — it is the **absence of a structured contract
 
 You're starting a project and want the agent to build on solid foundations from the very first line of code. You run `@quinotospec.discovery`, the agent maps the stack and generates 8 context files. From there, every proposal, story, and task stems from a documented, verifiable base — not assumptions.
 
+### From-scratch project with automatic scaffolding
+
+The directory is empty — not a single line of code. You run `@quinotospec.init`, the agent detects there's no project and launches an interactive wizard: language? framework? testing? database? You pick Python + FastAPI + Poetry + pytest + SQLite. The agent runs `poetry new`, installs dependencies, creates `.gitignore`, `README.md` and the `.quinoto-spec/` structure. Also accepts `--stack python:fastapi:poetry:pytest:sqlite` to skip the wizard entirely.
+
 ### Developer onboarding to the project
 
 A new team member needs to understand the codebase fast. `@quinotospec.onboard developer` generates a technical onboarding document: architecture, endpoints, tech debt, conventions. Productive in hours, not weeks.
@@ -256,7 +260,7 @@ Actions: Reads context → Confirms branch → Implements → Runs tests → Upd
 | **Heimdallr** | `@quinotospec.heimdallr` | STRIDE + DREAD threat analysis with mitigations |
 | **Pre-commit** | `@quinotospec.pre-commit` | Quick pre-commit check (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automates version bump, changelog consolidation, and tagging |
-| **Init** | `@quinotospec.init` | Initializes `.quinoto-spec/` structure from scratch |
+| **Init** | `@quinotospec.init` | Initializes `.quinoto-spec/` structure from scratch. If the project is empty, offers an interactive wizard to generate a scaffold with the desired stack |
 | **Retrospective** | `@quinotospec.retrospective` | Retrospective with metrics and patterns from completed proposals |
 | **Health** | `@quinotospec.health` | Detects orphan files and inconsistencies in `.quinoto-spec/` |
 | **Cleanup** | `@quinotospec.cleanup` | Cleans stale branches, temp scripts, and inactive proposals |
@@ -343,6 +347,24 @@ Executes exhaustive security analysis using STRIDE + DREAD methodology.
 - Critical assets and trust boundaries identification
 - Critical threats detail with actionable mitigations
 - Report saved in `.quinoto-spec/threat-analysis/`
+
+#### Init (Automatic Scaffold)
+
+In an empty project, `@quinotospec.init` detects no code and offers an interactive wizard to choose the stack:
+
+```bash
+@quinotospec.init                                   # Interactive wizard (empty project)
+@quinotospec.init --stack python:fastapi:poetry:pytest:sqlite  # Direct stack, no questions
+@quinotospec.init --no-scaffold                     # Only .quinoto-spec/ structure, no wizard
+@quinotospec.init --with-agents --stack rust:axum:cargo:stdlib:none  # Scaffold + AGENTS.md
+```
+
+**Automatic actions:**
+- Initializes the project with the chosen package manager
+- Installs framework, testing, and dependencies
+- Generates `.gitignore` and `README.md` adapted to the stack
+- Creates the base `.quinoto-spec/` structure
+- If the project already has code, skips the wizard and only creates `.quinoto-spec/`
 
 ---
 
