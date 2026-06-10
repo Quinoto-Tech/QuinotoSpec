@@ -2,6 +2,8 @@
 description: Flujo para generar una Propuesta de Refactor "Mjolnir" que reescribe módulos enteros bajo demanda.
 ---
 
+# Workflow: Mjolnir Refactor
+
 ## Datos requeridos para ejecutar el workflow
 
 El workflow debe ser invocado con los siguientes datos. **Si falta alguno, detener el proceso y solicitar al usuario antes de continuar.**

@@ -67,3 +67,83 @@ Ejecuta los siguientes checks en orden y reporta el resultado de cada uno con �
 ### 10. Sprint Consistency
 - ✅ Si hay sprints activos, las tareas asignadas existen.
 - ✅ No hay tareas duplicadas entre sprints.
+
+## Modo --fix (Correccion Automatica)
+
+Ejecuta con `--fix` para intentar corregir automaticamente los errores detectados:
+
+```bash
+/quinotospec-validate --full --fix
+```
+
+### Correcciones Automaticas Disponibles
+
+| Check | Correccion Automatica |
+|-------|----------------------|
+| Changelog vacio | Crea archivo con titulo `# QuinotoSpec Changelog` |
+| Prefix registry no existe | Crea archivo con estructura base |
+| `_archived/` no existe | Crea directorio en cada propuesta activa |
+| Discovery > 30 dias | Sugiere `@quinotospec.refresh-discovery` (no auto-fix) |
+| Orphan tasks | Reporta pero no corrige (requiere decision humana) |
+
+### Correcciones que Requieren Confirmacion
+
+- Crear archivos nuevos → Siempre pregunta antes
+- Mover archivos a `_archived/` → Requiere confirmacion explicita
+- Modificar estados en proposal.md → Requiere confirmacion
+
+## Output JSON
+
+Ejecuta con `--json` para obtener resultados en formato JSON (util para integracion con CI/CD):
+
+```bash
+/quinotospec-validate --full --json
+```
+
+### Formato de Output JSON
+
+```json
+{
+  "valid": false,
+  "timestamp": "2026-04-15T10:30:00Z",
+  "checks": {
+    "discovery": {
+      "status": "pass",
+      "details": "8/8 archivos presentes, DoR/DoD definidos"
+    },
+    "prefix_registry": {
+      "status": "fail",
+      "severity": "BLOCKING",
+      "details": "Archivo no encontrado",
+      "fix": "Ejecuta: touch .quinoto-spec/prefix-registry.md"
+    },
+    "changelog": {
+      "status": "pass",
+      "details": "15 entradas encontradas"
+    }
+  },
+  "summary": {
+    "total": 10,
+    "passed": 8,
+    "failed": 1,
+    "warnings": 1,
+    "blocking": 1
+  }
+}
+```
+
+## Check de Integridad (Checksums)
+
+En modo `--full`, verifica integridad de archivos criticos:
+
+1. Calcula checksum (md5) de archivos de especificacion
+2. Compara con checksums almacenados en `.quinoto-spec/.checksums` (si existe)
+3. Si un archivo fue modificado externamente (sin pasar por QuinotoSpec):
+   - Reporta: "⚠️ Archivo modificado externamente: proposal.md"
+   - Sugiere verificar si el cambio fue intencional
+4. Actualiza checksums despues de cada workflow exitoso
+
+Este check detecta:
+- Ediciones manuales de archivos de especificacion
+- Conflictos de merge no resueltos
+- Archivos corruptos o truncados

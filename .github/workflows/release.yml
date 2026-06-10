@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Run tests
+        run: ./tests/run-all-tests.sh
+
+      - name: Validate package
+        run: ./scripts/validate-all.sh
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          # Extract changelog section for this version
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | head -n -1 >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: QuinotoSpec v${{ steps.version.outputs.VERSION }}
+          body: |
+            ## QuinotoSpec v${{ steps.version.outputs.VERSION }}
+            
+            ${{ steps.notes.outputs.NOTES }}
+            
+            ---
+            
+            ### Installation
+            
+            ```bash
+            # Clone
+            git clone https://github.com/Quinoto-Tech/QuinotoSpec.git
+            cd QuinotoSpec
+            
+            # Install for your IDE
+            ./install.sh --opencode --global   # OpenCode
+            ./install.sh --cursor --global     # Cursor
+            ./install.sh --cline --global      # Cline
+            ```
+          draft: false
+          prerelease: false
+
+      - name: Create distribution archive
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          tar -czf "quinotospec-${VERSION}.tar.gz" \
+            agent-dist/ \
+            install.sh \
+            AGENTS.md \
+            README.md \
+            LICENSE \
+            CHANGELOG.md
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./quinotospec-${{ steps.version.outputs.VERSION }}.tar.gz
+          asset_name: quinotospec-${{ steps.version.outputs.VERSION }}.tar.gz
+          asset_content_type: application/gzip

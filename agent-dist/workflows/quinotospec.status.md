@@ -2,6 +2,8 @@
 description: Genera un Panel de Control (Dashboard) del estado del proyecto
 ---
 
+# Workflow: Status
+
 Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que resume el progreso global, las métricas de valor y el estado de las iniciativas.
 
 ### Instrucciones de Ejecución:

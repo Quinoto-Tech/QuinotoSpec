@@ -2,6 +2,8 @@
 description: Limpia branches stale, scripts temporales y propuestas inactivas. Modo dry-run por defecto — nunca borra sin confirmación.
 ---
 
+# Workflow: Cleanup
+
 Objetivo: eliminar artefactos acumulados que ya no son necesarios: branches mergeados, scripts temporales viejos y propuestas sin actividad.
 
 **Regla de seguridad**: este workflow NUNCA borra sin mostrar primero qué eliminará y pedir confirmación explícita. El modo por defecto es `--dry-run`.

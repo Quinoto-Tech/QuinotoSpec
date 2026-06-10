@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, 'release-*']
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run test suite
+        run: ./tests/run-all-tests.sh
+
+      - name: Validate all
+        run: ./scripts/validate-all.sh
+
+  lint-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check internal links
+        run: ./scripts/check-links.sh --internal-only
+
+      - name: Verify file conventions
+        run: |
+          echo "Checking workflow naming conventions..."
+          for f in agent-dist/workflows/*.md; do
+            filename=$(basename "$f")
+            if [[ ! "$filename" =~ ^quinotospec\..+\.md$ ]]; then
+              echo "ERROR: $filename doesn't follow quinotospec.<name>.md convention"
+              exit 1
+            fi
+          done
+          echo "All workflows follow naming convention"
+          
+          echo "Checking skill naming conventions..."
+          for d in agent-dist/skills/*/; do
+            dirname=$(basename "$d")
+            if [[ ! "$dirname" =~ ^quinotospec- ]]; then
+              echo "ERROR: $dirname doesn't follow quinotospec-<name> convention"
+              exit 1
+            fi
+          done
+          echo "All skills follow naming convention"
+
+  structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify directory structure
+        run: |
+          REQUIRED_DIRS="agent-dist/workflows agent-dist/skills agent-dist/rules agent-dist/agents agent-dist/templates tests scripts"
+          for dir in $REQUIRED_DIRS; do
+            if [ ! -d "$dir" ]; then
+              echo "ERROR: Required directory missing: $dir"
+              exit 1
+            fi
+          done
+          echo "All required directories present"
+
+      - name: Verify critical files
+        run: |
+          REQUIRED_FILES="install.sh AGENTS.md README.md LICENSE agent-dist/rules/quinotospec-rules.md"
+          for file in $REQUIRED_FILES; do
+            if [ ! -f "$file" ]; then
+              echo "ERROR: Required file missing: $file"
+              exit 1
+            fi
+          done
+          echo "All critical files present"

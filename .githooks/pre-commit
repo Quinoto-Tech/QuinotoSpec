@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Pre-commit hook: Validates syntax of modified files before commit
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+echo "Running pre-commit checks..."
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+ERRORS=0
+
+# Check modified workflow files
+WORKFLOW_FILES=$(echo "$STAGED_FILES" | grep "^agent-dist/workflows/.*\.md$" || true)
+if [ -n "$WORKFLOW_FILES" ]; then
+    echo "  Checking workflows..."
+    for file in $WORKFLOW_FILES; do
+        if [ -f "$file" ]; then
+            # Check frontmatter
+            first_line=$(head -n 1 "$file")
+            if [ "$first_line" != "---" ]; then
+                echo "    ERROR: $file missing frontmatter"
+                ERRORS=$((ERRORS + 1))
+            fi
+            # Check H1 heading
+            if ! grep -q "^# " "$file"; then
+                echo "    ERROR: $file missing H1 heading"
+                ERRORS=$((ERRORS + 1))
+            fi
+        fi
+    done
+fi
+
+# Check modified skill files
+SKILL_FILES=$(echo "$STAGED_FILES" | grep "^agent-dist/skills/.*/SKILL\.md$" || true)
+if [ -n "$SKILL_FILES" ]; then
+    echo "  Checking skills..."
+    for file in $SKILL_FILES; do
+        if [ -f "$file" ]; then
+            first_line=$(head -n 1 "$file")
+            if [ "$first_line" != "---" ]; then
+                echo "    ERROR: $file missing frontmatter"
+                ERRORS=$((ERRORS + 1))
+            fi
+            if ! grep -q "^name:" "$file"; then
+                echo "    ERROR: $file missing 'name' in frontmatter"
+                ERRORS=$((ERRORS + 1))
+            fi
+        fi
+    done
+fi
+
+# Check modified rules
+RULES_FILES=$(echo "$STAGED_FILES" | grep "^agent-dist/rules/.*\.md$" || true)
+if [ -n "$RULES_FILES" ]; then
+    echo "  Checking rules..."
+    for file in $RULES_FILES; do
+        if [ -f "$file" ]; then
+            first_line=$(head -n 1 "$file")
+            if [ "$first_line" != "---" ]; then
+                echo "    ERROR: $file missing frontmatter"
+                ERRORS=$((ERRORS + 1))
+            fi
+        fi
+    done
+fi
+
+# Check install.sh if modified
+if echo "$STAGED_FILES" | grep -q "^install\.sh$"; then
+    echo "  Checking install.sh..."
+    if ! bash -n "$PROJECT_ROOT/install.sh" 2>/dev/null; then
+        echo "    ERROR: install.sh has syntax errors"
+        ERRORS=$((ERRORS + 1))
+    fi
+fi
+
+if [ $ERRORS -gt 0 ]; then
+    echo ""
+    echo "Pre-commit check failed with $ERRORS errors"
+    echo "Fix the errors or use --no-verify to skip"
+    exit 1
+fi
+
+echo "Pre-commit checks passed"
+exit 0

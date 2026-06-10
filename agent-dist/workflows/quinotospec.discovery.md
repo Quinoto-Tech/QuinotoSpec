@@ -2,6 +2,8 @@
 description: Generar documentación de descubrimiento del proyecto en .quinoto-spec/discovery
 ---
 
+# Workflow: Discovery
+
 Explora el proyecto completo y genera 8 archivos Markdown independientes dentro de .quinoto-spec/discovery con los siguientes nombres EXACTOS (dentro del proyecto):
 - 01-stack-profile.md
 - 02-overview.md

@@ -2,6 +2,8 @@
 description: crea tareas a partir de user stories o desde un RFC (create-rfc)
 ---
 
+# Workflow: Create Tasks
+
 Este workflow genera un plan de tareas técnicas derivado de user stories.
 
 **Dos orígenes de contexto (usa uno u otro, no ambos):**

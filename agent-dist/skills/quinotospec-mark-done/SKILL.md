@@ -75,18 +75,52 @@ Usa `--force` para mover a archive aunque no esté 100% completo:
 
 ⚠️ **Advertencia**: Esto archivará el archivo de tareas aunque tenga tareas pendientes.
 
-## Manejo de Errores
+## Validacion Pre-Completion (Tests)
 
-- Si el archivo de tareas no existe → notificar: *"No se encontró el archivo de tareas para {{US_ID}} en la propuesta {{PROPOSAL_SLUG}}."*
-- Si el ID de tarea no existe en el archivo → notificar: *"El ID {{TSK_ID}} no fue encontrado en el archivo de tareas."*
-- Si `_archived/` no existe, créalo antes de mover archivos.
-- Si bulk y parcial falla → reportar qué tareas fallaron y cuáles se completaron exitosamente
+Antes de marcar una tarea como completada, verifica que los tests pasen:
+
+### Paso 0 - Ejecutar Tests del Stack
+
+1. Lee `01-stack-profile.md` para obtener el comando de tests del proyecto
+2. Ejecuta los tests relacionados con la tarea:
+   - Si la tarea modifico archivos especificos, ejecuta tests que cubren esos archivos
+   - Si no se puede determinar scope, ejecuta suite completa
+3. Evalua resultados:
+   - **Todos pasan** -> Continua con Paso 1 normalmente
+   - **Algunos fallan** -> **DETEN** el proceso y reporta:
+     ```
+     X No se puede marcar TSK-AUTH-001 como completada: 3 tests fallando
+     - test_login_success: Expected 200, got 500
+     - test_token_validation: AssertionError
+     Corrige los tests o usa --skip-tests si es un falso positivo.
+     ```
+   - **No hay tests** -> Advierte pero permite continuar:
+     ```
+     ! No se detectaron tests para esta tarea. Se recomienda agregar tests.
+     ? Continuar sin tests? [y/N]
+     ```
+
+### Excepciones
+
+- Usa `--skip-tests` para saltar la validacion (solo con confirmacion del usuario)
+- Si el proyecto no tiene tests configurados, omite este check automaticamente
+- Para tareas de documentacion o configuracion, el check de tests se omite automaticamente
 
 ## Flags
 
-| Flag | Descripción |
+| Flag | Descripcion |
 |------|-------------|
-| `--bulk` `-b` | Procesar múltiples tareas separadas por coma |
-| `--force` `-f` | Forzar archive aunque no esté completo |
+| `--bulk` `-b` | Procesar multiples tareas separadas por coma |
+| `--force` `-f` | Forzar archive aunque no este completo |
 | `--skip-changelog` | No actualizar changelog (para testing) |
 | `--dry-run` | Simular sin hacer cambios reales |
+| `--skip-tests` | Saltar validacion de tests (no recomendado) |
+
+## Manejo de Errores
+
+- Si los tests fallan -> No marcar como completada, listar failures
+- Si el archivo de tareas no existe -> notificar: *"No se encontro el archivo de tareas para {{US_ID}} en la propuesta {{PROPOSAL_SLUG}}."*
+- Si el ID de tarea no existe en el archivo -> notificar: *"El ID {{TSK_ID}} no fue encontrado en el archivo de tareas."*
+- Si `_archived/` no existe, crealo antes de mover archivos.
+- Si bulk y parcial falla -> reportar que tareas fallaron y cuales se completaron exitosamente
+- Si `--force` se usa con tareas pendientes -> requiere confirmacion doble

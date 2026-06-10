@@ -2,6 +2,8 @@
 description: Generar user stories basadas en una propuesta existente
 ---
 
+# Workflow: Create User Stories
+
 Este workflow genera user stories derivadas de una propuesta técnica existente.
 Requiere que la propuesta (`proposal.md`) ya haya sido creada.
 

@@ -2,6 +2,8 @@
 description: Generar documentación de descubrimiento del stack consolidado para proyectos distribuidos en múltiples sub-carpetas
 ---
 
+# Workflow: Stack Discovery
+
 Este workflow consolida los discoveries de múltiples sub-proyectos en un único `.quinoto-spec/discovery/`.
 
 **Precondición OBLIGATORIA**: Dentro de todas las carpetas del root debe existir `*/.quinoto-spec/discovery/`. De no ser así, **detener el proceso** y listar qué carpetas no tienen discovery para que el usuario ejecute `quinotospec.discovery` en cada una.

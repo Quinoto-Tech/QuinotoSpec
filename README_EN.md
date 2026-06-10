@@ -605,15 +605,15 @@ graph LR
 - ✅ Create PRD / Create RFC
 - ✅ Pre-commit / Release / Init / Retrospective / Health / Cleanup
 
-**Warband: Phalanx (TBA)**
-- Class System: Specialized roles
-- Shield Wall: Defensive testing
-- External PM integration (Jira, Linear, GitHub Issues)
-- JSON Schema for proposal and task validation
+**Warband: Phalanx (v3.0.0, TBA)**
+- 🟡 Class System: Specialized roles (~60%) — 9 specialized agents exist, missing progression system and mythological names (Scout/Skald/Blacksmith)
+- 🟡 Shield Wall: Defensive testing (~50%) — Layered validation exists (pre-commit, validate, rules), missing cross-agent validation
+- 🟡 External PM integration (Jira CSV, GitHub Issues) (~55%) — Import/export specs exist, missing live API adapters and bidirectional sync
+- 🔴 JSON Schema for proposal and task validation (~5%) — Pattern-based validation exists, zero formal JSON schemas
 
-**Warband: Hird (TBA)**
-- War Council: Conflict resolution
-- Alliance Integration: Multi-repo
+**Warband: Hird (v4.0.0, TBA)**
+- 🟡 War Council: Conflict resolution (~40%) — Detection with 4 severity levels exists, missing resolution execution and mediation
+- 🟡 Alliance Integration: Multi-repo (~55%) — Sync skill, stack-discovery and dependency-graph exist, missing federated context and remote support
 
 ---
 

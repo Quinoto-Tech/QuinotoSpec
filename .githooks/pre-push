@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Pre-push hook: Runs full test suite before pushing
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+
+echo "Running pre-push checks..."
+echo ""
+
+# Run test suite
+if ! bash "$PROJECT_ROOT/tests/run-all-tests.sh"; then
+    echo ""
+    echo "Pre-push check failed: tests failing"
+    echo "Fix the errors or use --no-verify to skip"
+    exit 1
+fi
+
+echo ""
+echo "Pre-push checks passed"
+exit 0

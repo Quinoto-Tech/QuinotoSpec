@@ -1,0 +1,27 @@
+{
+  "name": "quinotospec",
+  "version": "2.1.0",
+  "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
+  "workflows": 33,
+  "skills": 27,
+  "rules": 12,
+  "agents": 9,
+  "supported_ides": ["opencode", "cursor", "cline", "generic"],
+  "min_requirements": {
+    "bash": "4.0",
+    "git": "2.0"
+  },
+  "directories": {
+    "workflows": "agent-dist/workflows",
+    "skills": "agent-dist/skills",
+    "rules": "agent-dist/rules",
+    "agents": "agent-dist/agents",
+    "templates": "agent-dist/templates"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Quinoto-Tech/QuinotoSpec"
+  },
+  "license": "MIT",
+  "edition": "Possessed Edition"
+}

@@ -2,6 +2,8 @@
 description: aplicar la tarea correspondiente
 ---
 
+# Workflow: Apply
+
 [INSTRUCCIÓN MAESTRA]
 Debes ejecutar la tarea técnica especificada por el usuario y documentar EXACTAMENTE los cambios realizados en el archivo de registro.
 
@@ -42,6 +44,51 @@ Después de `quinotospec-mark-done`, ejecutar skill `quinotospec-blood-bond-moni
 - Si `should_remind: false`, no mostrar nada
 
 IMPORTANTE: Los pasos de documentación y mark-done son OBLIGATORIOS. No termines la ejecución sin completarlos.
+
+---
+
+## Resolucion de Conflictos
+
+Si durante la implementacion detectas conflictos con codigo existente:
+
+### Conflicto de Merge
+1. **NO fuerces** la implementacion sobre codigo existente
+2. Identifica el conflicto: "El archivo X tiene implementacion incompatible con la tarea"
+3. Opciones a presentar al usuario:
+   - **Preservar existente**: No aplicar cambios que sobreescriben codigo existente
+   - **Merge manual**: Mostrar las diferencias y pedir decision linea por linea
+   - **Crear nueva tarea**: Si el conflicto requiere refactor previo, sugiere crear una tarea de desbloqueo
+4. Documenta el conflicto en el changelog
+
+### Conflicto de Arquitectura
+Si la tarea contradice la arquitectura documentada en `03-architecture.md`:
+1. **DETEN** la implementacion
+2. Reporta: "La tarea requiere cambiar {componente} que segun la arquitectura actual es {patron}. ¿Actualizar la arquitectura o adaptar la tarea?"
+3. Espera decision del usuario antes de continuar
+
+---
+
+## Rollback Automatico
+
+Si los tests fallan despues de implementar cambios:
+
+### Paso 1 - Intentar Correccion
+- Si el failure es claro (typo, import faltante), intenta corregir directamente
+- Tienes maximo 2 intentos de correccion automatica
+
+### Paso 2 - Rollback si Persiste
+Si despues de 2 intentos los tests siguen fallando:
+1. Revierte los cambios usando `git checkout -- {archivos_modificados}`
+2. Si no hay git, restaura desde backup manual
+3. Reporta al usuario:
+   ```
+   X Rollback ejecutado: Los tests siguen fallando despues de 2 intentos.
+   Archivos revertidos: {lista}
+   Error persistente: {mensaje_de_error}
+   Sugerencia: Revisar manualmente o crear tarea de debugging.
+   ```
+4. NO marques la tarea como completada
+5. Sugiere crear una tarea de debugging
 
 ---
 

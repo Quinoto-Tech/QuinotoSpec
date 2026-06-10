@@ -2,6 +2,8 @@
 description: Check rápido pre-commit que ejecuta tests del stack + validación de sintaxis + enforcement de reglas
 ---
 
+# Workflow: Pre Commit
+
 Objetivo: ejecutar una verificación pre-commit rápida antes de hacer push o crear un PR. No reemplaza CI completo, pero detecta problemas comunes antes de que lleguen al repo.
 
 ## Instrucciones

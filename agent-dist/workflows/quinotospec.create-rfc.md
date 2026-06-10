@@ -2,6 +2,8 @@
 description: crear un RFC proposal-ready en modo conversacional (compatible con create-tasks --from-rfc)
 ---
 
+# Workflow: Create Rfc
+
 Objetivo: crear un RFC nuevo usando el template oficial, guiando al usuario con preguntas iterativas y dejandolo listo para derivar una propuesta QuinotoSpec.
 
 Regla principal:

@@ -36,3 +36,34 @@ trigger: always_on
     - `.quinoto-spec/sprints/sprint-{{ID}}/sprint-config.yml`
     - `.quinoto-spec/*/mjolnir-refactor.yml`
 - Esta regla aplica tanto para la creación inicial (si requiere datos del usuario) como para modificaciones posteriores.
+
+# Validación Pre-Workflow Crítico (BLOQUEANTE)
+- **ANTES** de ejecutar workflows de creación o modificación (`create-proposal`, `apply`, `create-tasks`, `create-user-stories`):
+    - Ejecuta `quinotospec-validate --full` como precondición.
+    - Si hay errores con severidad BLOCKING → **DETÉN LA EJECUCIÓN** y reporta al usuario.
+    - Si hay warnings → Notifica al usuario pero permite continuar con confirmación.
+- Ejemplo de error BLOCKING: `08-product-and-agreements.md` vacío, prefijo no registrado.
+- Ejemplo de WARNING: Discovery con más de 30 días, branch naming incorrecto.
+
+# Backup Pre-Refactor (BLOQUEANTE)
+- **ANTES** de ejecutar `quinotospec.mjolnir-refactor`:
+    - Crea un backup completo en `.quinoto-spec/backups/pre-refactor-{YYYYMMDD-HHmmss}/`.
+    - El backup debe incluir: propuesta, user stories, tareas, y archivos de código afectados.
+    - Confirma con el usuario antes de proceder: "Backup creado en {ruta}. ¿Continuar con el refactor?"
+- Si el backup falla → **DETÉN LA EJECUCIÓN**. No hacer refactor sin red de seguridad.
+- Después de un refactor exitoso, el backup se mantiene por 7 días antes de limpieza automática.
+
+# Validación de Sintaxis Pre-Apply
+- **ANTES** de ejecutar `quinotospec.apply`:
+    - Ejecuta `quinotospec-syntax-validate --type proposal --slug {SLUG}` para validar la propuesta.
+    - Si la validación de sintaxis falla → **ADVIETE al usuario** con los errores encontrados.
+    - Permite continuar solo si el usuario confirma explícitamente ("¿Continuar a pesar de los errores de sintaxis? [y/N]").
+- Esto previene aplicar tareas basadas en propuestas mal formadas que pueden llevar a implementaciones incorrectas.
+
+# Protección de Archivos Archivados (BLOQUEANTE)
+- **NUNCA** modifiques, elimines o muevas archivos dentro de carpetas `_archived/` sin:
+    1. Confirmación **explícita** del usuario (no implícita).
+    2. Justificación documentada en el changelog con `quinotospec-update-changelog`.
+- Los archivos archivados son registro histórico inmutable. Alterarlos rompe la trazabilidad.
+- Si necesitas recuperar un archivo archivado, **copialo** fuera de `_archived/` en lugar de moverlo.
+- Excepción: El workflow `quinotospec.archive` puede mover archivos HACIA `_archived/`, pero nunca modificar los que ya están dentro.

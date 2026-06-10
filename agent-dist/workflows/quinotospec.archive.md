@@ -2,6 +2,8 @@
 description: Archiva propuestas, user stories o planes de tareas
 ---
 
+# Workflow: Archive
+
 Este workflow permite archivar elementos de la especificación técnica que han sido completados para limpiar el espacio de trabajo.
 
 ### Objetivos:

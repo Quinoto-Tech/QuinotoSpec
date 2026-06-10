@@ -1,12 +1,42 @@
 # QuinotoSpec: Possessed Edition
 
-> **ESTADO: PRODUCCIÓN / ESTABLE**
-> Metodología y sistema de configuración de agentes para desarrollo asistido por IA.
-> Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precisión y minimizar alucinaciones.
-
 <div align="center">
-  <img src="possessed.png" alt="Quinoto Possessed" width="400" />
+
+![Version](https://img.shields.io/badge/version-2.1.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline-orange)
+![Workflows](https://img.shields.io/badge/workflows-33-purple)
+![Skills](https://img.shields.io/badge/skills-27-purple)
+![Rules](https://img.shields.io/badge/rules-12-red)
+![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
+
+**ESTADO: PRODUCCION / ESTABLE**
+
+Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA.
+Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y minimizar alucinaciones.
+
+<img src="possessed.png" alt="Quinoto Possessed" width="400" />
+
 </div>
+
+## Quick Start
+
+```bash
+# 1. Clonar el paquete
+git clone https://github.com/Quinoto-Tech/QuinotoSpec.git
+cd QuinotoSpec
+
+# 2. Instalar para tu IDE
+./install.sh --opencode --global    # OpenCode
+./install.sh --cursor --global      # Cursor
+./install.sh --cline --global       # Cline
+
+# 3. En tu proyecto, ejecutar discovery
+@quinotospec.discovery
+
+# 4. Crear tu primera propuesta
+@quinotospec.create-proposal
+```
 
 ## Tabla de Contenido
 
@@ -103,7 +133,7 @@ Cada cambio queda registrado en un changelog inmutable (regla #1: nunca editar m
 
 ### Gobernanza, no solo ejecución
 
-QuinotoSpec no es un archivo de prompts — es un **sistema de reglas**. 8 reglas estrictas que el agente debe cumplir, validables con `@quinotospec-validate` y `/quinotospec-rules-enforce`. Si un acuerdo de producto está vacío, el workflow se bloquea. Si un prefijo no está registrado, no se avanza.
+QuinotoSpec no es un archivo de prompts — es un **sistema de reglas**. 12 reglas estrictas que el agente debe cumplir, validables con `@quinotospec-validate` y `/quinotospec-rules-enforce`. Si un acuerdo de producto está vacío, el workflow se bloquea. Si un prefijo no está registrado, no se avanza.
 
 ### Funciona con tu agente, no en lugar de tu agente
 
@@ -477,18 +507,22 @@ La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 24 de 29 
 
 ## Reglas
 
-QuinotoSpec impone 8 reglas estrictas (definidas en `agent-dist/rules/quinotospec-rules.md`):
+QuinotoSpec impone 12 reglas estrictas (definidas en `agent-dist/rules/quinotospec-rules.md`):
 
-| # | Regla | Descripción |
-|---|-------|-------------|
-| 1 | **Changelog** | Nunca editar manualmente. Usar siempre `quinotospec-update-changelog` |
-| 2 | **Prefijos e IDs** | Todo trabajo debe estar trazado bajo un prefijo único (MNEMONICO-UUID, ej. `AUTH-a1b2`) registrado en `prefix-registry.md` |
-| 3 | **Acuerdos de Producto** | Bloqueante: verificar `08-product-and-agreements.md` antes de crear propuestas |
-| 4 | **No Sobreescribir** | Nunca sobreescribir `user-stories.md` o `*_tasks.md`. Usar merge inteligente |
-| 5 | **Validación de Archive** | Verificar `Estado: Completada` antes de archivar |
-| 6 | **Convención de Archivado** | Usar carpeta `_archived/`, nunca prefijo `__` |
-| 7 | **Nombrado de Branches** | Siempre usar formato `feature/{{TASK_ID}}-descripcion-en-kebab-case` |
-| 8 | **Config Crítica** | Nunca modificar `base-config.yml`, `sprint-config.yml` o `mjolnir-refactor.yml` sin aprobación |
+| # | Regla | Severidad | Descripción |
+|---|-------|-----------|-------------|
+| 1 | **Changelog** | STANDARD | Nunca editar manualmente. Usar siempre `quinotospec-update-changelog` |
+| 2 | **Prefijos e IDs** | STANDARD | Todo trabajo debe estar trazado bajo un prefijo único (MNEMONICO-UUID, ej. `AUTH-a1b2`) registrado en `prefix-registry.md` |
+| 3 | **Acuerdos de Producto** | BLOCKING | Verificar `08-product-and-agreements.md` antes de crear propuestas |
+| 4 | **No Sobreescribir** | STANDARD | Nunca sobreescribir `user-stories.md` o `*_tasks.md`. Usar merge inteligente |
+| 5 | **Validación de Archive** | STANDARD | Verificar `Estado: Completada` antes de archivar |
+| 6 | **Convención de Archivado** | STANDARD | Usar carpeta `_archived/`, nunca prefijo `__` |
+| 7 | **Nombrado de Branches** | STANDARD | Siempre usar formato `feature/{{TASK_ID}}-descripcion-en-kebab-case` |
+| 8 | **Config Crítica** | STANDARD | Nunca modificar `base-config.yml`, `sprint-config.yml` o `mjolnir-refactor.yml` sin aprobación |
+| 9 | **Validación Pre-Workflow** | BLOCKING | Ejecutar `quinotospec-validate --full` antes de workflows críticos |
+| 10 | **Backup Pre-Refactor** | BLOCKING | Backup obligatorio antes de `mjolnir-refactor` |
+| 11 | **Sintaxis Pre-Apply** | WARNING | Validar sintaxis de propuesta antes de aplicar tarea |
+| 12 | **Archivos Archivados** | BLOCKING | Nunca modificar archivos en `_archived/` sin aprobación explícita |
 
 ---
 
@@ -593,10 +627,10 @@ graph LR
 
 ## Roadmap
 
-**Possessed Edition (v2.0.0)** — Estable / Producción
-- ✅ Blood-Bond: Predicción proactiva
-- ✅ Battle Frenzy: Ejecución paralela
-- ✅ Mjolnir Refactor: Reescritura de módulos
+**Possessed Edition (v2.0.0)** — Estable / Produccion
+- ✅ Blood-Bond: Prediccion proactiva
+- ✅ Battle Frenzy: Ejecucion paralela
+- ✅ Mjolnir Refactor: Reescritura de modulos
 - ✅ Code Review Workflow
 - ✅ Sprint Planning
 - ✅ Validate / Syntax Validate
@@ -605,15 +639,27 @@ graph LR
 - ✅ Create PRD / Create RFC
 - ✅ Pre-commit / Release / Init / Retrospective / Health / Cleanup
 
-**Warband: Falange (TBA)**
-- Class System: Roles especializados
-- Shield Wall: Testing defensivo
-- Integración con PMs externos (Jira, Linear, GitHub Issues)
-- JSON Schema para validación de propuestas y tasks
+**Berserker Edition (v2.1.0)** — Completada
+- ✅ 9 agentes especializados pre-configurados
+- ✅ 12 reglas de gobernanza (4 nuevas BLOCKING/WARNING)
+- ✅ Skills avanzadas: search, stats, diff, sync
+- ✅ Workflows: migrate, backup, export, import
+- ✅ Test suite completa con validacion automatica
+- ✅ Install.sh mejorado con --verify, --uninstall, --version
+- ✅ CI/CD con GitHub Actions
+- ✅ Scripts de automatizacion
+- ✅ Documentacion extendida (docs/)
+- ✅ Proyectos de ejemplo (examples/)
 
-**Warband: Hird (TBA)**
-- War Council: Resolución de conflictos
-- Alliance Integration: Multi-repo
+**Warband: Falange (v3.0.0, TBA)**
+- 🟡 Class System: Roles especializados (~60%) — 9 agentes especializados existen, falta sistema de progresión y nombres mitológicos (Scout/Skald/Blacksmith)
+- 🟡 Shield Wall: Testing defensivo (~50%) — Validación en capas existe (pre-commit, validate, rules), falta validación cruzada entre agentes
+- 🟡 Integración con PMs externos (Jira, Linear, GitHub Issues) (~55%) — Specs para import/export existen, faltan adapters de API live y sync bidireccional
+- 🔴 JSON Schema para validación de propuestas y tasks (~5%) — Validación por patrones existe, cero schemas JSON formales
+
+**Warband: Hird (v4.0.0, TBA)**
+- 🟡 War Council: Resolución de conflictos (~40%) — Detección con 4 niveles de severidad existe, falta ejecución de resolución y mediación
+- 🟡 Alliance Integration: Multi-repo (~55%) — Sync skill, stack-discovery y dependency-graph existen, falta contexto federado y soporte remoto
 
 ---
 

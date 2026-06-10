@@ -2,6 +2,8 @@
 description: Distribuye las tareas de una propuesta centralizada hacia los sub-proyectos correspondientes según el campo Servicio
 ---
 
+# Workflow: Distribute
+
 Este workflow toma una propuesta centralizada (normalmente generada desde un `stack-discovery` o `create-proposal`) y distribuye sus artefactos hacia los `.quinoto-spec/` de cada sub-proyecto afectado.
 
 **Parámetros Requeridos:**

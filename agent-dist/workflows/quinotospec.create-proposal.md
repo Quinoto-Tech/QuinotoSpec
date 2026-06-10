@@ -2,6 +2,8 @@
 description: crear una propuesta independiente
 ---
 
+# Workflow: Create Proposal
+
 Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `01-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `08-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global y **detectar posibles conflictos o solapamientos** de alcance (mismos archivos, dominios o flujos afectados); si detectas alguno, documéntalo al inicio de la propuesta bajo `**⚠️ Conflictos Detectados:**`.
 El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
 PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
@@ -60,13 +62,27 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG
 - Escribe en español técnico.
 - SOLO genera el archivo `proposal.md`. No generes historias ni tareas.
 
-**Gestión de Prefijos (CRÍTICO):**
+**Gestion de Prefijos (CRITICO):**
 1. Lee el archivo `.quinoto-spec/prefix-registry.md` si existe.
-2. Determina un prefijo que combine un mnemónico de 4 letras + un sufijo único de 4 caracteres alfanuméricos (ej. `AUTH-a1b2`, `REWA-c3d4`, `PAYF-x9y0`).
-   - El mnemónico debe representar la propuesta (ej. `REWA` para Rewards).
+2. Determina un prefijo que combine un mnemonico de 4 letras + un sufijo unico de 4 caracteres alfanumericos (ej. `AUTH-a1b2`, `REWA-c3d4`, `PAYF-x9y0`).
+   - El mnemonico debe representar la propuesta (ej. `REWA` para Rewards).
    - El sufijo garantiza la idempotencia y evita colisiones en entornos multi-usuario.
-3. Añade una nueva fila a la tabla en `.quinoto-spec/prefix-registry.md`: `| {{PREFIX}} | {{PROPOSAL_NAME}} | {{DATE}} |`.
-4. En el `proposal.md` generado, incluye una línea al inicio (después del título) que diga: `**Prefijo:** {{PREFIX}}`.
+3. **Validacion en Tiempo Real**: Antes de registrar el prefijo:
+   - Verifica que no exista ya en `prefix-registry.md` (ni el mnemonico completo ni el prefijo completo)
+   - Si el mnemonico existe con diferente sufijo, sugiere reutilizarlo: "El mnemonico AUTH ya existe como AUTH-a1b2. ¿Reutilizar AUTH-{nuevo}?"
+   - Si el prefijo completo existe, genera un nuevo sufijo automaticamente
+4. Anade una nueva fila a la tabla en `.quinoto-spec/prefix-registry.md`: `| {{PREFIX}} | {{PROPOSAL_NAME}} | {{DATE}} |`.
+5. En el `proposal.md` generado, incluye una linea al inicio (despues del titulo) que diga: `**Prefijo:** {{PREFIX}}`.
+
+**Deteccion de Conflictos con Propuestas Existentes:**
+Antes de finalizar la propuesta, ejecuta un check de conflictos:
+1. Lee todas las propuestas activas en `.quinoto-spec/proposals/*/proposal.md`
+2. Compara "Servicios Afectados" con los de propuestas activas
+3. Compara archivos mencionados en "Archivos Afectados"
+4. Si detectas solapamiento:
+   - Documentalo bajo `**Conflictos Detectados:**` al inicio de la propuesta
+   - Sugiere al usuario: "Esta propuesta solapa con {propuesta_existente} en {area}. ¿Continuar o ajustar alcance?"
+5. Si no hay conflictos, indica: `**Conflictos Detectados:** Ninguno`
 
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completada, DEBES ejecutar la skill `quinotospec-update-changelog`.
