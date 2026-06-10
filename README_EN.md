@@ -1,12 +1,14 @@
-# QuinotoSpec: Possessed Edition
+# QuinotoSpec: Yggdrasil Edition
 
 > **STATUS: PRODUCTION / STABLE**
 > Methodology and agent configuration system for AI-assisted development.
 > "Proposal First" / "Context Slicing" workflow to maximize accuracy and minimize hallucinations.
 
 <div align="center">
-  <img src="possessed.png" alt="Quinoto Possessed" width="400" />
+  <img src="YGGDRASIL.png" alt="Quinoto Yggdrasil Edition" width="800" />
 </div>
+
+**Yggdrasil Edition** - The tree that connects the 9 realms of AI-assisted development.
 
 ## Table of Contents
 
@@ -604,6 +606,25 @@ graph LR
 - ✅ Agent Train
 - ✅ Create PRD / Create RFC
 - ✅ Pre-commit / Release / Init / Retrospective / Health / Cleanup
+
+**Berserker Edition (v2.1.0)** — Completed
+- ✅ 9 specialized pre-configured agents
+- ✅ 12 governance rules (4 new BLOCKING/WARNING)
+- ✅ Advanced skills: search, stats, diff, sync
+- ✅ Workflows: migrate, backup, export, import
+- ✅ Complete test suite with automatic validation
+- ✅ Improved install.sh with --verify, --uninstall, --version
+- ✅ CI/CD with GitHub Actions
+- ✅ Automation scripts
+- ✅ Extended documentation (docs/)
+- ✅ Example projects (examples/)
+
+**Yggdrasil Edition (v2.1.0)** — Current
+- ✅ 9 specialized agents (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
+- ✅ Governance system with 12 rules
+- ✅ Testing and CI/CD infrastructure
+- ✅ Complete documentation and examples
+- ✅ Integration with GitHub Issues and Jira CSV
 
 **Warband: Phalanx (v3.0.0, TBA)**
 - 🟡 Class System: Specialized roles (~60%) — 9 specialized agents exist, missing progression system and mythological names (Scout/Skald/Blacksmith)

@@ -1,4 +1,4 @@
-# QuinotoSpec: Possessed Edition
+# QuinotoSpec: Yggdrasil Edition
 
 <div align="center">
 
@@ -15,7 +15,9 @@
 Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA.
 Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y minimizar alucinaciones.
 
-<img src="possessed.png" alt="Quinoto Possessed" width="400" />
+<img src="YGGDRASIL.png" alt="Quinoto Yggdrasil Edition" width="800" />
+
+**Yggdrasil Edition** - El arbol que conecta los 9 reinos del desarrollo asistido por IA.
 
 </div>
 
@@ -651,8 +653,15 @@ graph LR
 - ✅ Documentacion extendida (docs/)
 - ✅ Proyectos de ejemplo (examples/)
 
+**Yggdrasil Edition (v2.1.0)** — Actual
+- ✅ 9 agentes especializados (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
+- ✅ Sistema de gobernanza con 12 reglas
+- ✅ Infraestructura de testing y CI/CD
+- ✅ Documentacion completa y ejemplos
+- ✅ Integracion con GitHub Issues y Jira CSV
+
 **Warband: Falange (v3.0.0, TBA)**
-- 🟡 Class System: Roles especializados (~60%) — 9 agentes especializados existen, falta sistema de progresión y nombres mitológicos (Scout/Skald/Blacksmith)
+-  Class System: Roles especializados (~60%) — 9 agentes especializados existen, falta sistema de progresión y nombres mitológicos (Scout/Skald/Blacksmith)
 - 🟡 Shield Wall: Testing defensivo (~50%) — Validación en capas existe (pre-commit, validate, rules), falta validación cruzada entre agentes
 - 🟡 Integración con PMs externos (Jira, Linear, GitHub Issues) (~55%) — Specs para import/export existen, faltan adapters de API live y sync bidireccional
 - 🔴 JSON Schema para validación de propuestas y tasks (~5%) — Validación por patrones existe, cero schemas JSON formales

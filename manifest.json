@@ -1,6 +1,7 @@
 {
   "name": "quinotospec",
   "version": "2.1.0",
+  "edition": "Yggdrasil",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
   "workflows": 33,
   "skills": 27,
@@ -23,5 +24,5 @@
     "url": "https://github.com/Quinoto-Tech/QuinotoSpec"
   },
   "license": "MIT",
-  "edition": "Possessed Edition"
+  "release_date": "2026-06-10"
 }
