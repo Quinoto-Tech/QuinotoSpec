@@ -85,9 +85,14 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 | Workflow | Propósito |
 |----------|-----------|
 | `/quinotospec.create-prd` | Product Requirements Document |
-| `/quinotospec.create-rfc` | RFC interactivo con proposal seed |
+| `/quinotospec.create-rfc` | RFC interactivo con proposal seed. Soporta `--party` para debate multi-agente |
 | `/quinotospec.review` | Revisar branch/PR contra criterios |
-| `/quinotospec.archive` | Archivar propuestas completadas |
+| `/quinotospec.archive` | Archivar propuestas completadas y mergear delta specs |
+| `/quinotospec.status` | Dashboard de proyecto con estado DAG de artefactos |
+| `/quinotospec.specs-init` | Inicializar specs/ con requerimientos del sistema |
+| `/quinotospec.schema-fork` | Personalizar schema YAML del DAG de artefactos |
+| `/quinotospec.party-mode` | Mesa redonda multi-agente — debate en caracter. Tambien invocable via `--party` en create-proposal y create-rfc |
+| `/quinotospec.changelog-view` | Ver changelog consolidado (v2 + v1) con filtros |
 | `/quinotospec.status` | Dashboard de proyecto |
 | `/quinotospec.pre-commit` | Check pre-commit (test + validate + rules) |
 | `/quinotospec.release` | Version bump, changelog, tagging |
@@ -137,7 +142,10 @@ Una vez ejecutado el `/quinotospec.discovery`, los 8 archivos en `.quinoto-spec/
 │   ├── {US_ID}_tasks.md
 │   └── _archived/
 ├── prefix-registry.md            # Seguimiento de prefijos
-├── quinoto-spec-changelog.md     # Historial auto-generado
+├── changelog/                    # Historial auto-generado (v2: archivos individuales)
+│   ├── YYYY-MM-DD-PREFIX-slug.md
+│   └── INDEX.md                  # Tabla de contenido (gitignored, regenerable)
+├── quinoto-spec-changelog.md     # Historial v1 legacy (opcional, backward compat)
 ├── scripts/                      # Scripts temporales (temp_*.py, etc.)
 └── sprints/                      # Planificación de sprints
 ```
@@ -146,11 +154,25 @@ Una vez ejecutado el `/quinotospec.discovery`, los 8 archivos en `.quinoto-spec/
 
 ## 6. Gestión del Changelog (CRÍTICO)
 
-- **NUNCA editar `.quinoto-spec/quinoto-spec-changelog.md` manualmente**
-- Siempre usar la skill `quinotospec-update-changelog`
-- Las entradas van al INICIO (más reciente primero), debajo del título
+QuinotoSpec soporta dos formatos de changelog:
 
-### Formato de Entrada
+### Formato v2 (recomendado, default)
+Cada entrada es un archivo separado en `.quinoto-spec/changelog/YYYY-MM-DD-PREFIX-SLUG.md`:
+- **Append-Only**: nunca genera merge conflicts en equipos multi-agente
+- **INDEX.md** se regenera automáticamente (gitignored, nunca commiteado)
+- Vista consolidada con `/quinotospec.changelog-view`
+
+### Formato v1 (legacy)
+Archivo único `.quinoto-spec/quinoto-spec-changelog.md`:
+- Entradas ordenadas newest-first manualmente
+- Usado para backward compatibility con proyectos pre-v2.5.0
+
+### Reglas compartidas
+- **NUNCA editar archivos de changelog manualmente**
+- Siempre usar la skill `quinotospec-update-changelog` (auto-detecta formato)
+- Para ver historial: `/quinotospec.changelog-view`
+
+### Formato de Entrada (ambos formatos)
 ```markdown
 ## [Fecha: YYYY-MM-DD] - [Título de la Acción]
 ### Resumen
@@ -202,6 +224,12 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 |-------|-----------|
 | `quinotospec-swarm-executor` | Ejecutar múltiples subagentes en paralelo |
 | `quinotospec-swarm-task-splitter` | Dividir tareas masivas en chunks paralelizables |
+
+### Skills de Specs y Artefactos
+| Skill | Propósito |
+|-------|-----------|
+| `quinotospec-artifact-engine` | Computar estado DAG de artefactos (done/ready/blocked) |
+| `quinotospec-party-orchestrator` | Orquestar mesas redondas multi-agente |
 
 ### Skills de Onboarding
 | Skill | Propósito |

@@ -1,12 +1,20 @@
 {
   "name": "quinotospec",
-  "version": "2.1.0",
+  "version": "2.5.0",
   "edition": "Yggdrasil",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
-  "workflows": 33,
-  "skills": 27,
+  "workflows": 37,
+  "skills": 29,
   "rules": 12,
   "agents": 9,
+  "features": {
+    "delta_specs": true,
+    "specs_directory": true,
+    "artifact_engine": true,
+    "schema_yaml": true,
+    "party_mode": true,
+    "changelog_v2": true
+  },
   "supported_ides": ["opencode", "cursor", "cline", "generic"],
   "min_requirements": {
     "bash": "4.0",
@@ -24,5 +32,6 @@
     "url": "https://github.com/Quinoto-Tech/QuinotoSpec"
   },
   "license": "MIT",
-  "release_date": "2026-06-10"
+  "release_date": "2026-06-12",
+  "changelog": "F2.2.5 — Changelog v2: append-only per-task files, INDEX.md, backward compat, changelog-view workflow"
 }

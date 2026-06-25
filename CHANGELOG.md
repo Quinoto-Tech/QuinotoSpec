@@ -6,6 +6,80 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 
 ---
 
+## [2.5.0] - 2026-06-12
+
+### Added
+- **Changelog v2 (Append-Only)**: Nuevo formato de changelog con archivos individuales en `.quinoto-spec/changelog/YYYY-MM-DD-PREFIX-SLUG.md` — elimina merge conflicts en equipos multi-agente
+- **Template `changelog-entry-template.md`**: Template para entradas v2 con placeholders de fecha, título, resumen y métricas
+- **Workflow `@quinotospec.changelog-view`**: Vista consolidada que combina entradas v2 y v1 con filtros por fecha, prefijo y texto
+- **INDEX.md regenerable**: Tabla de contenido auto-generada en `changelog/INDEX.md`, gitignored, nunca commiteada
+
+### Changed
+- **`quinotospec-update-changelog`**: Auto-detección de formato (v1 si solo existe quinoto-spec-changelog.md, v2 si existe changelog/). Modo v2 crea archivos individuales y regenera INDEX.md
+- **`@quinotospec.init`**: Crea directorio `changelog/` con `.gitignore` en la estructura base
+- **Infrastructure**: Actualizados badges, versiones, conteos (37 workflows, 29 skills), AGENTS.md, validate-all.sh, ARCHITECTURE.md, install.sh
+
+### Compatibility
+- **Backward compatible**: Si solo existe `quinoto-spec-changelog.md`, la skill usa formato v1 automáticamente
+- **Coexistencia**: v1 y v2 pueden convivir — changelog-view detecta duplicados y prioriza v2
+
+---
+
+## [2.4.0] - 2026-06-11
+
+### Added
+- **Party Mode** (`@quinotospec.party-mode`): Mesa redonda multi-agente donde los agentes discuten, debaten y colaboran en caracter sobre un tema
+- **Party Orchestrator** (`quinotospec-party-orchestrator`): Skill orquestador con monitoreo de salud de la discusion (groupthink, impasse, dominacion)
+- **Voiced by Orchestrator** (`voiced-by-orchestrator.md`): Estrategia rapida — el agente principal voicea 2-4 agentes en un solo hilo. Tecnicas de voicing, vocabulario por especialidad, anti-patrones
+- **Spawned Subagents** (`spawned-subagents.md`): Estrategia profunda — cada agente es un subagente independiente con contexto aislado. Rondas paralelas y secuenciales
+- **`--party` flag en `create-proposal`**: Party Mode se integra como paso previo a la generacion de la propuesta. El consejo debate antes de redactar — conclusiones alimentan automaticamente Resumen, Alternativas, Riesgos y Plan de Verificacion
+- **`--party` flag en `create-rfc`**: Party Mode se integra en la fase de Contexto y Propuesta del RFC. Consenso, disenso y recomendaciones del consejo enriquecen el RFC generado
+
+### Changed
+- **Infrastructure**: Actualizados badges, versiones, conteos (36 workflows, 29 skills), AGENTS.md, validate-all.sh, ARCHITECTURE.md, install.sh
+
+### Resumen Consolidado v2.1.0 → v2.4.0
+- **+3 workflows**: specs-init, schema-fork, party-mode
+- **+2 skills**: artifact-engine, party-orchestrator (+ 2 strategy files)
+- **+2 templates**: delta-spec-template.md, schema-template.yaml
+- **+1 directorio**: agent-dist/agents/ refactorizado con personalidades para Party Mode
+- **Delta Specs**: Sistema completo de especificaciones incrementales con engine de merge
+- **Artifact DAG**: Schema YAML con dependencias formales y topological sort
+- **Party Mode**: Mesa redonda multi-agente con dos modos de ejecucion
+
+---
+
+## [2.3.0] - 2026-06-11
+
+### Added
+- **Artifact Dependency Graph Engine** (`quinotospec-artifact-engine`): Computa estado del DAG de artefactos basado en schema YAML — determina que artefactos estan listos, bloqueados o completados
+- **Schema YAML** (`schema-template.yaml`): Define formalmente artefactos, dependencias, templates e instrucciones. Soporta topological sort
+- **Workflow `@quinotospec.schema-fork`**: Permite crear schemas personalizados agregando/eliminando artefactos o saltando opcionales
+
+### Changed
+- **`@quinotospec.status`**: Integra artifact engine — muestra tabla de estado de artefactos (done/ready/blocked) por propuesta activa
+- **`@quinotospec.init`**: Crea `schema.yaml` en la estructura inicial
+
+---
+
+## [2.2.0] - 2026-06-11
+
+### Added
+- **Delta Specs (ADDED/MODIFIED/REMOVED/RENAMED)**: Las propuestas ahora generan `delta-specs/` con formato de cambio incremental en lugar de especificaciones completas
+- **Directorio `specs/`**: Source of truth canonico del sistema, organizado por dominio/servicio
+- **Workflow `@quinotospec.specs-init`**: Inicializa `specs/` desde discovery, propuestas existentes o desde cero
+- **Template `delta-spec-template.md`**: Template con secciones ADDED/MODIFIED/REMOVED/RENAMED y escenarios GIVEN/WHEN/THEN opcionales
+
+### Changed
+- **`@quinotospec.create-proposal`**: Genera `delta-specs/` con especificaciones incrementales; `proposal.md` ahora contiene resumen ejecutivo con referencias a delta-specs
+- **`@quinotospec.archive`**: Ejecuta engine de merge de delta specs al archivar (ADDED→append, MODIFIED→replace, REMOVED→delete, RENAMED→rename) en `specs/`
+- **`@quinotospec.init`**: Crea directorio `specs/` con README en la estructura inicial
+
+### Compatibility
+- **Coexistencia**: Propuestas sin `delta-specs/` se archivan normalmente sin merge de specs. Compatible hacia atras.
+
+---
+
 ## [2.0.0] - 2026-04-15 - Possessed Edition
 
 ### Resumen

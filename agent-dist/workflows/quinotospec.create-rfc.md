@@ -6,6 +6,10 @@ description: crear un RFC proposal-ready en modo conversacional (compatible con 
 
 Objetivo: crear un RFC nuevo usando el template oficial, guiando al usuario con preguntas iterativas y dejandolo listo para derivar una propuesta QuinotoSpec.
 
+**Flags:**
+- `--party [agents]`: Ejecuta Party Mode con los agentes especificados durante la fase de Contexto y Propuesta. El debate multi-agente enriquece el RFC con perspectivas cruzadas.
+- `--party-rounds <N>`: Numero de rondas del party (default: 2)
+
 Regla principal:
 - El flujo es interactivo: pregunta una cosa por vez, espera respuesta y confirma antes de avanzar.
 - Si el usuario ya dio un dato, no lo vuelvas a pedir.
@@ -35,6 +39,27 @@ Confirmacion final obligatoria:
   - Prefijo QuinotoSpec (US/TSK)
 - Preguntar: "Confirmas que genero el RFC con estos datos? (si/no)"
 - Si responde "no", corregir solo los campos indicados y volver a confirmar.
+
+**Party Mode (opcional, solo si `--party`):**
+
+Si el usuario paso `--party`, ejecutar Party Mode despues de la confirmacion y antes de generar el RFC:
+
+1. **Resolver agentes:**
+   - Si `--party` incluye lista, usar esos.
+   - Si `--party` sin agentes, auto-seleccionar basado en la propuesta del RFC:
+     - RFCs de arquitectura → architect, devops-engineer, performance-optimizer
+     - RFCs de seguridad → security-auditor, architect, devops-engineer
+     - RFCs de features → architect, test-writer, security-auditor
+     - Default → architect, security-auditor, test-writer
+
+2. **Ejecutar Party Mode:**
+   @quinotospec.party-mode "RFC: {{TITLE}}" --agents {{AGENT_LIST}} --rounds {{PARTY_ROUNDS}} --output .quinoto-spec/rfc/{{RFC_ID}}-{{SLUG}}-party.md
+
+3. **Incorporar conclusiones al RFC:**
+   - Consenso del party → enriquece `1. Contexto` y `4. Propuesta`
+   - Riesgos identificados → alimenta `8. Riesgos y mitigaciones`
+   - Disenso → documentado en una sub-seccion `Party Mode Insights` dentro de `4. Propuesta`
+   - Recomendaciones → `9. Plan de pruebas`
 
 Generacion del RFC:
 1. Usa el template base `.cursor/templates/rfc-template.md`.

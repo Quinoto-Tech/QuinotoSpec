@@ -94,10 +94,21 @@ Most AI workflows follow the "ask, wait, verify" pattern. QuinotoSpec reverses t
 Instead of loading the entire project into every model call, QuinotoSpec refines context progressively:
 
 ```
-Discovery (global) → Proposal (initiative) → User Story (value) → Task (atomic)
+Discovery (global) → Proposal (initiative) → Delta Specs (incremental) → User Story (value) → Task (atomic)
 ```
 
 At each step, the agent receives **less context but more precise**. Fewer tokens, less noise, fewer hallucinations.
+
+### Delta Specs: Incremental Specifications
+
+QuinotoSpec uses **delta specs** to describe system changes. Instead of rewriting the full specification each time:
+
+- **ADDED**: New requirements being introduced
+- **MODIFIED**: Existing requirements that change (with `Was:` and `Reason:`)
+- **REMOVED**: Requirements being eliminated (with `Reason:` and `Migration:`)
+- **RENAMED**: Renamed requirements
+
+When archiving a proposal, the **merge engine** applies the deltas to `specs/` — the canonical source of truth, organized by domain/service. This makes QuinotoSpec work for both greenfield and brownfield projects.
 
 ### Traceability by Design
 
@@ -263,6 +274,10 @@ Actions: Reads context → Confirms branch → Implements → Runs tests → Upd
 | **Pre-commit** | `@quinotospec.pre-commit` | Quick pre-commit check (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automates version bump, changelog consolidation, and tagging |
 | **Init** | `@quinotospec.init` | Initializes `.quinoto-spec/` structure from scratch. If the project is empty, offers an interactive wizard to generate a scaffold with the desired stack |
+| **Specs Init** | `@quinotospec.specs-init` | Initializes `specs/` with requirements from discovery or existing proposals |
+| **Schema Fork** | `@quinotospec.schema-fork` | Creates custom YAML schema of the artifact DAG |
+| **Party Mode** | `@quinotospec.party-mode` | Multi-agent roundtable — in-character debate between specialized agents |
+| **Changelog View** | `@quinotospec.changelog-view` | View consolidated changelog (v2 + v1) with filters |
 | **Retrospective** | `@quinotospec.retrospective` | Retrospective with metrics and patterns from completed proposals |
 | **Health** | `@quinotospec.health` | Detects orphan files and inconsistencies in `.quinoto-spec/` |
 | **Cleanup** | `@quinotospec.cleanup` | Cleans stale branches, temp scripts, and inactive proposals |
@@ -310,6 +325,23 @@ Runs multiple subagents in parallel for massive tasks.
 ```bash
 @quinotospec.battle-frenzy "Migrate 10 endpoints to v2"
 @quinotospec.battle-frenzy --dry-run "Create tests for multiple modules"
+```
+
+#### Party Mode (Multi-Agent Roundtable)
+
+Brings specialized agents together for in-character roundtable discussion and debate.
+
+```bash
+# Standalone roundtable
+@quinotospec.party-mode "Monolith or microservices for the payment module?"
+@quinotospec.party-mode "Review API security" --agents security-auditor,architect
+
+# Integrated into proposals — the council debates before drafting
+@quinotospec.create-proposal "Refactor authentication layer" --party
+@quinotospec.create-proposal "New notification system" --party architect,test-writer
+
+# Integrated into RFCs — the council debates context and proposal
+@quinotospec.create-rfc "Feature flags in staging" --party
 ```
 
 #### Blood-Bond (Proactive Prediction)
@@ -527,8 +559,11 @@ After running `@quinotospec.discovery`:
 │   ├── blood-bond/                   # Predictive analysis
 │   ├── swarm/                        # Parallel execution
 │   ├── scripts/                      # Temp scripts
+│   ├── changelog/                     # Auto-generated history (v2)
+│   │   ├── YYYY-MM-DD-PREFIX-slug.md
+│   │   └── INDEX.md (gitignored)
 │   ├── prefix-registry.md            # Prefix registry
-│   └── quinoto-spec-changelog.md     # Change history
+│   └── quinoto-spec-changelog.md     # v1 legacy history (optional)
 ├── src/
 ├── tests/
 ├── package.json

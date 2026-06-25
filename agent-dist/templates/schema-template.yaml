@@ -1,0 +1,146 @@
+# QuinotoSpec Artifact Schema
+#
+# Define los artefactos del workflow, sus dependencias, templates e instrucciones.
+# El artifact engine usa este schema para calcular estado (done/ready/blocked).
+#
+# Personalizacion:
+#   - Fork este archivo con @quinotospec.schema-fork
+#   - Agrega, modifica o elimina artefactos segun tu proceso
+#   - Cambia templates apuntando a paths en templates/ o extensions/
+
+name: quinotospec-default
+version: 1
+description: Default QuinotoSpec workflow — proposal first, delta specs, user stories, tasks
+
+# =============================================================================
+# ARTIFACTS
+# =============================================================================
+# Cada artifact define:
+#   id:            Identificador unico
+#   generates:     Path glob relativo a .quinoto-spec/ que este artifact produce
+#   requires:      Lista de IDs de artifacts que DEBEN existir antes de crear este
+#   template:      Template a usar (relativo a agent-dist/templates/)
+#   instruction:   Mini-prompt que el agente recibe para generar este artifact
+#   optional:      Si true, el artifact puede omitirse sin bloquear dependientes
+
+artifacts:
+  - id: constitution
+    generates: .quinoto-spec/constitution.md
+    requires: []
+    template: constitution-template.md
+    instruction: |
+      Create the project constitution defining core principles for code quality,
+      testing standards, user experience consistency, and performance requirements.
+      This supersedes all other practices.
+    optional: true
+
+  - id: discovery
+    generates: .quinoto-spec/discovery/*-stack-profile.md
+    requires: []
+    template: null
+    instruction: |
+      Execute @quinotospec.discovery to generate the 8 discovery files documenting
+      the project's tech stack, architecture, endpoints, data models, and agreements.
+
+  - id: proposal
+    generates: .quinoto-spec/proposals/{slug}/proposal.md
+    requires: []
+    template: proposal-template.md
+    instruction: |
+      Create a technical proposal analyzing the discovery context. Define the problem,
+      solution approach, affected services, risks, and implementation plan.
+      Register a unique prefix in prefix-registry.md.
+
+  - id: delta-specs
+    generates: .quinoto-spec/proposals/{slug}/delta-specs/**/*.md
+    requires:
+      - proposal
+    template: delta-spec-template.md
+    instruction: |
+      Generate delta specs (ADDED/MODIFIED/REMOVED/RENAMED) for each affected domain.
+      Read existing specs from .quinoto-spec/specs/ for MODIFIED/REMOVED context.
+
+  - id: design
+    generates: .quinoto-spec/proposals/{slug}/design.md
+    requires:
+      - proposal
+    template: null
+    instruction: |
+      Define the technical architecture: component diagram, data flow, technology choices,
+      trade-offs, and ADRs. Reference the delta specs for what's changing.
+
+  - id: user-stories
+    generates: .quinoto-spec/proposals/{slug}/user-stories.md
+    requires:
+      - delta-specs
+      - design
+    template: null
+    instruction: |
+      Break down the proposal into user stories. Each story should have: role, action,
+      benefit, acceptance criteria, priority (P1-P3), estimate (XS-XL), and service.
+
+  - id: tasks
+    generates: .quinoto-spec/proposals/{slug}/*_tasks.md
+    requires:
+      - user-stories
+    template: null
+    instruction: |
+      Create implementation tasks from user stories. Each task should be atomic (2-5 min),
+      include exact file paths, verification steps, and commit commands.
+      Mark parallelizable tasks with [P].
+
+# =============================================================================
+# APPLY (implementation phase)
+# =============================================================================
+apply:
+  requires:
+    - tasks
+  tracks: .quinoto-spec/proposals/{slug}/*_tasks.md
+  instruction: |
+    Implement tasks from the task file. Check off - [x] as completed.
+    Run tests after each task. Update changelog after completion.
+
+# =============================================================================
+# WORKFLOW LIFECYCLE
+# =============================================================================
+# Define que workflows corresponden a cada fase del ciclo de vida.
+# Usado por quinotospec-help para navegacion contextual.
+
+phases:
+  - id: setup
+    label: Configuracion
+    artifacts: [constitution, discovery]
+    description: Configuracion inicial del proyecto y descubrimiento del stack
+
+  - id: planning
+    label: Planificacion
+    artifacts: [proposal, delta-specs, design]
+    description: Definir que construir y como
+
+  - id: breakdown
+    label: Desglose
+    artifacts: [user-stories, tasks]
+    description: Convertir plan en trabajo atomico
+
+  - id: implementation
+    label: Implementacion
+    artifacts: [apply]
+    description: Ejecutar tareas y construir
+
+# =============================================================================
+# VALIDATION RULES
+# =============================================================================
+# Reglas adicionales que el engine verifica.
+
+validation:
+  - rule: no-duplicate-prefixes
+    description: No puede haber dos propuestas activas con el mismo prefijo
+    severity: BLOCKING
+
+  - rule: constitution-before-archive
+    description: Si constitution existe, el archive debe verificar compliance
+    severity: WARNING
+
+  - rule: specs-consistency
+    description: Delta specs no pueden declarar MODIFIED/REMOVED si specs/ no existe
+    severity: WARNING

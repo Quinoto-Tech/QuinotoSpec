@@ -371,11 +371,57 @@ Crear la siguiente estructura:
 
 ```
 .quinoto-spec/
+├── schema.yaml
+├── specs/
+│   └── README.md
 ├── discovery/
 │   └── README.md
 ├── proposals/
 ├── scripts/
-└── rfc/
+├── rfc/
+└── changelog/
+    └── .gitignore
+```
+
+### Schema YAML
+
+Crear `.quinoto-spec/schema.yaml` copiando `agent-dist/templates/schema-template.yaml`:
+
+El schema define el DAG de artefactos (propuesta, delta-specs, design, user-stories, tareas) y sus dependencias. El artifact engine (`quinotospec-artifact-engine`) usa este schema para calcular estado (done/ready/blocked).
+
+Personalizacion: `@quinotospec.schema-fork` permite adaptar el schema al flujo del equipo.
+
+### Specs README
+
+El `specs/README.md` debe contener:
+
+```markdown
+# Specs — Source of Truth
+
+Este directorio contiene la especificacion canonica del sistema, organizada por dominio/servicio.
+
+Cada subdirectorio representa un dominio (ej. `auth/`, `payments/`, `ui/`) y contiene un `spec.md` con los requerimientos actuales del sistema.
+
+## Formato
+
+Los specs usan el formato de requerimientos con escenarios GIVEN/WHEN/THEN (opcionales):
+
+### Requirement: Name
+The system SHALL...
+
+#### Scenario: Name (optional)
+- **GIVEN** precondition
+- **WHEN** action
+- **THEN** expected outcome
+
+## Actualizacion
+
+Los specs se actualizan automaticamente al archivar propuestas que contienen `delta-specs/`.
+Ver `@quinotospec.archive` para detalles del engine de merge.
+
+## Inicializacion
+
+Para proyectos existentes sin specs/, ejecuta `@quinotospec.specs-init` para generar specs iniciales desde el discovery o propuestas existentes.
 ```
 
 El `discovery/README.md` debe contener:
@@ -401,31 +447,32 @@ Crear `.quinoto-spec/prefix-registry.md` con la tabla vacía:
 
 ---
 
-### Paso 7 — Crear quinoto-spec-changelog.md
+### Paso 7 — Crear changelog/ y .gitignore (v2)
 
-Crear `.quinoto-spec/quinoto-spec-changelog.md` con el header inicial:
+Crear el directorio `.quinoto-spec/changelog/` con un `.gitignore` que excluya INDEX.md:
 
-```markdown
-# QuinotoSpec Changelog
-
-Registro automático de cambios realizados por agentes QuinotoSpec.
-**NO EDITAR MANUALMENTE** — Usar siempre la skill `quinotospec-update-changelog`.
-
----
-
-## [Fecha: {{TODAY}}] - Estructura QuinotoSpec Inicializada
-
-### Resumen
-- Se creó la estructura base de `.quinoto-spec/`
-- Se inicializó `prefix-registry.md`
-- Próximo paso: ejecutar `@quinotospec.discovery`
+```bash
+mkdir -p .quinoto-spec/changelog
 ```
 
-**Si se generó scaffold**, agregar una entrada adicional al changelog con el stack usado:
+Crear `.quinoto-spec/changelog/.gitignore`:
 
-```markdown
+```gitignore
+INDEX.md
+```
+
+**Nota sobre el formato:** QuinotoSpec usa formato v2 (append-only) por defecto. Cada entrada es un archivo separado `changelog/YYYY-MM-DD-PREFIX-SLUG.md`. INDEX.md es regenerable y gitignored — nunca se commitea.
+
+Si se requiere compatibilidad con versiones anteriores de QuinotoSpec (v2.4.0 o anterior), agregar también `.quinoto-spec/quinoto-spec-changelog.md` (formato v1 legacy). La skill `quinotospec-update-changelog` detecta automáticamente el formato activo.
+
+Crear la primera entrada con autodetección v2:
+
+Usar la skill `quinotospec-update-changelog` para crear la primera entrada en `changelog/`:
+- **Título**: QuinotoSpec Initialized
+- **Resumen**: Se creó la estructura base de `.quinoto-spec/` y el directorio `changelog/` (formato v2).
+
+**Si se generó scaffold**, agregar al resumen:
 - Se generó scaffold del proyecto con: {{LENGUAJE}} + {{FRAMEWORK}} ({{PACKAGE_MANAGER}})
-```
 
 ---
 
@@ -447,35 +494,35 @@ Mostrar al usuario:
 ✓ Scaffold generado con {{LENGUAJE}} + {{FRAMEWORK}} ({{PACKAGE_MANAGER}})
 ✓ .gitignore y README.md creados
 ✓ Estructura QuinotoSpec inicializada en .quinoto-spec/
+✓ specs/ creado — esperando inicializacion
 
 Próximos pasos:
-  1. @quinotospec.discovery          → Documentar el proyecto
-  2. Completar discovery/08-product-and-agreements.md
-  3. @quinotospec.sprints.init       → Configurar sprints
-  4. @quinotospec.create-proposal    → Primera propuesta
+  1. @quinotospec.specs-init        → Inicializar specs desde discovery
+  2. @quinotospec.discovery         → Documentar el proyecto
+  3. Completar discovery/08-product-and-agreements.md
+  4. @quinotospec.create-proposal   → Las propuestas generaran delta-specs/
 ```
 
 **Si NO se generó scaffold (proyecto existente):**
 ```
 ✓ Estructura QuinotoSpec inicializada en .quinoto-spec/
+✓ specs/ creado — esperando inicializacion
 
 Próximos pasos:
-  1. @quinotospec.discovery          → Documentar el proyecto
-  2. Completar discovery/08-product-and-agreements.md
-  3. @quinotospec.sprints.init       → Configurar sprints
-  4. @quinotospec.create-proposal    → Primera propuesta
+  1. @quinotospec.specs-init        → Inicializar specs desde discovery
+  2. @quinotospec.discovery         → Documentar el proyecto (si no ejecutado)
+  3. Completar discovery/08-product-and-agreements.md
+  4. @quinotospec.create-proposal   → Las propuestas generaran delta-specs/
 ```
 
 ---
 
-### Paso 10 — Changelog (OBLIGATORIO)
+### Paso 10 — Verificar Changelog
 
-Ejecutar la skill `quinotospec-update-changelog`.
-- **Título de la Acción**: QuinotoSpec Initialized
-- **Resumen**: Se creó la estructura `.quinoto-spec/` base con `prefix-registry.md` y `quinoto-spec-changelog.md`.
+Verificar que la entrada se creó correctamente:
 
-Si se generó scaffold, incluir en el resumen:
-- **Resumen**: Se creó la estructura `.quinoto-spec/` base y se generó scaffold del proyecto con {{LENGUAJE}} + {{FRAMEWORK}} ({{PACKAGE_MANAGER}}).
+- Si v2: `ls .quinoto-spec/changelog/` debe mostrar un archivo `2026-06-12-ZZZZ-quinotospec-initialized.md` (o similar).
+- Si se forzó v1: `.quinoto-spec/quinoto-spec-changelog.md` debe existir con la entrada correspondiente.
 
 ---
 

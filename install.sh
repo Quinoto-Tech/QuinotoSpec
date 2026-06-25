@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# QuinotoSpec Installer v2.0.0
+# QuinotoSpec Installer v2.4.0
 # Instala QuinotoSpec en el IDE seleccionado con validación post-instalación
 
 set -euo pipefail
 
-INSTALLER_VERSION="2.0.0"
+INSTALLER_VERSION="2.5.0"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(pwd)"
 TARGET_ROOT="$PROJECT_ROOT"

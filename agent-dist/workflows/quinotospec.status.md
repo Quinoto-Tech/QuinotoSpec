@@ -29,22 +29,26 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
     - Detecta historias con todas sus tareas pendientes (`[ ]`) sin ningún progreso.
     - Detecta conflictos de propuestas registrados con `⚠️ Conflictos Detectados:`.
 
-5. **Salud de la Metodología**:
+5. **Estado de Artefactos por Propuesta (Artifact DAG)**:
+    - Para cada propuesta activa, invocar skill `quinotospec-artifact-engine --status --change {{slug}}`.
+    - Incluir en el dashboard una seccion `## 🔀 Estado de Artefactos` con la tabla de estado (done/ready/blocked) para cada propuesta.
+    - Destacar artefactos `ready` como acciones inmediatas sugeridas.
+    - Si el schema no existe, mostrar: `Schema no encontrado — ejecuta @quinotospec.schema-fork para crear uno.`
+
+6. **Salud de la Metodología**:
     - Verifica la existencia y contenido de los siguientes artefactos:
         - ✅/❌ `.quinoto-spec/discovery/` existe y tiene los 8 archivos esperados.
         - ✅/❌ `08-product-and-agreements.md` tiene contenido más allá de los encabezados.
         - ✅/❌ `.quinoto-spec/prefix-registry.md` está actualizado y sin duplicados.
+        - ✅/❌ `.quinoto-spec/schema.yaml` existe y es valido.
 
-6. **Próximos Pasos Sugeridos** (Blood-Bond):
-    - Invocar skill `quinotospec-blood-bond-analyzer --force`
-    - Invocar skill `quinotospec-blood-bond-predictor --force`
-    - Leer `.quinoto-spec/blood-bond/suggestions.md` y mostrar las sugerencias en la sección `⏭️ Próximos Pasos Sugeridos`
-    - Si `suggestions.md` no existe o proyecto está en cold start (< 5 entradas en changelog): fallback a sugerencias basadas en prioridad P1 y menor completitud
+7. **Próximos Pasos Sugeridos** (Blood-Bond):
 
-7. **Generación del Dashboard**:
+8. **Generación del Dashboard**:
     - Crea o actualiza `PROJECT_STATUS.md` con las siguientes secciones en orden:
         - `# 📊 Dashboard de Proyecto`
         - `## 📈 Resumen Ejecutivo` (Métricas de Valor Ahorrado + velocidad)
+        - `## 🔀 Estado de Artefactos` (Tabla de estado DAG por propuesta activa)
         - `## 🗺️ Mapa de Ruta y Estado de Iniciativas` (Tabla de Propuestas activas + contador de archivadas)
         - `## 🚨 Alertas y Bloqueos` (propuestas estancadas, conflictos detectados)
         - `## 🛠️ Salud de la Metodología` (checks explícitos con ✅/❌)

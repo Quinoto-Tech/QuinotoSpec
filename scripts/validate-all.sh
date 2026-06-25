@@ -78,7 +78,7 @@ echo ""
 
 # 4. Validar estructura de agent-dist
 echo "--- Structure Validation ---"
-EXPECTED_COUNTS=("workflows:33" "skills:27" "agents:9")
+EXPECTED_COUNTS=("workflows:37" "skills:29" "agents:9")
 for expected in "${EXPECTED_COUNTS[@]}"; do
     dir="${expected%%:*}"
     count="${expected##*:}"

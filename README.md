@@ -2,11 +2,11 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.1.0-blue)
+![Version](https://img.shields.io/badge/version-2.5.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline-orange)
-![Workflows](https://img.shields.io/badge/workflows-33-purple)
-![Skills](https://img.shields.io/badge/skills-27-purple)
+![Workflows](https://img.shields.io/badge/workflows-37-purple)
+![Skills](https://img.shields.io/badge/skills-29-purple)
 ![Rules](https://img.shields.io/badge/rules-12-red)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
 
@@ -124,10 +124,21 @@ La mayoría de los workflows con IA siguen el patrón "pedí, esperá, verificá
 En lugar de cargar todo el proyecto en cada llamada al modelo, QuinotoSpec refina el contexto progresivamente:
 
 ```
-Discovery (global) → Proposal (iniciativa) → User History (valor) → Task (atómico)
+Discovery (global) → Proposal (iniciativa) → Delta Specs (incremental) → User History (valor) → Task (atómico)
 ```
 
 En cada paso, el agente recibe **menos contexto pero más preciso**. Menos tokens, menos ruido, menos alucinaciones.
+
+### Delta Specs: Especificaciones Incrementales
+
+QuinotoSpec usa **delta specs** para describir cambios al sistema. En lugar de reescribir la especificación completa cada vez:
+
+- **ADDED**: Nuevos requerimientos que se agregan
+- **MODIFIED**: Requerimientos existentes que cambian (con `Was:` y `Reason:`)
+- **REMOVED**: Requerimientos que se eliminan (con `Reason:` y `Migration:`)
+- **RENAMED**: Requerimientos renombrados
+
+Al archivar una propuesta, el **engine de merge** aplica los deltas a `specs/` — el source of truth canónico del sistema, organizado por dominio/servicio. Esto hace que QuinotoSpec funcione tanto en greenfield como en brownfield.
 
 ### Trazabilidad por diseño
 
@@ -293,6 +304,10 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | **Pre-commit** | `@quinotospec.pre-commit` | Check rápido pre-commit (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automatiza version bump, consolidación de changelog y tagging |
 | **Init** | `@quinotospec.init` | Inicializa estructura `.quinoto-spec/` desde cero. Si el proyecto está vacío, ofrece wizard interactivo para generar scaffold con el stack deseado |
+| **Specs Init** | `@quinotospec.specs-init` | Inicializa `specs/` con requerimientos desde discovery o propuestas existentes |
+| **Schema Fork** | `@quinotospec.schema-fork` | Crea schema YAML personalizado del DAG de artefactos |
+| **Party Mode** | `@quinotospec.party-mode` | Mesa redonda multi-agente — debate en caracter entre agentes especializados |
+| **Changelog View** | `@quinotospec.changelog-view` | Ver changelog consolidado (v2 + v1) con filtros |
 | **Retrospective** | `@quinotospec.retrospective` | Retrospectiva con métricas y patrones de propuestas completadas |
 | **Health** | `@quinotospec.health` | Detecta archivos huérfanos e inconsistencias en `.quinoto-spec/` |
 | **Cleanup** | `@quinotospec.cleanup` | Limpia branches stale, scripts temporales y propuestas inactivas |
@@ -340,6 +355,23 @@ Ejecuta múltiples subagentes en paralelo para tareas masivas.
 ```bash
 @quinotospec.battle-frenzy "Migrar 10 endpoints a v2"
 @quinotospec.battle-frenzy --dry-run "Crear tests para múltiples módulos"
+```
+
+#### Party Mode (Mesa Redonda Multi-Agente)
+
+Reune agentes especializados en una mesa redonda para discutir, debatir y colaborar en caracter.
+
+```bash
+# Mesa redonda independiente
+@quinotospec.party-mode "¿Monolito o microservicios para el modulo de pagos?"
+@quinotospec.party-mode "Revisar la seguridad del API" --agents security-auditor,architect
+
+# Integrado en propuestas — el consejo debate antes de redactar
+@quinotospec.create-proposal "Refactorizar capa de autenticacion" --party
+@quinotospec.create-proposal "Nuevo sistema de notificaciones" --party architect,test-writer
+
+# Integrado en RFCs — el consejo debate el contexto y la propuesta
+@quinotospec.create-rfc "Feature flags en staging" --party
 ```
 
 #### Blood-Bond (Predicción Proactiva)
@@ -561,8 +593,11 @@ Después de ejecutar `@quinotospec.discovery`:
 │   ├── blood-bond/                   # Análisis predictivo
 │   ├── swarm/                        # Ejecución paralela
 │   ├── scripts/                      # Scripts temporales
+│   ├── changelog/                     # Historial auto-generado (v2)
+│   │   ├── YYYY-MM-DD-PREFIX-slug.md
+│   │   └── INDEX.md (gitignored)
 │   ├── prefix-registry.md            # Registro de prefijos
-│   └── quinoto-spec-changelog.md     # Historial de cambios
+│   └── quinoto-spec-changelog.md     # Historial v1 legacy (opcional)
 ├── src/
 ├── tests/
 ├── package.json
