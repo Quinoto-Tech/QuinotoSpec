@@ -158,13 +158,13 @@ QuinotoSpec se instala en tu IDE (Cursor, OpenCode, Cline, o genérico) y opera 
 
 ```bash
 # Clonar y dar permisos
-chmod +x quinotospec-package/install.sh
+chmod +x install.sh
 
-# Ejecutar (modo interactivo)
-./quinotospec-package/install.sh
+# Ejecutar (modo local e interactivo)
+./install.sh
 
-# Instalación global (en ~/.config/)
-./quinotospec-package/install.sh --opencode --global
+# Instalación global (registra el comando 'quinotospec' mediante un symlink en /usr/local/bin)
+sudo ./install.sh --opencode --global
 ```
 
 El instalador pregunta la ruta de destino y el IDE:
@@ -173,22 +173,27 @@ El instalador pregunta la ruta de destino y el IDE:
 |------|-----|---------|
 | `--opencode` | OpenCode | `.opencode/` o `~/.config/opencode/` (global) |
 | `--cursor` | Cursor | `.cursor/` o `~/.config/cursor/` (global) |
-| `--global`, `--root` | - | Instala en `~/.config/` ignorando el directorio del proyecto |
+| `--global`, `--root` | - | Instala en `~/.config/` y registra el comando `quinotospec` en `/usr/local/bin/` (requiere `sudo`) |
 | (default) | Genérico | `.agent/` |
 
-### Instalación Global
+### Instalación Global y Comando CLI
 
-Para instalar una vez y disponible en todos tus proyectos:
+Al realizar una instalación global con el flag `--global` (o `--root`), el instalador creará un enlace simbólico (symlink) en `/usr/local/bin/quinotospec` apuntando a `quinotospec.py`. Esto requiere permisos de superusuario (`sudo`).
 
 ```bash
-# OpenCode global
-./quinotospec-package/install.sh --opencode --global
+# Instalar globalmente para OpenCode y registrar el comando CLI
+sudo ./install.sh --opencode --global
 
-# Cursor global
-./quinotospec-package/install.sh --cursor --global
+# Instalar globalmente para Cursor y registrar el comando CLI
+sudo ./install.sh --cursor --global
 ```
 
-Esto crea la configuración en `~/.config/opencode/` o `~/.config/cursor/` según el IDE.
+Una vez instalado globalmente, puedes ejecutar `quinotospec` directamente desde cualquier proyecto para instalar localmente los workflows y configuraciones de tu IDE:
+
+```bash
+# Dentro de cualquier repositorio nuevo
+quinotospec --opencode
+```
 
 ### Dependencias
 

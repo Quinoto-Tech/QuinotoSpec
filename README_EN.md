@@ -128,13 +128,13 @@ QuinotoSpec installs into your IDE (Cursor, OpenCode, Cline, or generic) and ope
 
 ```bash
 # Clone and set permissions
-chmod +x quinotospec-package/install.sh
+chmod +x install.sh
 
-# Run (interactive mode)
-./quinotospec-package/install.sh
+# Run (local interactive mode)
+./install.sh
 
-# Global installation (in ~/.config/)
-./quinotospec-package/install.sh --opencode --global
+# Global installation (registers the CLI command via a symlink in /usr/local/bin)
+sudo ./install.sh --opencode --global
 ```
 
 The installer prompts for destination path and IDE:
@@ -143,22 +143,27 @@ The installer prompts for destination path and IDE:
 |------|-----|-------------|
 | `--opencode` | OpenCode | `.opencode/` or `~/.config/opencode/` (global) |
 | `--cursor` | Cursor | `.cursor/` or `~/.config/cursor/` (global) |
-| `--global`, `--root` | - | Install in `~/.config/`, ignoring project directory |
+| `--global`, `--root` | - | Installs in `~/.config/` and registers the `quinotospec` command in `/usr/local/bin/` (requires `sudo`) |
 | (default) | Generic | `.agent/` |
 
-### Global Installation
+### Global Installation & CLI Command
 
-Install once and available in all your projects:
+When performing a global installation using the `--global` (or `--root`) flag, the installer will attempt to create a symlink in `/usr/local/bin/quinotospec` pointing to `quinotospec.py`. This requires superuser privileges (`sudo`).
 
 ```bash
-# OpenCode global
-./quinotospec-package/install.sh --opencode --global
+# OpenCode global + CLI symlink
+sudo ./install.sh --opencode --global
 
-# Cursor global
-./quinotospec-package/install.sh --cursor --global
+# Cursor global + CLI symlink
+sudo ./install.sh --cursor --global
 ```
 
-This creates the config in `~/.config/opencode/` or `~/.config/cursor/` depending on the IDE.
+Once globally registered, you can run the `quinotospec` command from any directory to initialize the local workflows/configuration for your IDE:
+
+```bash
+# Inside any target repository
+quinotospec --opencode
+```
 
 ### Dependencies
 

@@ -48,15 +48,12 @@ QU_LOGO = f"""{ORANGE}
 
 def print_banner():
     print(QU_LOGO)
-    print(f"{BOLD}QuinotoSpec CLI - Berserker Edition{RESET}")
+    print(f"{BOLD}QuinotoSpec CLI v2.5.0{RESET}")
     print(f"Enhancing AI Collaboration since 2024\n")
 
 def run_install(args):
     """Calls the local install.sh script with appropriate flags."""
     print_banner()
-    
-    # Find the install.sh script. It should be in the same directory as this script 
-    # if installed via symlink or in the package.
     script_dir = os.path.dirname(os.path.realpath(__file__))
     install_script = os.path.join(script_dir, "install.sh")
     
@@ -98,7 +95,7 @@ def main():
     args = parser.parse_args()
     
     if args.version:
-        print("QuinotoSpec CLI v1.0.0 (Berserker)")
+        print("QuinotoSpec v2.5.0")
         sys.exit(0)
     
     run_install(args)
