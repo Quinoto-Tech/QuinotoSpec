@@ -380,6 +380,19 @@ echo ""
 verify_installation "$config_dir" "$IDE_CHOICE"
 VERIFY_RESULT=$?
 
+if [ "$GLOBAL_INSTALL" = true ]; then
+    echo ""
+    print_info "Registering 'quinotospec' command globally..."
+    # Create symlink in /usr/local/bin
+    if sudo ln -sf "$DIR/quinotospec.py" /usr/local/bin/quinotospec; then
+        sudo chmod +x /usr/local/bin/quinotospec
+        print_success "Global command 'quinotospec' installed!"
+    else
+        print_warning "Failed to create global symlink. You might need sudo permissions."
+    fi
+fi
+
+
 echo ""
 echo "======================================================================"
 if [ "$GLOBAL_INSTALL" = true ]; then
