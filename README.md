@@ -15,7 +15,7 @@
 Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA.
 Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y minimizar alucinaciones.
 
-<img src="YGGDRASIL.png" alt="Quinoto Yggdrasil Edition" width="800" />
+<img src="Mimir.png" alt="QuinotoSpec v2.5.0 — Yggdrasil + Mimr" width="800" />
 
 **Yggdrasil Edition** - El arbol que conecta los 9 reinos del desarrollo asistido por IA.
 
@@ -688,12 +688,16 @@ graph LR
 - ✅ Documentacion extendida (docs/)
 - ✅ Proyectos de ejemplo (examples/)
 
-**Yggdrasil Edition (v2.1.0)** — Actual
+**Yggdrasil + Mimr Edition (v2.5.0)** — Actual
 - ✅ 9 agentes especializados (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
 - ✅ Sistema de gobernanza con 12 reglas
 - ✅ Infraestructura de testing y CI/CD
 - ✅ Documentacion completa y ejemplos
 - ✅ Integracion con GitHub Issues y Jira CSV
+- ✅ Delta Specs: especificaciones incrementales (ADDED/MODIFIED/REMOVED/RENAMED)
+- ✅ Artifact DAG Engine: grafo de dependencias con schema YAML
+- ✅ Party Mode: mesa redonda multi-agente integrada en create-proposal y create-rfc
+- ✅ Changelog v2: append-only, archivos individuales, sin merge conflicts
 
 **Warband: Falange (v3.0.0, TBA)**
 -  Class System: Roles especializados (~60%) — 9 agentes especializados existen, falta sistema de progresión y nombres mitológicos (Scout/Skald/Blacksmith)

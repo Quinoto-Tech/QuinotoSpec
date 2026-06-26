@@ -5,7 +5,7 @@
 > "Proposal First" / "Context Slicing" workflow to maximize accuracy and minimize hallucinations.
 
 <div align="center">
-  <img src="YGGDRASIL.png" alt="Quinoto Yggdrasil Edition" width="800" />
+  <img src="Mimir.png" alt="QuinotoSpec v2.5.0 — Yggdrasil + Mimr" width="800" />
 </div>
 
 **Yggdrasil Edition** - The tree that connects the 9 realms of AI-assisted development.
@@ -116,7 +116,7 @@ Every change is recorded in an immutable changelog (rule #1: never edit manually
 
 ### Governance, not just Execution
 
-QuinotoSpec is not a prompt file — it's a **rule system**. 8 strict rules that the agent must follow, validated with `@quinotospec-validate` and `/quinotospec-rules-enforce`. If a product agreement is empty, the workflow blocks. If a prefix is not registered, progress stops.
+QuinotoSpec is not a prompt file — it's a **rule system**. 12 strict rules that the agent must follow, validated with `@quinotospec-validate` and `/quinotospec-rules-enforce`. If a product agreement is empty, the workflow blocks. If a prefix is not registered, progress stops.
 
 ### Works with your agent, not instead of your agent
 
@@ -511,18 +511,22 @@ The `quinotospec-update-changelog` skill is the traceability backbone: 24 of 29 
 
 ## Rules
 
-QuinotoSpec enforces 8 strict rules (defined in `agent-dist/rules/quinotospec-rules.md`):
+QuinotoSpec enforces 12 strict rules (defined in `agent-dist/rules/quinotospec-rules.md`):
 
-| # | Rule | Description |
-|---|------|-------------|
-| 1 | **Changelog** | Never edit manually. Always use `quinotospec-update-changelog` |
-| 2 | **Prefixes & IDs** | All work must be tracked under a prefix registered in `prefix-registry.md` |
-| 3 | **Product Agreements** | Blocking: check `08-product-and-agreements.md` before creating proposals |
-| 4 | **No Overwrite** | Never overwrite `user-stories.md` or `*_tasks.md`. Use smart merge |
-| 5 | **Archive Validation** | Verify `Status: Completed` before archiving |
-| 6 | **Archive Convention** | Use `_archived/` folder, never `__` prefix |
-| 7 | **Branch Naming** | Always use format `feature/{{TASK_ID}}-description-in-kebab-case` |
-| 8 | **Critical Config** | Never modify `base-config.yml`, `sprint-config.yml`, or `mjolnir-refactor.yml` without approval |
+| # | Rule | Severity | Description |
+|---|------|----------|-------------|
+| 1 | **Changelog** | STANDARD | Never edit manually. Always use `quinotospec-update-changelog` |
+| 2 | **Prefixes & IDs** | STANDARD | All work must be tracked under a unique prefix (MNEMONIC-UUID, e.g. `AUTH-a1b2`) registered in `prefix-registry.md` |
+| 3 | **Product Agreements** | BLOCKING | Check `08-product-and-agreements.md` before creating proposals |
+| 4 | **No Overwrite** | STANDARD | Never overwrite `user-stories.md` or `*_tasks.md`. Use smart merge |
+| 5 | **Archive Validation** | STANDARD | Verify `Status: Completed` before archiving |
+| 6 | **Archive Convention** | STANDARD | Use `_archived/` folder, never `__` prefix |
+| 7 | **Branch Naming** | STANDARD | Always use format `feature/{{TASK_ID}}-description-in-kebab-case` |
+| 8 | **Critical Config** | STANDARD | Never modify `base-config.yml`, `sprint-config.yml`, or `mjolnir-refactor.yml` without approval |
+| 9 | **Pre-Workflow Validation** | BLOCKING | Run `quinotospec-validate --full` before critical workflows |
+| 10 | **Backup Pre-Refactor** | BLOCKING | Mandatory backup before `mjolnir-refactor` |
+| 11 | **Pre-Apply Syntax** | WARNING | Validate proposal syntax before applying a task |
+| 12 | **Archived Files** | BLOCKING | Never modify files in `_archived/` without explicit approval |
 
 ---
 
@@ -654,12 +658,16 @@ graph LR
 - ✅ Extended documentation (docs/)
 - ✅ Example projects (examples/)
 
-**Yggdrasil Edition (v2.1.0)** — Current
+**Yggdrasil + Mimr Edition (v2.5.0)** — Current
 - ✅ 9 specialized agents (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
 - ✅ Governance system with 12 rules
 - ✅ Testing and CI/CD infrastructure
 - ✅ Complete documentation and examples
 - ✅ Integration with GitHub Issues and Jira CSV
+- ✅ Delta Specs: incremental specifications (ADDED/MODIFIED/REMOVED/RENAMED)
+- ✅ Artifact DAG Engine: dependency graph with YAML schema
+- ✅ Party Mode: multi-agent roundtable integrated into create-proposal and create-rfc
+- ✅ Changelog v2: append-only, individual files, no merge conflicts
 
 **Warband: Phalanx (v3.0.0, TBA)**
 - 🟡 Class System: Specialized roles (~60%) — 9 specialized agents exist, missing progression system and mythological names (Scout/Skald/Blacksmith)
