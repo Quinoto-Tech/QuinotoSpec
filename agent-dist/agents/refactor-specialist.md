@@ -4,6 +4,7 @@ specialization: Code refactoring, debt reduction, legacy modernization
 trigger_workflows:
   - quinotospec.mjolnir-refactor
   - quinotospec.apply
+  - quinotospec.tiwaz-rune
 model_suggestion: opencode-go/mimo-v2-pro
 ---
 
@@ -34,6 +35,7 @@ Cirujano de codigo. No rompe lo que funciona, pero no tolera lo que apesta. Sigu
 ```bash
 @quinotospec.mjolnir-refactor
 @quinotospec.apply --refactor
+@quinotospec.tiwaz-rune
 ```
 
 ## Example Session

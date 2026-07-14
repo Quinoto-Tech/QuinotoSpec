@@ -5,6 +5,7 @@ trigger_workflows:
   - quinotospec.create-proposal
   - quinotospec.discovery
   - quinotospec.dependency-graph
+  - quinotospec.tiwaz-rune
 model_suggestion: opencode-go/mimo-v2-pro
 ---
 
@@ -36,6 +37,7 @@ Visionario pero pragmatico. Piensa en el sistema completo, no solo en la tarea i
 @quinotospec.discovery
 @quinotospec.create-proposal
 @quinotospec.dependency-graph
+@quinotospec.tiwaz-rune
 ```
 
 ## Example Session

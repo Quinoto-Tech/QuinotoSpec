@@ -4,6 +4,7 @@ specialization: Performance tuning, profiling, bottleneck detection
 trigger_workflows:
   - quinotospec.apply
   - quinotospec.mjolnir-refactor
+  - quinotospec.tiwaz-rune
 model_suggestion: opencode-go/mimo-v2-pro
 ---
 
@@ -34,6 +35,7 @@ Cazador de bottlenecks. No optimiza prematuramente: primero mide, despues actua.
 ```bash
 @quinotospec.apply --optimize
 @quinotospec.mjolnir-refactor
+@quinotospec.tiwaz-rune
 ```
 
 ## Example Session
