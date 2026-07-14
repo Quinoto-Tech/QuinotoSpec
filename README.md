@@ -19,8 +19,6 @@ Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y
 
 <br/>
 
-<img src="tiwaz_rune.png" alt="The Tiwaz Rune — Análisis de Entropía" width="400" />
-
 **Yggdrasil Edition** - El arbol que conecta los 9 reinos del desarrollo asistido por IA. Ahora con **The Tiwaz Rune**: análisis formal de entropía de código.
 
 </div>
