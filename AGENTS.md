@@ -99,6 +99,7 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 | `/quinotospec.retrospective` | Retrospectiva con métricas y patrones |
 | `/quinotospec.health` | Detectar archivos huérfanos e inconsistencias |
 | `/quinotospec.cleanup` | Limpiar branches stale y scripts temporales |
+| `/quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
 
 ### Regla del Registro de Prefijos
 - Cada propuesta necesita un prefijo único que combine un mnemónico de 4 letras + un sufijo de 4 caracteres (ej. `AUTH-a1b2`)
@@ -201,6 +202,7 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 | `quinotospec-validate` | Pre-flight checks para workflows críticos |
 | `quinotospec-syntax-validate` | Validar estructura de archivos spec |
 | `quinotospec-update-changelog` | Escribir en changelog |
+| `quinotospec-entropy-calculator` | Calcular métricas de entropía (Shannon v2 + proxies v1) para Tiwaz Rune |
 | `quinotospec-mark-done` | Completar tareas y archivar |
 | `quinotospec-generate-github-branch` | Crear branches con nombres correctos |
 | `quinotospec-file-creation` | Estandarizar creación de archivos y scripts temporales |

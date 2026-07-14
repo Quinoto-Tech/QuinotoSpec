@@ -9,6 +9,9 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 ## [2.5.0] - 2026-06-12
 
 ### Added
+- **The Tiwaz Rune** (`@quinotospec.tiwaz-rune`): Análisis formal de entropía de código con métricas de Shannon (v2) y proxies de deuda técnica (v1). Genera score compuesto, hallazgos por dimensión, plan de remediación priorizado y métricas de seguimiento
+- **Entropy Calculator** (`quinotospec-entropy-calculator`): Skill que provee fórmulas, heurísticas por stack y comandos para calcular métricas de entropía formales y proxies
+- **Template `tiwaz-rune-report-template.md`**: Template para reportes de entropía con frontmatter YAML, tablas de scores, gráficos ASCII y plan de remediación
 - **Changelog v2 (Append-Only)**: Nuevo formato de changelog con archivos individuales en `.quinoto-spec/changelog/YYYY-MM-DD-PREFIX-SLUG.md` — elimina merge conflicts en equipos multi-agente
 - **Template `changelog-entry-template.md`**: Template para entradas v2 con placeholders de fecha, título, resumen y métricas
 - **Workflow `@quinotospec.changelog-view`**: Vista consolidada que combina entradas v2 y v1 con filtros por fecha, prefijo y texto

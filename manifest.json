@@ -3,8 +3,8 @@
   "version": "2.5.0",
   "edition": "Yggdrasil",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
-  "workflows": 37,
-  "skills": 29,
+  "workflows": 38,
+  "skills": 31,
   "rules": 12,
   "agents": 9,
   "features": {
@@ -13,7 +13,8 @@
     "artifact_engine": true,
     "schema_yaml": true,
     "party_mode": true,
-    "changelog_v2": true
+    "changelog_v2": true,
+    "tiwaz_rune": true
   },
   "supported_ides": ["opencode", "cursor", "cline", "generic"],
   "min_requirements": {

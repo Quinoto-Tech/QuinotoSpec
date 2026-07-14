@@ -70,6 +70,39 @@ Genera:
 - Activos criticos y limites de confianza
 - Amenazas con mitigaciones accionables
 
+## Tiwaz Rune (Analisis de Entropia)
+
+Analisis formal de entropia de codigo con metricas de Shannon (v2) y proxies de deuda tecnica (v1):
+
+```bash
+# Analisis completo de un microservicio
+@quinotospec.tiwaz-rune --service ./services/payments
+
+# Solo metricas formales (Shannon)
+@quinotospec.tiwaz-rune --formal-only
+
+# Solo metricas proxy (deuda tecnica)
+@quinotospec.tiwaz-rune --proxy-only
+
+# Output JSON estructurado
+@quinotospec.tiwaz-rune --json
+
+# Comparar con reporte anterior
+@quinotospec.tiwaz-rune --baseline
+```
+
+**Fases del analisis:**
+1. Metricas formales: entropia del grafo de dependencias, complejidad ciclomatica, distribucion de tamanos, churn y configuracion
+2. Metricas proxy: complejidad, acoplamiento, configuracion, dependencias, seguridad, testing y observabilidad
+3. Score compuesto: `S_final = 0.60 * H_total + 0.40 * S_proxy`
+4. Plan de remediacion: acciones inmediatas, corto y mediano plazo
+
+Genera:
+- Reporte completo en `.quinoto-spec/tiwaz-rune/YYYYMMDD-hhmm-entropy-report.md`
+- Integracion con discovery (`07-findings-and-recommendations.md`)
+- Alertas criticas si `S_final >= 0.76`
+- Sugerencias de remediacion (`mjolnir-refactor`, `create-proposal`)
+
 ## Mjolnir Refactor
 
 Reescritura agresiva de modulos con alta deuda:

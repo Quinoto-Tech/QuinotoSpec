@@ -2,6 +2,7 @@
 name: security-auditor
 specialization: Security analysis, vulnerability detection, STRIDE/DREAD
 trigger_workflows:
+  - quinotospec.tiwaz-rune
   - quinotospec.heimdallr
   - quinotospec.review
   - quinotospec.discovery

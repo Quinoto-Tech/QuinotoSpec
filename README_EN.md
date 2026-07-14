@@ -6,9 +6,13 @@
 
 <div align="center">
   <img src="Mimir.png" alt="QuinotoSpec v2.5.0 — Yggdrasil + Mimr" width="800" />
+
+  <br/>
+
+  <img src="tiwaz_rune.png" alt="The Tiwaz Rune — Entropy Analysis" width="400" />
 </div>
 
-**Yggdrasil Edition** - The tree that connects the 9 realms of AI-assisted development.
+**Yggdrasil Edition** - The tree that connects the 9 realms of AI-assisted development. Now with **The Tiwaz Rune**: formal code entropy analysis.
 
 ## Table of Contents
 
@@ -271,6 +275,7 @@ Actions: Reads context → Confirms branch → Implements → Runs tests → Upd
 | **Sprint Create** | `@quinotospec.sprint.create` | Creates a new sprint with configuration |
 | **Sprint Plan** | `@quinotospec.sprint.plan` | Generates optimal sprint plan |
 | **Heimdallr** | `@quinotospec.heimdallr` | STRIDE + DREAD threat analysis with mitigations |
+| **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Formal entropy analysis (Shannon v2 + proxy v1) with remediation plan |
 | **Pre-commit** | `@quinotospec.pre-commit` | Quick pre-commit check (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automates version bump, changelog consolidation, and tagging |
 | **Init** | `@quinotospec.init` | Initializes `.quinoto-spec/` structure from scratch. If the project is empty, offers an interactive wizard to generate a scaffold with the desired stack |
@@ -382,6 +387,44 @@ Executes exhaustive security analysis using STRIDE + DREAD methodology.
 - Critical threats detail with actionable mitigations
 - Report saved in `.quinoto-spec/threat-analysis/`
 
+#### Tiwaz Rune (Entropy Analysis)
+
+<div align="center">
+  <img src="tiwaz_rune.png" alt="The Tiwaz Rune" width="400" />
+</div>
+
+Runs a formal code entropy analysis using Shannon metrics (v2) and technical debt proxies (v1). Generates a composite score with a prioritized remediation plan.
+
+```bash
+@quinotospec.tiwaz-rune                              # Full analysis (formal + proxy)
+@quinotospec.tiwaz-rune --service ./services/payments # Specific microservice
+@quinotospec.tiwaz-rune --formal-only                 # Formal metrics only
+@quinotospec.tiwaz-rune --proxy-only                  # Proxy metrics only
+@quinotospec.tiwaz-rune --json                        # JSON + Markdown output
+@quinotospec.tiwaz-rune --baseline                    # Compare with previous report
+```
+
+**Analysis phases:**
+1. **Formal metrics (Shannon v2)**: dependency graph entropy, cyclomatic complexity, size distribution, churn, and configuration
+2. **Proxy metrics (v1)**: complexity, coupling, configuration, dependencies, security, testing, and observability
+3. **Composite score**: `S_final = 0.60 * H_total + 0.40 * S_proxy`
+4. **Remediation plan**: immediate, short-term, and medium-term actions
+
+**Entropy classification:**
+
+| S_final | Classification |
+|---------|----------------|
+| 0.00–0.20 | Low entropy (healthy system) |
+| 0.21–0.50 | Medium entropy (improvable) |
+| 0.51–0.75 | High entropy (risky) |
+| 0.76–1.00 | Critical entropy (immediate action) |
+
+**Output:**
+- Full report in `.quinoto-spec/tiwaz-rune/YYYYMMDD-hhmm-entropy-report.md`
+- Discovery integration (`07-findings-and-recommendations.md`)
+- Critical alerts if `S_final >= 0.76`
+- Remediation suggestions (`mjolnir-refactor`, `create-proposal`)
+
 #### Init (Automatic Scaffold)
 
 In an empty project, `@quinotospec.init` detects no code and offers an interactive wizard to choose the stack:
@@ -413,6 +456,7 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **Stack Detect** | `/quinotospec-stack-detect` | Identifies stack from configuration files |
 | **Mark Done** | `/quinotospec-mark-done` | Marks tasks as completed and archives artifacts |
 | **Update Changelog** | `/quinotospec-update-changelog` | Updates changelog automatically |
+| **Entropy Calculator** | `/quinotospec-entropy-calculator` | Calculates entropy metrics (Shannon v2 + proxy v1) for Tiwaz Rune |
 | **Validate** | `/quinotospec-validate` | System checks as preconditions for workflows |
 
 ### Advanced Skills (Governance)
@@ -498,6 +542,7 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **sprint.create** | *(none)* |
 | **sprint.plan** | `update-changelog` |
 | **heimdallr** | `update-changelog`, `blood-bond-monitor` |
+| **tiwaz-rune** | `entropy-calculator`, `stack-detect`, `update-changelog`, `blood-bond-monitor` |
 | **pre-commit** | `syntax-validate`, `rules-enforce` |
 | **release** | `update-changelog` |
 | **init** | `update-changelog` |
@@ -505,7 +550,7 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-The `quinotospec-update-changelog` skill is the traceability backbone: 24 of 29 workflows call it to document their actions.
+The `quinotospec-update-changelog` skill is the traceability backbone: 25 of 30 workflows call it to document their actions.
 
 ---
 
@@ -562,6 +607,7 @@ After running `@quinotospec.discovery`:
 │   ├── docs/                         # Extracted documentation
 │   ├── blood-bond/                   # Predictive analysis
 │   ├── swarm/                        # Parallel execution
+│   ├── tiwaz-rune/                    # Entropy reports
 │   ├── scripts/                      # Temp scripts
 │   ├── changelog/                     # Auto-generated history (v2)
 │   │   ├── YYYY-MM-DD-PREFIX-slug.md
@@ -668,6 +714,7 @@ graph LR
 - ✅ Artifact DAG Engine: dependency graph with YAML schema
 - ✅ Party Mode: multi-agent roundtable integrated into create-proposal and create-rfc
 - ✅ Changelog v2: append-only, individual files, no merge conflicts
+- ✅ The Tiwaz Rune: formal entropy analysis (Shannon v2 + proxy v1) with remediation plan
 
 **Warband: Phalanx (v3.0.0, TBA)**
 - 🟡 Class System: Specialized roles (~60%) — 9 specialized agents exist, missing progression system and mythological names (Scout/Skald/Blacksmith)

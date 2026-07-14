@@ -19,11 +19,11 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 +--------+---------+
 |   agent-dist/    |  <-- Distribucion
 |  +-------------+ |
-|  | workflows/  | |  <-- 37 workflows
-|  | skills/     | |  <-- 29 skills
+|  | workflows/  | |  <-- 38 workflows
+|  | skills/     | |  <-- 31 skills
 |  | rules/      | |  <-- 12 reglas
 |  | agents/     | |  <-- 9 agentes
-|  | templates/  | |  <-- 4 templates
+|  | templates/  | |  <-- 5 templates
 |  +-------------+ |
 +--------+---------+
          |
@@ -77,7 +77,7 @@ Los workflows se dividen en categorias:
 - stack-discovery, refresh-discovery, dependency-graph
 
 **Especiales:**
-- battle-frenzy, blood-bond, mjolnir-refactor, heimdallr
+- battle-frenzy, blood-bond, mjolnir-refactor, heimdallr, tiwaz-rune
 
 **Soporte:**
 - init, migrate, backup, export, import, onboard, agent-train
@@ -150,11 +150,11 @@ El sistema coexiste con el formato anterior de propuestas.
 
 ---
 
-### Skills (28)
+### Skills (31)
 
 Organizadas por dominio:
 
-**Basicas:** stack-detect, file-creation, generate-github-branch, mark-done, update-changelog, validate
+**Basicas:** stack-detect, file-creation, generate-github-branch, mark-done, update-changelog, validate, entropy-calculator
 
 **Gobernanza:** rules-enforce, syntax-validate, rollback, metrics
 

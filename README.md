@@ -5,8 +5,8 @@
 ![Version](https://img.shields.io/badge/version-2.5.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline-orange)
-![Workflows](https://img.shields.io/badge/workflows-37-purple)
-![Skills](https://img.shields.io/badge/skills-29-purple)
+![Workflows](https://img.shields.io/badge/workflows-38-purple)
+![Skills](https://img.shields.io/badge/skills-31-purple)
 ![Rules](https://img.shields.io/badge/rules-12-red)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
 
@@ -17,7 +17,11 @@ Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y
 
 <img src="Mimir.png" alt="QuinotoSpec v2.5.0 — Yggdrasil + Mimr" width="800" />
 
-**Yggdrasil Edition** - El arbol que conecta los 9 reinos del desarrollo asistido por IA.
+<br/>
+
+<img src="tiwaz_rune.png" alt="The Tiwaz Rune — Análisis de Entropía" width="400" />
+
+**Yggdrasil Edition** - El arbol que conecta los 9 reinos del desarrollo asistido por IA. Ahora con **The Tiwaz Rune**: análisis formal de entropía de código.
 
 </div>
 
@@ -301,6 +305,7 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | **Sprint Create** | `@quinotospec.sprint.create` | Crea un nuevo sprint con configuración |
 | **Sprint Plan** | `@quinotospec.sprint.plan` | Genera plan de sprint óptimo |
 | **Heimdallr** | `@quinotospec.heimdallr` | Análisis de amenazas STRIDE + DREAD con mitigaciones |
+| **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
 | **Pre-commit** | `@quinotospec.pre-commit` | Check rápido pre-commit (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automatiza version bump, consolidación de changelog y tagging |
 | **Init** | `@quinotospec.init` | Inicializa estructura `.quinoto-spec/` desde cero. Si el proyecto está vacío, ofrece wizard interactivo para generar scaffold con el stack deseado |
@@ -412,6 +417,44 @@ Ejecuta un análisis exhaustivo de seguridad usando metodología STRIDE + DREAD.
 - Detalle de amenazas críticas con mitigaciones accionables
 - Reporte guardado en `.quinoto-spec/threat-analysis/`
 
+#### Tiwaz Rune (Análisis de Entropía)
+
+<div align="center">
+  <img src="tiwaz_rune.png" alt="The Tiwaz Rune" width="400" />
+</div>
+
+Ejecuta un análisis formal de entropía de código usando métricas de Shannon (v2) y proxies de deuda técnica (v1). Genera un score compuesto con plan de remediación priorizado.
+
+```bash
+@quinotospec.tiwaz-rune                              # Análisis completo (formal + proxy)
+@quinotospec.tiwaz-rune --service ./services/payments # Microservicio específico
+@quinotospec.tiwaz-rune --formal-only                 # Solo métricas formales
+@quinotospec.tiwaz-rune --proxy-only                  # Solo métricas proxy
+@quinotospec.tiwaz-rune --json                        # Output JSON + Markdown
+@quinotospec.tiwaz-rune --baseline                    # Comparar con reporte anterior
+```
+
+**Fases del análisis:**
+1. **Métricas formales (Shannon v2)**: entropía del grafo de dependencias, complejidad ciclomática, distribución de tamaños, churn y configuración
+2. **Métricas proxy (v1)**: complejidad, acoplamiento, configuración, dependencias, seguridad, testing y observabilidad
+3. **Score compuesto**: `S_final = 0.60 * H_total + 0.40 * S_proxy`
+4. **Plan de remediación**: acciones inmediatas, corto y mediano plazo
+
+**Clasificación de entropía:**
+
+| S_final | Clasificación |
+|---------|---------------|
+| 0.00–0.20 | Entropía baja (sistema sano) |
+| 0.21–0.50 | Entropía media (mejorable) |
+| 0.51–0.75 | Entropía alta (riesgoso) |
+| 0.76–1.00 | Entropía crítica (acción inmediata) |
+
+**Salida:**
+- Reporte completo en `.quinoto-spec/tiwaz-rune/YYYYMMDD-hhmm-entropy-report.md`
+- Integración con discovery (`07-findings-and-recommendations.md`)
+- Alertas críticas si `S_final >= 0.76`
+- Sugerencias de remediación (`mjolnir-refactor`, `create-proposal`)
+
 #### Init (Scaffold Automático)
 
 En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece wizard interactivo para elegir stack:
@@ -443,6 +486,7 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **Stack Detect** | `/quinotospec-stack-detect` | Identifica stack desde archivos de configuración |
 | **Mark Done** | `/quinotospec-mark-done` | Marca tareas completadas y archiva artefactos |
 | **Update Changelog** | `/quinotospec-update-changelog` | Actualiza changelog automáticamente |
+| **Entropy Calculator** | `/quinotospec-entropy-calculator` | Calcula métricas de entropía (Shannon v2 + proxies v1) para Tiwaz Rune |
 | **Validate** | `/quinotospec-validate` | Checks de sistema como precondición para workflows |
 
 ### Skills Avanzadas (Gobernanza)
@@ -528,6 +572,7 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **sprint.create** | *(ninguna)* |
 | **sprint.plan** | `update-changelog` |
 | **heimdallr** | `update-changelog`, `blood-bond-monitor` |
+| **tiwaz-rune** | `entropy-calculator`, `stack-detect`, `update-changelog`, `blood-bond-monitor` |
 | **pre-commit** | `syntax-validate`, `rules-enforce` |
 | **release** | `update-changelog` |
 | **init** | `update-changelog` |
@@ -535,7 +580,7 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 24 de 29 workflows la invocan para documentar sus acciones.
+La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 25 de 30 workflows la invocan para documentar sus acciones.
 
 ---
 
@@ -592,6 +637,7 @@ Después de ejecutar `@quinotospec.discovery`:
 │   ├── docs/                         # Documentación extraída
 │   ├── blood-bond/                   # Análisis predictivo
 │   ├── swarm/                        # Ejecución paralela
+│   ├── tiwaz-rune/                    # Reportes de entropía
 │   ├── scripts/                      # Scripts temporales
 │   ├── changelog/                     # Historial auto-generado (v2)
 │   │   ├── YYYY-MM-DD-PREFIX-slug.md
@@ -698,6 +744,7 @@ graph LR
 - ✅ Artifact DAG Engine: grafo de dependencias con schema YAML
 - ✅ Party Mode: mesa redonda multi-agente integrada en create-proposal y create-rfc
 - ✅ Changelog v2: append-only, archivos individuales, sin merge conflicts
+- ✅ The Tiwaz Rune: análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación
 
 **Warband: Falange (v3.0.0, TBA)**
 -  Class System: Roles especializados (~60%) — 9 agentes especializados existen, falta sistema de progresión y nombres mitológicos (Scout/Skald/Blacksmith)

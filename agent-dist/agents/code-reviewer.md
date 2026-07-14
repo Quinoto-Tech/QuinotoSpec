@@ -2,6 +2,7 @@
 name: code-reviewer
 specialization: Code quality, best practices, security vulnerabilities
 trigger_workflows:
+  - quinotospec.tiwaz-rune
   - quinotospec.review
   - quinotospec.pre-commit
   - quinotospec.apply
