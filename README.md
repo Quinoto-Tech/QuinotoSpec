@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.5.0-blue)
+![Version](https://img.shields.io/badge/version-2.6.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline-orange)
 ![Workflows](https://img.shields.io/badge/workflows-38-purple)
@@ -15,7 +15,7 @@
 Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA.
 Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y minimizar alucinaciones.
 
-<img src="Mimir.png" alt="QuinotoSpec v2.5.0 — Yggdrasil + Mimr" width="800" />
+<img src="Mimir.png" alt="QuinotoSpec v2.6.0 — Yggdrasil + Tiwaz Rune" width="800" />
 
 <br/>
 
@@ -732,7 +732,7 @@ graph LR
 - ✅ Documentacion extendida (docs/)
 - ✅ Proyectos de ejemplo (examples/)
 
-**Yggdrasil + Mimr Edition (v2.5.0)** — Actual
+**Yggdrasil + Tiwaz Rune (v2.6.0)** — Actual
 - ✅ 9 agentes especializados (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
 - ✅ Sistema de gobernanza con 12 reglas
 - ✅ Infraestructura de testing y CI/CD

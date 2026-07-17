@@ -5,7 +5,7 @@
 > "Proposal First" / "Context Slicing" workflow to maximize accuracy and minimize hallucinations.
 
 <div align="center">
-  <img src="Mimir.png" alt="QuinotoSpec v2.5.0 — Yggdrasil + Mimr" width="800" />
+  <img src="Mimir.png" alt="QuinotoSpec v2.6.0 — Yggdrasil + Tiwaz Rune" width="800" />
 
   <br/>
 
@@ -704,7 +704,7 @@ graph LR
 - ✅ Extended documentation (docs/)
 - ✅ Example projects (examples/)
 
-**Yggdrasil + Mimr Edition (v2.5.0)** — Current
+**Yggdrasil + Tiwaz Rune (v2.6.0)** — Current
 - ✅ 9 specialized agents (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
 - ✅ Governance system with 12 rules
 - ✅ Testing and CI/CD infrastructure

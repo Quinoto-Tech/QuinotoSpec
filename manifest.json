@@ -1,7 +1,7 @@
 {
   "name": "quinotospec",
-  "version": "2.5.0",
-  "edition": "Yggdrasil",
+  "version": "2.6.0",
+  "edition": "Yggdrasil — Tiwaz Rune",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
   "workflows": 38,
   "skills": 31,
@@ -33,6 +33,6 @@
     "url": "https://github.com/Quinoto-Tech/QuinotoSpec"
   },
   "license": "MIT",
-  "release_date": "2026-06-12",
-  "changelog": "F2.2.5 — Changelog v2: append-only per-task files, INDEX.md, backward compat, changelog-view workflow"
+  "release_date": "2026-07-17",
+  "changelog": "F2.2.6 — Tiwaz Rune: anuncio oficial del analisis de entropia"
 }

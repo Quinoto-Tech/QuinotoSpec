@@ -6,6 +6,19 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 
 ---
 
+## [2.6.0] - 2026-07-17
+
+### Added
+- **Post de anuncio `docs/posts/v2.6.0-tiwaz-rune-post.md`**: Anuncio oficial del Tiwaz Rune v2.6.0 — entropia de Shannon, proxies de deuda tecnica y plan de remediacion
+
+### Changed
+- **Infrastructure**: Actualizados badges, versiones, conteos (38 workflows, 31 skills), install.sh, manifest.json
+
+### Summary
+v2.6.0 es la edicion "Yggdrasil - Tiwaz Rune": el analisis formal de entropia con metricas de Shannon y proxies de deuda tecnica es ahora el feature insignia estadistico del framework. Incluye anuncio en formato post para difusion.
+
+---
+
 ## [2.5.0] - 2026-06-12
 
 ### Added
