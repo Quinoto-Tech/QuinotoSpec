@@ -15,7 +15,7 @@
 Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA.
 Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y minimizar alucinaciones.
 
-<img src="Mimir.png" alt="QuinotoSpec v2.6.0 — Yggdrasil + Tiwaz Rune" width="800" />
+<img src="tiwaz.png" alt="QuinotoSpec v2.6.0 — Yggdrasil + Tiwaz Rune" width="800" />
 
 <br/>
 

@@ -5,7 +5,7 @@
 > "Proposal First" / "Context Slicing" workflow to maximize accuracy and minimize hallucinations.
 
 <div align="center">
-  <img src="Mimir.png" alt="QuinotoSpec v2.6.0 — Yggdrasil + Tiwaz Rune" width="800" />
+  <img src="tiwaz.png" alt="QuinotoSpec v2.6.0 — Yggdrasil + Tiwaz Rune" width="800" />
 
   <br/>
 
