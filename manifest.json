@@ -3,7 +3,7 @@
   "version": "2.6.0",
   "edition": "Yggdrasil — Tiwaz Rune",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
-  "workflows": 38,
+  "workflows": 39,
   "skills": 31,
   "rules": 12,
   "agents": 9,
@@ -14,7 +14,8 @@
     "schema_yaml": true,
     "party_mode": true,
     "changelog_v2": true,
-    "tiwaz_rune": true
+    "tiwaz_rune": true,
+    "fix": true
   },
   "supported_ides": ["opencode", "cursor", "cline", "generic"],
   "min_requirements": {

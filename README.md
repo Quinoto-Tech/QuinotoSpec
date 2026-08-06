@@ -5,7 +5,7 @@
 ![Version](https://img.shields.io/badge/version-2.6.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline-orange)
-![Workflows](https://img.shields.io/badge/workflows-38-purple)
+![Workflows](https://img.shields.io/badge/workflows-39-purple)
 ![Skills](https://img.shields.io/badge/skills-31-purple)
 ![Rules](https://img.shields.io/badge/rules-12-red)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
@@ -304,6 +304,7 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | **Sprint Plan** | `@quinotospec.sprint.plan` | Genera plan de sprint óptimo |
 | **Heimdallr** | `@quinotospec.heimdallr` | Análisis de amenazas STRIDE + DREAD con mitigaciones |
 | **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
+| **Fix** | `@quinotospec.fix` | Resuelve bugs y fixes menores sin propuesta formal — rápido, documentado, con tests |
 | **Pre-commit** | `@quinotospec.pre-commit` | Check rápido pre-commit (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automatiza version bump, consolidación de changelog y tagging |
 | **Init** | `@quinotospec.init` | Inicializa estructura `.quinoto-spec/` desde cero. Si el proyecto está vacío, ofrece wizard interactivo para generar scaffold con el stack deseado |

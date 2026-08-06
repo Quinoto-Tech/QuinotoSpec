@@ -276,6 +276,7 @@ Actions: Reads context → Confirms branch → Implements → Runs tests → Upd
 | **Sprint Plan** | `@quinotospec.sprint.plan` | Generates optimal sprint plan |
 | **Heimdallr** | `@quinotospec.heimdallr` | STRIDE + DREAD threat analysis with mitigations |
 | **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Formal entropy analysis (Shannon v2 + proxy v1) with remediation plan |
+| **Fix** | `@quinotospec.fix` | Resolves bugs and minor fixes without formal proposal — fast, documented, with tests |
 | **Pre-commit** | `@quinotospec.pre-commit` | Quick pre-commit check (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automates version bump, changelog consolidation, and tagging |
 | **Init** | `@quinotospec.init` | Initializes `.quinoto-spec/` structure from scratch. If the project is empty, offers an interactive wizard to generate a scaffold with the desired stack |

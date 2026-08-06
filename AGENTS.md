@@ -100,6 +100,7 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 | `/quinotospec.health` | Detectar archivos huérfanos e inconsistencias |
 | `/quinotospec.cleanup` | Limpiar branches stale y scripts temporales |
 | `/quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
+| `/quinotospec.fix` | Resolver bugs y fixes menores sin propuesta formal — rápido, documentado, con tests |
 
 ### Regla del Registro de Prefijos
 - Cada propuesta necesita un prefijo único que combine un mnemónico de 4 letras + un sufijo de 4 caracteres (ej. `AUTH-a1b2`)
