@@ -434,6 +434,37 @@ Ejecutá `@quinotospec.discovery` para generar los 8 archivos de documentación 
 
 ---
 
+### Paso 5.5 — Detectar y configurar Engram (memoria persistente)
+
+**Si se usó `--skip-engram`:**
+- Saltear este paso completamente.
+
+Detectar si Engram esta disponible en el sistema:
+
+```bash
+which engram 2>/dev/null && engram version || echo "NOT_FOUND"
+```
+
+**Si Engram esta instalado y NO se usó `--skip-engram`:**
+1. Mostrar: *"Engram detectado v{{VERSION}}. ¿Configurar memoria persistente para este proyecto? (recomendado) [S/n]"*
+2. Si responde "n" → Saltear configuracion.
+3. Si responde "s" o Enter → ejecutar la skill `quinotospec-engram-setup`:
+   - Configurar `ENGRAM_DATA_DIR=.quinoto-spec/engram`
+   - Crear directorio `.quinoto-spec/engram/`
+   - Ejecutar `engram setup opencode`
+   - Agregar `.quinoto-spec/engram/` a `.gitignore`
+   - Guardar primera memoria: "QuinotoSpec project initialized"
+
+**Si Engram NO esta instalado:**
+1. Mostrar: *"ℹ️ Engram no detectado. Instalalo para memoria persistente entre sesiones: `brew install gentleman-programming/tap/engram`"*
+2. No bloquear. Continuar con el resto del init.
+
+**Si se usó `--with-engram`:**
+- Si Engram esta instalado, configurarlo automaticamente sin preguntar.
+- Si no esta instalado, mostrar advertencia y continuar.
+
+---
+
 ### Paso 6 — Crear prefix-registry.md
 
 Crear `.quinoto-spec/prefix-registry.md` con la tabla vacía:
@@ -534,6 +565,8 @@ Verificar que la entrada se creó correctamente:
 | `--with-agents` | Copiar `AGENTS.md` a la raíz del proyecto |
 | `--stack <stack>` | Especificar stack directamente sin wizard interactivo. Formato: `lenguaje:framework:package-manager:testing:database`. Ej: `python:fastapi:poetry:pytest:sqlite`. Usar `none` para campos opcionales. Solo funciona en proyecto vacío. |
 | `--no-scaffold` | Saltear detección de proyecto vacío y wizard. Solo crea estructura `.quinoto-spec/`. Comportamiento clásico. |
+| `--with-engram` | Configurar Engram automáticamente sin preguntar (si está instalado) |
+| `--skip-engram` | No detectar ni configurar Engram |
 
 ---
 

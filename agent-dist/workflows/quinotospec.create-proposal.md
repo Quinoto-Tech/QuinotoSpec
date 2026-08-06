@@ -171,4 +171,13 @@ Antes de finalizar la propuesta, ejecuta un check de conflictos:
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completada, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Proposal Generated: {{PROPOSAL_NAME}}{{#if PARTY}} (Party Mode: {{AGENT_COUNT}} agentes){{/if}}
-- **Resumen**: Se generó la propuesta base '{{PROPOSAL_NAME}}' en .quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/. {{#if PARTY}}Precedida por Party Mode con {{AGENT_COUNT}} agentes — ver party-analysis.md.{{/if}}`
+- **Resumen**: Se generó la propuesta base '{{PROPOSAL_NAME}}' en .quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/. {{#if PARTY}}Precedida por Party Mode con {{AGENT_COUNT}} agentes — ver party-analysis.md.{{/if}}
+
+**Memoria (Engram):**
+Si Engram esta configurado, ejecutar `mem_save` con:
+- **Título**: Proposal: {{PROPOSAL_NAME}}
+- **Tipo**: `decision`
+- **What**: Solución propuesta, arquitectura definida, {{N}} dominios afectados
+- **Why**: {{PROPOSAL_DESCRIPTION}}
+- **Where**: `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/`
+- **Learned**: Tradeoffs clave, alternativas descartadas y motivo, riesgos identificados{{#if PARTY}}, consenso del Party Mode{{/if}}`

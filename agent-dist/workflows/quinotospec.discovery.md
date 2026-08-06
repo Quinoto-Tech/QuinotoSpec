@@ -82,3 +82,12 @@ Al final del prompt:
 Una vez completada la generación de archivos, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Discovery Executed
 - **Resumen**: Se exploró el proyecto y se generaron los archivos de especificación en .quinoto-spec/discovery/
+
+**Memoria (Engram):**
+Si Engram esta configurado, ejecutar `mem_save` con:
+- **Título**: Discovery: {{NOMBRE_PROYECTO}}
+- **Tipo**: `discovery`
+- **What**: Stack {{LENGUAJE}} + {{FRAMEWORK}}, {{N}} endpoints, {{N}} modelos de datos
+- **Why**: Documentar el estado actual del proyecto para futuras sesiones
+- **Where**: `.quinoto-spec/discovery/`
+- **Learned**: Hallazgos principales de `07-findings-and-recommendations.md` (top 3)

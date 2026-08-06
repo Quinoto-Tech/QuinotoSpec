@@ -132,3 +132,12 @@ Si el fix es independiente, omitir este paso.
 Después de completar, ejecutar skill `quinotospec-blood-bond-monitor --check-only`:
 - Si `should_remind: true` (inactivo >=14 días), mostrar recordatorio pasivo con suggestions.
 - Si `should_remind: false`, no mostrar nada.
+
+**Memoria (Engram):**
+Si Engram esta configurado, ejecutar `mem_save` con:
+- **Título**: Fix: {{descripción breve del bug}}
+- **Tipo**: `bugfix`
+- **What**: Causa raíz, solución aplicada, archivos modificados
+- **Why**: {{descripción del bug}}
+- **Where**: Lista de archivos modificados
+- **Learned**: Por qué ocurrió el bug, cómo prevenirlo en el futuro

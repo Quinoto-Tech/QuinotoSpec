@@ -67,3 +67,14 @@ trigger: always_on
 - Los archivos archivados son registro histórico inmutable. Alterarlos rompe la trazabilidad.
 - Si necesitas recuperar un archivo archivado, **copialo** fuera de `_archived/` en lugar de moverlo.
 - Excepción: El workflow `quinotospec.archive` puede mover archivos HACIA `_archived/`, pero nunca modificar los que ya están dentro.
+
+# Protocolo de Memoria (Engram)
+- **Al iniciar cualquier workflow**: ejecuta `mem_search` con keywords relevantes para recuperar contexto previo de sesiones anteriores.
+- **Al iniciar sesión**: ejecuta `mem_session_start` con el nombre del proyecto detectado.
+- **Al completar workflows clave**, DEBES guardar memoria con `mem_save`:
+    - `quinotospec.discovery` → tipo `discovery`: stack, arquitectura, hallazgos principales.
+    - `quinotospec.create-proposal` → tipo `decision`: qué se decidió, tradeoffs, alternativas descartadas.
+    - `quinotospec.apply` → tipo `implementation`: qué se implementó, archivos clave, solución.
+    - `quinotospec.fix` → tipo `bugfix`: causa raíz, solución aplicada, archivos modificados.
+- **Al finalizar sesión**: ejecuta `mem_session_summary` para guardar resumen de la sesión.
+- **Regla de idempotencia**: si `engram` no está instalado o configurado, omite los pasos de memoria silenciosamente (no bloquea el workflow).

@@ -45,6 +45,15 @@ Después de `quinotospec-mark-done`, ejecutar skill `quinotospec-blood-bond-moni
 
 IMPORTANTE: Los pasos de documentación y mark-done son OBLIGATORIOS. No termines la ejecución sin completarlos.
 
+**Memoria (Engram):**
+Si Engram esta configurado, ejecutar `mem_save` con:
+- **Título**: Applied: {{TASK_ID}} — {{TASK_DESCRIPTION}}
+- **Tipo**: `implementation`
+- **What**: Archivos modificados, solución implementada, tests ejecutados
+- **Why**: {{TASK_DESCRIPTION}}
+- **Where**: Lista de archivos modificados
+- **Learned**: Patrones o decisiones notables durante la implementación
+
 ---
 
 ## Resolucion de Conflictos

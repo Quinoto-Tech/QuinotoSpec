@@ -99,6 +99,7 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 | `/quinotospec.retrospective` | Retrospectiva con métricas y patrones |
 | `/quinotospec.health` | Detectar archivos huérfanos e inconsistencias |
 | `/quinotospec.cleanup` | Limpiar branches stale y scripts temporales |
+| `/quinotospec.engram-setup` | Configurar Engram como memoria persistente del proyecto |
 | `/quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
 | `/quinotospec.fix` | Resolver bugs y fixes menores sin propuesta formal — rápido, documentado, con tests |
 
@@ -248,12 +249,54 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 |-------|-----------|
 | `quinotospec-pre-commit` | Check pre-commit (test + validate + rules) |
 | `quinotospec-suggest-next` | Sugerir siguiente tarea a ejecutar |
+| `quinotospec-engram-setup` | Detectar, instalar y configurar Engram para el proyecto |
 | `quinotospec-conflict-detector` | Detectar conflictos entre propuestas activas |
 | `quinotospec-estimate` | Estimar complejidad de propuestas |
 
 ---
 
-## 9. Frescura del Discovery
+## 9. Protocolo de Memoria (Engram)
+
+QuinotoSpec integra **Engram** como sistema de memoria persistente por defecto. Engram es un binario Go con SQLite + FTS5 que expone herramientas MCP para que los agentes recuerden contexto entre sesiones.
+
+### Configuración (una vez)
+```bash
+# Instalar Engram
+brew install gentleman-programming/tap/engram
+
+# Configurar para el proyecto
+ENGRAM_DATA_DIR=.quinoto-spec/engram engram setup opencode
+```
+
+### Herramientas MCP Disponibles
+| Herramienta | Propósito |
+|-------------|-----------|
+| `mem_save` | Guardar memoria: título, tipo, What/Why/Where/Learned |
+| `mem_search` | Buscar en memoria por keywords |
+| `mem_context` | Recuperar contexto de sesión anterior |
+| `mem_session_start` | Iniciar sesión de memoria |
+| `mem_session_end` | Finalizar sesión y guardar resumen |
+| `mem_timeline` | Ver timeline cronológico de una memoria |
+| `mem_stats` | Estadísticas de uso de memoria |
+| `mem_doctor` | Diagnóstico de salud de la base de memoria |
+
+### Cuándo guardar en Engram
+- **Al iniciar cualquier workflow**: buscar `mem_search` para contexto previo relevante
+- **Al completar discovery**: guardar stack, arquitectura, hallazgos clave
+- **Al crear propuesta**: guardar decisiones técnicas, tradeoffs, alternativas evaluadas
+- **Al aplicar tarea**: guardar qué se implementó, archivos modificados, solución
+- **Al corregir bug (fix)**: guardar causa raíz, solución, archivos tocados
+- **Al cerrar sesión**: guardar resumen de la sesión con `mem_session_summary`
+
+### Ubicación de la base de memoria
+```
+.quinoto-spec/engram/engram.db
+```
+La memoria viaja con el proyecto. Cada desarrollador que ejecute `quinotospec.engram-setup` tendrá acceso a la memoria compartida.
+
+---
+
+## 10. Frescura del Discovery
 
 - Archivos de discovery mayores a **30 días** generan advertencia
 - Usar `/quinotospec.refresh-discovery` para actualizar discovery obsoleto
