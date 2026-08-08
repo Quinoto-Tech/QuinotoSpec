@@ -4,11 +4,13 @@ description: Flujo para generar una Propuesta de Refactor "Mjolnir" que reescrib
 
 # Workflow: Mjolnir Refactor
 
+Flujo para generar una Propuesta de Refactor "Mjolnir" que reescribe módulos enteros bajo demanda. Este workflow usa el sistema estándar de proposals de QuinotoSpec (`.quinoto-spec/proposals/{slug}/`) en lugar de una estructura paralela.
+
 ## Datos requeridos para ejecutar el workflow
 
 El workflow debe ser invocado con los siguientes datos. **Si falta alguno, detener el proceso y solicitar al usuario antes de continuar.**
 
-- **nombre**: Nombre del módulo que se desea refactorizar.
+- **nombre**: Nombre del módulo que se desea refactorizar. Se usa como slug de la propuesta (kebab-case).
 - **problema**: Descripción del motivo por el que se desea refactorizar el módulo.
 - **resultado_esperado**: Qué resultado se espera alcanzar a través de la refactorización.
 - **detalles_adicionales**: Otras informaciones de valor (librerías, formatos, tecnologías, restricciones, etc.).
@@ -17,7 +19,7 @@ El workflow debe ser invocado con los siguientes datos. **Si falta alguno, deten
 
 ## Paso 1 — Inicialización del contexto
 
-Genera el archivo `.quinoto-spec/{nombre}/mjolnir-refactor.yml` con el siguiente schema exacto:
+Genera el archivo `.quinoto-spec/proposals/{SLUG}/mjolnir-refactor.yml` con el siguiente schema exacto:
 
 ```yaml
 nombre: ""
@@ -41,9 +43,9 @@ Una vez confirmado, ejecuta `quinotospec-update-changelog`:
 
 > Actualiza `ultimo_paso_completado: 1` en el `.yml` al iniciar este paso. Si falla, el proceso puede reanudarse desde aquí.
 
-1. **Mapa de impacto previo al discovery**: Antes de analizar el módulo, identificar qué otros módulos, archivos o servicios del proyecto **importan o dependen** del módulo a refactorizar. Documentar este mapa en `.quinoto-spec/{nombre}/00-impact-map.md`.
-2. Realiza un discovery completo del módulo actual siguiendo las mismas instrucciones del workflow `quinotospec.discovery`, pero guarda todos los archivos en `.quinoto-spec/{nombre}/` en lugar de `.quinoto-spec/discovery/`.
-3. El archivo `08-product-and-agreements.md` debe generarse con contenido real y relevante para el contexto del refactor (no dejarlo vacío).
+1. **Mapa de impacto previo al discovery**: Antes de analizar el módulo, identificar qué otros módulos, archivos o servicios del proyecto **importan o dependen** del módulo a refactorizar. Documentar este mapa en `.quinoto-spec/proposals/{SLUG}/00-impact-map.md`.
+2. Realiza un discovery completo del módulo actual usando como contexto los archivos de `.quinoto-spec/proposals/{SLUG}/`.
+3. El discovery debe incluir la definición de DoR/DoD específica para este refactor (no dejar `08-product-and-agreements.md` vacío).
 
 Una vez completado, ejecuta `quinotospec-update-changelog`:
 - **Título**: Mjolnir Discovery: {nombre}
@@ -55,11 +57,8 @@ Una vez completado, ejecuta `quinotospec-update-changelog`:
 
 > Actualiza `ultimo_paso_completado: 2` en el `.yml` al iniciar este paso.
 
-1. Vuelve a leer el archivo `.quinoto-spec/{nombre}/mjolnir-refactor.yml` por si el usuario realizó cambios desde el paso 1.
-2. Ejecuta el workflow `quinotospec.create-proposal` usando como contexto:
-    - Los archivos del discovery generados en `.quinoto-spec/{nombre}/`.
-    - Los datos del `.yml` como `PROPOSAL_DESCRIPTION`.
-    - El archivo `08-product-and-agreements.md` generado en el paso 2 debe ser la base para la sección **Alineación con Producto y Acuerdos** de la propuesta.
+1. Vuelve a leer el archivo `.quinoto-spec/proposals/{SLUG}/mjolnir-refactor.yml` por si el usuario realizó cambios desde el paso 1.
+2. Ejecuta el workflow `quinotospec.create-proposal` con `PROPOSAL_DESCRIPTION` basado en `{problema}: {resultado_esperado}`. La propuesta se crea en `.quinoto-spec/proposals/{SLUG}/` usando el sistema estándar de QuinotoSpec.
 
 Una vez completado, ejecuta `quinotospec-update-changelog`:
 - **Título**: Mjolnir Proposal: {nombre}
@@ -71,7 +70,7 @@ Una vez completado, ejecuta `quinotospec-update-changelog`:
 
 > Actualiza `ultimo_paso_completado: 3` en el `.yml` al iniciar este paso.
 
-Ejecuta el workflow `quinotospec.create-user-stories` sobre la propuesta generada en el paso 3, completando así el ciclo: propuesta → stories → listo para `create-tasks`.
+Ejecuta el workflow `quinotospec.create-user-stories` sobre la propuesta generada en el paso 3 (`.quinoto-spec/proposals/{SLUG}/`), completando así el ciclo estándar: propuesta → stories → listo para `create-tasks`.
 
 Una vez completado, ejecuta `quinotospec-update-changelog`:
 - **Título**: Mjolnir User Stories: {nombre}
@@ -81,4 +80,4 @@ Una vez completado, ejecuta `quinotospec-update-changelog`:
 
 ## Instrucción de Reanudación
 
-Si el proceso fue interrumpido, leer el campo `ultimo_paso_completado` del archivo `.quinoto-spec/{nombre}/mjolnir-refactor.yml` para saber desde qué paso continuar. No repetir pasos ya completados.
+Si el proceso fue interrumpido, leer el campo `ultimo_paso_completado` del archivo `.quinoto-spec/proposals/{SLUG}/mjolnir-refactor.yml` para saber desde qué paso continuar. No repetir pasos ya completados.

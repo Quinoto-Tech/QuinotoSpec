@@ -85,14 +85,9 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
 
 Si después de 2 intentos los tests siguen fallando:
 
-1. Revertir cambios: `git checkout -- {archivos_modificados}`
-2. Reportar:
-   ```
-   ❌ Rollback ejecutado: Los tests siguen fallando después de 2 intentos.
-   Archivos revertidos: {lista}
-   Error persistente: {mensaje}
-   Sugerencia: El fix puede requerir una propuesta formal más amplia. Usar @quinotospec.create-proposal.
-   ```
+1. Ejecutar skill `quinotospec-rollback` para revertir cambios automáticamente.
+2. Reportar al usuario el error persistente y sugerir:
+   - "El fix puede requerir una propuesta formal más amplia. Usar @quinotospec.create-proposal."
 3. NO documentar en changelog (no hubo cambios efectivos).
 
 ---
@@ -126,9 +121,4 @@ Si el fix es independiente, omitir este paso.
 1. Si se creó un archivo de contexto en `.quinoto-spec/fixes/`, dejarlo como registro histórico.
 2. Si el fix fue trivial (typo, formato) y `--skip-tests`, el archivo de contexto es opcional.
 
----
 
-**Blood-Bond Monitor:**
-Después de completar, ejecutar skill `quinotospec-blood-bond-monitor --check-only`:
-- Si `should_remind: true` (inactivo >=14 días), mostrar recordatorio pasivo con suggestions.
-- Si `should_remind: false`, no mostrar nada.

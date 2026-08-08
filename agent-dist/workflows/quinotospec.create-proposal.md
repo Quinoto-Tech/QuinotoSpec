@@ -127,6 +127,7 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG
 - Crea los directorios necesarios.
 - Escribe en español técnico.
 - Genera el archivo `proposal.md` y los archivos `delta-specs/` correspondientes. No generes historias ni tareas.
+- **Nota:** El artefacto `design.md` es opcional. Si la propuesta requiere decisiones arquitectónicas complejas, genera también `design.md` en la carpeta de la propuesta.
 
 **Paso Adicional — Generar Delta Specs:**
 

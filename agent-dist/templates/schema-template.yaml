@@ -65,15 +65,16 @@ artifacts:
     requires:
       - proposal
     template: null
+    optional: true
     instruction: |
-      Define the technical architecture: component diagram, data flow, technology choices,
+      (OPCIONAL) Define the technical architecture: component diagram, data flow, technology choices,
       trade-offs, and ADRs. Reference the delta specs for what's changing.
+      Si no se genera, user-stories puede crearse directamente desde delta-specs + proposal.
 
   - id: user-stories
     generates: .quinoto-spec/proposals/{slug}/user-stories.md
     requires:
       - delta-specs
-      - design
     template: null
     instruction: |
       Break down the proposal into user stories. Each story should have: role, action,
@@ -114,7 +115,8 @@ phases:
 
   - id: planning
     label: Planificacion
-    artifacts: [proposal, delta-specs, design]
+    artifacts: [proposal, delta-specs]
+    optional_artifacts: [design]
     description: Definir que construir y como
 
   - id: breakdown

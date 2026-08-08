@@ -38,11 +38,6 @@ Una vez completado y documentado el changelog, DEBES ejecutar la skill `quinotos
 - `TASK_ID`: el ID de la tarea completada.
 Esto actualizará el estado de la tarea, la historia y la propuesta correspondiente.
 
-**Blood-Bond Monitor:**
-Después de `quinotospec-mark-done`, ejecutar skill `quinotospec-blood-bond-monitor --check-only`:
-- Si `should_remind: true` (inactivo >=14 días), mostrar recordatorio pasivo con suggestions
-- Si `should_remind: false`, no mostrar nada
-
 IMPORTANTE: Los pasos de documentación y mark-done son OBLIGATORIOS. No termines la ejecución sin completarlos.
 
 ---
@@ -72,23 +67,12 @@ Si la tarea contradice la arquitectura documentada en `03-architecture.md`:
 
 Si los tests fallan despues de implementar cambios:
 
-### Paso 1 - Intentar Correccion
-- Si el failure es claro (typo, import faltante), intenta corregir directamente
-- Tienes maximo 2 intentos de correccion automatica
-
-### Paso 2 - Rollback si Persiste
-Si despues de 2 intentos los tests siguen fallando:
-1. Revierte los cambios usando `git checkout -- {archivos_modificados}`
-2. Si no hay git, restaura desde backup manual
-3. Reporta al usuario:
-   ```
-   X Rollback ejecutado: Los tests siguen fallando despues de 2 intentos.
-   Archivos revertidos: {lista}
-   Error persistente: {mensaje_de_error}
-   Sugerencia: Revisar manualmente o crear tarea de debugging.
-   ```
-4. NO marques la tarea como completada
-5. Sugiere crear una tarea de debugging
+1. **Intentar corrección automática** (máximo 2 intentos):
+   - Si el failure es claro (typo, import faltante), intenta corregir directamente.
+2. **Si persiste el fallo**, ejecutar skill `quinotospec-rollback`:
+   - La skill revierte los cambios, documenta el error, y reporta al usuario.
+   - NO marcar la tarea como completada.
+   - Sugerir crear una tarea de debugging.
 
 ---
 

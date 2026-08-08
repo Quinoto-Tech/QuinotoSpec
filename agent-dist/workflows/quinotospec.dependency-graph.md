@@ -53,7 +53,7 @@ Identifica recursos compartidos entre servicios:
 
 ## Paso 5 — Generación del archivo de salida
 
-Genera `.quinoto-spec/discovery/00-dependency-graph.md` con:
+Genera `.quinoto-spec/discovery/09-dependency-graph.md` con:
 
 ```markdown
 # 🕸️ Dependency Graph — [Fecha]
@@ -82,4 +82,4 @@ graph TD
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez completado, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Dependency Graph Generated
-- **Resumen**: Se generó el mapa de dependencias en `.quinoto-spec/discovery/00-dependency-graph.md`. Contract drifts detectados: [N].
+- **Resumen**: Se generó el mapa de dependencias en `.quinoto-spec/discovery/09-dependency-graph.md`. Contract drifts detectados: [N].

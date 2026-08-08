@@ -1,8 +1,8 @@
 ---
-description: Detecta archivos huérfanos, inconsistencias entre _archived/ y propuestas activas, y problemas de integridad en la estructura .quinoto-spec/
+description: Detecta archivos huérfanos, inconsistencias entre _archived/ y propuestas activas, y problemas de integridad en la estructura .quinoto-spec/. Para dashboard ejecutivo ver @quinotospec.status.
 ---
 
-Objetivo: ejecutar un chequeo de salud completo del sistema QuinotoSpec, identificando archivos huérfanos, referencias rotas, propuestas inconsistentes y problemas de frescura.
+Objetivo: ejecutar un chequeo técnico completo de integridad del sistema QuinotoSpec. Este workflow se enfoca en la **integridad estructural** (archivos, referencias, huérfanos). Para métricas de progreso y velocidad, usar `@quinotospec.status`.
 
 ## Precondiciones
 
@@ -58,11 +58,12 @@ Objetivo: ejecutar un chequeo de salud completo del sistema QuinotoSpec, identif
 
 | Directorio | Archivos esperados |
 |------------|-------------------|
-| `discovery/` | 8 archivos `0X-*.md` |
+| `discovery/` | 8 archivos `0X-*.md` (01-08) |
 | `proposals/` | `proposal.md`, `user-stories.md`, `*_tasks.md` |
 | `scripts/` | `temp_*.py`, `temp_*.sh`, `temp_*.js` |
 | `sprints/` | `base-config.yml`, `sprint-*/` |
-| Raíz `.quinoto-spec/` | `prefix-registry.md`, `quinoto-spec-changelog.md` |
+| `rfc/` | `RFC-*.md` |
+| Raíz `.quinoto-spec/` | `prefix-registry.md`, `schema.yaml`, `changelog/` o `quinoto-spec-changelog.md` |
 
 2. Reportar cualquier archivo fuera de lo esperado.
 

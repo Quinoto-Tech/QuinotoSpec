@@ -170,7 +170,4 @@ Una vez completado el análisis y guardado el reporte, DEBES ejecutar la skill `
 - **Título de la Acción**: Heimdallr Threat Model Executed
 - **Resumen**: Se ejecutó un análisis de amenazas STRIDE + DREAD sobre el sistema indicado y se generó matriz de riesgos priorizada con mitigaciones críticas. Reporte guardado en `.quinoto-spec/threat-analysis/`.
 
-**Blood-Bond Monitor:**
-Después del changelog, ejecutar skill `quinotospec-blood-bond-monitor --check-only`:
-- Si `should_remind: true` (inactivo >=14 días), mostrar recordatorio pasivo con suggestions.
-- Si `should_remind: false`, no mostrar nada.
+

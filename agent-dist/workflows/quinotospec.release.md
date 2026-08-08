@@ -8,17 +8,19 @@ Objetivo: automatizar el proceso de release de QuinotoSpec o de cualquier proyec
 
 ## Precondiciones
 
-- `.quinoto-spec/quinoto-spec-changelog.md` debe existir con entradas desde el último release.
+- Debe existir changelog (v1 en `.quinoto-spec/quinoto-spec-changelog.md` o v2 en `.quinoto-spec/changelog/`) con entradas desde el último release.
+- `.version` debe existir con la versión actual.
+- `CHANGELOG.md` (raíz del paquete QuinotoSpec) debe existir con entradas desde el último release.
 - Git debe estar disponible y el working tree limpio.
-- `README.md` debe tener una línea de título con versión (ej. `# QuinotoSpec: Possessed Edition`).
 
 ---
 
 ### Paso 1 — Analizar cambios desde el último release
 
 1. Buscar el último tag de git: `git describe --tags --abbrev=0`
-2. Leer `.quinoto-spec/quinoto-spec-changelog.md` y extraer todas las entradas posteriores a la fecha del último tag.
-3. Si no hay tags previos, considerar todas las entradas del changelog.
+2. Leer `CHANGELOG.md` (raíz) y `.version` del paquete QuinotoSpec.
+3. Extraer todas las entradas posteriores a la fecha del último tag.
+4. Si no hay tags previos, considerar todas las entradas del changelog.
 4. Clasificar los cambios encontrados:
 
 | Tipo | Palabras clave en entradas | Bump |
@@ -33,7 +35,7 @@ Objetivo: automatizar el proceso de release de QuinotoSpec o de cualquier proyec
    - Si hay al menos 1 BREAKING → Major
    - Si hay al menos 1 Feature y 0 BREAKING → Minor
    - Si solo hay Fix/Docs → Patch
-2. Leer la versión actual (del último tag o de `README.md`).
+2. Leer la versión actual de `.version` (fuente canónica de versión).
 3. Calcular nueva versión con semver.
 4. Mostrar al usuario:
    ```
@@ -57,9 +59,9 @@ Objetivo: automatizar el proceso de release de QuinotoSpec o de cualquier proyec
 
 ### Paso 4 — Actualizar versión en archivos
 
-1. `README.md`: actualizar la línea de título si incluye versión (ej. `# QuinotoSpec: Possessed Edition` → sin cambios, pero si tiene `v2.0.0` → `v2.1.0`).
-2. `README_EN.md` (si existe): mismo cambio.
-3. `CHANGELOG.md` del proyecto (si existe, distinto al de `.quinoto-spec/`): misma consolidación.
+1. `.version`: actualizar a la nueva versión (fuente canónica).
+2. `README.md`: actualizar la línea de título si incluye versión (ej. `# QuinotoSpec: Possessed Edition` → sin cambios, pero si tiene `v2.0.0` → `v2.1.0`).
+3. `README_EN.md` (si existe): mismo cambio.
 
 ### Paso 5 — Crear tag y mostrar instrucciones
 
@@ -74,10 +76,10 @@ Objetivo: automatizar el proceso de release de QuinotoSpec o de cualquier proyec
      git push origin {{NEW}}
    ```
 3. Si el proyecto tiene GitHub remoto detectado, sugerir:
-   ```
-   Para crear el release en GitHub:
-     gh release create {{NEW}} --title "{{NEW}}" --notes-file .quinoto-spec/quinoto-spec-changelog.md
-   ```
+```
+    Para crear el release en GitHub:
+      gh release create {{NEW}} --title "{{NEW}}" --notes-file CHANGELOG.md
+```
 
 ### Paso 6 — Changelog (OBLIGATORIO)
 

@@ -301,7 +301,4 @@ Una vez completado el análisis y guardado el reporte, DEBES ejecutar la skill `
 - **Título de la Acción**: Tiwaz Rune Entropy Analysis Executed
 - **Resumen**: Se ejecutó análisis de entropía (v2 formal + v1 proxy) sobre `{service_path}`. S_final: {score} ({classification}). Reporte en `.quinoto-spec/tiwaz-rune/`.
 
-**Blood-Bond Monitor:**
-Después del changelog, ejecutar skill `quinotospec-blood-bond-monitor --check-only`:
-- Si `should_remind: true` (inactivo >=14 días), mostrar recordatorio pasivo con suggestions.
-- Si `should_remind: false`, no mostrar nada.
+

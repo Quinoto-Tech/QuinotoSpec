@@ -106,7 +106,7 @@ Leer los archivos de discovery disponibles. El skill del rol seleccionado indica
 - Escanear `.quinoto-spec/proposals/` (excluir `_archived/`): extraer título, estado, prioridad y servicios afectados de cada `proposal.md`.
 - Para cada propuesta activa, buscar archivos `*_tasks.md` y contar tareas `[ ]` vs `[x]`.
 - Leer `.quinoto-spec/prefix-registry.md` para listar los prefijos activos.
-- Leer `.quinoto-spec/quinoto-spec-changelog.md` para actividad reciente.
+- Ejecutar `@quinotospec.changelog-view --limit 10` para actividad reciente (auto-detecta formato v1/v2).
 
 > **Importante**: El skill del rol indica cuántas entradas del changelog incluir, qué propuestas son relevantes y cómo presentar la información.
 
@@ -258,7 +258,7 @@ cp .env.example .env
 |---|---|
 | Discovery completo | `.quinoto-spec/discovery/` |
 | Propuestas técnicas | `.quinoto-spec/proposals/` |
-| Historial de cambios | `.quinoto-spec/quinoto-spec-changelog.md` |
+| Historial de cambios | `.quinoto-spec/changelog/` (v2) o `.quinoto-spec/quinoto-spec-changelog.md` (v1) |
 | Registro de prefijos | `.quinoto-spec/prefix-registry.md` |
 | Dashboard del proyecto | `PROJECT_STATUS.md` (si existe) |
 | Comandos del agente | Ver `AGENTS.md` en la raíz |

@@ -16,24 +16,29 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
     - Lee `**Discovery Date:**` en `.quinoto-spec/discovery/01-stack-profile.md`. Si han pasado más de 30 días desde esa fecha → marcarlo como alerta en la sección `🚨 Alertas y Bloqueos` con el mensaje: *"⏰ El discovery tiene [N] días de antigüedad. Considera ejecutar `@quinotospec.refresh-discovery`."*
 
 2. **Cálculo de Progreso y Velocidad**:
-    - Para cada propuesta activa, busca archivos de tareas (`*_tasks.md`).
-    - Calcula el porcentaje de completitud basado en los checkboxes `[x]` vs `[ ]`.
-    - Lee `.quinoto-spec/quinoto-spec-changelog.md` para estimar la velocidad del equipo: cuántas tareas se completaron en los últimos 7 días y en los últimos 30 días.
+     - Para cada propuesta activa, busca archivos de tareas (`*_tasks.md`).
+     - Calcula el porcentaje de completitud basado en los checkboxes `[x]` vs `[ ]`.
+     - Ejecuta `@quinotospec.changelog-view --days 7 --json` y `@quinotospec.changelog-view --days 30 --json` para estimar la velocidad del equipo (auto-detecta formato v1/v2).
 
 3. **Métricas de Valor**:
-    - Lee `.quinoto-spec/quinoto-spec-changelog.md`.
-    - Suma todos los valores de `Human Time` ahorrados para dar un total de "Valor Generado por IA". Si el campo no existe en alguna entrada, registrar `N/D` y continuar sin interrumpir el proceso.
+     - Ejecuta `@quinotospec.changelog-view --json` para obtener todas las entradas.
+     - Suma todos los valores de `Human Time` ahorrados para dar un total de "Valor Generado por IA". Si el campo no existe en alguna entrada, registrar `N/D` y continuar sin interrumpir el proceso.
 
 4. **Alertas y Bloqueos**:
-    - Identifica propuestas activas sin cambios en el changelog en los últimos 14 días.
-    - Detecta historias con todas sus tareas pendientes (`[ ]`) sin ningún progreso.
-    - Detecta conflictos de propuestas registrados con `⚠️ Conflictos Detectados:`.
+     - Ejecuta `@quinotospec.changelog-view --days 14 --json` para detectar inactividad.
+     - Identifica propuestas activas sin cambios en changelog en los últimos 14 días.
+     - Detecta historias con todas sus tareas pendientes (`[ ]`) sin ningún progreso.
+     - Detecta conflictos de propuestas registrados con `⚠️ Conflictos Detectados:`.
 
 5. **Estado de Artefactos por Propuesta (Artifact DAG)**:
-    - Para cada propuesta activa, invocar skill `quinotospec-artifact-engine --status --change {{slug}}`.
-    - Incluir en el dashboard una seccion `## 🔀 Estado de Artefactos` con la tabla de estado (done/ready/blocked) para cada propuesta.
-    - Destacar artefactos `ready` como acciones inmediatas sugeridas.
-    - Si el schema no existe, mostrar: `Schema no encontrado — ejecuta @quinotospec.schema-fork para crear uno.`
+     - Para cada propuesta activa, invocar skill `quinotospec-artifact-engine --status --change {{slug}}`.
+     - Incluir en el dashboard una seccion `## 🔀 Estado de Artefactos` con la tabla de estado (done/ready/blocked) para cada propuesta.
+     - Destacar artefactos `ready` como acciones inmediatas sugeridas.
+     - Si el schema no existe, mostrar: `Schema no encontrado — ejecuta @quinotospec.schema-fork para crear uno.`
+
+6. **Actividad Reciente**:
+     - Ejecutar `@quinotospec.changelog-view --limit 5` para obtener los últimos 5 cambios.
+     - Mostrar en la sección `## 🕐 Actividad Reciente`.
 
 6. **Salud de la Metodología**:
     - Verifica la existencia y contenido de los siguientes artefactos:
@@ -51,9 +56,9 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
         - `## 🔀 Estado de Artefactos` (Tabla de estado DAG por propuesta activa)
         - `## 🗺️ Mapa de Ruta y Estado de Iniciativas` (Tabla de Propuestas activas + contador de archivadas)
         - `## 🚨 Alertas y Bloqueos` (propuestas estancadas, conflictos detectados)
-        - `## 🛠️ Salud de la Metodología` (checks explícitos con ✅/❌)
-        - `## 🕐 Actividad Reciente` (Últimos 5 cambios del Changelog)
-        - `## ⏭️ Próximos Pasos Sugeridos` (Top 3 acciones recomendadas)
+     - `## 🛠️ Salud de la Metodología` (checks explícitos con ✅/❌)
+     - `## 🕐 Actividad Reciente` (Últimos 5 cambios vía `@quinotospec.changelog-view --limit 5`)
+     - `## ⏭️ Próximos Pasos Sugeridos` (Top 3 acciones recomendadas)
 
 **Instrucción Final OBLIGATORIA (Changelog):**
 Una vez generado el dashboard, DEBES ejecutar la skill `quinotospec-update-changelog`.

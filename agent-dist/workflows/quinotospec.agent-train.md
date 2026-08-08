@@ -81,12 +81,14 @@ Escanear la estructura del proyecto para detectar áreas potenciales:
 
 #### 2.1 Criterios para Selección de Modelo
 
-| Complejidad | Modelo Sugerido |
-|-------------|-----------------|
-| Baja (proyecto simple, < 20 archivos) | `opencode/big-pickle` |
-| Media (proyecto medio, 20-100 archivos) | `opencode-go/mimo-v2-pro` |
-| Alta (proyecto complejo, > 100 archivos) | `opencode-go/mimo-v2-pro` |
-| Requiere visión multimodal | `opencode-go/mimo-v2-omni` |
+| Complejidad | Sugerencia |
+|-------------|------------|
+| Baja (proyecto simple, < 20 archivos) | Modelo rápido/económico disponible |
+| Media (proyecto medio, 20-100 archivos) | Modelo de capacidad media disponible |
+| Alta (proyecto complejo, > 100 archivos) | Modelo de alta capacidad disponible |
+| Requiere visión multimodal | Modelo con soporte de imagen disponible |
+
+> **Nota:** Los modelos específicos disponibles dependen de la configuración del IDE y el proveedor. Consultar la documentación del IDE para ver modelos disponibles.
 
 #### 2.2 Criterios para Selección de Tipo
 
@@ -102,16 +104,14 @@ Escanear la estructura del proyecto para detectar áreas potenciales:
 ```
 ### Sugerencia de Configuración
 
-**Modelo recomendado**: `opencode-go/mimo-v2-pro`
+**Modelo recomendado**: [modelo basado en complejidad]
 - Justificación: {razón basada en complejidad del proyecto}
 
 **Tipo recomendado**: subagent
 - Justificación: {razón basada en uso previsto}
 
 **Alternativas**:
-- Si necesitas visión multimodal: `opencode-go/mimo-v2-omni`
-- Si quieres modelo gratuito: `opencode/big-pickle`
-- Si necesitas el mejor modelo: `opencode-go/glm-5.1`
+- Ajustar modelo según necesidades específicas (multimodal, mayor capacidad, etc.)
 ```
 
 ---

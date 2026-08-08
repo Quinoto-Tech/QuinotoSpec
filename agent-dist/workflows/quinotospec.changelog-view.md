@@ -2,6 +2,8 @@
 description: Muestra el changelog consolidado del proyecto, combinando entradas del formato v2 (changelog/) y v1 (quinoto-spec-changelog.md). Ofrece filtros por fecha, prefijo y tipo.
 ---
 
+# Workflow: Changelog View
+
 Workflow para visualizar el historial de cambios del proyecto de forma consolidada. Detecta automáticamente si el proyecto usa formato v1 (archivo único) o v2 (directorio `changelog/`) o ambos.
 
 ## Precondiciones

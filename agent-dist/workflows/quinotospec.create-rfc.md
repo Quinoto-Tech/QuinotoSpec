@@ -1,5 +1,5 @@
 ---
-description: crear un RFC proposal-ready en modo conversacional (compatible con create-tasks --from-rfc)
+description: Crear un Request for Comments (RFC) en modo conversacional, compatible con create-tasks --from-rfc
 ---
 
 # Workflow: Create Rfc

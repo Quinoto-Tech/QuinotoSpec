@@ -287,6 +287,9 @@ Ejecutar los comandos correspondientes según el stack elegido.
 | Python | Flask | Poetry | `poetry add flask` |
 | Python | Flask | pip | `echo "flask" > requirements.txt` |
 | Python | Flask | uv | `uv add flask` |
+| Python | Litestar | Poetry | `poetry add litestar` |
+| Python | Litestar | pip | `echo "litestar" > requirements.txt` |
+| Python | Litestar | uv | `uv add litestar` |
 | JS/TS | Next.js | npm | `npx create-next-app@latest . --typescript` |
 | JS/TS | Next.js | yarn | `yarn create next-app . --typescript` |
 | JS/TS | Next.js | pnpm | `pnpm create next-app@latest . --typescript` |
@@ -316,6 +319,7 @@ Ejecutar los comandos correspondientes según el stack elegido.
 | Go | testify | go mod | `go get github.com/stretchr/testify` |
 | Rust | rstest | cargo | Agregar `rstest` a `dev-dependencies` en `Cargo.toml` |
 | Ruby | RSpec | bundler | Agregar `gem "rspec"` al `Gemfile` + `bundle install` + `rails generate rspec:install` (si Rails) |
+| Ruby | Minitest | bundler | Agregar `gem "minitest"` al `Gemfile` + `bundle install` |
 
 #### Generar `.gitignore`
 
@@ -474,6 +478,8 @@ Usar la skill `quinotospec-update-changelog` para crear la primera entrada en `c
 **Si se generó scaffold**, agregar al resumen:
 - Se generó scaffold del proyecto con: {{LENGUAJE}} + {{FRAMEWORK}} ({{PACKAGE_MANAGER}})
 
+**Registro de prefijo**: Generar un prefijo único con mnemónico `INIT` (ej. `INIT-a1b2`) y registrarlo en `.quinoto-spec/prefix-registry.md`. Usar este prefijo como parte del nombre del archivo de changelog: `changelog/YYYY-MM-DD-INIT-xxxx-quinotospec-initialized.md`.
+
 ---
 
 ### Paso 8 — Copiar AGENTS.md (opcional)
@@ -521,8 +527,10 @@ Próximos pasos:
 
 Verificar que la entrada se creó correctamente:
 
-- Si v2: `ls .quinoto-spec/changelog/` debe mostrar un archivo `2026-06-12-ZZZZ-quinotospec-initialized.md` (o similar).
+- Si v2: `ls .quinoto-spec/changelog/` debe mostrar un archivo `YYYY-MM-DD-INIT-xxxx-quinotospec-initialized.md` (o similar).
 - Si se forzó v1: `.quinoto-spec/quinoto-spec-changelog.md` debe existir con la entrada correspondiente.
+
+**Nota sobre el prefijo:** Para eventos de sistema (init, migrate), usa el prefijo `INIT-xxxx` donde `xxxx` es un sufijo alfanumérico único de 4 caracteres. Registra el prefijo en `.quinoto-spec/prefix-registry.md`.
 
 ---
 

@@ -7,7 +7,7 @@ Objetivo: aprender de las propuestas completadas para mejorar la adopción de la
 ## Precondiciones
 
 - `.quinoto-spec/proposals/_archived/` debe contener al menos 1 propuesta archivada.
-- `.quinoto-spec/quinoto-spec-changelog.md` debe tener entradas.
+- Debe existir changelog (v1 en `.quinoto-spec/quinoto-spec-changelog.md` o v2 en `.quinoto-spec/changelog/`).
 - Si no hay propuestas archivadas, el workflow muestra un mensaje y sugiere completar una propuesta primero.
 
 ---
@@ -23,8 +23,8 @@ Objetivo: aprender de las propuestas completadas para mejorar la adopción de la
 
 ### Paso 2 — Extraer métricas del changelog
 
-1. Leer `.quinoto-spec/quinoto-spec-changelog.md`.
-2. Para cada propuesta archivada, buscar sus entradas de changelog.
+1. Ejecutar `@quinotospec.changelog-view --json` para obtener todas las entradas (auto-detecta formato v1/v2).
+2. Para cada propuesta archivada, filtrar sus entradas del JSON resultante.
 3. Extraer de cada entrada:
    - `**Tiempo Ahorrado**: ~{Tiempo Humano} (IA: {Tiempo IA} vs Humano: {Tiempo Humano})`
 4. Calcular métricas agregadas:

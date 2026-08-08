@@ -1,6 +1,8 @@
 ---
-description: crear un Product Requirements Document (PRD)
+description: Crear un Product Requirements Document (PRD) para validar ideas de producto antes de comprometer recursos de desarrollo
 ---
+
+# Workflow: Create PRD
 
 Este workflow te guía en la creación de un Product Requirements Document (PRD) estructurado para validar ideas de producto antes de comprometer recursos de desarrollo. El PRD es un documento vivo que evoluciona durante la sesión de trabajo.
 
@@ -137,3 +139,8 @@ version: 0.1
 - Registra el PRD en `.quinoto-spec/prefix-registry.md` con prefijo `PRD-{código}` (ej. `PRD-0001`)
 
 **Nota:** A diferencia de una Proposal Técnica, el PRD se enfoca en el "qué" y el "por qué", no en el "cómo". La implementación técnica viene después vía `/quinotospec.create-proposal`.
+
+**Instrucción Final OBLIGATORIA (Changelog):**
+Una vez completado el PRD, DEBES ejecutar la skill `quinotospec-update-changelog`.
+- **Título de la Acción**: PRD Generated: {{PRD_NAME}}
+- **Resumen**: Se generó el Product Requirements Document '{{PRD_NAME}}' en `.quinoto-spec/prd/{{SLUG}}/prd.md`. Audience: {{PRD_AUDIENCE}}.

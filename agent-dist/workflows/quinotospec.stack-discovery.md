@@ -106,7 +106,7 @@ Explora el proyecto completo y genera 8 archivos Markdown independientes en `.qu
 
 ## Paso Final — Dependency Graph
 
-Una vez generados los 8 archivos, ejecuta el workflow `quinotospec.dependency-graph` para generar `.quinoto-spec/discovery/00-dependency-graph.md` con el mapa de dependencias inter-servicio y la detección de contract drift.
+Una vez generados los 8 archivos, ejecuta el workflow `quinotospec.dependency-graph` para generar `.quinoto-spec/discovery/09-dependency-graph.md` con el mapa de dependencias inter-servicio y la detección de contract drift.
 
 ---
 

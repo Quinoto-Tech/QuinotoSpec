@@ -62,8 +62,14 @@ trigger: always_on
 
 # Protección de Archivos Archivados (BLOQUEANTE)
 - **NUNCA** modifiques, elimines o muevas archivos dentro de carpetas `_archived/` sin:
-    1. Confirmación **explícita** del usuario (no implícita).
-    2. Justificación documentada en el changelog con `quinotospec-update-changelog`.
+  1. Confirmación **explícita** del usuario (no implícita).
+  2. Justificación documentada en el changelog con `quinotospec-update-changelog`.
 - Los archivos archivados son registro histórico inmutable. Alterarlos rompe la trazabilidad.
 - Si necesitas recuperar un archivo archivado, **copialo** fuera de `_archived/` en lugar de moverlo.
 - Excepción: El workflow `quinotospec.archive` puede mover archivos HACIA `_archived/`, pero nunca modificar los que ya están dentro.
+
+# Blood-Bond Monitor (Global)
+- Después de completar CUALQUIER workflow que modifique código o documentación (apply, fix, tiwaz-rune, heimdallr), ejecutar skill `quinotospec-blood-bond-monitor --check-only`:
+  - Si `should_remind: true` (inactivo >=14 días), mostrar recordatorio pasivo con suggestions.
+  - Si `should_remind: false`, no mostrar nada.
+- Esta regla aplica globalmente. Los workflows individuales NO necesitan repetir este bloque.

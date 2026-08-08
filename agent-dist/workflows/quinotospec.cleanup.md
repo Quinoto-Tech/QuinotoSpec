@@ -34,7 +34,7 @@ Objetivo: eliminar artefactos acumulados que ya no son necesarios: branches merg
 1. Listar carpetas activas en `.quinoto-spec/proposals/` (excluyendo `_archived/`).
 2. Para cada propuesta:
    - Verificar `**Estado:**` en `proposal.md`
-   - Buscar entradas en `.quinoto-spec/quinoto-spec-changelog.md` relacionadas
+   - Buscar entradas en changelog usando `@quinotospec.changelog-view --prefix {{PREFIX}} --json` (auto-detecta formato v1/v2)
 3. Marcar como stale si:
    - Sin entradas en changelog por > 30 días
    - Sin tareas completadas (`[x]`)
