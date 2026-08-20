@@ -60,12 +60,14 @@ Debes completar los acuerdos de producto antes de crear propuestas:
 - **OpenCode**: Verifica que los archivos estan en `.opencode/commands/` (no `workflows/`)
 - **Cursor**: Verifica que estan en `.cursor/commands/`
 - **Cline**: Verifica que estan en `.cline/workflows/`
+- **Antigravity**: Verifica que estan en `.agents/workflows/` (o `.agents/skills/`)
 
 Reinstala con el flag correcto:
 ```bash
 ./install.sh --opencode
 ./install.sh --cursor
 ./install.sh --cline
+./install.sh --antigravity
 ```
 
 ### Discovery desactualizado (> 30 dias)
