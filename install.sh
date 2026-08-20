@@ -53,7 +53,8 @@ show_help() {
     echo "  --cursor          Install for Cursor"
     echo "  --opencode        Install for OpenCode"
     echo "  --cline           Install for Cline"
-    echo "  --global, --root  Install globally in ~/.config/"
+    echo "  --antigravity     Install for Antigravity (AGY)"
+    echo "  --global, --root  Install globally in ~/.config/ or ~/.gemini/config"
     echo ""
     echo "Management Options:"
     echo "  --verify          Verify existing installation"
@@ -64,8 +65,10 @@ show_help() {
     echo "Examples:"
     echo "  $0 --opencode                    # Install for OpenCode (interactive path)"
     echo "  $0 --cursor --global             # Install for Cursor globally"
+    echo "  $0 --antigravity --global        # Install for Antigravity globally"
     echo "  $0 --opencode --global           # Install for OpenCode globally"
     echo "  $0 --verify --opencode --global  # Verify global OpenCode installation"
+    echo "  $0 --verify --antigravity --global # Verify global Antigravity installation"
     echo "  $0 --uninstall --cursor          # Uninstall Cursor installation"
     exit 0
 }
@@ -205,6 +208,9 @@ get_config_dir() {
         cline)
             [ "$global" = true ] && echo "$HOME/.config/cline" || echo "$TARGET_ROOT/.cline"
             ;;
+        antigravity)
+            [ "$global" = true ] && echo "$HOME/.gemini/config" || echo "$TARGET_ROOT/.agents"
+            ;;
         *)
             [ "$global" = true ] && echo "$HOME/.config/agent" || echo "$TARGET_ROOT/.agent"
             ;;
@@ -256,6 +262,7 @@ for arg in "$@"; do
         --cursor) IDE_CHOICE="cursor" ;;
         --opencode) IDE_CHOICE="opencode" ;;
         --cline) IDE_CHOICE="cline" ;;
+        --antigravity) IDE_CHOICE="antigravity" ;;
         --global|--root) GLOBAL_INSTALL=true ;;
         --verify) VERIFY_ONLY=true ;;
         --uninstall) ACTION="uninstall" ;;
@@ -274,7 +281,7 @@ print_header
 # Handle uninstall
 if [ "$ACTION" = "uninstall" ]; then
     if [ -z "$IDE_CHOICE" ]; then
-        print_error "--uninstall requires an IDE flag (--opencode, --cursor, --cline)"
+        print_error "--uninstall requires an IDE flag (--opencode, --cursor, --cline, --antigravity)"
         exit 1
     fi
     uninstall "$IDE_CHOICE"
@@ -286,7 +293,7 @@ check_dependencies
 # Handle verify-only mode
 if [ "$VERIFY_ONLY" = true ]; then
     if [ -z "$IDE_CHOICE" ]; then
-        print_error "--verify requires an IDE flag (--opencode, --cursor, --cline)"
+        print_error "--verify requires an IDE flag (--opencode, --cursor, --cline, --antigravity)"
         exit 1
     fi
     config_dir=$(get_config_dir "$IDE_CHOICE" "$GLOBAL_INSTALL")
@@ -299,8 +306,13 @@ fi
 
 # Determine target directory
 if [ "$GLOBAL_INSTALL" = true ]; then
-    TARGET_ROOT="$HOME/.config"
-    print_info "Installing globally to ~/.config/"
+    if [ "$IDE_CHOICE" = "antigravity" ]; then
+        TARGET_ROOT="$HOME/.gemini"
+        print_info "Installing globally to ~/.gemini/config/"
+    else
+        TARGET_ROOT="$HOME/.config"
+        print_info "Installing globally to ~/.config/"
+    fi
 else
     echo -n "Enter the installation path (default: current directory '$PROJECT_ROOT'): "
     read -r USER_PATH
@@ -325,16 +337,18 @@ if [ -z "$IDE_CHOICE" ]; then
     echo "  1) OpenCode"
     echo "  2) Cursor"
     echo "  3) Cline"
-    echo "  4) Generic (.agent/)"
+    echo "  4) Antigravity"
+    echo "  5) Generic (.agent/)"
     echo ""
-    echo -n "Enter your choice [1-4] (default: 1): "
+    echo -n "Enter your choice [1-5] (default: 1): "
     read -r choice
 
     case "$choice" in
         1|"") IDE_CHOICE="opencode" ;;
         2) IDE_CHOICE="cursor" ;;
         3) IDE_CHOICE="cline" ;;
-        4) IDE_CHOICE="generic" ;;
+        4) IDE_CHOICE="antigravity" ;;
+        5) IDE_CHOICE="generic" ;;
         *) IDE_CHOICE="opencode" ;;
     esac
 fi
@@ -343,7 +357,7 @@ SOURCE_AGENT="$DIR/agent-dist"
 
 # Execute installation
 case "$IDE_CHOICE" in
-    cursor|opencode|cline)
+    cursor|opencode|cline|antigravity)
         echo "Installing for ${IDE_CHOICE^}..."
         config_dir=$(get_config_dir "$IDE_CHOICE" "$GLOBAL_INSTALL")
 
@@ -351,9 +365,11 @@ case "$IDE_CHOICE" in
         cp -rf "$SOURCE_AGENT/." "$config_dir/"
 
         # Rename workflows to commands for Cursor/OpenCode
-        if [ -d "$config_dir/workflows" ]; then
-            rm -rf "$config_dir/commands"
-            mv "$config_dir/workflows" "$config_dir/commands"
+        if [ "$IDE_CHOICE" = "cursor" ] || [ "$IDE_CHOICE" = "opencode" ]; then
+            if [ -d "$config_dir/workflows" ]; then
+                rm -rf "$config_dir/commands"
+                mv "$config_dir/workflows" "$config_dir/commands"
+            fi
         fi
 
         cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
@@ -384,10 +400,11 @@ echo ""
 echo "======================================================================"
 if [ "$GLOBAL_INSTALL" = true ]; then
     case "$IDE_CHOICE" in
-        cursor)   echo "Installed to ~/.config/cursor/" ;;
-        opencode) echo "Installed to ~/.config/opencode/" ;;
-        cline)    echo "Installed to ~/.config/cline/" ;;
-        *)        echo "Installed to ~/.config/agent/" ;;
+        cursor)      echo "Installed to ~/.config/cursor/" ;;
+        opencode)    echo "Installed to ~/.config/opencode/" ;;
+        cline)       echo "Installed to ~/.config/cline/" ;;
+        antigravity) echo "Installed to ~/.gemini/config/" ;;
+        *)           echo "Installed to ~/.config/agent/" ;;
     esac
 else
     echo "Installed to $config_dir"

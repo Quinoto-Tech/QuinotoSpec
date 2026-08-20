@@ -63,7 +63,7 @@ fi
 TESTED=$((TESTED + 1))
 
 # Check 6: install.sh soporta múltiples IDEs
-IDE_COUNT=$(grep -c "\-\-opencode\|\-\-cursor\|\-\-cline" "$INSTALL_SCRIPT" || true)
+IDE_COUNT=$(grep -c "\-\-opencode\|\-\-cursor\|\-\-cline\|\-\-antigravity" "$INSTALL_SCRIPT" || true)
 if [ "$IDE_COUNT" -lt 2 ]; then
     echo "⚠️  install.sh podría no soportar suficientes IDEs (encontrados: $IDE_COUNT)"
 else

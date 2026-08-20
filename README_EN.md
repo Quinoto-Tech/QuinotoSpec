@@ -147,7 +147,9 @@ The installer prompts for destination path and IDE:
 |------|-----|-------------|
 | `--opencode` | OpenCode | `.opencode/` or `~/.config/opencode/` (global) |
 | `--cursor` | Cursor | `.cursor/` or `~/.config/cursor/` (global) |
-| `--global`, `--root` | - | Install in `~/.config/`, ignoring project directory |
+| `--cline` | Cline | `.cline/` or `~/.config/cline/` (global) |
+| `--antigravity` | Antigravity (AGY) | `.agents/` or `~/.gemini/config/` (global) |
+| `--global`, `--root` | - | Install in `~/.config/` or `~/.gemini/config/`, ignoring project directory |
 | (default) | Generic | `.agent/` |
 
 ### Global Installation
@@ -160,9 +162,12 @@ Install once and available in all your projects:
 
 # Cursor global
 ./quinotospec-package/install.sh --cursor --global
+
+# Antigravity global
+./quinotospec-package/install.sh --antigravity --global
 ```
 
-This creates the config in `~/.config/opencode/` or `~/.config/cursor/` depending on the IDE.
+This creates the config in `~/.config/opencode/`, `~/.config/cursor/`, or `~/.gemini/config/` depending on the IDE.
 
 ### Dependencies
 
@@ -666,7 +671,7 @@ graph LR
 | ".quinoto-spec/discovery/ not found" | Run `@quinotospec.discovery` first |
 | "Prefix not registered" | Register with `@quinotospec.create-proposal` |
 | "Changelog outdated" | Run `@quinotospec-update-changelog` |
-| Workflows not recognized | Reinstall with correct flag (`--opencode`, `--cursor`, `--cline`) |
+| Workflows not recognized | Reinstall with correct flag (`--opencode`, `--cursor`, `--cline`, `--antigravity`) |
 
 ### Diagnostic Commands
 

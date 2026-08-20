@@ -34,6 +34,7 @@ cd QuinotoSpec
 ./install.sh --opencode --global    # OpenCode
 ./install.sh --cursor --global      # Cursor
 ./install.sh --cline --global       # Cline
+./install.sh --antigravity --global  # Antigravity (AGY)
 
 # 3. En tu proyecto, ejecutar discovery
 @quinotospec.discovery
@@ -175,7 +176,9 @@ El instalador pregunta la ruta de destino y el IDE:
 |------|-----|---------|
 | `--opencode` | OpenCode | `.opencode/` o `~/.config/opencode/` (global) |
 | `--cursor` | Cursor | `.cursor/` o `~/.config/cursor/` (global) |
-| `--global`, `--root` | - | Instala en `~/.config/` ignorando el directorio del proyecto |
+| `--cline` | Cline | `.cline/` o `~/.config/cline/` (global) |
+| `--antigravity` | Antigravity (AGY) | `.agents/` o `~/.gemini/config/` (global) |
+| `--global`, `--root` | - | Instala en `~/.config/` o `~/.gemini/config/` ignorando el directorio del proyecto |
 | (default) | Genérico | `.agent/` |
 
 ### Instalación Global
@@ -188,9 +191,12 @@ Para instalar una vez y disponible en todos tus proyectos:
 
 # Cursor global
 ./quinotospec-package/install.sh --cursor --global
+
+# Antigravity global
+./quinotospec-package/install.sh --antigravity --global
 ```
 
-Esto crea la configuración en `~/.config/opencode/` o `~/.config/cursor/` según el IDE.
+Esto crea la configuración en `~/.config/opencode/`, `~/.config/cursor/` o `~/.gemini/config/` según el IDE.
 
 ### Dependencias
 
@@ -694,7 +700,7 @@ graph LR
 | "No se encontró .quinoto-spec/discovery/" | Ejecutar `@quinotospec.discovery` primero |
 | "Prefijo no registrado" | Registrar con `@quinotospec.create-proposal` |
 | "Changelog desactualizado" | Ejecutar `@quinotospec-update-changelog` |
-| Workflows no reconocidos | Reinstalar con flag correcto (`--opencode`, `--cursor`, `--cline`) |
+| Workflows no reconocidos | Reinstalar con flag correcto (`--opencode`, `--cursor`, `--cline`, `--antigravity`) |
 
 ### Comandos de Diagnóstico
 
