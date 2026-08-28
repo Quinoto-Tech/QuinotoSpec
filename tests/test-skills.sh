@@ -90,7 +90,7 @@ done
 
 echo ""
 echo "=========================================="
-echo "Resultados: $TESTED skills testadas, $ERRORES errores"
+echo "Resultados: $TESTED skills testadas, $ERRORS errores"
 echo "=========================================="
 
 if [ $ERRORS -gt 0 ]; then

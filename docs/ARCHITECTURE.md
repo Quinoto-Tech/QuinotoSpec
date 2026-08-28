@@ -19,9 +19,9 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 +--------+---------+
 |   agent-dist/    |  <-- Distribucion
 |  +-------------+ |
-|  | workflows/  | |  <-- 38 workflows
-|  | skills/     | |  <-- 31 skills
-|  | rules/      | |  <-- 12 reglas
+ |  | workflows/  | |  <-- 39 workflows
+ |  | skills/     | |  <-- 69 skills (39 core + 30 utilitarias)
+ |  | rules/      | |  <-- 13 reglas
 |  | agents/     | |  <-- 9 agentes
 |  | templates/  | |  <-- 5 templates
 |  +-------------+ |
@@ -59,7 +59,7 @@ Usuario -> IDE -> Agente -> Workflow -> Skills -> .quinoto-spec/
 
 ## Componentes
 
-### Workflows (35)
+### Workflows (39)
 
 Los workflows se dividen en categorias:
 
@@ -150,11 +150,13 @@ El sistema coexiste con el formato anterior de propuestas.
 
 ---
 
-### Skills (31)
+### Skills (69)
 
 Organizadas por dominio:
 
-**Basicas:** stack-detect, file-creation, generate-github-branch, mark-done, update-changelog, validate, entropy-calculator
+**Core (wrappers de workflows, 39):** agent-train, apply, archive, backup, battle-frenzy, blood-bond, changelog-view, cleanup, create-prd, create-proposal, create-rfc, create-tasks, create-user-stories, dependency-graph, discovery, distribute, export, fix, health, heimdallr, import, init, migrate, mjolnir-refactor, onboard, party-mode, pre-commit, refresh-discovery, release, retrospective, review, schema-fork, specs-init, sprint-create, sprint-plan, sprints-init, stack-discovery, status, tiwaz-rune
+
+**Basicas/utilitarias:** stack-detect, file-creation, generate-github-branch, mark-done, update-changelog, validate, entropy-calculator
 
 **Gobernanza:** rules-enforce, syntax-validate, rollback, metrics
 
@@ -168,9 +170,9 @@ Organizadas por dominio:
 
 **Party Mode:** party-orchestrator
 
-**Onboarding:** onboard-developer, onboard-product, onboard-support, onboard-general, onboard-simple
+**Onboarding:** onboard-developer, onboard-product, onboard-support, onboard-general, onboard-simple, onboard (consolidado)
 
-### Reglas (12)
+### Reglas (13)
 
 Las reglas tienen niveles de severidad:
 
@@ -191,6 +193,9 @@ Las reglas tienen niveles de severidad:
 - #6 Convencion de Archivado
 - #7 Nombrado de Branches
 - #8 Aprobacion de Configuracion Critica
+
+**GLOBAL (post-workflow):**
+- #13 Blood-Bond Monitor — tras apply/fix/tiwaz-rune/heimdallr, check inactividad ≥14 días
 
 ## Extension
 

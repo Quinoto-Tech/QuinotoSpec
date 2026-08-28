@@ -1,2 +1,25 @@
 # Backlog interno
 backlog.md
+
+# Python / caches
+__pycache__/
+*.pyc
+*.pyo
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# OS / editor
+.DS_Store
+*.log
+.env
+
+# QuinotoSpec generated
+.quinoto-spec/backups/
+.quinoto-spec/changelog/INDEX.md
+temp_*
+agent-dist/.tmp/
+
+# IDE
+.vscode/
+.idea/

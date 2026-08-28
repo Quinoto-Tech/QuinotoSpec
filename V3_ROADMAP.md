@@ -9,7 +9,7 @@ Este documento detalla el plan de evolucion de QuinotoSpec desde v2.1.0 (Yggdras
 - **Spec-Kit** (github/spec-kit) — Extensiones/presets, constitution, workflow engine
 - **BMAD-METHOD** (bmad-code-org/bmad-method) — Agentes con personalidad, party mode, scale-adaptive
 
-**Version actual:** 2.4.0
+**Version actual:** 2.6.0
 **Version objetivo:** 3.3.0
 **Fases:** 4 fases incrementales, cada una entregable independientemente
 **Progreso:** 15/118 tareas completadas (13%)

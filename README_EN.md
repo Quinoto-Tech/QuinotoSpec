@@ -120,7 +120,7 @@ Every change is recorded in an immutable changelog (rule #1: never edit manually
 
 ### Governance, not just Execution
 
-QuinotoSpec is not a prompt file — it's a **rule system**. 12 strict rules that the agent must follow, validated with `@quinotospec-validate` and `/quinotospec-rules-enforce`. If a product agreement is empty, the workflow blocks. If a prefix is not registered, progress stops.
+QuinotoSpec is not a prompt file — it's a **rule system**. 13 strict rules that the agent must follow, validated with `@quinotospec-validate` and `/quinotospec-rules-enforce`. If a product agreement is empty, the workflow blocks. If a prefix is not registered, progress stops.
 
 ### Works with your agent, not instead of your agent
 
@@ -556,13 +556,13 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-The `quinotospec-update-changelog` skill is the traceability backbone: 25 of 30 workflows call it to document their actions.
+The `quinotospec-update-changelog` skill is the traceability backbone: 25 of 39 workflows call it to document their actions.
 
 ---
 
 ## Rules
 
-QuinotoSpec enforces 12 strict rules (defined in `agent-dist/rules/quinotospec-rules.md`):
+QuinotoSpec enforces 13 strict rules (defined in `agent-dist/rules/quinotospec-rules.md`):
 
 | # | Rule | Severity | Description |
 |---|------|----------|-------------|
@@ -578,6 +578,7 @@ QuinotoSpec enforces 12 strict rules (defined in `agent-dist/rules/quinotospec-r
 | 10 | **Backup Pre-Refactor** | BLOCKING | Mandatory backup before `mjolnir-refactor` |
 | 11 | **Pre-Apply Syntax** | WARNING | Validate proposal syntax before applying a task |
 | 12 | **Archived Files** | BLOCKING | Never modify files in `_archived/` without explicit approval |
+| 13 | **Blood-Bond Monitor** | GLOBAL | After `apply`/`fix`/`tiwaz-rune`/`heimdallr`, check inactivity ≥14 days |
 
 ---
 
@@ -700,7 +701,7 @@ graph LR
 
 **Berserker Edition (v2.1.0)** — Completed
 - ✅ 9 specialized pre-configured agents
-- ✅ 12 governance rules (4 new BLOCKING/WARNING)
+- ✅ 13 governance rules (4 new BLOCKING/WARNING + Global)
 - ✅ Advanced skills: search, stats, diff, sync
 - ✅ Workflows: migrate, backup, export, import
 - ✅ Complete test suite with automatic validation
@@ -712,7 +713,7 @@ graph LR
 
 **Yggdrasil + Tiwaz Rune (v2.6.0)** — Current
 - ✅ 9 specialized agents (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
-- ✅ Governance system with 12 rules
+- ✅ Governance system with 13 rules
 - ✅ Testing and CI/CD infrastructure
 - ✅ Complete documentation and examples
 - ✅ Integration with GitHub Issues and Jira CSV

@@ -122,7 +122,7 @@ TESTED=$((TESTED + 1))
 
 echo ""
 echo "=========================================="
-echo "Resultados: $TESTED checks, $ERRORES errores"
+echo "Resultados: $TESTED checks, $ERRORS errores"
 echo "=========================================="
 
 if [ $ERRORS -gt 0 ]; then

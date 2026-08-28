@@ -65,9 +65,10 @@ check_external_link() {
 echo "Scanning markdown files..."
 echo ""
 
-for md_file in "$PROJECT_ROOT"/*.md "$PROJECT_ROOT"/agent-dist/**/*.md; do
+shopt -s globstar nullglob 2>/dev/null || true
+while IFS= read -r -d '' md_file; do
     if [ ! -f "$md_file" ]; then continue; fi
-    
+
     while IFS= read -r link; do
         if [[ "$link" =~ ^https?:// ]]; then
             if [ "$INTERNAL_ONLY" = false ]; then
@@ -76,8 +77,8 @@ for md_file in "$PROJECT_ROOT"/*.md "$PROJECT_ROOT"/agent-dist/**/*.md; do
         elif [[ ! "$link" =~ ^# ]]; then
             check_internal_link "$link" "$md_file"
         fi
-    done < <(grep -oP '\[.*?\]\(\K[^)]+' "$md_file" 2>/dev/null || true)
-done
+    done < <(grep -oE '\[[^]]*\]\([^)]+\)' "$md_file" 2>/dev/null | sed -E 's/.*\(([^)]+)\)/\1/' || true)
+done < <(find "$PROJECT_ROOT" -maxdepth 1 -name "*.md" -print0 2>/dev/null; find "$PROJECT_ROOT/agent-dist" -name "*.md" -print0 2>/dev/null)
 
 echo ""
 echo "=========================================="

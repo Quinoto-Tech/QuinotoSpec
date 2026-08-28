@@ -82,7 +82,7 @@ done
 
 echo ""
 echo "=========================================="
-echo "Resultados: $TESTED workflows testados, $ERRORES errores"
+echo "Resultados: $TESTED workflows testados, $ERRORS errores"
 echo "=========================================="
 
 if [ $ERRORS -gt 0 ]; then

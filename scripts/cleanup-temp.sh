@@ -10,16 +10,17 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 DAYS=7
 DRY_RUN=false
 
-for arg in "$@"; do
-    case "$arg" in
-        --days) shift; DAYS="$1" ;;
-        --dry-run) DRY_RUN=true ;;
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --days) DAYS="$2"; shift 2 ;;
+        --dry-run) DRY_RUN=true; shift ;;
         -h|--help)
             echo "Usage: $0 [--days N] [--dry-run]"
             echo "  --days N     Keep backups newer than N days (default: 7)"
             echo "  --dry-run    Show what would be deleted without deleting"
             exit 0
             ;;
+        *) echo "Unknown option: $1" >&2; exit 1 ;;
     esac
 done
 
@@ -34,7 +35,7 @@ TOTAL_DELETED=0
 # 1. Clean old backups in .quinoto-spec/backups/ (if in a project context)
 echo "--- Backups ---"
 if [ -d "$PROJECT_ROOT/.quinoto-spec/backups" ]; then
-    OLD_BACKUPS=$(find "$PROJECT_ROOT/.quinoto-spec/backups" -maxdepth 1 -type d -mtime +$DAYS -name "backup-*" 2>/dev/null)
+    OLD_BACKUPS=$(find "$PROJECT_ROOT/.quinoto-spec/backups" -maxdepth 1 -type d -mtime +"$DAYS" -name "backup-*" 2>/dev/null)
     if [ -n "$OLD_BACKUPS" ]; then
         while IFS= read -r backup; do
             SIZE=$(du -sh "$backup" 2>/dev/null | cut -f1)
@@ -56,7 +57,7 @@ echo ""
 
 # 2. Clean temp scripts
 echo "--- Temp Scripts ---"
-TEMP_SCRIPTS=$(find "$PROJECT_ROOT" -name "temp_*" -type f -mtime +$DAYS 2>/dev/null)
+TEMP_SCRIPTS=$(find "$PROJECT_ROOT" -name "temp_*" -type f -mtime +"$DAYS" 2>/dev/null)
 if [ -n "$TEMP_SCRIPTS" ]; then
     while IFS= read -r temp; do
         if [ "$DRY_RUN" = true ]; then

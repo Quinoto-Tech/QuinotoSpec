@@ -4,10 +4,10 @@
 
 ![Version](https://img.shields.io/badge/version-2.6.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline-orange)
+![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline%20%7C%20Antigravity-orange)
 ![Workflows](https://img.shields.io/badge/workflows-39-purple)
-![Skills](https://img.shields.io/badge/skills-31-purple)
-![Rules](https://img.shields.io/badge/rules-12-red)
+![Skills](https://img.shields.io/badge/skills-69-purple)
+![Rules](https://img.shields.io/badge/rules-13-red)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
 
 **ESTADO: PRODUCCION / ESTABLE**
@@ -149,7 +149,7 @@ Cada cambio queda registrado en un changelog inmutable (regla #1: nunca editar m
 
 ### Gobernanza, no solo ejecución
 
-QuinotoSpec no es un archivo de prompts — es un **sistema de reglas**. 12 reglas estrictas que el agente debe cumplir, validables con `@quinotospec-validate` y `/quinotospec-rules-enforce`. Si un acuerdo de producto está vacío, el workflow se bloquea. Si un prefijo no está registrado, no se avanza.
+QuinotoSpec no es un archivo de prompts — es un **sistema de reglas**. 13 reglas estrictas que el agente debe cumplir, validables con `@quinotospec-validate` y `/quinotospec-rules-enforce`. Si un acuerdo de producto está vacío, el workflow se bloquea. Si un prefijo no está registrado, no se avanza.
 
 ### Funciona con tu agente, no en lugar de tu agente
 
@@ -585,13 +585,13 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 25 de 30 workflows la invocan para documentar sus acciones.
+La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 25 de 39 workflows la invocan para documentar sus acciones.
 
 ---
 
 ## Reglas
 
-QuinotoSpec impone 12 reglas estrictas (definidas en `agent-dist/rules/quinotospec-rules.md`):
+QuinotoSpec impone 13 reglas estrictas (definidas en `agent-dist/rules/quinotospec-rules.md`):
 
 | # | Regla | Severidad | Descripción |
 |---|-------|-----------|-------------|
@@ -607,6 +607,7 @@ QuinotoSpec impone 12 reglas estrictas (definidas en `agent-dist/rules/quinotosp
 | 10 | **Backup Pre-Refactor** | BLOCKING | Backup obligatorio antes de `mjolnir-refactor` |
 | 11 | **Sintaxis Pre-Apply** | WARNING | Validar sintaxis de propuesta antes de aplicar tarea |
 | 12 | **Archivos Archivados** | BLOCKING | Nunca modificar archivos en `_archived/` sin aprobación explícita |
+| 13 | **Blood-Bond Monitor** | GLOBAL | Tras `apply`/`fix`/`tiwaz-rune`/`heimdallr`, verificar inactividad ≥14 días y recordar |
 
 ---
 
@@ -741,7 +742,7 @@ graph LR
 
 **Yggdrasil + Tiwaz Rune (v2.6.0)** — Actual
 - ✅ 9 agentes especializados (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
-- ✅ Sistema de gobernanza con 12 reglas
+- ✅ Sistema de gobernanza con 13 reglas
 - ✅ Infraestructura de testing y CI/CD
 - ✅ Documentacion completa y ejemplos
 - ✅ Integracion con GitHub Issues y Jira CSV

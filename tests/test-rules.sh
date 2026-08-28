@@ -62,6 +62,7 @@ EXPECTED_RULES=(
     "Backup Pre-Refactor"
     "Validación de Sintaxis Pre-Apply"
     "Protección de Archivos Archivados"
+    "Blood-Bond Monitor"
 )
 
 echo ""
@@ -89,7 +90,7 @@ fi
 
 echo ""
 echo "=========================================="
-echo "Resultados: $ERRORES errores encontrados"
+echo "Resultados: $ERRORS errores encontrados"
 echo "=========================================="
 
 if [ $ERRORS -gt 0 ]; then

@@ -40,8 +40,11 @@ fi
 # 2. Validar links en documentacion
 echo "--- Link Validation ---"
 BROKEN_LINKS=0
-for md_file in "$PROJECT_ROOT"/*.md "$PROJECT_ROOT"/agent-dist/**/*.md; do
+shopt -s globstar nullglob 2>/dev/null || true
+# Usar find para portabilidad (globstar no disponible en bash <4 o sin shopt)
+while IFS= read -r -d '' md_file; do
     if [ ! -f "$md_file" ]; then continue; fi
+    # Extracción portable sin grep -P (no disponible en macOS BSD grep)
     while IFS= read -r link; do
         if [[ "$link" =~ ^https?:// ]]; then
             if ! curl -sf --max-time 5 "$link" > /dev/null 2>&1; then
@@ -49,8 +52,8 @@ for md_file in "$PROJECT_ROOT"/*.md "$PROJECT_ROOT"/agent-dist/**/*.md; do
                 BROKEN_LINKS=$((BROKEN_LINKS + 1))
             fi
         fi
-    done < <(grep -oP '\[.*?\]\(\K[^)]+' "$md_file" 2>/dev/null || true)
-done
+    done < <(grep -oE '\[[^]]*\]\([^)]+\)' "$md_file" 2>/dev/null | sed -E 's/.*\(([^)]+)\)/\1/' || true)
+done < <(find "$PROJECT_ROOT" -maxdepth 1 -name "*.md" -print0 2>/dev/null; find "$PROJECT_ROOT/agent-dist" -name "*.md" -print0 2>/dev/null)
 if [ $BROKEN_LINKS -eq 0 ]; then
     echo "  All links valid"
 else
@@ -78,7 +81,7 @@ echo ""
 
 # 4. Validar estructura de agent-dist
 echo "--- Structure Validation ---"
-EXPECTED_COUNTS=("workflows:38" "skills:31" "agents:9")
+EXPECTED_COUNTS=("workflows:39" "skills:69" "agents:9")
 for expected in "${EXPECTED_COUNTS[@]}"; do
     dir="${expected%%:*}"
     count="${expected##*:}"
