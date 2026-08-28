@@ -4,7 +4,7 @@
   "edition": "Yggdrasil \u2014 Tiwaz Rune",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
   "workflows": 39,
-  "skills": 73,
+  "skills": 74,
   "rules": 13,
   "agents": 9,
   "features": {
