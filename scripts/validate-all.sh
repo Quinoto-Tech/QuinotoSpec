@@ -81,7 +81,7 @@ echo ""
 
 # 4. Validar estructura de agent-dist
 echo "--- Structure Validation ---"
-EXPECTED_COUNTS=("workflows:39" "skills:72" "agents:9")
+EXPECTED_COUNTS=("workflows:39" "skills:73" "agents:9")
 for expected in "${EXPECTED_COUNTS[@]}"; do
     dir="${expected%%:*}"
     count="${expected##*:}"
@@ -93,6 +93,26 @@ for expected in "${EXPECTED_COUNTS[@]}"; do
         ERRORS=$((ERRORS + 1))
     fi
 done
+echo ""
+
+# 5. Jormungandr — detectar ciclos en DAG (strict BLOCKING, no-strict warn)
+echo "--- Jormungandr (DAG Cycle Check) ---"
+JORMUNGANDR_SCHEMA="$PROJECT_ROOT/agent-dist/templates/schema-template.yaml"
+if [ -f "$JORMUNGANDR_SCHEMA" ]; then
+    if python3 "$PROJECT_ROOT/agent-dist/skills/quinotospec-jormungandr/check.py" "$JORMUNGANDR_SCHEMA" 2>&1; then
+        echo "  Jormungandr: DAG OK"
+    else
+        if [ "$STRICT" = true ]; then
+            echo "  Jormungandr: CYCLE detected (BLOCKING in --strict)"
+            ERRORS=$((ERRORS + 1))
+        else
+            echo "  Jormungandr: CYCLE detected (WARNING)"
+            WARNINGS=$((WARNINGS + 1))
+        fi
+    fi
+else
+    echo "  Jormungandr: schema not found, skip"
+fi
 echo ""
 
 # Summary
