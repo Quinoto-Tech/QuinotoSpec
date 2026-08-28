@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline%20%7C%20Antigravity-orange)
 ![Workflows](https://img.shields.io/badge/workflows-39-purple)
-![Skills](https://img.shields.io/badge/skills-69-purple)
+![Skills](https://img.shields.io/badge/skills-76-purple)
 ![Rules](https://img.shields.io/badge/rules-13-red)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
 
@@ -537,6 +537,18 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **Conflict Detector** | `/quinotospec-conflict-detector` | Detecta conflictos entre propuestas activas |
 | **Estimate** | `/quinotospec-estimate` | Estima complejidad de propuestas |
 
+### Skills Nórdicas (v2.7.0 — Warband)
+
+| Skill | Comando | Descripción | Saga |
+|-------|---------|-------------|------|
+| **Norns** | `/quinotospec-norns --to X.Y.Z` | Tejedoras del Destino — bump atómico sin drift (README/ARCH/manifest/validate sync) | Teje la versión en cada hilo |
+| **Huginn & Muninn** | `/quinotospec-huginn-muninn --pr` | Cuervos de Odín — Tiwaz continuo + gate S≥0.76 en CI | Vuelan y reportan degradación |
+| **Skald** | `/quinotospec-skald --role developer` | Poeta — unifica 5 onboard-* + sync README bilingüe fuente única | Guarda las sagas |
+| **Jormungandr** | `/quinotospec-jormungandr` | Serpiente del Mundo — detecta ciclos DAG (Kahn) BLOCKING en --strict | Se muerde la cola |
+| **Valkyrie** | `/quinotospec-valkyrie` | Electora — triage ranking impact/urgency/risk/debt/deps_ready | Elige quién va a Valhalla |
+| **Bifrost** | `/quinotospec-bifrost --sync` | Puente Arcoíris — federación multi-repo con git notes + status federado | Une Asgard-Midgard |
+| **Mimir** | `/quinotospec-mimir "por qué?" --cite` | Cabeza Sabia — índice BM25 cita-exacta `file:line` sin LLM externo | Memoria viva sin alucinación |
+
 ### Integración Recomendada
 
 ```bash
@@ -585,7 +597,39 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 25 de 39 workflows la invocan para documentar sus acciones.
+La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 25 de 39 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
+
+#### Tutorial rápido — Nórdicas
+
+```bash
+# 1. Versionado sin drift (Norns)
+./scripts/update-version.sh 2.7.0              # sync atómico + CHANGELOG
+/quinotospec-norns --to 2.7.0 --dry-run        # preview
+
+# 2. Observabilidad continua (Huginn & Muninn)
+bash agent-dist/skills/quinotospec-huginn-muninn/check.sh --json   # local
+# en CI: .github/workflows/huginn-muninn.yml corre en PR + cron 06:00, bloquea si S>=0.76
+
+# 3. Docs viva (Skald)
+/quinotospec-skald --role developer            # genera .quinoto-spec/onboard/developer.md
+bash agent-dist/skills/quinotospec-skald/sync-readme.sh --check   # drift README.md vs README_EN.md
+
+# 4. Ciclos (Jormungandr)
+python3 agent-dist/skills/quinotospec-jormungandr/check.py agent-dist/templates/schema-template.yaml
+./scripts/validate-all.sh --strict            # incluye Jormungandr como paso 5
+
+# 5. Triage (Valkyrie)
+/quinotospec-valkyrie                          # tabla rankeada de propuestas activas
+python3 agent-dist/skills/quinotospec-valkyrie/rank.py
+
+# 6. Federación (Bifrost)
+/quinotospec-bifrost --init                    # crea federation.yaml
+/quinotospec-bifrost --sync                    # git notes + status federado
+
+# 7. Memoria (Mimir BM25)
+python3 agent-dist/skills/quinotospec-mimir/index.py      # indexa 54 chunks
+python3 agent-dist/skills/quinotospec-mimir/search.py "TOTP 2FA"  # cita file:line
+```
 
 ---
 
@@ -751,6 +795,16 @@ graph LR
 - ✅ Party Mode: mesa redonda multi-agente integrada en create-proposal y create-rfc
 - ✅ Changelog v2: append-only, archivos individuales, sin merge conflicts
 - ✅ The Tiwaz Rune: análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación
+- ✅ Antigravity (AGY) — soporte `.agents` / `~/.gemini/config` + 39 skills wrapper globales
+
+**Warband: Nórdicas (v2.7.0)** — Actual (7 sagas)
+- ✅ **Norns** — versionado atómico sin drift (sync 7 archivos + CHANGELOG)
+- ✅ **Huginn & Muninn** — observabilidad Tiwaz continua + gate CI S≥0.76
+- ✅ **Skald** — docs viva, unifica 5 onboard-* + sync README bilingüe
+- ✅ **Jormungandr** — detección de ciclos DAG (Kahn) en validate --strict
+- ✅ **Valkyrie** — triage ranking impact/urgency/risk/debt
+- ✅ **Bifrost** — federación multi-repo con git notes + status federado
+- ✅ **Mimir BM25** — índice cita-exacta `file:line` sin LLM externo, offline stdlib
 
 **Warband: Falange (v3.0.0, TBA)**
 -  Class System: Roles especializados (~60%) — 9 agentes especializados existen, falta sistema de progresión y nombres mitológicos (Scout/Skald/Blacksmith)

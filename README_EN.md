@@ -508,6 +508,18 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **Conflict Detector** | `/quinotospec-conflict-detector` | Detects conflicts between active proposals |
 | **Estimate** | `/quinotospec-estimate` | Estimates proposal complexity |
 
+### Nordic Skills (v2.7.0 — Warband)
+
+| Skill | Command | Description | Saga |
+|-------|---------|-------------|------|
+| **Norns** | `/quinotospec-norns --to X.Y.Z` | Weavers of Fate — atomic bump without drift (README/ARCH/manifest/validate sync) | Weaves version in every thread |
+| **Huginn & Muninn** | `/quinotospec-huginn-muninn --pr` | Odin's Ravens — continuous Tiwaz + CI gate S≥0.76 | Fly and report degradation |
+| **Skald** | `/quinotospec-skald --role developer` | Poet — unifies 5 onboard-* + bilingual README sync | Keeps the sagas |
+| **Jormungandr** | `/quinotospec-jormungandr` | World Serpent — DAG cycle detection (Kahn) BLOCKING in --strict | Bites its own tail |
+| **Valkyrie** | `/quinotospec-valkyrie` | Chooser — triage ranking impact/urgency/risk/debt | Chooses who goes to Valhalla |
+| **Bifrost** | `/quinotospec-bifrost --sync` | Rainbow Bridge — multi-repo federation with git notes | Bridges Asgard-Midgard |
+| **Mimir** | `/quinotospec-mimir "why?" --cite` | Wise Head — BM25 exact `file:line` citation, no external LLM | Living memory without hallucination |
+
 ### Recommended Integration
 
 ```bash
@@ -556,7 +568,37 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-The `quinotospec-update-changelog` skill is the traceability backbone: 25 of 39 workflows call it to document their actions.
+The `quinotospec-update-changelog` skill is the traceability backbone: 25 of 39 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
+
+#### Quick Tutorial — Nordic
+
+```bash
+# 1. Drift-free versioning (Norns)
+./scripts/update-version.sh 2.7.0              # atomic sync + CHANGELOG
+/quinotospec-norns --to 2.7.0 --dry-run        # preview
+
+# 2. Continuous observability (Huginn & Muninn)
+bash agent-dist/skills/quinotospec-huginn-muninn/check.sh --json
+# CI: .github/workflows/huginn-muninn.yml runs on PR + cron 06:00, blocks if S>=0.76
+
+# 3. Living docs (Skald)
+/quinotospec-skald --role developer
+bash agent-dist/skills/quinotospec-skald/sync-readme.sh --check
+
+# 4. Cycles (Jormungandr)
+python3 agent-dist/skills/quinotospec-jormungandr/check.py agent-dist/templates/schema-template.yaml
+./scripts/validate-all.sh --strict
+
+# 5. Triage (Valkyrie)
+/quinotospec-valkyrie
+
+# 6. Federation (Bifrost)
+/quinotospec-bifrost --init; /quinotospec-bifrost --sync
+
+# 7. Memory (Mimir BM25)
+python3 agent-dist/skills/quinotospec-mimir/index.py
+python3 agent-dist/skills/quinotospec-mimir/search.py "TOTP 2FA"
+```
 
 ---
 
@@ -722,6 +764,16 @@ graph LR
 - ✅ Party Mode: multi-agent roundtable integrated into create-proposal and create-rfc
 - ✅ Changelog v2: append-only, individual files, no merge conflicts
 - ✅ The Tiwaz Rune: formal entropy analysis (Shannon v2 + proxy v1) with remediation plan
+- ✅ Antigravity (AGY) — `.agents` / `~/.gemini/config` + 39 global workflow skills
+
+**Warband: Nordics (v2.7.0)** — Current (7 sagas)
+- ✅ **Norns** — atomic versioning without drift (sync 7 files + CHANGELOG)
+- ✅ **Huginn & Muninn** — continuous Tiwaz + CI gate S≥0.76
+- ✅ **Skald** — living docs, unifies 5 onboard-* + bilingual sync
+- ✅ **Jormungandr** — DAG cycle detection (Kahn) in validate --strict
+- ✅ **Valkyrie** — triage ranking impact/urgency/risk/debt
+- ✅ **Bifrost** — multi-repo federation with git notes
+- ✅ **Mimir BM25** — exact `file:line` citation index without external LLM, offline stdlib
 
 **Warband: Phalanx (v3.0.0, TBA)**
 - 🟡 Class System: Specialized roles (~60%) — 9 specialized agents exist, missing progression system and mythological names (Scout/Skald/Blacksmith)

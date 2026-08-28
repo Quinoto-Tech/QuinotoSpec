@@ -20,7 +20,7 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 |   agent-dist/    |  <-- Distribucion
 |  +-------------+ |
  |  | workflows/  | |  <-- 39 workflows
- |  | skills/     | |  <-- 69 skills (39 core + 30 utilitarias)
+ |  | skills/     | |  <-- 76 skills (39 core + 37 utilitarias)
  |  | rules/      | |  <-- 13 reglas
 |  | agents/     | |  <-- 9 agentes
 |  | templates/  | |  <-- 5 templates
@@ -150,7 +150,7 @@ El sistema coexiste con el formato anterior de propuestas.
 
 ---
 
-### Skills (69)
+### Skills (76)
 
 Organizadas por dominio:
 
@@ -171,6 +171,8 @@ Organizadas por dominio:
 **Party Mode:** party-orchestrator
 
 **Onboarding:** onboard-developer, onboard-product, onboard-support, onboard-general, onboard-simple, onboard (consolidado)
+
+**Nordicas (v2.7.0):** norns, huginn-muninn, skald, jormungandr, valkyrie, bifrost, mimir
 
 ### Reglas (13)
 
