@@ -23,3 +23,6 @@ agent-dist/.tmp/
 # IDE
 .vscode/
 .idea/
+
+# Mimir index (regenerable)
+.quinoto-spec/mimir/
