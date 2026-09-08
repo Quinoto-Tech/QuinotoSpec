@@ -16,6 +16,25 @@ PROPOSAL_SLUG: derivar de PROPOSAL_NAME en lowercase con palabras separadas por 
 DATE_PREFIX: fecha actual en formato YYYYMMDD.
 Tu objetivo es generar una Propuesta Técnica específica para este tema, INTEGRADA con el resto del sistema.
 
+**Paso Previo — Validación de Acuerdos de Producto (BLOQUEANTE):**
+
+1. Lee `.quinoto-spec/discovery/08-product-and-agreements.md`.
+2. Si el archivo NO existe, contiene únicamente los títulos/placeholders originales, o está vacío de contenido sustantivo → **DETÉN LA EJECUCIÓN INMEDIATAMENTE**. No avances a los pasos siguientes ni generes ningún archivo.
+3. Notifica al usuario exactamente:
+   > "No puedo crear la propuesta porque no se han definido los Acuerdos de Producto (DoR/DoD) en `.quinoto-spec/discovery/08-product-and-agreements.md`. Por favor complétalo primero (o indícame explícitamente que quieres continuar sin ellos como excepción documentada)."
+4. Solo continúa al Paso 0 si el archivo tiene Definition of Ready (DoR) y Definition of Done (DoD) definidas con contenido real, o si el usuario confirmó explícitamente un override tras la advertencia anterior (en ese caso, documentar la excepción en `proposal.md` bajo `**⚠️ Excepción DoR/DoD:**` con el motivo dado por el usuario).
+
+**Paso Previo (opcional) — Gate de Mimir (evitar duplicar decisiones):**
+
+Si existe `.quinoto-spec/mimir/index.json` (generado por `quinotospec-mimir`), ejecuta:
+```bash
+python3 agent-dist/skills/quinotospec-mimir/search.py --root . "{{PROPOSAL_DESCRIPTION}}" --cite
+```
+Si el resultado top1 tiene `score > 2.5` y cita una decisión previa (`proposal.md` o `delta-specs/`) potencialmente contradictoria o redundante con `{{PROPOSAL_DESCRIPTION}}`, advierte al usuario antes de continuar:
+> "⚠️ Decisión similar encontrada: {{PREFIX}} — {{cita textual}} ({{file:line}}). ¿Querés continuar con una propuesta nueva o preferís un MODIFIED sobre la decisión existente?"
+
+No es bloqueante — si no hay índice (`--check` falla o el archivo no existe), continúa sin advertencia. El usuario puede confirmar que la propuesta nueva es intencional y seguir adelante.
+
 **Paso 0 — Party Mode (opcional, solo si `--party`):**
 
 Si el usuario paso el flag `--party`, ejecuta Party Mode ANTES de generar la propuesta:

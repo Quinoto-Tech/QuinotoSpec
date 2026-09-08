@@ -196,6 +196,9 @@ Si el usuario desea guardar el agente:
    - **Tipo sugerido**: `primary` o `subagent`
    - Comandos útiles
    - Ejemplos de código
+4. **Instrucción Final OBLIGATORIA (Changelog)**: Si el perfil fue guardado, DEBES ejecutar la skill `quinotospec-update-changelog`.
+   - **Título de la Acción**: Agente Creado: {{AGENT_NAME}}
+   - **Resumen**: Se generó el perfil de agente en `.quinoto-spec/agents/{{AGENT_NAME}}.md`. Modelo: {{modelo sugerido}}. Tipo: {{primary|subagent}}.
 
 #### Plantilla de Archivo
 
@@ -272,6 +275,9 @@ Si se invoca con `--edit AGENT_NAME`, el workflow permitirá editar un agente ex
 
 1. Sobrescribir archivo `.quinoto-spec/agents/{AGENT_NAME}.md`
 2. Confirmar al usuario que los cambios fueron guardados
+3. **Instrucción Final OBLIGATORIA (Changelog)**: DEBES ejecutar la skill `quinotospec-update-changelog`.
+   - **Título de la Acción**: Agente Editado: {{AGENT_NAME}}
+   - **Resumen**: Se actualizó el perfil de agente en `.quinoto-spec/agents/{{AGENT_NAME}}.md`.
 
 ---
 

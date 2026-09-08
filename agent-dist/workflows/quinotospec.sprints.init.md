@@ -31,6 +31,9 @@ Verifica que tenga datos válidos (`equipo` no vacío y `velocidad_promedio_punt
 
 - **SI TIENE DATOS VÁLIDOS**:
   - Notifica al usuario: "Configuración base de sprints verificada. Archivo: `.quinoto-spec/sprints/base-config.yml`"
+  - **Instrucción Final OBLIGATORIA (Changelog):** DEBES ejecutar la skill `quinotospec-update-changelog`.
+    - **Título de la Acción**: Sprints Inicializados
+    - **Resumen**: Se verificó/inicializó la configuración base de sprints en `.quinoto-spec/sprints/base-config.yml` con equipo y velocidad promedio definidos.
 
 ---
 

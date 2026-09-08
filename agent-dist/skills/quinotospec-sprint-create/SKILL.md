@@ -39,9 +39,13 @@ prioridad_propuestas:
 ```
 
 - Notifica al usuario: "Se ha creado la estructura del Sprint {{SPRINT_ID}}: '{{NOMBRE_SPRINT}}'. Archivo de configuración: `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-config.yml`. Por favor, completa la información de fechas y prioridad de propuestas."
+- **Instrucción Final OBLIGATORIA (Changelog):** DEBES ejecutar la skill `quinotospec-update-changelog`.
+  - **Título de la Acción**: Sprint Creado: Sprint {{SPRINT_ID}} — {{NOMBRE_SPRINT}}
+  - **Resumen**: Se creó la estructura del Sprint {{SPRINT_ID}} ('{{NOMBRE_SPRINT}}') en `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/`.
 
 ### B. Si el archivo ya existe:
 - Notifica al usuario: "El Sprint {{SPRINT_ID}} ya existe. Archivo: `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-config.yml`"
+- No hubo cambios de estado — omite el registro en changelog.
 
 ---
 

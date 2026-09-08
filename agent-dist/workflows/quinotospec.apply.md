@@ -23,6 +23,7 @@ Antes de realizar cualquier cambio:
 3. Analiza el código actual y realiza los cambios necesarios para cumplir con la tarea descrita.
 4. **Verificación de Criterios de Aceptación (DoD)**: Antes de finalizar, revisa uno a uno los criterios de aceptación definidos en la tarea/historia y confirma que cada uno está cumplido. Si alguno no está cubierto, impleméntalo o documenta la excepción.
 5. **Ejecuta los tests del stack**: Usa el comando de tests detectado en `01-stack-profile.md` (ej. `npm test`, `pytest`, `bundle exec rspec`) y verifica que no haya regresiones. Si los tests fallan, corrígelos antes de continuar.
+6. **Revisión recomendada (opcional)**: Si se creó un branch en el paso 2, sugiere al usuario ejecutar `@quinotospec.review` con `TASK_ID={{TASK_ID}}` y `BRANCH_NAME={{nombre del branch creado}}` antes de mergear, para una revisión técnica independiente contra los criterios de aceptación. No es bloqueante — si el usuario prefiere omitirla, continúa con los pasos siguientes.
 
 **Instrucciones de Documentación (Changelog):**
 Una vez aplicados los cambios, DEBES ejecutar la skill `quinotospec-update-changelog`.

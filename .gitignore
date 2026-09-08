@@ -24,5 +24,6 @@ agent-dist/.tmp/
 .vscode/
 .idea/
 
-# Mimir index (regenerable)
+# Mimir index (regenerable) -- doble patron: raiz del paquete + cualquier fixture/proyecto anidado
 .quinoto-spec/mimir/
+**/.quinoto-spec/mimir/

@@ -58,18 +58,18 @@ Esperar la respuesta del usuario antes de continuar.
 4. Registrar las especificaciones como `ROL_SPECS`.
 5. Continuar al Paso 1 usando `ROL_SPECS` como guía de generación en lugar de un skill predefinido.
 
-### Tabla de mapeo de roles a skills
+### Tabla de mapeo de roles a Skald
 
-| Opción | ROL | Skill a cargar y aplicar |
+| Opción | ROL | Invocación |
 |---|---|---|
-| 1 | General | `quinotospec-onboard-general` |
-| 2 | Desarrollador | `quinotospec-onboard-developer` |
-| 3 | Producto / Negocio | `quinotospec-onboard-product` |
-| 4 | Soporte | `quinotospec-onboard-support` |
-| 5 | Simple | `quinotospec-onboard-simple` |
-| 6 | Custom (`ROL_CUSTOM`) | Sin skill — usar `ROL_SPECS` como instrucciones |
+| 1 | General | `quinotospec-skald --role general` |
+| 2 | Desarrollador | `quinotospec-skald --role developer` |
+| 3 | Producto / Negocio | `quinotospec-skald --role product` |
+| 4 | Soporte | `quinotospec-skald --role support` |
+| 5 | Simple | `quinotospec-skald --role simple` |
+| 6 | Custom (`ROL_CUSTOM`) | Sin rol fijo — usar `ROL_SPECS` como instrucciones |
 
-**Instrucción crítica**: Una vez determinado el ROL, leer el SKILL.md correspondiente de la carpeta `skills/quinotospec-onboard-{rol}/` **antes de recolectar contexto**. Las instrucciones del skill son vinculantes: determinan qué secciones incluir, con qué nivel de detalle y en qué tono.
+**Instrucción crítica**: Una vez determinado el ROL, invocar `quinotospec-skald --role {{ROL}}` (ver `skills/quinotospec-skald/SKILL.md`) **antes de recolectar contexto**. Skald genera el documento desde una fuente única de lógica de onboarding (evita mantener 5 skills casi idénticas) con las secciones, nivel de detalle y tono correspondientes al rol. Las 5 skills legacy `quinotospec-onboard-{rol}` siguen existiendo como shims de compatibilidad que delegan a Skald, pero este workflow ya no las invoca directamente.
 
 ---
 
@@ -265,7 +265,7 @@ cp .env.example .env
 
 ---
 
-_Generado por `@quinotospec.onboard` · QuinotoSpec Possessed Edition_
+_Generado por `@quinotospec.onboard` · QuinotoSpec_
 ```
 
 ---

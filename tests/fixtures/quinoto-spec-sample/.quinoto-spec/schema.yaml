@@ -1,0 +1,28 @@
+# QuinotoSpec Artifact Schema (fixture reducida — ver agent-dist/templates/schema-template.yaml)
+name: quinoto-spec-sample
+version: 1
+description: Schema reducido usado solo por tests/test-nordic-skills.sh
+
+artifacts:
+  - id: discovery
+    generates: .quinoto-spec/discovery/*-stack-profile.md
+    requires: []
+    template: null
+
+  - id: proposal
+    generates: .quinoto-spec/proposals/{slug}/proposal.md
+    requires:
+      - discovery
+    template: proposal-template.md
+
+  - id: delta-specs
+    generates: .quinoto-spec/proposals/{slug}/delta-specs/**/*.md
+    requires:
+      - proposal
+    template: delta-spec-template.md
+
+  - id: user-stories
+    generates: .quinoto-spec/proposals/{slug}/user-stories.md
+    requires:
+      - delta-specs
+    template: null

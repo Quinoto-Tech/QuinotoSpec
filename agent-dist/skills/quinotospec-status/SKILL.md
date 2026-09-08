@@ -37,24 +37,31 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
      - Destacar artefactos `ready` como acciones inmediatas sugeridas.
      - Si el schema no existe, mostrar: `Schema no encontrado — ejecuta @quinotospec.schema-fork para crear uno.`
 
-6. **Actividad Reciente**:
+6. **Prioridad Valhalla (Valkyrie)**:
+     - Ejecutar `python3 agent-dist/skills/quinotospec-valkyrie/rank.py --root . --json`.
+     - Incluir en el dashboard una sección `## 🏆 Prioridad Valhalla` con la tabla rankeada (`#`, Propuesta, Score, Impact, ΔS, Conflictos, Next Action) que devuelve Valkyrie.
+     - Si Valkyrie reporta `cycle_detected: true`, destacar el bloqueo como alerta **BLOCKING** también en `## 🚨 Alertas y Bloqueos`.
+     - Si no hay propuestas activas o no existe `.quinoto-spec/proposals/`, omitir la sección con la nota: `Sin propuestas activas para rankear.`
+
+7. **Actividad Reciente**:
      - Ejecutar `@quinotospec.changelog-view --limit 5` para obtener los últimos 5 cambios.
      - Mostrar en la sección `## 🕐 Actividad Reciente`.
 
-6. **Salud de la Metodología**:
+8. **Salud de la Metodología**:
     - Verifica la existencia y contenido de los siguientes artefactos:
         - ✅/❌ `.quinoto-spec/discovery/` existe y tiene los 8 archivos esperados.
         - ✅/❌ `08-product-and-agreements.md` tiene contenido más allá de los encabezados.
         - ✅/❌ `.quinoto-spec/prefix-registry.md` está actualizado y sin duplicados.
         - ✅/❌ `.quinoto-spec/schema.yaml` existe y es valido.
 
-7. **Próximos Pasos Sugeridos** (Blood-Bond):
+9. **Próximos Pasos Sugeridos** (Blood-Bond):
 
-8. **Generación del Dashboard**:
+10. **Generación del Dashboard**:
     - Crea o actualiza `PROJECT_STATUS.md` con las siguientes secciones en orden:
         - `# 📊 Dashboard de Proyecto`
         - `## 📈 Resumen Ejecutivo` (Métricas de Valor Ahorrado + velocidad)
         - `## 🔀 Estado de Artefactos` (Tabla de estado DAG por propuesta activa)
+        - `## 🏆 Prioridad Valhalla` (Ranking de propuestas vía Valkyrie)
         - `## 🗺️ Mapa de Ruta y Estado de Iniciativas` (Tabla de Propuestas activas + contador de archivadas)
         - `## 🚨 Alertas y Bloqueos` (propuestas estancadas, conflictos detectados)
      - `## 🛠️ Salud de la Metodología` (checks explícitos con ✅/❌)

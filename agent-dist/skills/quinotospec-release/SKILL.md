@@ -36,8 +36,8 @@ Objetivo: automatizar el proceso de release de QuinotoSpec o de cualquier proyec
    - Si hay al menos 1 BREAKING → Major
    - Si hay al menos 1 Feature y 0 BREAKING → Minor
    - Si solo hay Fix/Docs → Patch
-2. Leer la versión actual de `.version` (fuente canónica de versión).
-3. Calcular nueva versión con semver.
+2. Ejecutar `quinotospec-norns --check` para leer la versión actual (fuente canónica `.version`) y detectar drift preexistente entre `.version`, `manifest.json`, `install.sh`, `README.md`/`README_EN.md`, `docs/ARCHITECTURE.md`, `CHANGELOG.md`, `V3_ROADMAP.md` y `scripts/validate-all.sh`. Si reporta `DRIFT`, mostrarlo al usuario — el Paso 4 lo corrige, pero el usuario debe estar al tanto antes de confirmar.
+3. Calcular la nueva versión aplicando el bump sugerido (semver) sobre la versión actual.
 4. Mostrar al usuario:
    ```
    Release Plan ──────────────────────────────
@@ -58,11 +58,11 @@ Objetivo: automatizar el proceso de release de QuinotoSpec o de cualquier proyec
 2. Agrupar las entradas bajo el header.
 3. No modificar entradas individuales — solo agregar el header agrupador.
 
-### Paso 4 — Actualizar versión en archivos
+### Paso 4 — Actualizar versión en archivos (delegado a Norns)
 
-1. `.version`: actualizar a la nueva versión (fuente canónica).
-2. `README.md`: actualizar la línea de título si incluye versión (ej. `# QuinotoSpec: Possessed Edition` → sin cambios, pero si tiene `v2.0.0` → `v2.1.0`).
-3. `README_EN.md` (si existe): mismo cambio.
+1. Ejecutar `quinotospec-norns --to {{NEW}}` (o con `--dry-run` si el release se corrió con `--dry-run`). Esto reemplaza la actualización manual de archivos: Norns sincroniza atómicamente `.version`, badges `version-`/`skills-`/`rules-`/`workflows-` de `README.md`/`README_EN.md`, el diagrama y headings de `docs/ARCHITECTURE.md`, `V3_ROADMAP.md` (`Version actual:`) y `scripts/validate-all.sh` (`EXPECTED_COUNTS`), y valida que no queden referencias colgantes en `schema-template.yaml`.
+2. Si Norns reporta error o drift irresoluble, **DETENER** el release y mostrar el reporte al usuario — no continuar al Paso 5 sobre una base inconsistente.
+3. Norns ya ejecuta `bash tests/run-all-tests.sh && bash scripts/validate-all.sh --strict` como parte de su propio flujo de bump — no es necesario repetirlo en este paso.
 
 ### Paso 5 — Crear tag y mostrar instrucciones
 

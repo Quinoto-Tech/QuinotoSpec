@@ -53,6 +53,13 @@ Combinar resultados y generar reporte:
 - Detallar éxitos y fallos
 - Ofrecer siguiente acción
 
+### Paso 5 — Changelog (OBLIGATORIO, salvo `--dry-run`)
+Si NO se ejecutó con `--dry-run` (es decir, si hubo ejecución real de chunks), DEBES ejecutar la skill `quinotospec-update-changelog`.
+- **Título de la Acción**: Battle Frenzy Ejecutado: {{TAREA_ORIGINAL}}
+- **Resumen**: Se ejecutaron {{N}} chunks en paralelo ({{WAVES}} waves). Resultado: {{EXITOSOS}}/{{N}} exitosos. Reporte en `.quinoto-spec/swarm/results.json`.
+
+Si se ejecutó con `--dry-run`, omite este paso — no hubo cambios reales.
+
 ---
 
 ## Ejemplo de Sesión
