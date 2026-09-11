@@ -16,15 +16,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install shellcheck (macOS)
+      - name: Install shellcheck + bash 5 (macOS)
         if: runner.os == 'macOS'
-        run: brew install shellcheck
+        run: |
+          brew install shellcheck bash
+          echo "BASH_PATH=$(brew --prefix)/bin/bash" >> $GITHUB_ENV
 
       - name: Run test suite
-        run: ./tests/run-all-tests.sh
+        run: ${BASH_PATH:-bash} ./tests/run-all-tests.sh
 
       - name: Validate all
-        run: ./scripts/validate-all.sh
+        run: ${BASH_PATH:-bash} ./scripts/validate-all.sh
 
   lint-shell:
     runs-on: ubuntu-latest
