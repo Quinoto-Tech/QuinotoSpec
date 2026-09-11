@@ -45,6 +45,11 @@ print_info() {
     echo -e "${BLUE}ℹ️  $1${NC}"
 }
 
+# Titlecase portable (bash 3.2 en macOS no soporta ${var^})
+titlecase() {
+    echo "$1" | awk '{print toupper(substr($0,1,1)) substr($0,2)}'
+}
+
 show_help() {
     echo "QuinotoSpec Installer v${INSTALLER_VERSION}"
     echo ""
@@ -391,7 +396,7 @@ SOURCE_AGENT="$DIR/agent-dist"
 # Execute installation
 case "$IDE_CHOICE" in
     cursor|opencode|cline|antigravity)
-        echo "Installing for ${IDE_CHOICE^}..."
+        echo "Installing for $(titlecase "$IDE_CHOICE")..."
         config_dir=$(get_config_dir "$IDE_CHOICE" "$GLOBAL_INSTALL")
 
         mkdir -p "$config_dir"
@@ -425,7 +430,7 @@ esac
 
 echo ""
 echo "======================================================================"
-print_success "Installation complete for ${IDE_CHOICE^}!"
+print_success "Installation complete for $(titlecase "$IDE_CHOICE")!"
 echo ""
 
 # Auto-verify installation
