@@ -110,7 +110,7 @@ Cuando el proyecto usa formato v2, cada entrada es un archivo separado en `.quin
      
      | Fecha | Título | Prefijo | Archivo |
      |-------|--------|---------|---------|
-     | 2026-06-12 | Login Endpoint | AUTH-a1b2 | [ver](2026-06-12-AUTH-a1b2-login-endpoint.md) |
+     | 2026-06-12 | Login Endpoint | AUTH-a1b2 | `2026-06-12-AUTH-a1b2-login-endpoint.md` |
      ```
    - **Importante**: INDEX.md está en `.gitignore` y nunca se commitea.
 

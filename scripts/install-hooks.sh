@@ -36,4 +36,9 @@ done
 
 echo ""
 echo "Git hooks installed successfully"
-echo "Hooks: $(ls "$HOOKS_DIR" | tr '\n' ', ' | sed 's/,$//')"
+HOOK_NAMES=""
+for hook in "$HOOKS_DIR"/*; do
+    [ -f "$hook" ] || continue
+    HOOK_NAMES="$HOOK_NAMES $(basename "$hook")"
+done
+echo "Hooks:$HOOK_NAMES"

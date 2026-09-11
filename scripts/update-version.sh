@@ -137,7 +137,7 @@ if [ -f "$CHANGELOG" ]; then
 
     MAJOR=$(echo "$NEW_VERSION" | cut -d. -f1)
     MINOR=$(echo "$NEW_VERSION" | cut -d. -f2)
-    PATCH=$(echo "$NEW_VERSION" | cut -d. -f3)
+    # (patch intentionally unused in edition naming)
 
     if [ "$MAJOR" -ge 3 ]; then
         EDITION_NAME="Warband: Hird Edition"

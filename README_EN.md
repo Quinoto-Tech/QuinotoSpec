@@ -5,11 +5,11 @@
 > "Proposal First" / "Context Slicing" workflow to maximize accuracy and minimize hallucinations.
 
 <div align="center">
-  <img src="tiwaz.png" alt="QuinotoSpec v2.6.0 — Yggdrasil + Tiwaz Rune" width="800" />
+  <img src="docs/assets/tiwaz.png" alt="QuinotoSpec v2.7.0 — Yggdrasil Warband: Nórdicas" width="800" />
 
   <br/>
 
-  <img src="tiwaz_rune.png" alt="The Tiwaz Rune — Entropy Analysis" width="400" />
+  <img src="docs/assets/tiwaz_rune.png" alt="The Tiwaz Rune — Entropy Analysis" width="400" />
 </div>
 
 **Yggdrasil Edition** - The tree that connects the 9 realms of AI-assisted development. Now with **The Tiwaz Rune**: formal code entropy analysis.
@@ -378,7 +378,7 @@ Analyzes work patterns and predicts next actions.
 #### Heimdallr (Threat Analysis)
 
 <div align="center">
-  <img src="Heimdallr.png" alt="Heimdallr" width="400" />
+  <img src="docs/assets/Heimdallr.png" alt="Heimdallr" width="400" />
 </div>
 
 Executes exhaustive security analysis using STRIDE + DREAD methodology.
@@ -396,7 +396,7 @@ Executes exhaustive security analysis using STRIDE + DREAD methodology.
 #### Tiwaz Rune (Entropy Analysis)
 
 <div align="center">
-  <img src="tiwaz_rune.png" alt="The Tiwaz Rune" width="400" />
+  <img src="docs/assets/tiwaz_rune.png" alt="The Tiwaz Rune" width="400" />
 </div>
 
 Runs a formal code entropy analysis using Shannon metrics (v2) and technical debt proxies (v1). Generates a composite score with a prioritized remediation plan.
@@ -457,7 +457,7 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 
 | Skill | Command | Description |
 |-------|---------|-------------|
-| **Generate GitHub Branch** | `/generate-github-branch` | Creates branches with `feature/{TASK_ID}-description` convention |
+| **Generate GitHub Branch** | `/quinotospec-generate-github-branch` | Creates branches with `feature/{TASK_ID}-description` convention |
 | **File Creation** | `/quinotospec-file-creation` | Standardizes file creation and temp scripts |
 | **Stack Detect** | `/quinotospec-stack-detect` | Identifies stack from configuration files |
 | **Mark Done** | `/quinotospec-mark-done` | Marks tasks as completed and archives artifacts |
@@ -753,7 +753,7 @@ graph LR
 - ✅ Extended documentation (docs/)
 - ✅ Example projects (examples/)
 
-**Yggdrasil + Tiwaz Rune (v2.6.0)** — Current
+**Yggdrasil + Tiwaz Rune (v2.6.0)** — Completed
 - ✅ 9 specialized agents (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
 - ✅ Governance system with 13 rules
 - ✅ Testing and CI/CD infrastructure
@@ -775,15 +775,9 @@ graph LR
 - ✅ **Bifrost** — multi-repo federation with git notes
 - ✅ **Mimir BM25** — exact `file:line` citation index without external LLM, offline stdlib
 
-**Warband: Phalanx (v3.0.0, TBA)**
-- 🟡 Class System: Specialized roles (~60%) — 9 specialized agents exist, missing progression system and mythological names (Scout/Skald/Blacksmith)
-- 🟡 Shield Wall: Defensive testing (~50%) — Layered validation exists (pre-commit, validate, rules), missing cross-agent validation
-- 🟡 External PM integration (Jira CSV, GitHub Issues) (~55%) — Import/export specs exist, missing live API adapters and bidirectional sync
-- 🔴 JSON Schema for proposal and task validation (~5%) — Pattern-based validation exists, zero formal JSON schemas
+**Next versions (v3.0.0 → v3.3.0)** — Planned
 
-**Warband: Hird (v4.0.0, TBA)**
-- 🟡 War Council: Conflict resolution (~40%) — Detection with 4 severity levels exists, missing resolution execution and mediation
-- 🟡 Alliance Integration: Multi-repo (~55%) — Sync skill, stack-discovery and dependency-graph exist, missing federated context and remote support
+The single source of truth for the v3 plan is [V3_ROADMAP.md](V3_ROADMAP.md): Phase 1 Engineering Fundamentals (bootstrap, TDD, debugging, constitution, worktrees), Phase 2 Extensibility (extensions/presets, dynamic AGENTS.md), Phase 3 Agents (named personalities + TOML config, contextual help), Phase 4 Product (PRFAQ, scale-adaptive router, YAML workflow engine).
 
 ---
 

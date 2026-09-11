@@ -5,13 +5,14 @@
 
 set -euo pipefail
 
-INSTALLER_VERSION="2.6.0"
+INSTALLER_VERSION="2.7.0"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(pwd)"
 TARGET_ROOT="$PROJECT_ROOT"
 GLOBAL_INSTALL=false
 ACTION="install"
 VERIFY_ONLY=false
+ASSUME_YES=false
 
 # Colors
 RED='\033[0;31m'
@@ -54,11 +55,13 @@ show_help() {
     echo "  --opencode        Install for OpenCode"
     echo "  --cline           Install for Cline"
     echo "  --antigravity     Install for Antigravity (AGY)"
+    echo "  --generic         Install for Generic (.agent/)"
     echo "  --global, --root  Install globally in ~/.config/ or ~/.gemini/config"
     echo ""
     echo "Management Options:"
     echo "  --verify          Verify existing installation"
     echo "  --uninstall       Uninstall QuinotoSpec"
+    echo "  --yes, -y         Non-interactive mode (accept all defaults and confirmations)"
     echo "  --version         Show installer version"
     echo "  -h, --help        Show this help"
     echo ""
@@ -229,22 +232,43 @@ uninstall() {
         exit 0
     fi
 
-    echo ""
-    echo -n "Are you sure you want to remove $config_dir? [y/N]: "
-    read confirm
-    if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
-        print_info "Uninstall cancelled"
-        exit 0
+    # Safety check: only delete if the directory actually contains QuinotoSpec files
+    local is_quinoto=false
+    if [ -f "$config_dir/rules/quinotospec-rules.md" ]; then
+        is_quinoto=true
+    elif find "$config_dir/skills" -maxdepth 2 -name "SKILL.md" -path "*quinotospec*" 2>/dev/null | grep -q .; then
+        is_quinoto=true
+    fi
+
+    if [ "$is_quinoto" != "true" ]; then
+        print_error "Refusing to delete $config_dir: no QuinotoSpec files detected (rules/quinotospec-rules.md or quinotospec skills not found)"
+        echo "  If this is the correct directory, remove it manually."
+        exit 1
+    fi
+
+    if [ "$ASSUME_YES" != "true" ]; then
+        echo ""
+        echo -n "Are you sure you want to remove $config_dir? [y/N]: "
+        read -r confirm
+        if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+            print_info "Uninstall cancelled"
+            exit 0
+        fi
     fi
 
     rm -rf "$config_dir"
     print_success "Removed $config_dir"
 
     # Remove AGENTS.md if it exists and was installed by us
-    if [ -f "$TARGET_ROOT/AGENTS.md" ]; then
-        echo -n "Also remove AGENTS.md? [y/N]: "
-        read confirm_agents
-        if [ "$confirm_agents" = "y" ] || [ "$confirm_agents" = "Y" ]; then
+    if [ -f "$TARGET_ROOT/AGENTS.md" ] && grep -q "Guía para Agentes QuinotoSpec\|QuinotoSpec Agent Guide" "$TARGET_ROOT/AGENTS.md" 2>/dev/null; then
+        local remove_agents="n"
+        if [ "$ASSUME_YES" = "true" ]; then
+            remove_agents="y"
+        else
+            echo -n "Also remove AGENTS.md? [y/N]: "
+            read -r remove_agents
+        fi
+        if [ "$remove_agents" = "y" ] || [ "$remove_agents" = "Y" ]; then
             rm -f "$TARGET_ROOT/AGENTS.md"
             print_success "Removed AGENTS.md"
         fi
@@ -263,9 +287,11 @@ for arg in "$@"; do
         --opencode) IDE_CHOICE="opencode" ;;
         --cline) IDE_CHOICE="cline" ;;
         --antigravity) IDE_CHOICE="antigravity" ;;
+        --generic) IDE_CHOICE="generic" ;;
         --global|--root) GLOBAL_INSTALL=true ;;
         --verify) VERIFY_ONLY=true ;;
         --uninstall) ACTION="uninstall" ;;
+        --yes|-y) ASSUME_YES=true ;;
         --version) show_version ;;
         -h|--help) show_help ;;
         *)
@@ -313,6 +339,8 @@ if [ "$GLOBAL_INSTALL" = true ]; then
         TARGET_ROOT="$HOME/.config"
         print_info "Installing globally to ~/.config/"
     fi
+elif [ "$ASSUME_YES" = true ]; then
+    print_info "Non-interactive mode: installing to current directory '$PROJECT_ROOT'"
 else
     echo -n "Enter the installation path (default: current directory '$PROJECT_ROOT'): "
     read -r USER_PATH
@@ -331,6 +359,11 @@ fi
 echo "Target: $TARGET_ROOT"
 
 # IDE Selection (interactive if not provided)
+if [ -z "$IDE_CHOICE" ] && [ "$ASSUME_YES" = true ]; then
+    print_info "Non-interactive mode: no IDE flag given, defaulting to opencode"
+    IDE_CHOICE="opencode"
+fi
+
 if [ -z "$IDE_CHOICE" ]; then
     echo ""
     echo "Select your IDE/AI Assistant:"
@@ -372,7 +405,10 @@ case "$IDE_CHOICE" in
             fi
         fi
 
-        cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
+        # Copy AGENTS.md unless target root is the source repo itself (same file)
+        if [ "$TARGET_ROOT/AGENTS.md" != "$DIR/AGENTS.md" ]; then
+            cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
+        fi
         ;;
 
     *)
@@ -381,7 +417,9 @@ case "$IDE_CHOICE" in
 
         mkdir -p "$config_dir"
         cp -rf "$SOURCE_AGENT/." "$config_dir/"
-        cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
+        if [ "$TARGET_ROOT/AGENTS.md" != "$DIR/AGENTS.md" ]; then
+            cp "$DIR/AGENTS.md" "$TARGET_ROOT/AGENTS.md"
+        fi
         ;;
 esac
 
@@ -393,8 +431,10 @@ echo ""
 # Auto-verify installation
 print_info "Running post-installation verification..."
 echo ""
-verify_installation "$config_dir" "$IDE_CHOICE"
-VERIFY_RESULT=$?
+VERIFY_RESULT=0
+if ! verify_installation "$config_dir" "$IDE_CHOICE"; then
+    VERIFY_RESULT=1
+fi
 
 echo ""
 echo "======================================================================"

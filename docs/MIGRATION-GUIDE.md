@@ -14,7 +14,7 @@
 
 ### Breaking Changes
 
-1. **Skill renombrada**: `generate-github-branch` -> `quinotospec-generate-branch`
+1. **Skill renombrada**: `generate-github-branch` -> `quinotospec-generate-github-branch`
    - El directorio en `agent-dist/skills/` cambio de nombre
    - Si tenias referencias directas, actualizalas
 
@@ -67,7 +67,7 @@ Si prefieres migrar manualmente:
 
 4. **Renombrar skill**:
    ```bash
-   mv .opencode/skills/generate-github-branch .opencode/skills/quinotospec-generate-branch
+   mv .opencode/skills/generate-github-branch .opencode/skills/quinotospec-generate-github-branch
    ```
 
 5. **Actualizar reglas**:

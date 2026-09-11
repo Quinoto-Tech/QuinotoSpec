@@ -19,6 +19,34 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
 
+      - name: Verify tag matches package version
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          VERSION_FILE="$(tr -d '[:space:]' < .version)"
+          MANIFEST_VERSION="$(python3 -c "import json; print(json.load(open('manifest.json'))['version'])")"
+          INSTALLER_VERSION="$(grep -o 'INSTALLER_VERSION="[0-9.]*"' install.sh | cut -d'"' -f2)"
+
+          echo "Tag: $VERSION | .version: $VERSION_FILE | manifest.json: $MANIFEST_VERSION | install.sh: $INSTALLER_VERSION"
+
+          FAIL=0
+          if [ "$VERSION" != "$VERSION_FILE" ]; then
+            echo "ERROR: tag v$VERSION != .version ($VERSION_FILE)"
+            FAIL=1
+          fi
+          if [ "$VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "ERROR: tag v$VERSION != manifest.json version ($MANIFEST_VERSION)"
+            FAIL=1
+          fi
+          if [ "$VERSION" != "$INSTALLER_VERSION" ]; then
+            echo "ERROR: tag v$VERSION != install.sh INSTALLER_VERSION ($INSTALLER_VERSION)"
+            FAIL=1
+          fi
+          if ! grep -q "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "ERROR: CHANGELOG.md has no entry for $VERSION — run scripts/update-version.sh first"
+            FAIL=1
+          fi
+          exit $FAIL
+
       - name: Run tests
         run: ./tests/run-all-tests.sh
 

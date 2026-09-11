@@ -13,7 +13,7 @@ Proyecto de ejemplo mostrando QuinotoSpec con Node.js + Express + Jest.
 
 ```
 node-express/
-├── .quinoto-spec/           # Configuración QuinotoSpec
+├── .quinoto-spec/           # Se genera con /quinotospec.init (ver demo completa en python-fastapi)
 │   ├── discovery/           # 8 archivos de discovery
 │   ├── proposals/           # Propuestas técnicas
 │   └── prefix-registry.md   # Prefijos registrados

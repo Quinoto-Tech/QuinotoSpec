@@ -43,6 +43,8 @@ run_suite "Workflows" "$SCRIPT_DIR/test-workflows.sh"
 run_suite "Skills" "$SCRIPT_DIR/test-skills.sh"
 run_suite "Rules" "$SCRIPT_DIR/test-rules.sh"
 run_suite "Install" "$SCRIPT_DIR/test-install.sh"
+run_suite "Install E2E (sandbox)" "$SCRIPT_DIR/test-install-e2e.sh"
+run_suite "Checkers funcionales" "$SCRIPT_DIR/test-checkers.sh"
 
 # Resumen final
 echo ""

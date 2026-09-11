@@ -2,17 +2,17 @@
 
 ## Resumen Ejecutivo
 
-Este documento detalla el plan de evolucion de QuinotoSpec desde v2.1.0 (Yggdrasil) hacia v3.0.0 (Warband: Phalanx), incorporando las mejores caracteristicas identificadas en el analisis competitivo de los 4 frameworks lideres del ecosistema:
+Este documento detalla el plan de evolucion de QuinotoSpec desde v2.7.0 (Warband: Nórdicas) hacia v3.3.0, incorporando las mejores caracteristicas identificadas en el analisis competitivo de los 4 frameworks lideres del ecosistema:
 
 - **Superpowers** (obra/superpowers) — Disciplina de ingenieria (TDD, debugging, verificacion)
 - **OpenSpec** (Fission-AI/OpenSpec) — Spec-driven con delta specs y artifact DAG
 - **Spec-Kit** (github/spec-kit) — Extensiones/presets, constitution, workflow engine
 - **BMAD-METHOD** (bmad-code-org/bmad-method) — Agentes con personalidad, party mode, scale-adaptive
 
-**Version actual:** 2.6.0
+**Version actual:** 2.7.0
 **Version objetivo:** 3.3.0
 **Fases:** 4 fases incrementales, cada una entregable independientemente
-**Progreso:** 15/118 tareas completadas (13%)
+**Progreso:** 29/151 items completados (19% — incluye tareas y criterios de aceptación; Fase 1 y Fase 4 permanecen sin implementar)
 
 > ⚠️ **Nota de implementacion:** Las features F2.1 (Delta Specs), F2.2 (Artifact DAG) y F3.2 (Party Mode) se implementaron como versiones incrementales (v2.2.0 → v2.4.0) antes de Fase 1. Fase 1 permanece sin implementar. Ver [Conflictos con Dependencias](#conflictos-con-dependencias-conocidos) al final de este documento.
 
@@ -330,7 +330,7 @@ agent-dist/skills/quinotospec-verify-before-done/
 | Campo | Detalle |
 |-------|---------|
 | **Fuente** | Spec-Kit (`.specify/memory/constitution.md`, `/speckit.constitution`) |
-| **Problema actual** | QuinotoSpec tiene 12 reglas de gobernanza pero no una "constitucion fundacional" que guie todas las decisiones de arquitectura e implementacion |
+| **Problema actual** | QuinotoSpec tiene 13 reglas de gobernanza pero no una "constitucion fundacional" que guie todas las decisiones de arquitectura e implementacion |
 | **Solucion** | Workflow `/quinotospec.constitution` que crea `.quinoto-spec/constitution.md` con principios fundacionales que todos los workflows respetan |
 
 #### Arquitectura
@@ -461,11 +461,11 @@ agent-dist/templates/constitution-template.md       # Template con placeholders
 
 #### Tareas
 
-- [ ] **T1.8.1** — Actualizar `agent-dist/rules/quinotospec-rules.md` — Agregar nuevas reglas:
-  - Regla #13: TDD Enforcement (STANDARD)
-  - Regla #14: Debugging Root Cause First (STANDARD)
-  - Regla #15: Verification Before Completion (STANDARD)
-  - Regla #16: Constitutional Compliance (BLOCKING para merge)
+- [ ] **T1.8.1** — Actualizar `agent-dist/rules/quinotospec-rules.md` — Agregar nuevas reglas (el archivo ya tiene 13 secciones; numerar a continuación):
+  - Regla #14: TDD Enforcement (STANDARD)
+  - Regla #15: Debugging Root Cause First (STANDARD)
+  - Regla #16: Verification Before Completion (STANDARD)
+  - Regla #17: Constitutional Compliance (BLOCKING para merge)
   - Archivo: `agent-dist/rules/quinotospec-rules.md`
 
 - [ ] **T1.8.2** — Actualizar `manifest.json` — Bump a 3.0.0, actualizar conteos (skills: +6 = 33, workflows: +2 = 35, rules: +4 = 16), agregar nuevos directorios.
@@ -1385,7 +1385,7 @@ quinotospec-package/
 │   │   └── quinotospec.workflow-run.md         # F4.5
 │   │   + (existing workflows updated)
 │   │
-│   ├── skills/                                 # 43 skills (27 originales + 16 nuevos)
+│   ├── skills/                                 # skills del paquete (76 en v2.7.0; cada fase agrega las suyas)
 │   │   ├── quinotospec-tdd/                    # F1.2
 │   │   │   ├── SKILL.md
 │   │   │   ├── testing-anti-patterns.md
@@ -1469,56 +1469,58 @@ quinotospec-package/
 
 ### Fase 1 (v3.0.0) — Done when:
 
-- [x] Bootstrap se inyecta automaticamente al iniciar sesion en OpenCode, Cursor y Claude Code
-- [x] Skill TDD bloquea implementacion si no hay test que falle primero
-- [x] Skill Debugging fuerza root cause investigation antes de fixes
-- [x] Skill Verify-Before-Done bloquea claims sin evidencia fresca
-- [x] `/quinotospec.constitution` genera `.quinoto-spec/constitution.md`
-- [x] Skill Receive-Review elimina "performative agreement" de las respuestas del agente
-- [x] Skill Worktree aisla el workspace durante implementacion
-- [x] Los tests suite pasan con los nuevos componentes
-- [x] `scripts/validate-all.sh --strict` pasa
+- [ ] Bootstrap se inyecta automaticamente al iniciar sesion en OpenCode, Cursor y Claude Code
+- [ ] Skill TDD bloquea implementacion si no hay test que falle primero
+- [ ] Skill Debugging fuerza root cause investigation antes de fixes
+- [ ] Skill Verify-Before-Done bloquea claims sin evidencia fresca
+- [ ] `/quinotospec.constitution` genera `.quinoto-spec/constitution.md`
+- [ ] Skill Receive-Review elimina "performative agreement" de las respuestas del agente
+- [ ] Skill Worktree aisla el workspace durante implementacion
+- [ ] Los tests suite pasan con los nuevos componentes
+- [ ] `scripts/validate-all.sh --strict` pasa
 
 ### Fase 2 (v3.1.0) — Done when:
 
-- [x] Propuestas generan delta specs en lugar de specs completas
-- [x] `/quinotospec.archive` aplica merge de delta specs correctamente
-- [x] Artifact engine calcula estado DAG y bloquea artefactos sin dependencias
-- [x] Sistema de extensiones: install, remove, update, list funcionales
-- [x] 4-layer template resolution stack funciona
-- [x] `/quinotospec.update-agents` regenera AGENTS.md dinamicamente
-- [x] Una extension de prueba se instala y sus hooks se ejecutan
+- [x] Propuestas generan delta specs en lugar de specs completas *(shipped en v2.2.0)*
+- [x] `/quinotospec.archive` aplica merge de delta specs correctamente *(shipped en v2.2.0)*
+- [x] Artifact engine calcula estado DAG y bloquea artefactos sin dependencias *(shipped en v2.3.0)*
+- [ ] Sistema de extensiones: install, remove, update, list funcionales
+- [ ] 4-layer template resolution stack funciona
+- [ ] `/quinotospec.update-agents` regenera AGENTS.md dinamicamente
+- [ ] Una extension de prueba se instala y sus hooks se ejecutan
 
 ### Fase 3 (v3.2.0) — Done when:
 
-- [x] Los 9 agentes tienen personalidades definidas y nombres
-- [x] 3-layer TOML merge funciona (defaults → team → personal)
-- [x] Party Mode ejecuta mesa redonda con al menos 3 agentes
-- [x] Modo `--subagents` spawn subagentes independientes
-- [x] `quinotospec-help` recomienda correctamente el proximo workflow
+- [ ] Los 9 agentes tienen personalidades definidas y nombres humanos + TOML *(los agentes ya tienen `## Personality`, falta naming humano y config TOML)*
+- [ ] 3-layer TOML merge funciona (defaults → team → personal)
+- [x] Party Mode ejecuta mesa redonda con al menos 3 agentes *(shipped en v2.4.0)*
+- [x] Modo `--subagents` spawn subagentes independientes *(shipped en v2.4.0 — spawned-subagents.md)*
+- [ ] `quinotospec-help` recomienda correctamente el proximo workflow
 - [x] `quinotospec-suggest-next` funciona tanto intra-propuesta como global
 
 ### Fase 4 (v3.3.0) — Done when:
 
-- [x] `/quinotospec.prfaq` completa el ciclo Working Backwards
-- [x] Complexity router deriva a Quick/Simple/Complex/Enterprise correctamente
-- [x] `/quinotospec.quick-dev` resuelve bugs en <5 turnos
-- [x] Todas las templates core implementan los 7 mecanismos de calidad
-- [x] SPEC kernel se genera desde PRD, RFC o brain dump
-- [x] Workflow engine YAML ejecuta `full-sdd.yml` completo con gates y fan-out
-- [x] El workflow es resumible desde fallos y gates
+- [ ] `/quinotospec.prfaq` completa el ciclo Working Backwards
+- [ ] Complexity router deriva a Quick/Simple/Complex/Enterprise correctamente
+- [ ] `/quinotospec.quick-dev` resuelve bugs en <5 turnos
+- [ ] Todas las templates core implementan los 7 mecanismos de calidad
+- [ ] SPEC kernel se genera desde PRD, RFC o brain dump
+- [ ] Workflow engine YAML ejecuta `full-sdd.yml` completo con gates y fan-out
+- [ ] El workflow es resumible desde fallos y gates
 
 ---
 
 ## Resumen de Metricas
 
-| Metrica | v2.1.0 | v3.0.0 | v3.1.0 | v3.2.0 | v3.3.0 |
+| Metrica | v2.7.0 (actual) | v3.0.0 | v3.1.0 | v3.2.0 | v3.3.0 |
 |---------|--------|--------|--------|--------|--------|
-| Workflows | 33 | 35 | 43 | 46 | 53 |
-| Skills | 27 | 33 | 36 | 40 | 43 |
-| Reglas | 12 | 16 | 16 | 16 | 16 |
+| Workflows | 39 | 35* | 43 | 46 | 53 |
+| Skills | 76 | 33* | 36* | 40* | 43* |
+| Reglas | 13 | 17 | 17 | 17 | 17 |
 | Agentes | 9 | 9 | 9 | 9 | 9 |
-| Templates | 1 | 2 | 7 | 8 | 11 |
+| Templates | 7 | 7 | 7 | 8 | 11 |
+
+> \* Las columnas de objetivos (v3.0.0–v3.3.0) fueron definidas cuando el baseline era v2.1.0 (33 workflows / 27 skills). Los targets de skills ya fueron ampliamente superados (76 hoy). Tratar las columnas de versiones futuras como relativos ("cuántos agrega cada fase"), no como absolutos.
 | IDEs soportados | 4 | 4 (+hooks) | 4 (+hooks) | 4 (+hooks) | 4 (+hooks) |
 | Bootstrap | Manual | Automatico | Automatico | Automatico | Automatico |
 | Extensibilidad | No | No | Extensiones + Presets | Extensiones + Presets | Extensiones + Presets |

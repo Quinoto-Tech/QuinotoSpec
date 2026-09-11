@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.6.0-blue)
+![Version](https://img.shields.io/badge/version-2.7.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Cline%20%7C%20Antigravity-orange)
 ![Workflows](https://img.shields.io/badge/workflows-39-purple)
@@ -15,7 +15,7 @@
 Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA.
 Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y minimizar alucinaciones.
 
-<img src="tiwaz.png" alt="QuinotoSpec v2.6.0 — Yggdrasil + Tiwaz Rune" width="800" />
+<img src="docs/assets/tiwaz.png" alt="QuinotoSpec v2.7.0 — Yggdrasil Warband: Nórdicas" width="800" />
 
 <br/>
 
@@ -231,7 +231,7 @@ Genera documentación del estado actual del proyecto.
 
 ```bash
 @quinotospec.discovery                          # Discovery completo (8 archivos)
-@quinotospec.stack-detect                       # Detectar stack tecnológico
+@quinotospec-stack-detect                       # Detectar stack tecnológico
 @quinotospec.stack-discovery                    # Discovery multi-servicio
 @quinotospec.refresh-discovery                  # Actualizar solo archivos cambiados
 ```
@@ -286,7 +286,7 @@ Acciones: Lee contexto → Confirma branch → Implementa → Ejecuta tests → 
 | Workflow | Comando | Descripción |
 |----------|---------|-------------|
 | **Discovery** | `@quinotospec.discovery` | Genera 8 archivos de documentación del proyecto |
-| **Stack Detect** | `@quinotospec.stack-detect` | Identifica stack tecnológico (lenguajes, frameworks, tests) |
+| **Stack Detect** | `@quinotospec-stack-detect` | Identifica stack tecnológico (lenguajes, frameworks, tests) |
 | **Stack Discovery** | `@quinotospec.stack-discovery` | Discovery consolidado para proyectos multi-servicio |
 | **Refresh Discovery** | `@quinotospec.refresh-discovery` | Actualiza solo archivos de discovery afectados |
 | **Create Proposal** | `@quinotospec.create-proposal` | Crea propuesta técnica con prefijo único e idempotente |
@@ -407,7 +407,7 @@ Analiza patrones de trabajo y predice siguientes acciones.
 #### Heimdallr (Análisis de Amenazas)
 
 <div align="center">
-  <img src="Heimdallr.png" alt="Heimdallr" width="400" />
+  <img src="docs/assets/Heimdallr.png" alt="Heimdallr" width="400" />
 </div>
 
 Ejecuta un análisis exhaustivo de seguridad usando metodología STRIDE + DREAD.
@@ -425,7 +425,7 @@ Ejecuta un análisis exhaustivo de seguridad usando metodología STRIDE + DREAD.
 #### Tiwaz Rune (Análisis de Entropía)
 
 <div align="center">
-  <img src="tiwaz_rune.png" alt="The Tiwaz Rune" width="400" />
+  <img src="docs/assets/tiwaz_rune.png" alt="The Tiwaz Rune" width="400" />
 </div>
 
 Ejecuta un análisis formal de entropía de código usando métricas de Shannon (v2) y proxies de deuda técnica (v1). Genera un score compuesto con plan de remediación priorizado.
@@ -597,7 +597,7 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 25 de 39 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
+La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 31 de 39 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
 
 #### Tutorial rápido — Nórdicas
 
@@ -784,7 +784,7 @@ graph LR
 - ✅ Documentacion extendida (docs/)
 - ✅ Proyectos de ejemplo (examples/)
 
-**Yggdrasil + Tiwaz Rune (v2.6.0)** — Actual
+**Yggdrasil + Tiwaz Rune (v2.6.0)** — Completada
 - ✅ 9 agentes especializados (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
 - ✅ Sistema de gobernanza con 13 reglas
 - ✅ Infraestructura de testing y CI/CD
@@ -806,15 +806,9 @@ graph LR
 - ✅ **Bifrost** — federación multi-repo con git notes + status federado
 - ✅ **Mimir BM25** — índice cita-exacta `file:line` sin LLM externo, offline stdlib
 
-**Warband: Falange (v3.0.0, TBA)**
--  Class System: Roles especializados (~60%) — 9 agentes especializados existen, falta sistema de progresión y nombres mitológicos (Scout/Skald/Blacksmith)
-- 🟡 Shield Wall: Testing defensivo (~50%) — Validación en capas existe (pre-commit, validate, rules), falta validación cruzada entre agentes
-- 🟡 Integración con PMs externos (Jira, Linear, GitHub Issues) (~55%) — Specs para import/export existen, faltan adapters de API live y sync bidireccional
-- 🔴 JSON Schema para validación de propuestas y tasks (~5%) — Validación por patrones existe, cero schemas JSON formales
+**Próximas versiones (v3.0.0 → v3.3.0)** — Planificadas
 
-**Warband: Hird (v4.0.0, TBA)**
-- 🟡 War Council: Resolución de conflictos (~40%) — Detección con 4 niveles de severidad existe, falta ejecución de resolución y mediación
-- 🟡 Alliance Integration: Multi-repo (~55%) — Sync skill, stack-discovery y dependency-graph existen, falta contexto federado y soporte remoto
+La fuente única del plan v3 es [V3_ROADMAP.md](V3_ROADMAP.md): Fase 1 Fundamentos de Ingeniería (bootstrap, TDD, debugging, constitution, worktrees), Fase 2 Extensibilidad (extensiones/presets, AGENTS.md dinámico), Fase 3 Agentes (personalidades con nombres + config TOML, ayuda contextual), Fase 4 Producto (PRFAQ, router scale-adaptive, workflow engine YAML).
 
 ---
 

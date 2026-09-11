@@ -29,7 +29,7 @@ echo "  QuinotoSpec - Cleanup"
 echo "=========================================="
 echo ""
 
-TOTAL_FREED=0
+
 TOTAL_DELETED=0
 
 # 1. Clean old backups in .quinoto-spec/backups/ (if in a project context)

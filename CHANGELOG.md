@@ -6,13 +6,32 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 
 ---
 
+## [2.7.0] - 2026-09-05 - Warband: Nórdicas
+
+### Summary
+v2.7.0 es la edición "Warband: Nórdicas" — 7 nuevas skills de gobernanza, observabilidad y federación que elevan el framework a 76 skills.
+
+### Added
+- **Norns** (`quinotospec-norns`): Las Tejedoras del Destino — versionado atómico y changelog semver sin drift. Sincroniza versión en todos los docs y valida sin dejar desfases
+- **Huginn & Muninn** (`quinotospec-huginn-muninn`): Los Cuervos de Odin — observabilidad continua de entropía y drift. Cron Tiwaz + contract drift alerting sin intervención manual
+- **Skald** (`quinotospec-skald`): El Poeta de la Corte — docs viva sin duplicación. Unifica onboard-* y sincroniza README bilingüe desde fuente única
+- **Jormungandr** (`quinotospec-jormungandr`): La Serpiente del Mundo — detección de ciclos en DAG de artefactos y grafo de imports
+- **Valkyrie** (`quinotospec-valkyrie`): La Electora de los Caídos — triage inteligente de propuestas (qué vive, qué muere, qué va a Valhalla)
+- **Bifrost** (`quinotospec-bifrost`): El Puente Arcoíris — federación multi-repo con schema federado y git notes sync
+- **Mimir** (`quinotospec-mimir`): La Cabeza Sabia — índice BM25 cita-exacta sobre discovery/specs/proposals, responde por qué con file:line
+
+### Changed
+- **Infrastructure**: Actualizados badges, versiones, conteos (39 workflows, 76 skills, 13 reglas), README ES/EN, AGENTS.md, docs/ARCHITECTURE.md con las 7 sagas nórdicas
+
+---
+
 ## [2.6.0] - 2026-07-17
 
 ### Added
 - **Post de anuncio `docs/posts/v2.6.0-tiwaz-rune-post.md`**: Anuncio oficial del Tiwaz Rune v2.6.0 — entropia de Shannon, proxies de deuda tecnica y plan de remediacion
 
 ### Changed
-- **Infrastructure**: Actualizados badges, versiones, conteos (39 workflows, 69 skills, 13 reglas), install.sh, manifest.json — soporte Antigravity (AGY)
+- **Infrastructure**: Actualizados badges, versiones, conteos (39 workflows, 76 skills, 13 reglas), install.sh, manifest.json — soporte Antigravity (AGY)
 
 ### Summary
 v2.6.0 es la edicion "Yggdrasil - Tiwaz Rune": el analisis formal de entropia con metricas de Shannon y proxies de deuda tecnica es ahora el feature insignia estadistico del framework. Incluye anuncio en formato post para difusion.
@@ -95,6 +114,18 @@ v2.6.0 es la edicion "Yggdrasil - Tiwaz Rune": el analisis formal de entropia co
 - **Coexistencia**: Propuestas sin `delta-specs/` se archivan normalmente sin merge de specs. Compatible hacia atras.
 
 ---
+
+## [2.1.0] - 2026-03-21 - Berserker Edition
+
+> Entrada documentada retroactivamente (backfill) — el release no registró changelog en su momento.
+
+### Added
+- **Battle Frenzy (Swarm Mode)** (`@quinotospec.battle-frenzy`): Ejecución paralela de múltiples agentes para tareas masivas, con skills de soporte `quinotospec-swarm-executor` y `quinotospec-swarm-task-splitter`
+- **Blood-Bond mejorado**: Predicción proactiva con métricas avanzadas — skills separadas `quinotospec-blood-bond-analyzer`, `quinotospec-blood-bond-monitor` y `quinotospec-blood-bond-predictor`
+- **Fix workflow** (`@quinotospec.fix`): Resolución de bugs y fixes menores sin propuesta formal
+
+### Changed
+- **Infrastructure**: Actualizados badges, versiones, conteos, AGENTS.md, install.sh
 
 ## [2.0.0] - 2026-04-15 - Possessed Edition
 
@@ -184,17 +215,7 @@ v2.6.0 es la edicion "Yggdrasil - Tiwaz Rune": el analisis formal de entropia co
 
 ## Versiones Futuras (Roadmap)
 
-### [2.1.0] - Berserker Edition (TBA)
-- **Battle Frenzy (Swarm Mode)**: Mejoras en ejecución de múltiples agentes en paralelo
-- **Blood-Bond**: Predicción proactiva mejorada con métricas avanzadas
-
-### [3.0.0] - Warband: Falange Edition (TBA)
-- **Class System**: Roles de agentes especializados (Scout, Skald, Blacksmith)
-- **Shield Wall**: Testing defensivo y validación cruzada entre agentes
-
-### [4.0.0] - Warband: Hird Edition (TBA)
-- **War Council**: Resolución de conflictos lógica y mediación estratégica
-- **Alliance Integration (Multi-Repo)**: Contexto compartido federado
+El roadmap vivo y único vive en [V3_ROADMAP.md](V3_ROADMAP.md) (plan v2.7.0 → v3.3.0: Fase 1 Engineering Fundamentals, Fase 2 Extensibility, Fase 3 Agents, Fase 4 Product). Esta sección ya no duplica su contenido para evitar planes divergentes.
 
 ---
 

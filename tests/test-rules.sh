@@ -79,7 +79,7 @@ done
 # Check 6: Cada regla tiene formato consistente (- **Regla** o - **SEVERIDAD**)
 echo ""
 echo "Verificando formato de reglas:"
-rule_count=$(grep -c "^# " "$RULES_FILE" || true)
+
 bold_count=$(grep -c "\*\*" "$RULES_FILE" || true)
 
 if [ "$bold_count" -lt 8 ]; then

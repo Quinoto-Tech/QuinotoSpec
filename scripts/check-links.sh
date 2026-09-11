@@ -27,23 +27,30 @@ echo ""
 
 BROKEN=0
 CHECKED=0
-WARNINGS=0
+
 
 check_internal_link() {
     local link="$1"
     local source_file="$2"
     local source_dir
     source_dir=$(dirname "$source_file")
-    
+
+    # Skip template placeholders and non-file URIs (documentation examples)
+    case "$link" in
+        *'{{'*) return ;;
+        mailto:*) return ;;
+        ftp:*) return ;;
+    esac
+
     # Remove anchor from link
     link="${link%%#*}"
-    
+
     # Skip empty links and anchors-only
     if [ -z "$link" ]; then return; fi
-    
+
     # Resolve relative path
     local target="$source_dir/$link"
-    
+
     if [ ! -e "$target" ]; then
         echo "  BROKEN: $link (in $(basename "$source_file"))"
         BROKEN=$((BROKEN + 1))

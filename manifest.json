@@ -1,7 +1,7 @@
 {
   "name": "quinotospec",
-  "version": "2.6.0",
-  "edition": "Yggdrasil \u2014 Tiwaz Rune",
+  "version": "2.7.0",
+  "edition": "Yggdrasil \u2014 Warband: N\u00f3rdicas",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
   "workflows": 39,
   "skills": 76,
@@ -15,7 +15,14 @@
     "party_mode": true,
     "changelog_v2": true,
     "tiwaz_rune": true,
-    "fix": true
+    "fix": true,
+    "norns": true,
+    "huginn_muninn": true,
+    "skald": true,
+    "jormungandr": true,
+    "valkyrie": true,
+    "bifrost": true,
+    "mimir": true
   },
   "supported_ides": [
     "opencode",
@@ -26,7 +33,8 @@
   ],
   "min_requirements": {
     "bash": "4.0",
-    "git": "2.0"
+    "git": "2.0",
+    "python3": "3.8"
   },
   "directories": {
     "workflows": "agent-dist/workflows",
@@ -40,6 +48,6 @@
     "url": "https://github.com/Quinoto-Tech/QuinotoSpec"
   },
   "license": "MIT",
-  "release_date": "2026-07-17",
-  "changelog": "F2.2.6 \u2014 Tiwaz Rune: anuncio oficial del analisis de entropia"
+  "release_date": "2026-09-05",
+  "changelog": "Warband: N\u00f3rdicas \u2014 7 skills de gobernanza, observabilidad y federaci\u00f3n (Norns, Huginn & Muninn, Skald, Jormungandr, Valkyrie, Bifrost, Mimir)"
 }

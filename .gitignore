@@ -8,11 +8,21 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 .mypy_cache/
+venv/
+.venv/
+
+# Bases de datos locales (nunca commitear binarios)
+*.db
+*.sqlite
+*.sqlite3
 
 # OS / editor
 .DS_Store
 *.log
 .env
+
+# Node
+node_modules/
 
 # QuinotoSpec generated
 .quinoto-spec/backups/
@@ -23,6 +33,10 @@ agent-dist/.tmp/
 # IDE
 .vscode/
 .idea/
+
+# PDFs generados desde README.md / README_EN.md (no versionados)
+README.pdf
+README_EN.pdf
 
 # Mimir index (regenerable) -- doble patron: raiz del paquete + cualquier fixture/proyecto anidado
 .quinoto-spec/mimir/

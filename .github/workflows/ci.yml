@@ -8,15 +8,40 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install shellcheck (macOS)
+        if: runner.os == 'macOS'
+        run: brew install shellcheck
 
       - name: Run test suite
         run: ./tests/run-all-tests.sh
 
       - name: Validate all
         run: ./scripts/validate-all.sh
+
+  lint-shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shellcheck all bash scripts
+        run: |
+          FAILED=0
+          for f in install.sh scripts/*.sh tests/*.sh .githooks/*; do
+            if [ -f "$f" ]; then
+              if ! shellcheck -x "$f" 2>&1; then
+                FAILED=1
+              fi
+            fi
+          done
+          exit $FAILED
 
   lint-docs:
     runs-on: ubuntu-latest
@@ -37,7 +62,7 @@ jobs:
             fi
           done
           echo "All workflows follow naming convention"
-          
+
           echo "Checking skill naming conventions..."
           for d in agent-dist/skills/*/; do
             dirname=$(basename "$d")
@@ -47,6 +72,24 @@ jobs:
             fi
           done
           echo "All skills follow naming convention"
+
+          echo "Checking agents naming conventions..."
+          for f in agent-dist/agents/*.md; do
+            filename=$(basename "$f" .md)
+            if [[ ! "$filename" =~ ^[a-z0-9-]+$ ]]; then
+              echo "ERROR: $filename.md doesn't follow kebab-case convention"
+              exit 1
+            fi
+          done
+          echo "All agents follow naming convention"
+
+          echo "Checking templates presence..."
+          for t in proposal-template.md rfc-template.md delta-spec-template.md changelog-entry-template.md schema-template.yaml; do
+            if [ ! -f "agent-dist/templates/$t" ]; then
+              echo "WARNING: expected template missing: $t"
+            fi
+          done
+          echo "Templates check done"
 
   structure:
     runs-on: ubuntu-latest

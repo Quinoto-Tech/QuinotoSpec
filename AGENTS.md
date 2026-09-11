@@ -101,6 +101,17 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 | `/quinotospec.cleanup` | Limpiar branches stale y scripts temporales |
 | `/quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
 | `/quinotospec.fix` | Resolver bugs y fixes menores sin propuesta formal — rápido, documentado, con tests |
+| `/quinotospec.heimdallr` | Análisis exhaustivo de amenazas (STRIDE) y evaluación de riesgo (DREAD) |
+| `/quinotospec.battle-frenzy` | Ejecución paralela de múltiples agentes para tareas masivas |
+| `/quinotospec.blood-bond` | Analiza patrones de trabajo y predice siguientes acciones proactivamente |
+| `/quinotospec.mjolnir-refactor` | Propuesta de refactor "Mjolnir" para reescribir módulos bajo demanda |
+| `/quinotospec.jormungandr` | Detección de ciclos en DAG de artefactos y grafo de imports |
+| `/quinotospec.valkyrie` | Triage inteligente de propuestas (qué vive, qué muere, qué se archiva) |
+| `/quinotospec.bifrost` | Federación multi-repo con schema federado y git notes sync |
+| `/quinotospec.mimir` | Índice BM25 cita-exacta sobre discovery/specs/proposals con `file:line` |
+| `/quinotospec.norns` | Versionado atómico y changelog semver sin drift |
+| `/quinotospec.huginn-muninn` | Observabilidad continua de entropía y drift (cron Tiwaz) |
+| `/quinotospec.skald` | Docs viva sin duplicación — unifica onboard-* y sincroniza README bilingüe |
 
 ### Regla del Registro de Prefijos
 - Cada propuesta necesita un prefijo único que combine un mnemónico de 4 letras + un sufijo de 4 caracteres (ej. `AUTH-a1b2`)
@@ -250,6 +261,17 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 | `quinotospec-suggest-next` | Sugerir siguiente tarea a ejecutar |
 | `quinotospec-conflict-detector` | Detectar conflictos entre propuestas activas |
 | `quinotospec-estimate` | Estimar complejidad de propuestas |
+
+### Skills Nórdicas (v2.7.0 — Warband)
+| Skill | Propósito |
+|-------|-----------|
+| `quinotospec-norns` | Versionado atómico y changelog semver sin drift |
+| `quinotospec-huginn-muninn` | Observabilidad continua de entropía y drift (cron + alerting) |
+| `quinotospec-skald` | Docs viva sin duplicación, sync README bilingüe |
+| `quinotospec-jormungandr` | Detección de ciclos en DAG de artefactos y grafo de imports |
+| `quinotospec-valkyrie` | Triage inteligente de propuestas (impact/urgency/risk/debt) |
+| `quinotospec-bifrost` | Federación multi-repo con git notes y status federado |
+| `quinotospec-mimir` | Índice BM25 cita-exacta con referencia `file:line`, offline stdlib |
 
 ---
 
