@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # QuinotoSpec Installer v2.6.0
 # Instala QuinotoSpec en el IDE seleccionado con validación post-instalación
