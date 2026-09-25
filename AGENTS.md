@@ -2,6 +2,12 @@
 
 Este es el paquete QuinotoSpec — una metodología y sistema de configuración de agentes para desarrollo asistido por IA. Los agentes operan en proyectos que usan QuinotoSpec siguiendo el flujo de trabajo "Proposal First" / "Context Slicing".
 
+## Bootstrap de sesión
+
+Las instalaciones F1.1 inyectan automáticamente `agent-dist/bootstrap/quinotospec-bootstrap.md` al iniciar sesión en OpenCode, Cursor y Claude Code. `AGENTS.md` permanece como referencia offline y fallback cuando el IDE no soporta hooks.
+
+El hook de Cursor y Claude se encuentra en `agent-dist/hooks/session-start.sh`; el adaptador de OpenCode es `agent-dist/plugins/opencode/quinotospec-plugin.js`. La configuración se valida durante la instalación y debe reiniciarse el IDE después de instalarla. `install.sh` usa staging, manifest de ownership y rollback automático; no borra archivos ajenos durante uninstall.
+
 ---
 
 ## 1. Comandos de Build, Lint y Test
@@ -39,6 +45,13 @@ cat .quinoto-spec/discovery/01-stack-profile.md
 
 **Patrones para un solo test**: `npm test -- --testPathPattern=filename`, `pytest -k test_name`, `bundle exec rspec spec/path/to/spec.rb`, `go test -run TestName ./...`
 
+### Gate del paquete/release
+```bash
+bash scripts/validate-all.sh --strict
+bash scripts/package-release.sh 3.2.0 /tmp/quinotospec-dist
+bash scripts/smoke-release.sh /tmp/quinotospec-dist/quinotospec-3.2.0.tar.gz
+```
+
 ---
 
 ## 2. Convenciones de Código
@@ -60,11 +73,22 @@ cat .quinoto-spec/discovery/01-stack-profile.md
 feature/{{TASK_ID}}-descripcion-en-kebab-case
 bugfix/{{TASK_ID}}-descripcion-en-kebab-case
 ```
-Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-validation`
+Ejemplos: `feature/TSK-AUTH-a1b2-001-add-login-endpoint`, `bugfix/US-AUTH-a1b2-001-fix-validation`
 
 ### Convención de Archivado
 - Usar carpeta `_archived/` (NUNCA prefijo `__`)
 - Estructura: `.quinoto-spec/proposals/{SLUG}/_archived/` para archivos
+
+### Contrato de Artefactos
+- Fuente de verdad: `agent-dist/skills/quinotospec-contract/contract.py`.
+- Validar antes de crear, aplicar o archivar:
+  `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict`
+- IDs canónicos: `US-MNEM-suffix-NNN` y `TSK-MNEM-suffix-NNN`.
+- Estados canónicos: `proposed`, `in_progress`, `pending`, `completed`, `blocked`, `cancelled`, `archived`.
+- Los formatos legacy se leen mediante adapters y no se reescriben automáticamente.
+- Changelog v2 es append-only; una reversión agrega una entrada `revert`.
+- Las decisiones humanas se registran en `.quinoto-spec/approvals/` y se validan con `agent-dist/skills/quinotospec-rules-enforce/approval_validate.py`; no se reemplazan con texto conversacional ni banderas CLI.
+- Las extensiones y presets se gestionan con `quinotospec-extension-manager`; los templates se resuelven con `quinotospec-template-resolver` en orden overrides → presets → extensions → core.
 
 ---
 
@@ -81,6 +105,8 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 7. Marcar Completado (/quinotospec-mark-done)     → Actualizar specs y archivar
 ```
 
+Antes de Apply, ejecuta `quinotospec-tdd`; si una prueba falla, cambia a `quinotospec-debug`; antes de Mark Done, exige `quinotospec-verify-before-done`. Registra la evidencia estructurada en `.quinoto-spec/evidence/{{TASK_ID}}/` y valida cada kind con `python3 -B agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py validate --kind <kind> --task-id {{TASK_ID}} --require --json`. Para una decisión humana, registra `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` y valida `human-approval` con `rules_enforce.py --require-approval --approval-id {{APPROVAL_ID}} --approval-subject {{SUBJECT}} --approval-action {{ACTION}}`; una conversación o bandera CLI no sustituye el registro. Para aislar el trabajo, usa `quinotospec-worktree` con `USE_WORKTREE=true` y completa la baseline antes del RED.
+
 ### Workflows Complementarios
 | Workflow | Propósito |
 |----------|-----------|
@@ -90,6 +116,7 @@ Ejemplos: `feature/TSK-AUTH-001-add-login-endpoint`, `bugfix/US-ABC-123-fix-vali
 | `/quinotospec.archive` | Archivar propuestas completadas y mergear delta specs |
 | `/quinotospec.status` | Dashboard de proyecto con estado DAG de artefactos |
 | `/quinotospec.specs-init` | Inicializar specs/ con requerimientos del sistema |
+| `/quinotospec.constitution` | Generar o enmendar la constitución del proyecto |
 | `/quinotospec.schema-fork` | Personalizar schema YAML del DAG de artefactos |
 | `/quinotospec.party-mode` | Mesa redonda multi-agente — debate en caracter. Tambien invocable via `--party` en create-proposal y create-rfc |
 | `/quinotospec.changelog-view` | Ver changelog consolidado (v2 + v1) con filtros |
@@ -213,17 +240,29 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 | `quinotospec-stack-detect` | Identificar stack tecnológico desde archivos de configuración |
 | `quinotospec-validate` | Pre-flight checks para workflows críticos |
 | `quinotospec-syntax-validate` | Validar estructura de archivos spec |
+| `quinotospec-contract` | Contrato canónico y parser de artefacts |
 | `quinotospec-update-changelog` | Escribir en changelog |
 | `quinotospec-entropy-calculator` | Calcular métricas de entropía (Shannon v2 + proxies v1) para Tiwaz Rune |
 | `quinotospec-mark-done` | Completar tareas y archivar |
 | `quinotospec-generate-github-branch` | Crear branches con nombres correctos |
 | `quinotospec-file-creation` | Estandarizar creación de archivos y scripts temporales |
 | `quinotospec-rollback` | Deshacer cambios de workflows fallidos |
+| `quinotospec-backup` | Crear, verificar y restaurar backups SHA-256 con staging seguro |
+
+### Skills de Disciplina de Ingeniería
+| Skill | Propósito |
+|-------|-----------|
+| `quinotospec-tdd` | RED-GREEN-REFACTOR antes de código de producción |
+| `quinotospec-debug` | Reproducción, hipótesis y causa raíz antes de fixes |
+| `quinotospec-verify-before-done` | Evidencia fresca antes de cambiar estados |
+| `quinotospec-constitution` | Principios, gates y enmiendas del proyecto |
+| `quinotospec-receive-review` | Verificar feedback, evitar acuerdo performativo y aplicar YAGNI |
+| `quinotospec-worktree` | Aislar Apply en un worktree Git con baseline y permisos seguros |
 
 ### Skills de Gobernanza
 | Skill | Propósito |
 |-------|-----------|
-| `quinotospec-rules-enforce` | Bloquear workflows que violen reglas |
+| `quinotospec-rules-enforce` | Bloquear workflows que violen reglas; dispatcher read-only para checks observables |
 | `quinotospec-metrics` | Métricas de compliance y productividad |
 
 ### Skills de Blood-Bond
@@ -257,12 +296,15 @@ Los siguientes archivos requieren **aprobación explícita del usuario** antes d
 ### Skills de Extensión
 | Skill | Propósito |
 |-------|-----------|
+| `quinotospec-extension-manager` | Gestionar extensiones y presets locales |
+| `quinotospec-template-resolver` | Resolver templates en cuatro capas |
+| `quinotospec-update-agents` | Regenerar `AGENTS.md` desde `config.yaml` |
 | `quinotospec-pre-commit` | Check pre-commit (test + validate + rules) |
 | `quinotospec-suggest-next` | Sugerir siguiente tarea a ejecutar |
 | `quinotospec-conflict-detector` | Detectar conflictos entre propuestas activas |
 | `quinotospec-estimate` | Estimar complejidad de propuestas |
 
-### Skills Nórdicas (v2.7.0 — Warband)
+### Skills Nórdicas (v3.2.0 — Hird Edition)
 | Skill | Propósito |
 |-------|-----------|
 | `quinotospec-norns` | Versionado atómico y changelog semver sin drift |

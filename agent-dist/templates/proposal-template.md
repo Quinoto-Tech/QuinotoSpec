@@ -3,13 +3,17 @@ name: Proposal Template
 description: Template para generar proposal.md con resumen ejecutivo, delta-specs y plan de implementacion
 ---
 
-# Propuesta: {{PROPOSAL_NAME}} — {{PREFIX}}
+# Propuesta Técnica: {{PROPOSAL_NAME}}
 
-> **Slug:** {{SLUG}}
-> **Prefijo:** {{PREFIX}} (registrado en `prefix-registry.md`)
-> **Fecha:** {{DATE}}
-> **Autor:** {{AUTHOR}}
-> **Estado:** 🟡 Propuesta
+**Contract Version:** 1
+**ID:** {{DATE_PREFIX}}-{{SLUG}}
+**Prefijo:** {{PREFIX}}
+**Fecha de Creación:** {{DATE}}
+**Estado:** 🟡 Propuesta
+**Prioridad:** P1
+**Complejidad:** Media
+**Servicios Afectados:** {{SERVICIOS}}
+**Autor:** {{AUTHOR}}
 
 ---
 

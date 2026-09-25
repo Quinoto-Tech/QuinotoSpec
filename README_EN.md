@@ -1,22 +1,54 @@
-# QuinotoSpec: Yggdrasil Edition
+# QuinotoSpec: Hird Edition
 
-> **STATUS: PRODUCTION / STABLE**
+> **STATUS: BETA / RELEASE CANDIDATE (HIRD EDITION; GATE 0 + F3.2)**
 > Methodology and agent configuration system for AI-assisted development.
 > "Proposal First" / "Context Slicing" workflow to maximize accuracy and minimize hallucinations.
 
 <div align="center">
-  <img src="docs/assets/tiwaz.png" alt="QuinotoSpec v2.7.0 — Yggdrasil Warband: Nórdicas" width="800" />
+
+  ![Version](https://img.shields.io/badge/version-3.2.0-blue)
+  ![License](https://img.shields.io/badge/license-MIT-green)
+  ![Workflows](https://img.shields.io/badge/workflows-43-purple)
+  ![Skills](https://img.shields.io/badge/skills-86-purple)
+  ![Rules](https://img.shields.io/badge/rules-18-red)
+
+  <img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.2.0 — Warband: Hird Edition" width="800" />
 
   <br/>
 
   <img src="docs/assets/tiwaz_rune.png" alt="The Tiwaz Rune — Entropy Analysis" width="400" />
 </div>
 
-**Yggdrasil Edition** - The tree that connects the 9 realms of AI-assisted development. Now with **The Tiwaz Rune**: formal code entropy analysis.
+## Maturity status (Gate 0 + F3.2)
+
+Version 3.2.0 is published as a **beta / release candidate** of Hird Edition. Proposal First and Context Slicing are the product foundation, but some capabilities still depend on agent instructions or partial validators. F1.1–F1.7 add session bootstrap, engineering discipline with evidence validation, constitution, verified review feedback, and optional worktree isolation; Gate 0 includes a read-only dispatcher, validated technical evidence, verifiable backups, and structured human approvals. F2.3 and F2.4 add local extensions/presets, template resolution, and dynamic `AGENTS.md` generation; F3.2 integrates Party Mode into session bootstrap; the known limitations below remain in force.
+
+| Surface | Status | Known limitation |
+|---------|--------|-----------------|
+| Main Discovery → Apply flow | Beta | Needs one artifact contract and executable gates |
+| Delta specs and DAG | Beta | Parser and merge coverage is still incomplete |
+| Changelog v2 | Beta | Some consumers still require a v1 compatibility path |
+| Rules and validation | Beta | Read-only dispatcher covers observable checks and structured human approvals; real execution remains deferred |
+| Extensions and presets | Beta | Local sources only; no remote downloads, package signing, or automatic hooks |
+| Dynamic AGENTS | Beta | `config.yaml` is the source of truth and the IDE must restart after installation |
+| Party Mode | Experimental | The roundtable and subagents depend on the IDE tools |
+| Backup engine | Beta | SHA-256 backups and transactional restore; disaster recovery remains out of scope |
+| Human decisions | Beta | JSON approvals require subject/action scope; identity proof remains external |
+| TDD/debug/verify discipline | Beta | Fresh records are validated; real execution and human decisions remain agent-driven |
+| Review feedback | Prompt-only | Feedback must be verified before implementation; no performative agreement |
+| Worktrees | Prompt-only | Isolation depends on native tools or Git and agent-side verification |
+| Session bootstrap and hooks | Beta | OpenCode, Cursor, and Claude Code require an IDE restart after install |
+| Nordic helpers | Experimental | Huginn & Muninn, Skald, and Norns need full implementation |
+| Installer, backup, and Git operations | Beta | Installer has staging, ownership manifest, and rollback; cross-repository disaster recovery remains out of scope |
+
+The full maturity matrix is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the artifact contract is in [`docs/ARTIFACT-CONTRACT.md`](docs/ARTIFACT-CONTRACT.md). F1.1–F1.7, F2.3–F2.5, and F3.2 are approved exceptions to the feature freeze: session bootstrap, engineering discipline, constitution, verified review feedback, worktrees, local extensibility, and Party Mode bootstrap; F3.1 and F3.3 remain planned.
+
+**Hird Edition** - The tree that connects the 9 realms of AI-assisted development. Now with **The Tiwaz Rune**: formal code entropy analysis.
 
 ## Table of Contents
 
 - [The Problem](#the-problem)
+- [Maturity status (Gate 0 + F3.2)](#maturity-status-gate-0--f32)
 - [Use Cases](#use-cases)
 - [Why QuinotoSpec](#why-quinotospec)
 - [Installation](#installation)
@@ -120,11 +152,11 @@ Every change is recorded in an immutable changelog (rule #1: never edit manually
 
 ### Governance, not just Execution
 
-QuinotoSpec is not a prompt file — it's a **rule system**. 13 strict rules that the agent must follow, validated with `@quinotospec-validate` and `/quinotospec-rules-enforce`. If a product agreement is empty, the workflow blocks. If a prefix is not registered, progress stops.
+QuinotoSpec is not a prompt file — it's a **rule system**. 18 strict rules that the agent must follow, validated with `@quinotospec-validate` and `/quinotospec-rules-enforce`. If a product agreement is empty, the workflow blocks. If a prefix is not registered, progress stops.
 
 ### Works with your agent, not instead of your agent
 
-QuinotoSpec installs into your IDE (Cursor, OpenCode, Cline, or generic) and operates on your project. It's not a SaaS, not a wrapper — it's configuration + methodology + rules that transform how your agent works.
+QuinotoSpec installs into your IDE (Cursor, OpenCode, Claude Code, Cline, or generic) and operates on your project. It's not a SaaS, not a wrapper — it's configuration + methodology + rules that transform how your agent works.
 
 ---
 
@@ -146,11 +178,18 @@ The installer prompts for destination path and IDE:
 | Flag | IDE | Destination |
 |------|-----|-------------|
 | `--opencode` | OpenCode | `.opencode/` or `~/.config/opencode/` (global) |
-| `--cursor` | Cursor | `.cursor/` or `~/.config/cursor/` (global) |
+| `--cursor` | Cursor | `.cursor/` or `~/.cursor/` (global) |
+| `--claude` | Claude Code | `.claude/` or `~/.claude/` (global) |
 | `--cline` | Cline | `.cline/` or `~/.config/cline/` (global) |
 | `--antigravity` | Antigravity (AGY) | `.agents/` or `~/.gemini/config/` (global) |
-| `--global`, `--root` | - | Install in `~/.config/` or `~/.gemini/config/`, ignoring project directory |
+| `--global`, `--root` | - | Install in `~/.config/`, `~/.cursor/`, `~/.claude/` or `~/.gemini/config/`, ignoring project directory |
 | (default) | Generic | `.agent/` |
+
+Each installation is prepared in staging, verified, and committed with a `.quinoto-spec/ownership.json` manifest. If a stage fails, `install.sh` restores the configuration and `AGENTS.md`; uninstall removes only intact managed files and preserves foreign files. Legacy installations without a manifest require manual migration.
+
+Maintainers validate the artifact with `bash scripts/package-release.sh <VERSION> <OUTPUT_DIR>` and `bash scripts/smoke-release.sh <ARCHIVE>`; the smoke test installs and uninstalls from the extracted tarball.
+
+Restart the IDE after installation to load the session bootstrap and hooks.
 
 ### Global Installation
 
@@ -163,11 +202,14 @@ Install once and available in all your projects:
 # Cursor global
 ./quinotospec-package/install.sh --cursor --global
 
+# Claude Code global
+./quinotospec-package/install.sh --claude --global
+
 # Antigravity global
 ./quinotospec-package/install.sh --antigravity --global
 ```
 
-This creates the config in `~/.config/opencode/`, `~/.config/cursor/`, or `~/.gemini/config/` depending on the IDE.
+This creates the config in `~/.config/opencode/`, `~/.cursor/`, `~/.claude/`, or `~/.gemini/config/` depending on the IDE.
 
 ### Dependencies
 
@@ -175,6 +217,7 @@ This creates the config in `~/.config/opencode/`, `~/.config/cursor/`, or `~/.ge
 |------------|----------|---------|
 | Bash 4.0+ | Yes | Run installer |
 | Git | Yes | Version control |
+| Python 3.8+ | Yes | Contract parser and deterministic validators |
 
 ---
 
@@ -246,9 +289,10 @@ Executes tasks one by one.
 
 ```bash
 @quinotospec.apply --task-id {TASK_ID}
+@quinotospec.apply --task-id {TASK_ID} --worktree
 ```
 
-Actions: Reads context → Confirms branch → Implements → Runs tests → Updates changelog → Suggests next task.
+Actions: Reads context → Confirms branch and worktree → Isolates and runs baseline → Implements → Runs tests → Updates changelog → Suggests next task.
 
 ---
 
@@ -464,6 +508,19 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **Update Changelog** | `/quinotospec-update-changelog` | Updates changelog automatically |
 | **Entropy Calculator** | `/quinotospec-entropy-calculator` | Calculates entropy metrics (Shannon v2 + proxy v1) for Tiwaz Rune |
 | **Validate** | `/quinotospec-validate` | System checks as preconditions for workflows |
+| **Artifact Contract** | `/quinotospec-contract` | Canonical contract and parser for proposals, stories, tasks, IDs, and changelog |
+| **Constitution** | `/quinotospec.constitution` | Generates and governs verifiable project principles |
+| **Backup** | `/quinotospec-backup` | Creates and restores SHA-256 backups with safe staging |
+
+### Engineering Discipline Skills
+
+| Skill | Command | Description |
+|-------|---------|-------------|
+| **TDD** | `/quinotospec-tdd` | RED-GREEN-REFACTOR before production code |
+| **Debug** | `/quinotospec-debug` | Reproduction, hypotheses, and root cause before fixes |
+| **Verify Before Done** | `/quinotospec-verify-before-done` | Fresh evidence before changing completion states |
+| **Receive Review** | `/quinotospec-receive-review` | Verifies feedback, avoids performative agreement, and controls YAGNI |
+| **Worktree** | `/quinotospec-worktree` | Isolates Apply, verifies paths, and runs a clean baseline |
 
 ### Advanced Skills (Governance)
 
@@ -503,12 +560,15 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 
 | Skill | Command | Description |
 |-------|---------|-------------|
+| **Extension Manager** | `/quinotospec-extension-manager` | Installs, updates, lists, and removes extensions/presets |
+| **Template Resolver** | `/quinotospec-template-resolver` | Resolves overrides → presets → extensions → core |
+| **Update Agents** | `/quinotospec.update-agents` | Generates AGENTS.md from config.yaml |
 | **Pre-commit** | `/quinotospec-pre-commit` | Quick pre-commit check (tests + validate + rules) |
 | **Suggest Next** | `/quinotospec-suggest-next` | Suggests the next task to execute |
 | **Conflict Detector** | `/quinotospec-conflict-detector` | Detects conflicts between active proposals |
 | **Estimate** | `/quinotospec-estimate` | Estimates proposal complexity |
 
-### Nordic Skills (v2.7.0 — Warband)
+### Nordic Skills (v3.2.0 — Hird Edition)
 
 | Skill | Command | Description | Saga |
 |-------|---------|-------------|------|
@@ -523,9 +583,10 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 ### Recommended Integration
 
 ```bash
+python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict
 @quinotospec-validate --full                                        # Precondition before critical workflows
 @quinotospec-syntax-validate --type proposal --slug {SLUG}          # Before applying code
-@quinotospec-mark-done --task-id TSK-AUTH-001                       # After completing task
+@quinotospec-mark-done --task-id TSK-AUTH-a1b2-001                 # After completing task
 @quinotospec-metrics --dashboard                                    # Metrics for retrospectives
 ```
 
@@ -568,14 +629,14 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-The `quinotospec-update-changelog` skill is the traceability backbone: 25 of 39 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
+The `quinotospec-update-changelog` skill is the traceability backbone: 36 of 43 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
 
 #### Quick Tutorial — Nordic
 
 ```bash
 # 1. Drift-free versioning (Norns)
-./scripts/update-version.sh 2.7.0              # atomic sync + CHANGELOG
-/quinotospec-norns --to 2.7.0 --dry-run        # preview
+./scripts/update-version.sh 3.2.0              # atomic sync + CHANGELOG
+/quinotospec-norns --to 3.2.0 --dry-run        # preview
 
 # 2. Continuous observability (Huginn & Muninn)
 bash agent-dist/skills/quinotospec-huginn-muninn/check.sh --json
@@ -604,7 +665,7 @@ python3 agent-dist/skills/quinotospec-mimir/search.py "TOTP 2FA"
 
 ## Rules
 
-QuinotoSpec enforces 13 strict rules (defined in `agent-dist/rules/quinotospec-rules.md`):
+QuinotoSpec enforces 18 strict rules (defined in `agent-dist/rules/quinotospec-rules.md`):
 
 | # | Rule | Severity | Description |
 |---|------|----------|-------------|
@@ -621,6 +682,11 @@ QuinotoSpec enforces 13 strict rules (defined in `agent-dist/rules/quinotospec-r
 | 11 | **Pre-Apply Syntax** | WARNING | Validate proposal syntax before applying a task |
 | 12 | **Archived Files** | BLOCKING | Never modify files in `_archived/` without explicit approval |
 | 13 | **Blood-Bond Monitor** | GLOBAL | After `apply`/`fix`/`tiwaz-rune`/`heimdallr`, check inactivity ≥14 days |
+| 14 | **TDD Enforcement** | STANDARD | Record RED before production and keep fresh evidence |
+| 15 | **Systematic Debugging** | STANDARD | Reproduce, form hypotheses, and demonstrate root cause |
+| 16 | **Verify Before Done** | BLOCKING | Require fresh DoD, test, and quality evidence before completion |
+| 17 | **Constitutional Compliance** | BLOCKING | Do not activate a constitution with conflicts; its principles are stricter |
+| 18 | **Structured Human Approval** | BLOCKING | Require a fresh JSON record scoped to the subject and action |
 
 ---
 
@@ -644,7 +710,7 @@ After running `@quinotospec.discovery`:
 │   │   └── 2024-04-15-auth-jwt/
 │   │       ├── proposal.md
 │   │       ├── user-stories.md
-│   │       ├── US-AUTH-001_tasks.md
+│   │       ├── US-AUTH-a1b2-001_tasks.md
 │   │       └── _archived/
 │   ├── sprints/                      # Planning
 │   │   ├── base-config.yml
@@ -714,7 +780,7 @@ graph LR
 | ".quinoto-spec/discovery/ not found" | Run `@quinotospec.discovery` first |
 | "Prefix not registered" | Register with `@quinotospec.create-proposal` |
 | "Changelog outdated" | Run `@quinotospec-update-changelog` |
-| Workflows not recognized | Reinstall with correct flag (`--opencode`, `--cursor`, `--cline`, `--antigravity`) |
+| Workflows not recognized | Reinstall with correct flag (`--opencode`, `--cursor`, `--claude`, `--cline`, `--antigravity`) |
 
 ### Diagnostic Commands
 
@@ -743,7 +809,7 @@ graph LR
 
 **Berserker Edition (v2.1.0)** — Completed
 - ✅ 9 specialized pre-configured agents
-- ✅ 13 governance rules (4 new BLOCKING/WARNING + Global)
+- ✅ 18 governance rules (engineering and human approval gates included)
 - ✅ Advanced skills: search, stats, diff, sync
 - ✅ Workflows: migrate, backup, export, import
 - ✅ Complete test suite with automatic validation
@@ -755,7 +821,7 @@ graph LR
 
 **Yggdrasil + Tiwaz Rune (v2.6.0)** — Completed
 - ✅ 9 specialized agents (architect, code-reviewer, test-writer, security-auditor, devops-engineer, debugger, refactor-specialist, doc-writer, performance-optimizer)
-- ✅ Governance system with 13 rules
+- ✅ Governance system with 18 rules
 - ✅ Testing and CI/CD infrastructure
 - ✅ Complete documentation and examples
 - ✅ Integration with GitHub Issues and Jira CSV
@@ -764,10 +830,10 @@ graph LR
 - ✅ Party Mode: multi-agent roundtable integrated into create-proposal and create-rfc
 - ✅ Changelog v2: append-only, individual files, no merge conflicts
 - ✅ The Tiwaz Rune: formal entropy analysis (Shannon v2 + proxy v1) with remediation plan
-- ✅ Antigravity (AGY) — `.agents` / `~/.gemini/config` + 39 global workflow skills
+- ✅ Antigravity (AGY) — `.agents` / `~/.gemini/config` + 86 installed skills
 
-**Warband: Nordics (v2.7.0)** — Current (7 sagas)
-- ✅ **Norns** — atomic versioning without drift (sync 7 files + CHANGELOG)
+**Warband: Hird Edition (v3.2.0)** — Current (F3.2 beta/RC)
+- ✅ **Norns** — atomic versioning without drift (syncs manifest, installer, docs, and CHANGELOG)
 - ✅ **Huginn & Muninn** — continuous Tiwaz + CI gate S≥0.76
 - ✅ **Skald** — living docs, unifies 5 onboard-* + bilingual sync
 - ✅ **Jormungandr** — DAG cycle detection (Kahn) in validate --strict
@@ -775,7 +841,7 @@ graph LR
 - ✅ **Bifrost** — multi-repo federation with git notes
 - ✅ **Mimir BM25** — exact `file:line` citation index without external LLM, offline stdlib
 
-**Next versions (v3.0.0 → v3.3.0)** — Planned
+**Next version (v3.3.0)** — Planned
 
 The single source of truth for the v3 plan is [V3_ROADMAP.md](V3_ROADMAP.md): Phase 1 Engineering Fundamentals (bootstrap, TDD, debugging, constitution, worktrees), Phase 2 Extensibility (extensions/presets, dynamic AGENTS.md), Phase 3 Agents (named personalities + TOML config, contextual help), Phase 4 Product (PRFAQ, scale-adaptive router, YAML workflow engine).
 

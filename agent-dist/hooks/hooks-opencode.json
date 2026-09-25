@@ -1,0 +1,8 @@
+{
+  "name": "quinotospec-session-start",
+  "version": 1,
+  "platform": "opencode",
+  "events": ["session.start", "session.compacted"],
+  "command": "./agent-dist/hooks/session-start.sh",
+  "output": "additionalContext"
+}

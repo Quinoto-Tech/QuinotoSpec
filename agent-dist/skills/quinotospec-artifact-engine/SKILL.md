@@ -9,6 +9,8 @@ description: Computa el estado del DAG de artefactos basado en el schema YAML â€
 
 Lee `.quinoto-spec/schema.yaml` y computa el estado de cada artefacto para una propuesta dada, basandose en la existencia de archivos en el filesystem y las dependencias declaradas en el schema.
 
+Antes de evaluar estados de lifecycle, consulta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json`. Los estados `done/ready/blocked` del DAG son distintos de `proposed/in_progress/completed/archived` del contrato de propuesta.
+
 **Core principle:** Las dependencias son habilitadores, no compuertas. Saber que esta listo ayuda a decidir que hacer â€” no fuerza un orden.
 
 ## Modos de Operacion

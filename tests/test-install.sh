@@ -36,8 +36,8 @@ TESTED=$((TESTED + 1))
 
 # Check 3: install.sh tiene shebang correcto
 first_line=$(head -n 1 "$INSTALL_SCRIPT")
-if [ "$first_line" != "#!/bin/bash" ]; then
-    echo "❌ ERROR: install.sh no tiene shebang correcto (esperado: #!/bin/bash, obtenido: $first_line)"
+if [ "$first_line" != "#!/usr/bin/env bash" ]; then
+    echo "❌ ERROR: install.sh no tiene shebang correcto (esperado: #!/usr/bin/env bash, obtenido: $first_line)"
     ERRORS=$((ERRORS + 1))
 else
     echo "✅ install.sh tiene shebang correcto"
@@ -63,7 +63,7 @@ fi
 TESTED=$((TESTED + 1))
 
 # Check 6: install.sh soporta múltiples IDEs
-IDE_COUNT=$(grep -c "\-\-opencode\|\-\-cursor\|\-\-cline\|\-\-antigravity" "$INSTALL_SCRIPT" || true)
+IDE_COUNT=$(grep -c "\-\-opencode\|\-\-cursor\|\-\-claude\|\-\-cline\|\-\-antigravity" "$INSTALL_SCRIPT" || true)
 if [ "$IDE_COUNT" -lt 2 ]; then
     echo "⚠️  install.sh podría no soportar suficientes IDEs (encontrados: $IDE_COUNT)"
 else
@@ -87,10 +87,26 @@ else
 fi
 TESTED=$((TESTED + 1))
 
+if grep -q "ownership.json" "$INSTALL_SCRIPT" && grep -q "previous-live" "$INSTALL_SCRIPT" && grep -q "candidate" "$INSTALL_SCRIPT"; then
+    echo "✅ install.sh contiene staging, ownership manifest y rollback"
+else
+    echo "❌ install.sh no contiene la transacción esperada"
+    ERRORS=$((ERRORS + 1))
+fi
+TESTED=$((TESTED + 1))
+
+if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["features"]["transactional_installer"] is True; assert d["capability_maturity"]["transactional_installer"] == "beta"' "$PROJECT_ROOT/manifest.json"; then
+    echo "✅ manifest registra installer transaccional"
+else
+    echo "❌ manifest no registra installer transaccional"
+    ERRORS=$((ERRORS + 1))
+fi
+TESTED=$((TESTED + 1))
+
 # Check 9: Verificar que agent-dist tiene la estructura esperada
 echo ""
 echo "Verificando estructura de agent-dist:"
-EXPECTED_DIRS=("workflows" "skills" "rules" "templates")
+EXPECTED_DIRS=("workflows" "skills" "rules" "templates" "bootstrap" "hooks" "plugins")
 for dir in "${EXPECTED_DIRS[@]}"; do
     if [ -d "$PROJECT_ROOT/agent-dist/$dir" ]; then
         echo "  ✅ agent-dist/$dir existe"
@@ -119,6 +135,40 @@ else
     ERRORS=$((ERRORS + 1))
 fi
 TESTED=$((TESTED + 1))
+
+for runtime_file in \
+    "$PROJECT_ROOT/agent-dist/bootstrap/quinotospec-bootstrap.md" \
+    "$PROJECT_ROOT/agent-dist/hooks/session-start.sh" \
+    "$PROJECT_ROOT/agent-dist/hooks/hooks.json" \
+    "$PROJECT_ROOT/agent-dist/hooks/hooks-cursor.json" \
+    "$PROJECT_ROOT/agent-dist/hooks/hooks-opencode.json" \
+    "$PROJECT_ROOT/agent-dist/plugins/opencode/quinotospec-plugin.js" \
+    "$PROJECT_ROOT/agent-dist/workflows/quinotospec.constitution.md" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-constitution/SKILL.md" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-receive-review/SKILL.md" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-worktree/SKILL.md" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-extension-manager/SKILL.md" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-extension-manager/extension_manager.py" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-template-resolver/SKILL.md" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-template-resolver/template_resolver.py" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-update-agents/SKILL.md" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-update-agents/update_agents.py" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-rules-enforce/rules_enforce.py" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-rules-enforce/approval_validate.py" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-backup/backup.py" \
+    "$PROJECT_ROOT/agent-dist/templates/constitution-template.md" \
+    "$PROJECT_ROOT/agent-dist/templates/AGENTS-template.md" \
+    "$PROJECT_ROOT/agent-dist/templates/config-template.yml" \
+    "$PROJECT_ROOT/.cursor-plugin/plugin.json"; do
+    if [ -f "$runtime_file" ]; then
+        echo "  ✅ $(basename "$runtime_file") existe"
+    else
+        echo "  ❌ $(basename "$runtime_file") no existe"
+        ERRORS=$((ERRORS + 1))
+    fi
+    TESTED=$((TESTED + 1))
+done
 
 echo ""
 echo "=========================================="

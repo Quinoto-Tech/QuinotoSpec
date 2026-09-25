@@ -1,67 +1,87 @@
 ---
 name: Constitution Template
-description: Template para generar .quinoto-spec/constitution.md con principios fundacionales del proyecto
+description: Template para generar .quinoto-spec/constitution.md con principios verificables del proyecto
 ---
 
-# Constitucion del Proyecto — {{PROJECT_NAME}}
+# Constitución del Proyecto — {{PROJECT_NAME}}
 
-> **Version:** 1.0.0
+> **Versión:** 1.0.0
 > **Fecha:** {{DATE}}
 > **Stack:** {{STACK}}
-> **Estado:** 🟡 Borrador — requiere aprobacion
+> **Owner:** {{OWNER}}
+> **Estado:** draft — requiere aprobación explícita
 
-Esta constitucion supersede cualquier otra practica del proyecto. Todos los workflows, proposals y reviews deben verificar compliance.
+Esta constitución define decisiones de arquitectura e implementación. No deroga reglas globales, legales, de seguridad ni los gates de TDD y verify-before-done; solo puede añadir restricciones más estrictas. Todos los workflows deben revisar sus principios.
 
 ---
 
 ## Principios Fundamentales
 
-### I. Calidad de Codigo
-- {{principio 1 — ej. "Simplicidad sobre abstraccion prematura"}}
-- {{principio 2 — ej. "Codigo legible, testeable y documentado donde aporte valor"}}
+### I. Calidad de Código
 
-### II. Estandares de Testing
-- {{estandar 1 — ej. "TDD para logica de negocio, tests de contrato para integraciones"}}
-- {{estandar 2 — ej. "Coverage minimo {{X}}% en dominios criticos, sin perseguir 100% vacio"}}
+- **CODE-01:** {{PRINCIPLE_QUALITY}}
+- **CODE-02:** {{PRINCIPLE_SIMPLICITY}}
+
+### II. Estándares de Testing
+
+- **TEST-01:** {{PRINCIPLE_TESTING}}
+- **TEST-02:** {{COVERAGE_OR_NA}}
 
 ### III. Consistencia de UX
-- {{principio 1 — ej. "Consistencia visual y de interaccion en todos los flujos"}}
-- {{principio 2 — ej. "Accesibilidad WCAG {{nivel}}"}}
+
+- **UX-01:** {{PRINCIPLE_UX_OR_NA}}
+- **UX-02:** {{ACCESSIBILITY_OR_NA}}
 
 ### IV. Requisitos de Performance
-- {{requisito 1 — ej. "p95 < {{X}}ms en endpoints criticos"}}
-- {{requisito 2 — ej. "Presupuesto de bundle < {{X}}KB"}}
+
+- **PERF-01:** {{PERFORMANCE_OR_NA}}
+- **PERF-02:** {{PERFORMANCE_BUDGET_OR_NA}}
 
 ---
 
 ## Restricciones Adicionales
 
 ### Seguridad
-- {{restriccion — ej. "STRIDE/DREAD via @quinotospec.heimdallr para cambios con superficie de ataque"}}
+
+- **SEC-01:** {{SECURITY_REQUIREMENT}}
 
 ### Cumplimiento Normativo
-- {{requisito — ej. "GDPR / HIPAA / SOC2 segun aplique"}}
+
+- **COMP-01:** {{COMPLIANCE_OR_NA}}
 
 ### Dependencias y Stack
-- {{regla — ej. "Nuevas dependencias deben justificarse en proposal.md — Alternativas Consideradas"}}
+
+- **DEP-01:** {{DEPENDENCY_RULE}}
 
 ---
 
 ## Flujo de Desarrollo
 
 ### Proceso de Review
-- Todo PR debe verificar compliance con esta constitucion
-- Review checklist incluye: calidad, testing, seguridad, performance
+
+- Todo PR debe verificar compliance con esta constitución.
+- El checklist incluye calidad, testing, seguridad, performance y principios aplicables.
+- Cada excepción registra razón, owner y fecha de revisión.
 
 ### Quality Gates
-- [ ] **Simplicity Gate:** ¿Se puede hacer mas simple sin perder valor?
-- [ ] **Anti-Abstraction Gate:** ¿La abstraccion se justifica con 3+ usos reales?
-- [ ] **Integration-First Gate:** ¿Se probo integracion antes de unit mocks profundos?
+
+- [ ] **Simplicity Gate:** ¿Se puede hacer más simple sin perder valor?
+- [ ] **Anti-Abstraction Gate:** ¿La abstracción está justificada por usos reales?
+- [ ] **Integration-First Gate:** ¿Se probó integración antes de usar mocks profundos?
+- [ ] **Constitution Gate:** ¿La implementación cumple todos los principios activos?
 
 ---
 
 ## Gobernanza
 
-- Enmiendas requieren: documentacion en proposal, revision del equipo, aprobacion explicita
-- La complejidad debe ser justificada — "No speculative or 'might need' features"
-- Versionado semantico de la constitucion; cambios breaking requieren major bump
+- Enmiendas requieren proposal, revisión y aprobación explícita.
+- No se agregan capacidades especulativas.
+- Los cambios breaking requieren una versión mayor.
+- Una regla global siempre prevalece sobre una excepción local.
+
+## Aprobación
+
+- [ ] Principios revisados por el usuario
+- [ ] Placeholders resueltos o marcados `N/A — no aplica`
+- [ ] Estado aprobado explícitamente
+- [ ] Registro de aprobación validado en `.quinoto-spec/approvals/{{APPROVAL_ID}}.json`

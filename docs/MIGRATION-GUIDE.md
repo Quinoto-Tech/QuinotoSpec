@@ -30,8 +30,9 @@
 
 #### Automatica (Recomendada)
 ```bash
-# 1. Backup manual por seguridad
-cp -r .quinoto-spec/ .quinoto-spec.backup/
+# 1. Backup verificable por seguridad
+python3 -B agent-dist/skills/quinotospec-backup/backup.py create --root . --type full --json
+python3 -B agent-dist/skills/quinotospec-backup/backup.py verify --root . --backup BACKUP_ID --json
 
 # 2. Ejecutar migracion
 @quinotospec.migrate --to 2.0.0
@@ -103,12 +104,8 @@ Despues de migrar, verifica:
 Si la migracion causa problemas:
 
 ```bash
-# Restaurar desde backup
-rm -rf .quinoto-spec/
-cp -r .quinoto-spec.backup/ .quinoto-spec/
-
-# O desde backup automatico (si existe)
-@quinotospec.backup --restore backup-pre-migrate-{timestamp}
+# Restaurar desde un backup verificado
+python3 -B agent-dist/skills/quinotospec-backup/backup.py restore --root . --backup BACKUP_ID --yes --json
 ```
 
 ## De v2.0 a v2.1

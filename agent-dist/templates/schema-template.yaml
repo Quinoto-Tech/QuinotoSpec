@@ -10,6 +10,7 @@
 
 name: quinotospec-default
 version: 1
+contract_version: 1
 description: Default QuinotoSpec workflow — proposal first, delta specs, user stories, tasks
 
 # =============================================================================
@@ -31,7 +32,34 @@ artifacts:
     instruction: |
       Create the project constitution defining core principles for code quality,
       testing standards, user experience consistency, and performance requirements.
-      This supersedes all other practices.
+      It can add stricter obligations but never overrides global, legal, security,
+      TDD, or verify-before-done rules.
+    optional: true
+
+  - id: human-approval
+    generates: .quinoto-spec/approvals/*.json
+    requires: []
+    template: null
+    instruction: |
+      Record an explicit human decision with decision, subject, action, requester,
+      decider, timestamp, rationale, and scope. Only approved records enable a
+      human-approval gate; the validator does not prove identity or run commands.
+    optional: true
+
+  - id: extensions
+    generates: .quinoto-spec/extensions/*/extension.yml
+    requires: []
+    template: extension-template.yml
+    instruction: |
+      Register and validate local extensions before resolving their templates or hooks.
+    optional: true
+
+  - id: presets
+    generates: .quinoto-spec/presets/*/preset.yml
+    requires: []
+    template: preset-template.yml
+    instruction: |
+      Register and validate local presets with explicit resolution priority.
     optional: true
 
   - id: discovery
@@ -49,6 +77,7 @@ artifacts:
     instruction: |
       Create a technical proposal analyzing the discovery context. Define the problem,
       solution approach, affected services, risks, and implementation plan.
+      Include the canonical ID, prefix, creation date, status and lifecycle metadata.
       Register a unique prefix in prefix-registry.md.
 
   - id: delta-specs
@@ -74,21 +103,22 @@ artifacts:
   - id: user-stories
     generates: .quinoto-spec/proposals/{slug}/user-stories.md
     requires:
-      - delta-specs
-    template: null
+      - proposal
+    template: user-stories-template.md
     instruction: |
-      Break down the proposal into user stories. Each story should have: role, action,
-      benefit, acceptance criteria, priority (P1-P3), estimate (XS-XL), and service.
+      Break down the proposal into user stories. Each story should have: canonical ID,
+      role, action, benefit, acceptance criteria, priority (P1-P3), estimate (XS-XL),
+      and service.
 
   - id: tasks
     generates: .quinoto-spec/proposals/{slug}/*_tasks.md
     requires:
       - user-stories
-    template: null
+    template: tasks-template.md
     instruction: |
       Create implementation tasks from user stories. Each task should be atomic (2-5 min),
-      include exact file paths, verification steps, and commit commands.
-      Mark parallelizable tasks with [P].
+      include exact file paths, verification steps, canonical IDs, and commit commands.
+      Store lifecycle state in the Estado column using [ ] or [x].
 
 # =============================================================================
 # APPLY (implementation phase)
@@ -99,6 +129,8 @@ apply:
   tracks: .quinoto-spec/proposals/{slug}/*_tasks.md
   instruction: |
     Implement tasks from the task file. Check off - [x] as completed.
+    If .quinoto-spec/constitution.md is active, verify its principles before and after implementation.
+    Run TDD before production changes, use quinotospec-debug on failures, and run verify-before-done before completion.
     Run tests after each task. Update changelog after completion.
 
 # =============================================================================
@@ -140,8 +172,8 @@ validation:
     severity: BLOCKING
 
   - rule: constitution-before-archive
-    description: Si constitution existe, el archive debe verificar compliance
-    severity: WARNING
+    description: Si constitution existe y está activa, el archive debe verificar compliance
+    severity: BLOCKING
 
   - rule: specs-consistency
     description: Delta specs no pueden declarar MODIFIED/REMOVED si specs/ no existe

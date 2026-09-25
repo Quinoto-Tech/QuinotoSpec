@@ -6,6 +6,10 @@ description: Archiva propuestas, user stories o planes de tareas
 
 Este workflow permite archivar elementos de la especificación técnica que han sido completados para limpiar el espacio de trabajo.
 
+## Extension hooks
+
+Consulta `before_archive` y `after_archive` con `extension_manager.py hooks --point <point> --json`. No muevas artefactos si un hook automático falla; requiere `--run --yes` y evidencia del resultado.
+
 ### Objetivos:
 - **Propuesta completa**: Archiva la carpeta entera de una propuesta.
 - **User Stories**: Archiva el archivo `user-stories.md` de una propuesta.
@@ -18,7 +22,8 @@ Este workflow permite archivar elementos de la especificación técnica que han 
 1. **Validación previa (OBLIGATORIA)**:
     - Lee `proposal.md` y verifica que el `**Estado:**` sea `✅ Completada` o equivalente a Done.
     - Si quedan user stories o tareas sin completar (`[ ]` en los archivos de tareas), **advierte al usuario** y detén el proceso a menos que confirme explícitamente continuar.
-    - Genera un resumen rápido: cuántas historias y tareas contenía el elemento, cuántas fueron completadas vs pendientes. Documenta esto en el changelog.
+     - Genera un resumen rápido: cuántas historias y tareas contenía el elemento, cuántas fueron completadas vs pendientes. Documenta esto en el changelog.
+     - Si existe `.quinoto-spec/constitution.md` con estado `active`, verifica compliance constitucional antes de archivar; si no existe, registra una advertencia de compatibilidad.
 
 2. **Merge de Delta Specs** (solo si la propuesta tiene `delta-specs/`):
 

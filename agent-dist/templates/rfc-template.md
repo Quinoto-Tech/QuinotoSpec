@@ -5,6 +5,8 @@ description: Template base para generar RFCs QuinotoSpec compatibles con create-
 
 # RFC: {{TITLE}}
 
+**Contract Version:** 1
+
 | Campo | Valor |
 |-------|-------|
 | **RFC ID** | {{RFC_ID}} |
@@ -104,7 +106,9 @@ description: Template base para generar RFCs QuinotoSpec compatibles con create-
 
 ## User Stories (entrada para create-tasks)
 
-**Prefijo (QuinotoSpec):** {{PREFIX}}
+**Proposal ID:** {{PROPOSAL_ID}}
+**Prefijo:** {{PREFIX}}
+**Estado:** proposed
 
 | ID | User Story | Criterios de Aceptación | Prioridad | Estimación | Servicio |
 |----|-----------|------------------------|-----------|------------|----------|

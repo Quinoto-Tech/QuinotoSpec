@@ -2,7 +2,7 @@
 
 # Update Version: Actualiza version en todos los archivos relevantes (Norns — sync atomico)
 # Uso: ./scripts/update-version.sh <new-version> [--dry-run]
-# Ejemplo: ./scripts/update-version.sh 2.7.0
+# Ejemplo: ./scripts/update-version.sh 3.2.0
 
 set -e
 
@@ -14,11 +14,12 @@ for arg in "$@"; do
         --dry-run) DRY_RUN=true ;;
         -h|--help)
             echo "Usage: $0 <new-version> [--dry-run]"
-            echo "Example: $0 2.7.0"
+            echo "Example: $0 3.2.0"
             echo ""
             echo "Updates version in (Norns — sync atomico):"
-            echo "  - install.sh (INSTALLER_VERSION)"
+            echo "  - install.sh (INSTALLER_VERSION + fallback)"
             echo "  - manifest.json (version field)"
+            echo "  - .cursor-plugin/plugin.json (version field)"
             echo "  - .version file"
             echo "  - README.md / README_EN.md (badges version/skills/rules + texto reglas)"
             echo "  - docs/ARCHITECTURE.md (diagrama + headings)"
@@ -54,7 +55,8 @@ echo "Updating version to $NEW_VERSION (Norns)..."
 # FS counts for sync
 FS_WORKFLOWS=$(find "$PROJECT_ROOT/agent-dist/workflows" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
 FS_SKILLS=$(find "$PROJECT_ROOT/agent-dist/skills" -maxdepth 1 -type d 2>/dev/null | wc -l); FS_SKILLS=$((FS_SKILLS - 1))
-FS_RULES=$(grep -c "^# " "$PROJECT_ROOT/agent-dist/rules/quinotospec-rules.md" 2>/dev/null || echo 13)
+FS_RULES=$(grep -c "^# " "$PROJECT_ROOT/agent-dist/rules/quinotospec-rules.md" 2>/dev/null || echo 18)
+FS_TEMPLATES=$(find "$PROJECT_ROOT/agent-dist/templates" -maxdepth 1 -type f \( -name "*.md" -o -name "*.yaml" -o -name "*.yml" \) 2>/dev/null | wc -l | tr -d ' ')
 
 portable_sed() {
     # $1 = sed expr, $2 = file — portable macOS/Linux
@@ -66,6 +68,8 @@ portable_sed() {
 INSTALL_SH="$PROJECT_ROOT/install.sh"
 if [ -f "$INSTALL_SH" ]; then
     portable_sed "s/INSTALLER_VERSION=\"[^\"]*\"/INSTALLER_VERSION=\"$NEW_VERSION\"/" "$INSTALL_SH"
+    portable_sed "s/# QuinotoSpec Installer v[0-9.]*/# QuinotoSpec Installer v$NEW_VERSION/" "$INSTALL_SH"
+    portable_sed "s/manifest.get(\\\"version\\\", \\\"[0-9.]*\\\")/manifest.get(\\\"version\\\", \\\"$NEW_VERSION\\\")/" "$INSTALL_SH"
     echo "  Updated install.sh"
 fi
 
@@ -74,6 +78,12 @@ MANIFEST="$PROJECT_ROOT/manifest.json"
 if [ -f "$MANIFEST" ]; then
     portable_sed "s/\"version\": *\"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" "$MANIFEST"
     echo "  Updated manifest.json"
+fi
+
+PLUGIN="$PROJECT_ROOT/.cursor-plugin/plugin.json"
+if [ -f "$PLUGIN" ]; then
+    portable_sed "s/\"version\": *\"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" "$PLUGIN"
+    echo "  Updated .cursor-plugin/plugin.json"
 fi
 
 # 3. Create/update .version file
@@ -95,7 +105,7 @@ done
 ARCH="$PROJECT_ROOT/docs/ARCHITECTURE.md"
 if [ -f "$ARCH" ]; then
     portable_sed "s/<-- [0-9]* workflows/<-- $FS_WORKFLOWS workflows/" "$ARCH"
-    portable_sed "s/<-- [0-9]* skills.*/<-- $FS_SKILLS skills (39 core + $((FS_SKILLS - 39)) utilitarias)/" "$ARCH"
+    portable_sed "s/<-- [0-9]* skills.*/<-- $FS_SKILLS skills (40 core + $((FS_SKILLS - 40)) utilitarias)/" "$ARCH"
     portable_sed "s/<-- [0-9]* reglas/<-- $FS_RULES reglas/" "$ARCH"
     portable_sed "s/### Workflows ([0-9]*)/### Workflows ($FS_WORKFLOWS)/" "$ARCH"
     portable_sed "s/### Skills ([0-9]*)/### Skills ($FS_SKILLS)/" "$ARCH"
@@ -113,11 +123,11 @@ fi
 # 7. Sync validate-all.sh expected counts
 VALIDATE="$PROJECT_ROOT/scripts/validate-all.sh"
 if [ -f "$VALIDATE" ]; then
-    portable_sed "s/EXPECTED_COUNTS=.*/EXPECTED_COUNTS=(\"workflows:$FS_WORKFLOWS\" \"skills:$FS_SKILLS\" \"agents:9\")/" "$VALIDATE"
+    portable_sed "s/EXPECTED_COUNTS=.*/EXPECTED_COUNTS=(\"workflows:$FS_WORKFLOWS\" \"skills:$FS_SKILLS\" \"rules:$FS_RULES\" \"agents:9\" \"templates:$FS_TEMPLATES\")/" "$VALIDATE"
     echo "  Synced scripts/validate-all.sh"
 fi
 
-# 8. Sync README rules count text (12->13 etc) — handle both languages
+# 8. Sync README rules count text — handle both languages
 for README in "$PROJECT_ROOT/README.md" "$PROJECT_ROOT/README_EN.md"; do
     if [ -f "$README" ]; then
         # ES: "12 reglas estrictas" -> "13 reglas"

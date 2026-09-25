@@ -16,8 +16,8 @@ description: Las Tejedoras del Destino — versionado atomico y changelog semver
 ## Invocacion
 
 ```bash
-/quinotospec-norns --to 2.7.0
-/quinotospec-norns --to 3.0.0 --dry-run
+/quinotospec-norns --to 3.2.0
+/quinotospec-norns --to 3.2.0 --dry-run
 /quinotospec-norns --check   # solo reporta drift sin tocar
 ```
 
@@ -51,7 +51,7 @@ Si hay mismatch → reporta tabla `OK/DRIFT` y sale con codigo 1 en `--check`.
    - `2.0` → `Possessed`
 3. Ejecuta `scripts/update-version.sh X.Y.Z` (portable `sed -i.bak`)
 4. Post-sync extra (lo que `update-version.sh` no hacia antes):
-   - `README.md` / `README_EN.md` badges `version-`, `skills-`, `rules-`, `workflows-` + texto `12→13 reglas`
+   - `README.md` / `README_EN.md` badges `version-`, `skills-`, `rules-`, `workflows-` + conteos de reglas del baseline
    - `docs/ARCHITECTURE.md` diagrama + headings
    - `V3_ROADMAP.md` `Version actual:`
    - `scripts/validate-all.sh` `EXPECTED_COUNTS`

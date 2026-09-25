@@ -19,8 +19,8 @@ Recibe los siguientes parametros:
 
 ### Paso 2 - Obtener Versiones
 1. Para comparacion por fechas:
-   - Busca en `.quinoto-spec/backups/` si existe backup de esa fecha
-   - Si no hay backup, usa git history: `git show HEAD@{YYYY-MM-DD}:path/to/file`
+   - Consulta `backup.py list` y `backup.py verify` para localizar un backup verificado de esa fecha
+   - Si no hay backup verificado, usa git history: `git show HEAD@{YYYY-MM-DD}:path/to/file`
    - Si el archivo no estaba versionado, reporta error
 2. Para comparacion por tags:
    - Busca tags en git: `git show v1:path/to/file`
@@ -78,7 +78,7 @@ Muestra el diff con:
 ## Notas Importantes
 
 - Requiere que el proyecto tenga git inicializado para comparaciones historicas
-- Los backups en `.quinoto-spec/backups/` tienen prioridad sobre git history
+- Los backups verificados del store externo tienen prioridad sobre git history
 - Si no se puede obtener una version, reporta claramente que falta
 - El diff de `status` es especialmente util para ver progreso de tareas sin ruido de cambios de contenido
 - Ejecuta `quinotospec-update-changelog` si el diff genera un reporte guardado

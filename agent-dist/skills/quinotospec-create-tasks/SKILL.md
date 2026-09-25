@@ -72,15 +72,17 @@ Solo aplica cuando **no** se uso `--from-rfc` (en modo RFC, equivalente con `{{R
 5. Genera un archivo consolidado `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/all_tasks.md` que contenga TODAS las tareas de todas las historias (solo si no existe o si se solicita explícitamente).
 
 ### Formato de las tareas (aplica a modo propuesta y a modo `--from-rfc`)
-    - **Título**: Plan de Tareas ({{PROPOSAL_NAME}} — {{USER_STORY_ID}}).
-    - Tabla con columnas: ID, Tipo, Título, Descripción, Historia Relacionada, Servicio, Archivos a Modificar, Estimación, Prioridad, Dependencias.
-    - **IDs**: Extrae el prefijo de la user story (ej. si la story es `US-{{PREFIX}}-XXX`) y úsalo para las tareas: `TSK-{{PREFIX}}-001`, `TSK-{{PREFIX}}-002`, etc.
-    - **Tipo**: Clasifica cada tarea según el tipo de trabajo: `Backend` | `Frontend` | `DB` | `Test` | `DevOps` | `Config`.
-    - **Story Relacionada**: DEBE enlazar explícitamente al ID de la story correspondiente (`{{USER_STORY_ID}}`).
-    - **Servicio**: Heredar el valor de la columna `Servicio` de la user story en `user-stories.md`. Indica en qué sub-proyecto/repositorio se ejecuta la tarea.
-    - **Archivos a Modificar**: Lista los archivos del repo que se espera crear, modificar o eliminar para completar la tarea (inferir desde `proposal.md` y el stack, o desde el RFC completo en modo `--from-rfc`).
-    - **Prioridad**: `P1` (alta) / `P2` (media) / `P3` (baja) según relevancia para cumplir los criterios de aceptación.
-    - **Estimación**: Talla de camiseta (`XS` / `S` / `M` / `L` / `XL`) según complejidad técnica.
+     - Antes de escribir, ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict`.
+     - **Título**: Plan de Tareas ({{PROPOSAL_NAME}} — {{USER_STORY_ID}}).
+     - Usa `agent-dist/templates/tasks-template.md` y una tabla con columnas: ID, Tipo, Título, Descripción, Historia Relacionada, Servicio, Archivos a Modificar, Estimación, Prioridad, Dependencias, Estado.
+     - **IDs**: Extrae el prefijo completo de la user story y genera `TSK-{{PREFIX}}-001`, `TSK-{{PREFIX}}-002`, etc.
+     - **Tipo**: Clasifica cada tarea según el tipo de trabajo: `Backend` | `Frontend` | `DB` | `Test` | `DevOps` | `Config`.
+     - **Story Relacionada**: DEBE enlazar explícitamente al ID canónico de la story (`{{USER_STORY_ID}}`).
+     - **Servicio**: Heredar el valor de la columna `Servicio` de la user story en `user-stories.md`. Indica en qué sub-proyecto/repositorio se ejecuta la tarea.
+     - **Archivos a Modificar**: Lista los archivos del repo que se espera crear, modificar o eliminar para completar la tarea.
+     - **Prioridad**: `P1` (alta) / `P2` (media) / `P3` (baja) según relevancia para cumplir los criterios de aceptación.
+     - **Estimación**: Talla de camiseta (`XS` / `S` / `M` / `L` / `XL`) según complejidad técnica.
+     - **Estado**: Usa `[ ]` para `pending` y `[x]` para `completed`; no dependas de una etiqueta distinta.
 
 **Notas de generación:**
 - Solo genera tareas relacionadas directamente con la historia especificada; no incluyas tareas globales ni de documentación genérica.

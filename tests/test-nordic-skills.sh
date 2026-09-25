@@ -56,44 +56,63 @@ MIMIR_WORK="$WORKDIR/mimir-fixture"
 cp -R "$FIXTURE_SRC" "$MIMIR_WORK"
 
 INDEX_OUT=$(python3 "$MIMIR_DIR/index.py" --root "$MIMIR_WORK" 2>&1)
-echo "$INDEX_OUT" | grep -q "chunks de"
-check "index.py genera chunks desde la fixture" $?
+RC=0
+echo "$INDEX_OUT" | grep -q "chunks de" || RC=$?
+check "index.py genera chunks desde la fixture" "$RC"
 
-[ -f "$MIMIR_WORK/.quinoto-spec/mimir/index.json" ]
-check "index.json fue generado" $?
+if [ -f "$MIMIR_WORK/.quinoto-spec/mimir/index.json" ]; then
+    check "index.json fue generado" 0
+else
+    check "index.json fue generado" 1
+fi
 
-[ -f "$MIMIR_WORK/.quinoto-spec/mimir/mimir-sources.json" ]
-check "mimir-sources.json fue generado (para reindex incremental)" $?
+if [ -f "$MIMIR_WORK/.quinoto-spec/mimir/mimir-sources.json" ]; then
+    check "mimir-sources.json fue generado (para reindex incremental)" 0
+else
+    check "mimir-sources.json fue generado (para reindex incremental)" 1
+fi
 
 SEARCH_OUT=$(python3 "$MIMIR_DIR/search.py" --root "$MIMIR_WORK" "TOTP 2FA" --cite 2>&1)
-echo "$SEARCH_OUT" | grep -q "delta-specs/auth/spec.md"
-check "search.py 'TOTP 2FA' devuelve el delta-spec de auth (file:line)" $?
+RC=0
+echo "$SEARCH_OUT" | grep -q "delta-specs/auth/spec.md" || RC=$?
+check "search.py 'TOTP 2FA' devuelve el delta-spec de auth (file:line)" "$RC"
 
-echo "$SEARCH_OUT" | grep -qi "TOTP"
-check "search.py --cite incluye texto citado verbatim con 'TOTP'" $?
+RC=0
+echo "$SEARCH_OUT" | grep -qi "TOTP" || RC=$?
+check "search.py --cite incluye texto citado verbatim con 'TOTP'" "$RC"
 
 TRACE_OUT=$(python3 "$MIMIR_DIR/search.py" --root "$MIMIR_WORK" --trace AUTH-a1b2 2>&1)
-echo "$TRACE_OUT" | grep -q "proposal creado"
-check "search.py --trace AUTH-a1b2 muestra el linaje de la propuesta" $?
-echo "$TRACE_OUT" | grep -q "delta-spec: auth"
-check "search.py --trace incluye el delta-spec de auth en el linaje" $?
+RC=0
+echo "$TRACE_OUT" | grep -q "proposal creado" || RC=$?
+check "search.py --trace AUTH-a1b2 muestra el linaje de la propuesta" "$RC"
+RC=0
+echo "$TRACE_OUT" | grep -q "delta-spec: auth" || RC=$?
+check "search.py --trace incluye el delta-spec de auth en el linaje" "$RC"
 
 CHECK_OUT=$(python3 "$MIMIR_DIR/search.py" --root "$MIMIR_WORK" --check 2>&1)
 CHECK_RC=$?
-echo "$CHECK_OUT" | grep -q "índice actualizado"
-check "search.py --check confirma índice fresco tras reindex" $?
-[ "$CHECK_RC" -eq 0 ]
-check "search.py --check devuelve exit 0 cuando el índice está fresco" $?
+RC=0
+echo "$CHECK_OUT" | grep -q "indice actualizado" || RC=$?
+check "search.py --check confirma índice fresco tras reindex" "$RC"
+if [ "$CHECK_RC" -eq 0 ]; then
+    check "search.py --check devuelve exit 0 cuando el índice está fresco" 0
+else
+    check "search.py --check devuelve exit 0 cuando el índice está fresco" 1
+fi
 
 # Modificar un archivo fuente y confirmar que --check detecta el drift (STALE)
 sleep 1
 echo "" >> "$MIMIR_WORK/.quinoto-spec/discovery/02-overview.md"
 STALE_OUT=$(python3 "$MIMIR_DIR/search.py" --root "$MIMIR_WORK" --check 2>&1)
 STALE_RC=$?
-echo "$STALE_OUT" | grep -q "STALE"
-check "search.py --check detecta archivo modificado (STALE)" $?
-[ "$STALE_RC" -eq 1 ]
-check "search.py --check devuelve exit 1 cuando hay drift" $?
+RC=0
+echo "$STALE_OUT" | grep -q "STALE" || RC=$?
+check "search.py --check detecta archivo modificado (STALE)" "$RC"
+if [ "$STALE_RC" -eq 1 ]; then
+    check "search.py --check devuelve exit 1 cuando hay drift" 0
+else
+    check "search.py --check devuelve exit 1 cuando hay drift" 1
+fi
 
 echo ""
 
@@ -127,23 +146,32 @@ except (json.JSONDecodeError, KeyError):
     pass
 " 2>/dev/null)
 
-[ -n "$AUTH_SCORE" ] && [ -n "$LEGACY_SCORE" ]
-check "rank.py --json produce scores numéricos para ambas propuestas" $?
+if [ -n "$AUTH_SCORE" ] && [ -n "$LEGACY_SCORE" ]; then
+    check "rank.py --json produce scores numéricos para ambas propuestas" 0
+else
+    check "rank.py --json produce scores numéricos para ambas propuestas" 1
+fi
 
 if [ -n "$AUTH_SCORE" ] && [ -n "$LEGACY_SCORE" ]; then
-    [ "$AUTH_SCORE" -gt "$LEGACY_SCORE" ]
-    check "sample-auth (score $AUTH_SCORE) rankea por encima de sample-legacy (score $LEGACY_SCORE)" $?
+    if [ "$AUTH_SCORE" -gt "$LEGACY_SCORE" ]; then
+        check "sample-auth (score $AUTH_SCORE) rankea por encima de sample-legacy (score $LEGACY_SCORE)" 0
+    else
+        check "sample-auth (score $AUTH_SCORE) rankea por encima de sample-legacy (score $LEGACY_SCORE)" 1
+    fi
 else
     check "sample-auth rankea por encima de sample-legacy (scores no disponibles, ver JSON arriba)" 1
 fi
 
 TABLE_OUT=$(python3 "$VALKYRIE_DIR/rank.py" --root "$FIXTURE_SRC" 2>&1)
-echo "$TABLE_OUT" | grep -q "sample-auth"
-check "rank.py (tabla) lista sample-auth" $?
-echo "$TABLE_OUT" | grep -q "sample-legacy"
-check "rank.py (tabla) lista sample-legacy" $?
-echo "$TABLE_OUT" | grep -q "candidate archive"
-check "rank.py detecta al menos una propuesta stale -> candidate archive" $?
+RC=0
+echo "$TABLE_OUT" | grep -q "sample-auth" || RC=$?
+check "rank.py (tabla) lista sample-auth" "$RC"
+RC=0
+echo "$TABLE_OUT" | grep -q "sample-legacy" || RC=$?
+check "rank.py (tabla) lista sample-legacy" "$RC"
+RC=0
+echo "$TABLE_OUT" | grep -q "candidate archive" || RC=$?
+check "rank.py detecta al menos una propuesta stale -> candidate archive" "$RC"
 
 echo ""
 
@@ -213,22 +241,33 @@ EOF
 
 INIT_OUT=$(python3 "$BIFROST_DIR/bifrost.py" --init --root "$BIFROST_WORK" --repos "auth:auth,payments:payments" --name "test-falange" 2>&1)
 INIT_RC=$?
-echo "$INIT_OUT" | grep -q "federation.yaml creado"
-check "bifrost.py --init crea federation.yaml" $?
-[ "$INIT_RC" -eq 0 ]
-check "bifrost.py --init devuelve exit 0" $?
-[ -f "$BIFROST_WORK/.quinoto-spec/federation.yaml" ]
-check "federation.yaml existe en disco" $?
+RC=0
+echo "$INIT_OUT" | grep -q "federation.yaml creado" || RC=$?
+check "bifrost.py --init crea federation.yaml" "$RC"
+if [ "$INIT_RC" -eq 0 ]; then
+    check "bifrost.py --init devuelve exit 0" 0
+else
+    check "bifrost.py --init devuelve exit 0" 1
+fi
+if [ -f "$BIFROST_WORK/.quinoto-spec/federation.yaml" ]; then
+    check "federation.yaml existe en disco" 0
+else
+    check "federation.yaml existe en disco" 1
+fi
 
 STATUS_OUT=$(python3 "$BIFROST_DIR/bifrost.py" --status --root "$BIFROST_WORK" 2>&1)
-echo "$STATUS_OUT" | grep -q "^auth "
-check "bifrost.py --status lista el repo 'auth'" $?
-echo "$STATUS_OUT" | grep -q "1 activas"
-check "bifrost.py --status cuenta la propuesta activa de 'auth'" $?
-echo "$STATUS_OUT" | grep -q "^payments "
-check "bifrost.py --status lista el repo 'payments'" $?
-echo "$STATUS_OUT" | grep -q "MISSING schema"
-check "bifrost.py --status detecta schema faltante en 'payments'" $?
+RC=0
+echo "$STATUS_OUT" | grep -q "^auth " || RC=$?
+check "bifrost.py --status lista el repo 'auth'" "$RC"
+RC=0
+echo "$STATUS_OUT" | grep -q "1 activas" || RC=$?
+check "bifrost.py --status cuenta la propuesta activa de 'auth'" "$RC"
+RC=0
+echo "$STATUS_OUT" | grep -q "^payments " || RC=$?
+check "bifrost.py --status lista el repo 'payments'" "$RC"
+RC=0
+echo "$STATUS_OUT" | grep -q "MISSING schema" || RC=$?
+check "bifrost.py --status detecta schema faltante en 'payments'" "$RC"
 
 # --sync: agregar una nota en 'auth' (sin pushear a mano) y verificar que
 # bifrost.py --sync la propague a origin y de ahi a 'payments'.
@@ -236,12 +275,17 @@ git -C "$BIFROST_WORK/auth" notes --ref=quinotospec-events add -m "evento de tes
 
 SYNC_OUT=$(python3 "$BIFROST_DIR/bifrost.py" --sync --root "$BIFROST_WORK" 2>&1)
 SYNC_RC=$?
-echo "$SYNC_OUT" | grep -q "auth | push: OK | fetch: OK"
-check "bifrost.py --sync hace push+fetch OK para 'auth'" $?
-echo "$SYNC_OUT" | grep -q "payments | push:.*| fetch: OK"
-check "bifrost.py --sync hace fetch OK para 'payments' (recibe la nota via origin)" $?
-[ "$SYNC_RC" -eq 0 ]
-check "bifrost.py --sync devuelve exit 0 (sin errores reales)" $?
+RC=0
+echo "$SYNC_OUT" | grep -q "auth | push: OK | fetch: OK" || RC=$?
+check "bifrost.py --sync hace push+fetch OK para 'auth'" "$RC"
+RC=0
+echo "$SYNC_OUT" | grep -q "payments | push:.*| fetch: OK" || RC=$?
+check "bifrost.py --sync hace fetch OK para 'payments' (recibe la nota via origin)" "$RC"
+if [ "$SYNC_RC" -eq 0 ]; then
+    check "bifrost.py --sync devuelve exit 0 (sin errores reales)" 0
+else
+    check "bifrost.py --sync devuelve exit 0 (sin errores reales)" 1
+fi
 
 AUTH_HEAD=$(git -C "$BIFROST_WORK/auth" rev-parse HEAD)
 git -C "$BIFROST_WORK/payments" notes --ref=quinotospec-events show "$AUTH_HEAD" > /dev/null 2>&1

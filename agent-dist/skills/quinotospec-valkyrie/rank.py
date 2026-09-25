@@ -16,6 +16,7 @@ score = 0.30*impact + 0.25*urgency + 0.20*risk_inverse + 0.15*debt_relief + 0.10
 Solo stdlib. Offline.
 """
 import datetime
+import importlib.util
 import json
 import os
 import re
@@ -23,6 +24,17 @@ import sys
 from collections import defaultdict, deque
 from pathlib import Path
 
+
+def load_contract():
+    path = Path(__file__).resolve().parents[1] / "quinotospec-contract" / "contract.py"
+    spec = importlib.util.spec_from_file_location("quinotospec_contract_shared", path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+CONTRACT = load_contract()
 PRIORITY_WEIGHT = {"P1": 1.0, "P2": 0.5, "P3": 0.0}
 
 
@@ -50,28 +62,28 @@ def _field(text, pattern, default=None):
 
 def parse_proposal(path: Path):
     text = path.read_text(errors="ignore")
-
-    prefix = _field(text, r'\*\*Prefijo:?\*\*:?\s*(\S+)') or "SIN-PREFIJO"
-    prefix = prefix.rstrip(".,;:")
-    fecha = _field(text, r'\*\*Fecha de Creaci[oó]n\*\*:?\s*([0-9]{4}-[0-9]{2}-[0-9]{2})')
-    estado = _field(text, r'\*\*Estado\*\*:?\s*(.+)', "?")
-    prioridad = _field(text, r'\*\*Prioridad\*\*:?\s*(P[123])', "P3")
-    complejidad = _field(text, r'\*\*Complejidad\*\*:?\s*(\w+)', "Media")
-    servicios_raw = _field(text, r'\*\*Servicios Afectados\*\*:?\s*(.+)', "")
-    servicios = [s.strip() for s in re.split(r'[,\n]', servicios_raw) if s.strip()] if servicios_raw else []
-
+    root = path.parents[3] if len(path.parents) >= 3 else path.parent
+    try:
+        parsed = CONTRACT.parse_proposal(path, root).to_dict()
+    except (OSError, ValueError):
+        parsed = {
+            "prefix": "SIN-PREFIJO",
+            "date": "",
+            "status": "unknown",
+            "priority": "P3",
+            "complexity": "Media",
+            "services": [],
+        }
     conflictos_raw = _field(text, r'\*\*?⚠️?\s*Conflictos Detectados:?\*\*?:?\s*(.+)')
     tiene_conflicto = bool(conflictos_raw) and "ninguno" not in conflictos_raw.lower()
-
     debt_relief = bool(re.search(r'07-findings|findings-and-recommendations|tiwaz-rune|hallazgo', text, re.I))
-
     return {
-        "prefix": prefix,
-        "fecha": fecha,
-        "estado": estado,
-        "prioridad": prioridad if prioridad in PRIORITY_WEIGHT else "P3",
-        "complejidad": complejidad,
-        "servicios": servicios,
+        "prefix": parsed["prefix"] or "SIN-PREFIJO",
+        "fecha": parsed["date"],
+        "estado": parsed["status"],
+        "prioridad": parsed["priority"] if parsed["priority"] in PRIORITY_WEIGHT else "P3",
+        "complejidad": parsed["complexity"] or "Media",
+        "servicios": parsed["services"],
         "tiene_conflicto": tiene_conflicto,
         "conflicto_detalle": conflictos_raw,
         "debt_relief": debt_relief,
@@ -82,10 +94,12 @@ def count_us_p1(prop_dir: Path):
     us_file = prop_dir / "user-stories.md"
     if not us_file.exists():
         return 0, 0
-    text = us_file.read_text(errors="ignore")
-    rows = [ln for ln in text.splitlines() if ln.strip().startswith("|") and "US-" in ln]
-    p1 = sum(1 for ln in rows if re.search(r'\|\s*P1\s*\|', ln))
-    return p1, len(rows)
+    try:
+        stories = CONTRACT.parse_stories(us_file, prop_dir.parents[2])
+    except (OSError, ValueError):
+        return 0, 0
+    p1 = sum(1 for story in stories if story.priority == "P1")
+    return p1, len(stories)
 
 
 def read_dread(prop_dir: Path):
@@ -103,22 +117,14 @@ def read_dread(prop_dir: Path):
 
 
 def find_changelog_last_date(root: Path, prefix: str, slug: str):
+    try:
+        entries, _ = CONTRACT.parse_changelog(root)
+    except (OSError, ValueError):
+        return None
     dates = []
-    changelog_dir = root / ".quinoto-spec" / "changelog"
-    if changelog_dir.exists():
-        for entry in changelog_dir.glob("*.md"):
-            text = entry.read_text(errors="ignore")
-            if prefix in text or slug in text:
-                m = re.match(r'(\d{4}-\d{2}-\d{2})', entry.stem)
-                if m:
-                    dates.append(m.group(1))
-    legacy = root / ".quinoto-spec" / "quinoto-spec-changelog.md"
-    if legacy.exists():
-        text = legacy.read_text(errors="ignore")
-        for m in re.finditer(r'##\s*\[Fecha:\s*([0-9-]{10})\]', text):
-            snippet = text[m.start():m.start() + 800]
-            if prefix in snippet or slug in snippet:
-                dates.append(m.group(1))
+    for entry in entries:
+        if prefix in (entry.prefix, entry.title, entry.path) or slug in entry.path:
+            dates.append(entry.date)
     return max(dates) if dates else None
 
 
@@ -219,12 +225,23 @@ def compute_urgency(prioridad, fecha_str, today):
 
 
 def suggest_next_task(prop_dir: Path):
+    completed = set()
+    candidates = []
     for tasks_file in sorted(prop_dir.glob("*_tasks.md")):
-        text = tasks_file.read_text(errors="ignore")
-        for line in text.splitlines():
-            m = re.match(r'\s*\|?\s*-?\s*\[ \]\s*(TSK-\S+)?\s*(.*)', line)
-            if "[ ]" in line:
-                return str(tasks_file), line.strip()
+        if tasks_file.name == "all_tasks.md":
+            continue
+        try:
+            tasks = CONTRACT.parse_tasks(tasks_file, prop_dir.parents[2])
+        except (OSError, ValueError):
+            continue
+        for task in tasks:
+            if task.status == "completed":
+                completed.add(task.canonical_id)
+            elif task.status == "pending":
+                candidates.append(task)
+    for task in candidates:
+        if all(dependency in completed for dependency in task.dependencies):
+            return task.path, task.canonical_id
     return None, None
 
 

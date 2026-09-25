@@ -32,12 +32,11 @@ Migra la estructura `.quinoto-spec/` de una version de QuinotoSpec a otra. Detec
 4. Si no hay breaking changes -> "Migracion compatible, sin cambios criticos"
 
 ### Paso 3 - Backup Automatico (BLOQUEANTE - Regla #10)
-1. Crea backup en `.quinoto-spec/backups/pre-migrate-{YYYYMMDD-HHmmss}/`
-2. El backup incluye:
-   - Todo el contenido de `.quinoto-spec/`
-   - `AGENTS.md` si existe
-3. Verifica integridad del backup (compara tamanos)
-4. Reporta: "Backup creado en: {ruta}"
+1. Ejecuta `backup.py create --root . --type full --json` antes de modificar `.quinoto-spec/`.
+2. Pasa el `--store` explícito si el proyecto usa un store externo.
+3. Verifica el backup con `backup.py verify --backup BACKUP_ID --json`; no continúes si falla.
+4. Reporta el ID, ruta, cantidad de archivos y hashes verificados.
+5. No copies manualmente `.quinoto-spec/` y no borres el store durante la migración.
 
 ### Paso 4 - Ejecutar Migracion
 Segun la version destino, aplica los cambios necesarios:
@@ -69,7 +68,7 @@ Segun la version destino, aplica los cambios necesarios:
 
 ## Output Esperado
 
-- Backup en `.quinoto-spec/backups/pre-migrate-{timestamp}/`
+- Backup verificado en el store externo con `BACKUP_ID`
 - Estructura `.quinoto-spec/` actualizada a la nueva version
 - Archivo `.version` actualizado
 - Entrada en changelog documentando la migracion

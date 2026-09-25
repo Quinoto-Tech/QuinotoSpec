@@ -9,16 +9,17 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
 ### Instrucciones de Ejecución:
 
 1. **Análisis de Propuestas**:
-    - Escanea el directorio `.quinoto-spec/proposals/` (activas) y `.quinoto-spec/proposals/_archived/` (archivadas).
-    - Clasifica propuestas activas: 🟡 Propuesta, 🟢 En Curso, ✅ Completada.
-    - Extrae prioridad y complejidad de cada `proposal.md`.
-    - Registra el conteo total: activas vs archivadas.
-    - Lee `**Discovery Date:**` en `.quinoto-spec/discovery/01-stack-profile.md`. Si han pasado más de 30 días desde esa fecha → marcarlo como alerta en la sección `🚨 Alertas y Bloqueos` con el mensaje: *"⏰ El discovery tiene [N] días de antigüedad. Considera ejecutar `@quinotospec.refresh-discovery`."*
+     - Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json`.
+     - Escanea el directorio `.quinoto-spec/proposals/` (activas) y `.quinoto-spec/proposals/_archived/` (archivadas).
+     - Clasifica estados normalizados: `proposed`, `in_progress`, `completed` y `archived`.
+     - Extrae prioridad, complejidad, prefijo e ID canónico de cada `proposal.md`.
+     - Registra el conteo total: activas vs archivadas.
+     - Lee `**Discovery Date:**` en `.quinoto-spec/discovery/01-stack-profile.md`. Si han pasado más de 30 días desde esa fecha → marcarlo como alerta en la sección `🚨 Alertas y Bloqueos` con el mensaje: *"⏰ El discovery tiene [N] días de antigüedad. Considera ejecutar `@quinotospec.refresh-discovery`."*
 
 2. **Cálculo de Progreso y Velocidad**:
-     - Para cada propuesta activa, busca archivos de tareas (`*_tasks.md`).
-     - Calcula el porcentaje de completitud basado en los checkboxes `[x]` vs `[ ]`.
-     - Ejecuta `@quinotospec.changelog-view --days 7 --json` y `@quinotospec.changelog-view --days 30 --json` para estimar la velocidad del equipo (auto-detecta formato v1/v2).
+     - Usa el snapshot del contrato para contar estados `completed`, `pending`, `in_progress`, `blocked` y `unknown`; no interpretes tablas manualmente.
+     - Para cada propuesta activa, busca archivos `*_tasks.md` primarios; excluye `all_tasks.md` del conteo.
+     - Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` y filtra por fecha para estimar la velocidad del equipo.
 
 3. **Métricas de Valor**:
      - Ejecuta `@quinotospec.changelog-view --json` para obtener todas las entradas.
@@ -47,11 +48,12 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
      - Mostrar en la sección `## 🕐 Actividad Reciente`.
 
 8. **Salud de la Metodología**:
-    - Verifica la existencia y contenido de los siguientes artefactos:
-        - ✅/❌ `.quinoto-spec/discovery/` existe y tiene los 8 archivos esperados.
-        - ✅/❌ `08-product-and-agreements.md` tiene contenido más allá de los encabezados.
-        - ✅/❌ `.quinoto-spec/prefix-registry.md` está actualizado y sin duplicados.
-        - ✅/❌ `.quinoto-spec/schema.yaml` existe y es valido.
+     - Verifica la existencia y contenido de los siguientes artefactos:
+         - ✅/❌ `.quinoto-spec/discovery/` existe y tiene los 8 archivos esperados.
+         - ✅/❌ `08-product-and-agreements.md` tiene contenido más allá de los encabezados.
+         - ✅/❌ `.quinoto-spec/prefix-registry.md` está actualizado y sin duplicados.
+         - ✅/❌ `.quinoto-spec/schema.yaml` existe y es valido.
+         - ✅/❌ `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict` pasa sin errores.
 
 9. **Próximos Pasos Sugeridos** (Blood-Bond):
 

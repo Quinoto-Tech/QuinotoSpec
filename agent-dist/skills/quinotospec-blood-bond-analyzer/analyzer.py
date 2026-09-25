@@ -18,6 +18,7 @@ Genera: .quinoto-spec/blood-bond/analysis.json
 Solo stdlib. Offline.
 """
 import datetime
+import importlib.util
 import json
 import os
 import re
@@ -25,6 +26,17 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+
+def load_contract():
+    path = Path(__file__).resolve().parents[1] / "quinotospec-contract" / "contract.py"
+    spec = importlib.util.spec_from_file_location("quinotospec_contract_shared", path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+CONTRACT = load_contract()
 SPANISH_DAYS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
 
 
@@ -46,155 +58,70 @@ def resolve_root(argv):
 
 
 def parse_changelog(root: Path):
-    """Retorna lista de dicts {date_str, date_obj, title, task_ids, raw} ordenada por fecha."""
-    entries = []
-
-    # v2: .quinoto-spec/changelog/*.md
-    changelog_dir = root / ".quinoto-spec" / "changelog"
-    if changelog_dir.exists():
-        for f in sorted(changelog_dir.glob("*.md")):
-            text = f.read_text(errors="ignore")
-            # Try to extract date from filename first
-            m = re.match(r"(\d{4}-\d{2}-\d{2})", f.stem)
-            date_str = m.group(1) if m else None
-            # Also try header
-            m2 = re.search(r"##\s*\[Fecha:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\]", text)
-            if m2:
-                date_str = m2.group(1)
-            if not date_str:
-                continue
-            try:
-                date_obj = datetime.date.fromisoformat(date_str)
-            except ValueError:
-                continue
-            # Extract TASK_IDs
-            task_ids = re.findall(r"TSK-[A-Za-z0-9]+-[0-9]+", text)
-            # Title: first heading after date or filename
-            title = f.stem
-            m_title = re.search(r"##\s*\[Fecha:[^\]]*\]\s*-\s*(.+)", text)
-            if m_title:
-                title = m_title.group(1).strip()
-            entries.append({"date_str": date_str, "date_obj": date_obj, "title": title, "task_ids": task_ids, "raw": text, "source": str(f)})
-
-    # v1: .quinoto-spec/quinoto-spec-changelog.md
-    legacy = root / ".quinoto-spec" / "quinoto-spec-changelog.md"
-    if legacy.exists():
-        text = legacy.read_text(errors="ignore")
-        for m in re.finditer(r"##\s*\[Fecha:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\]\s*-?\s*([^\n]*)", text):
-            date_str = m.group(1)
-            title = m.group(2).strip() or "legacy-entry"
-            try:
-                date_obj = datetime.date.fromisoformat(date_str)
-            except ValueError:
-                continue
-            # Snippet for task extraction
-            start = m.start()
-            snippet = text[start:start + 2000]
-            task_ids = re.findall(r"TSK-[A-Za-z0-9]+-[0-9]+", snippet)
-            entries.append({"date_str": date_str, "date_obj": date_obj, "title": title, "task_ids": task_ids, "raw": snippet, "source": str(legacy)})
-
-    # Deduplicate by date+title maybe but keep all; sort by date
-    entries.sort(key=lambda e: e["date_obj"])
-    return entries
+    entries, _ = CONTRACT.parse_changelog(root)
+    result = []
+    for entry in entries:
+        try:
+            date_obj = datetime.date.fromisoformat(entry.date)
+        except ValueError:
+            continue
+        raw = Path(entry.path)
+        if not raw.is_absolute():
+            raw = root / raw
+        text = raw.read_text(errors="ignore") if raw.exists() else ""
+        task_ids = re.findall(r"TSK-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*-\d+", text)
+        result.append({
+            "date_str": entry.date,
+            "date_obj": date_obj,
+            "title": entry.title,
+            "task_ids": task_ids,
+            "raw": text,
+            "source": entry.path,
+        })
+    return result
 
 
 def parse_prefix_registry(root: Path):
     registry = root / ".quinoto-spec" / "prefix-registry.md"
-    prefixes = []
-    if not registry.exists():
-        return prefixes
-    text = registry.read_text(errors="ignore")
-    # Table rows | PREFIX | ...
-    for line in text.splitlines():
-        # Look for | XXXX-xxxx | pattern
-        m = re.match(r"\s*\|\s*([A-Z]{3,6}-[a-z0-9]{4})\s*\|", line)
-        if m:
-            # Extract prefix part before -
-            full = m.group(1)
-            prefix = full.split("-")[0]
-            prefixes.append(prefix)
-        else:
-            # Alternative: | AUTH | ... (without suffix)
-            m2 = re.match(r"\s*\|\s*([A-Z]{2,6})\s*\|", line)
-            if m2:
-                val = m2.group(1)
-                if val not in ("Prefijo", "PREFIX", "Nombre"):
-                    prefixes.append(val)
+    prefixes, _ = CONTRACT.parse_registry(registry)
     return prefixes
 
 
 def parse_proposals(root: Path):
-    proposals_dir = root / ".quinoto-spec" / "proposals"
+    try:
+        snapshot = CONTRACT.scan_project(root)
+    except (OSError, ValueError):
+        return []
     proposals = []
-    if not proposals_dir.exists():
-        return proposals
-    for proposal_md in sorted(proposals_dir.glob("*/proposal.md")):
-        if "_archived" in proposal_md.parts:
-            continue
-        text = proposal_md.read_text(errors="ignore")
-        prefix = None
-        m = re.search(r"\*\*Prefijo:?\*\*:?\s*(\S+)", text)
-        if m:
-            raw_prefix = m.group(1).strip().rstrip(".,;:")
-            # raw may be AUTH-a1b2 -> extract AUTH
-            if "-" in raw_prefix:
-                prefix = raw_prefix.split("-")[0].upper()
-            else:
-                prefix = raw_prefix.upper()
-        fecha = None
-        m2 = re.search(r"\*\*Fecha de Creaci[oó]n\*\*:?\s*([0-9]{4}-[0-9]{2}-[0-9]{2})", text)
-        if m2:
-            fecha = m2.group(1)
-        estado = None
-        m3 = re.search(r"\*\*Estado\*\*:?\s*(.+)", text)
-        if m3:
-            estado = m3.group(1).strip()
-        prioridad = None
-        m4 = re.search(r"\*\*Prioridad\*\*:?\s*(P[123])", text)
-        if m4:
-            prioridad = m4.group(1)
+    for proposal in snapshot["proposals"]:
+        path = root / proposal["path"]
         proposals.append({
-            "path": proposal_md,
-            "dir": proposal_md.parent,
-            "slug": proposal_md.parent.name,
-            "prefix": prefix,
-            "fecha": fecha,
-            "estado": estado,
-            "prioridad": prioridad,
-            "text": text,
+            "path": path,
+            "dir": path.parent,
+            "slug": path.parent.name,
+            "prefix": proposal["prefix"],
+            "fecha": proposal["date"],
+            "estado": proposal["status"],
+            "prioridad": proposal["priority"],
+            "text": path.read_text(errors="ignore") if path.exists() else "",
         })
     return proposals
 
 
 def scan_tasks(root: Path):
-    proposals_dir = root / ".quinoto-spec" / "proposals"
-    total = 0
-    completed = 0
-    pending = 0
-    pending_tasks = []  # list of {id, line, file}
+    try:
+        snapshot = CONTRACT.scan_project(root)
+    except (OSError, ValueError):
+        return 0, 0, 0, [], []
+    pending_tasks = []
     completed_tasks = []
-    if not proposals_dir.exists():
-        return total, completed, pending, pending_tasks, completed_tasks
-    for tasks_file in proposals_dir.rglob("*_tasks.md"):
-        if "_archived" in tasks_file.parts:
-            continue
-        text = tasks_file.read_text(errors="ignore")
-        for line in text.splitlines():
-            # Count tasks with checkboxes
-            if "[x]" in line or "[X]" in line:
-                total += 1
-                completed += 1
-                # Extract TASK_ID
-                m = re.search(r"TSK-[A-Za-z0-9]+-[0-9]+", line)
-                if m:
-                    completed_tasks.append({"id": m.group(0), "file": str(tasks_file.relative_to(root)), "line": line.strip()})
-            elif "[ ]" in line:
-                total += 1
-                pending += 1
-                m = re.search(r"TSK-[A-Za-z0-9]+-[0-9]+", line)
-                tid = m.group(0) if m else None
-                pending_tasks.append({"id": tid, "file": str(tasks_file.relative_to(root)), "line": line.strip()})
-    return total, completed, pending, pending_tasks, completed_tasks
+    for task in snapshot["tasks"]:
+        item = {"id": task["canonical_id"], "file": task["path"], "line": task["line"]}
+        if task["status"] == "completed":
+            completed_tasks.append(item)
+        elif task["status"] in {"pending", "in_progress", "blocked", "unknown"}:
+            pending_tasks.append(item)
+    return len(snapshot["tasks"]), len(completed_tasks), len(pending_tasks), pending_tasks, completed_tasks
 
 
 def analyze_temporal(entries):
@@ -253,10 +180,9 @@ def analyze_category(entries, proposals, registry_prefixes):
     counter = Counter()
     for e in entries:
         for tid in e["task_ids"]:
-            # TSK-AUTH-001 -> AUTH
-            m = re.match(r"TSK-([A-Za-z0-9]+)-", tid)
-            if m:
-                counter[m.group(1).upper()] += 1
+            normalized = CONTRACT.normalize_id(tid)
+            if normalized.prefix:
+                counter[normalized.prefix] += 1
     for p in proposals:
         if p["prefix"]:
             counter[p["prefix"]] += 1
@@ -330,9 +256,9 @@ def analyze_sequential(entries):
     for e in entries:
         prefix = None
         if e["task_ids"]:
-            m = re.match(r"TSK-([A-Za-z0-9]+)-", e["task_ids"][0])
-            if m:
-                prefix = m.group(1).upper()
+            normalized = CONTRACT.normalize_id(e["task_ids"][0])
+            if normalized.prefix:
+                prefix = normalized.prefix
         if prefix:
             seq.append(prefix)
 

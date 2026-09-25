@@ -1,0 +1,15 @@
+schema_version: 1
+project:
+  name: "{{PROJECT_NAME}}"
+  stack: "{{STACK}}"
+  language: "{{LANGUAGE}}"
+context:
+  tech_stack: "{{TECH_STACK}}"
+  conventions: "{{CONVENTIONS}}"
+  testing: "{{TESTING}}"
+workflows:
+  active: [constitution, discovery, proposal, user-stories, tasks, apply, review, archive]
+  optional: [battle-frenzy, heimdallr, mjolnir-refactor]
+rules:
+  strictness: standard
+extensions: []

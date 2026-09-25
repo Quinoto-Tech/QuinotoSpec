@@ -11,11 +11,12 @@ Genera reportes estadisticos sobre el uso de QuinotoSpec en el proyecto. Util pa
 
 ### Paso 1 - Recopilar Datos
 Lee los siguientes archivos para extraer metricas:
-1. `.quinoto-spec/quinoto-spec-changelog.md` - Historial de acciones
+1. `.quinoto-spec/changelog/` (v2) o `.quinoto-spec/quinoto-spec-changelog.md` (v1 legacy) - Historial de acciones
 2. `.quinoto-spec/proposals/*/proposal.md` - Propuestas y sus estados
 3. `.quinoto-spec/proposals/*/*_tasks.md` - Tareas y su completion status
 4. `.quinoto-spec/proposals/*/user-stories.md` - User stories
 5. `.quinoto-spec/prefix-registry.md` - Prefijos registrados
+6. Usa `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json` como fuente normalizada.
 
 ### Paso 2 - Calcular Metricas
 Calcula las siguientes metricas:

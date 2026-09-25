@@ -46,8 +46,9 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
      ```
 
 4. Leer `.quinoto-spec/discovery/01-stack-profile.md` (si existe) para conocer el stack, comandos de test y convenciones.
-5. Identificar los archivos involucrados en el bug.
-6. **Presentar análisis al usuario antes de tocar código** (BLOQUEANTE):
+5. Ejecutar `quinotospec-debug` para reproducir, localizar la causa raíz y formular una hipótesis antes de tocar producción.
+6. Identificar los archivos involucrados en el bug.
+7. **Presentar análisis al usuario antes de tocar código** (BLOQUEANTE):
    - Archivos que se modificarán
    - Causa raíz identificada
    - Solución propuesta (1-2 líneas)
@@ -58,10 +59,11 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
 
 ## Paso 1 — Implementación del Fix
 
-1. Realizar los cambios mínimos necesarios para corregir el bug.
-2. Principio de mínima intervención: cambiar solo lo necesario. No aprovechar para refactorizar código no relacionado.
-3. Si el cambio es >20 líneas o afecta múltiples archivos, preguntar al usuario si prefiere crear una propuesta formal en su lugar.
-4. Mantener consistencia con el estilo y convenciones del código existente.
+1. Escribe un test de regresión que falle por la causa raíz usando `quinotospec-tdd`; ejecuta el RED y guarda la evidencia.
+2. Realizar los cambios mínimos necesarios para corregir el bug.
+3. Principio de mínima intervención: cambiar solo lo necesario. No aprovechar para refactorizar código no relacionado.
+4. Si el cambio es >20 líneas o afecta múltiples archivos, preguntar al usuario si prefiere crear una propuesta formal en su lugar.
+5. Mantener consistencia con el estilo y convenciones del código existente.
 
 ---
 
@@ -75,15 +77,15 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
    - `npm test -- --testPathPattern=archivo`
    - `pytest tests/test_archivo.py`
 3. Si los tests fallan:
-   - Verificar que el fallo no sea por el fix mismo (regresión)
-   - Corregir hasta que los tests pasen
-   - Máximo 2 intentos de corrección automática
+   - Cambia a `quinotospec-debug` y registra una hipótesis.
+   - Corrige solo la causa raíz y vuelve a ejecutar el test.
+   - Tras tres hipótesis fallidas, revisa la arquitectura o crea una propuesta.
 
 ---
 
 ## Paso 3 — Rollback si Persisten Fallos
 
-Si después de 2 intentos los tests siguen fallando:
+Si después de tres hipótesis o la revisión arquitectónica los tests siguen fallando:
 
 1. Ejecutar skill `quinotospec-rollback` para revertir cambios automáticamente.
 2. Reportar al usuario el error persistente y sugerir:
@@ -94,7 +96,7 @@ Si después de 2 intentos los tests siguen fallando:
 
 ## Paso 4 — Documentación (Changelog)
 
-Una vez aplicado el fix y pasados los tests, ejecutar la skill `quinotospec-update-changelog`:
+Antes de documentar el resultado, ejecuta `quinotospec-verify-before-done` y conserva la evidencia fresca. Una vez validado, ejecuta la skill `quinotospec-update-changelog`:
 
 - **Título**: Fix: {descripción breve del bug corregido}
 - **Resumen**:

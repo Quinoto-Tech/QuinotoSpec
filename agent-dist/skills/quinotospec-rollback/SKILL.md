@@ -14,16 +14,17 @@ Usa esta skill para deshacer cambios realizados durante la ejecución de un work
 
 ### 1. Rollback de Changelog
 
-Deshace la última entrada del changelog.
+Registra una reversión sin borrar el historial.
 
 ```bash
-/quinotospec-rollback --type changelog
+/quinotospec-rollback --type changelog --entry {{ENTRY_ID}}
 ```
 
 **Acciones**:
-1. Lee `.quinoto-spec/quinoto-spec-changelog.md`
-2. Elimina la última entrada (último header ##)
-3. Guarda el archivo
+1. Consulta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json`.
+2. Identifica la entrada v2 o v1 objetivo.
+3. Crea una nueva entrada v2 con tipo `revert` y referencia a la entrada original.
+4. Nunca elimines ni reescribas una entrada existente.
 
 ### 2. Rollback de Propuesta
 
@@ -86,6 +87,7 @@ Deshace todo lo realizado en una sesión/fecha específica.
 | `--us-id` | ID de la user story |
 | `--task-id` | ID de la tarea |
 | `--since` | Fecha para rollback full |
+| `--entry` | ID o nombre de la entrada de changelog a revertir |
 | `--dry-run` | Mostrar qué se revertirá sin hacer cambios |
 | `--confirm` | Saltar confirmación (para scripting) |
 
@@ -105,7 +107,7 @@ Deshace todo lo realizado en una sesión/fecha específica.
 /quinotospec-rollback --type proposal --slug auth-jwt --confirm
 
 # Rollback de múltiples tareas
-/quinotospec-rollback --type task --slug auth-jwt --task-id TSK-AUTH-001,TSK-AUTH-002 --confirm
+/quinotospec-rollback --type task --slug auth-jwt --task-id TSK-AUTH-a1b2-001,TSK-AUTH-002 --confirm
 ```
 
 ## Validación Post-Rollback

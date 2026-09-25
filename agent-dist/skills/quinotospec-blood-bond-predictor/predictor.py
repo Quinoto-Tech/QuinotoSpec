@@ -23,6 +23,7 @@ import re
 import sys
 from pathlib import Path
 
+TASK_ID_PATTERN = re.compile(r"TSK-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*-\d+")
 
 def resolve_root(argv):
     args = list(argv)
@@ -83,11 +84,9 @@ def find_pending_tasks(root: Path):
         text = tasks_file.read_text(errors="ignore")
         for line in text.splitlines():
             if "[ ]" in line:
-                m = re.search(r"TSK-([A-Za-z0-9]+)-[0-9]+", line)
-                prefix = m.group(1).upper() if m else "UNKNOWN"
-                # Extract TASK_ID
-                tid_m = re.search(r"TSK-[A-Za-z0-9]+-[0-9]+", line)
+                tid_m = TASK_ID_PATTERN.search(line)
                 tid = tid_m.group(0) if tid_m else None
+                prefix = tid.split("-")[1] if tid and "-" in tid else "UNKNOWN"
                 entry = {"id": tid, "prefix": prefix, "file": str(tasks_file.relative_to(root)), "line": line.strip()}
                 all_pending.append(entry)
                 pending_by_prefix.setdefault(prefix, []).append(entry)

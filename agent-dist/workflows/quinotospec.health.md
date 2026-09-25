@@ -71,8 +71,9 @@ Objetivo: ejecutar un chequeo técnico completo de integridad del sistema Quinot
 
 1. Leer `**Discovery Date:**` de `01-stack-profile.md`.
 2. Si > 30 días: *"⏰ Discovery desactualizado ({{N}} días). Ejecutar @quinotospec.refresh-discovery."*
-3. Leer última entrada de `quinoto-spec-changelog.md`.
-4. Si > 14 días sin entradas: *"⚠️ Sin actividad en changelog por {{N}} días."*
+3. Ejecutar `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict`.
+4. Consultar `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para la última entrada v1/v2.
+5. Si > 14 días sin entradas: *"⚠️ Sin actividad en changelog por {{N}} días."*
 
 ### Paso 6 — Chequear branches (requiere git)
 

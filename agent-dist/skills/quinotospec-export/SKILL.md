@@ -22,6 +22,9 @@ Recibe parametros:
 - `--include`: Que exportar (`all`, `proposals`, `tasks`, `stories`) (default: `all`)
 
 ### Paso 2 - Recopilar Datos
+
+Primero ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json` y usa su snapshot normalizado. Excluye `all_tasks.md` de las fuentes primarias y conserva `raw_id` junto con `canonical_id`.
+
 Segun el alcance:
 
 **Propuestas:**
@@ -60,10 +63,12 @@ Segun el alcance:
 **CSV:**
 ```csv
 type,id,title,status,proposal,description
-proposal,auth-jwt,Implementar Auth JWT,En Curso,AUTH-a1b2,...
-story,US-AUTH-001,Login endpoint,En Curso,auth-jwt,...
-task,TSK-AUTH-001,Crear endpoint POST /login,Completada,auth-jwt,...
+proposal,auth-jwt,Implementar Auth JWT,in_progress,AUTH-a1b2,...
+story,US-AUTH-a1b2-001,Login endpoint,in_progress,auth-jwt,...
+task,TSK-AUTH-a1b2-001,Crear endpoint POST /login,completed,auth-jwt,...
 ```
+
+Escapa celdas que comiencen con `=`, `+`, `-` o `@` para evitar fórmulas al abrir el CSV.
 
 **Jira CSV (para import en Jira):**
 ```csv

@@ -34,6 +34,8 @@ Completa los campos con los datos provistos. El campo `ultimo_paso_completado` s
 
 > **⚠️ Verificación humana requerida**: Solicitar confirmación del usuario antes de continuar al paso 2. El usuario puede editar el `.yml` antes de aprobar.
 
+Después de la confirmación, registra la decisión en `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` y valida `human-approval` para el subject `.quinoto-spec/proposals/{{SLUG}}/mjolnir-refactor.yml` y action `mjolnir-refactor` antes de continuar.
+
 Una vez confirmado, ejecuta `quinotospec-update-changelog`:
 - **Título**: Mjolnir Init: {nombre}
 - **Resumen**: Archivo de contexto generado en `.quinoto-spec/{nombre}/mjolnir-refactor.yml`.

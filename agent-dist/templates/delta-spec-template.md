@@ -5,10 +5,12 @@ description: Template para generar archivos delta-spec con secciones ADDED/MODIF
 
 # Delta Spec: {{DOMAIN}} — {{PROPOSAL_SLUG}}
 
-> **Propuesta:** {{PROPOSAL_NAME}}
-> **Prefijo:** {{PREFIX}}
-> **Fecha:** {{DATE}}
-> **Estado:** 🟡 Propuesta
+**Contract Version:** 1
+**Proposal ID:** {{PROPOSAL_ID}}
+**Propuesta:** {{PROPOSAL_NAME}}
+**Prefijo:** {{PREFIX}}
+**Fecha de Creación:** {{DATE}}
+**Estado:** proposed
 
 ---
 

@@ -16,6 +16,7 @@ Solo stdlib. Unicas llamadas de red posibles son los `git push/fetch` explicitos
 de --sync (heredan la configuracion de remotos de cada repo).
 """
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -23,6 +24,17 @@ import subprocess
 import sys
 from pathlib import Path
 
+
+def load_contract():
+    path = Path(__file__).resolve().parents[1] / "quinotospec-contract" / "contract.py"
+    spec = importlib.util.spec_from_file_location("quinotospec_contract_shared", path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+CONTRACT = load_contract()
 NOTES_REF = "refs/notes/quinotospec-events"
 
 
@@ -159,16 +171,13 @@ def count_proposals(repo_root: Path):
     props_dir = repo_root / ".quinoto-spec" / "proposals"
     if not props_dir.exists():
         return None, None
-    total = 0
-    en_curso = 0
-    for p in props_dir.glob("*/proposal.md"):
-        if "_archived" in p.parts:
-            continue
-        total += 1
-        text = p.read_text(errors="ignore")
-        if re.search(r'\*\*Estado\*\*:?\s*.*En Curso', text):
-            en_curso += 1
-    return total, en_curso
+    try:
+        snapshot = CONTRACT.scan_project(repo_root)
+    except (OSError, ValueError):
+        return None, None
+    proposals = snapshot["proposals"]
+    en_curso = sum(1 for proposal in proposals if proposal["status"] == "in_progress")
+    return len(proposals), en_curso
 
 
 def latest_s_final(repo_root: Path):

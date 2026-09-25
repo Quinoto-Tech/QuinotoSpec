@@ -7,6 +7,8 @@ description: Muestra el changelog consolidado del proyecto, combinando entradas 
 
 Workflow para visualizar el historial de cambios del proyecto de forma consolidada. Detecta automáticamente si el proyecto usa formato v1 (archivo único) o v2 (directorio `changelog/`) o ambos.
 
+La fuente de verdad para la lectura normalizada es `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json`. No interpretes manualmente fechas, títulos o `Tiempo Ahorrado` antes de consultar ese comando.
+
 ## Precondiciones
 
 - El directorio de trabajo será la raíz del proyecto.
@@ -30,17 +32,16 @@ Workflow para visualizar el historial de cambios del proyecto de forma consolida
 #### Si v2 activo (o híbrido):
 1. Listar archivos en `.quinoto-spec/changelog/` que coincidan con `*.md`, excluyendo `INDEX.md`.
 2. Para cada archivo:
-   - Leer contenido completo.
-   - Extraer fecha del heading `## [Fecha: YYYY-MM-DD]`.
-   - Extraer título del mismo heading.
-   - Extraer resumen (líneas debajo de `### Resumen` hasta `**Tiempo Ahorrado**`).
-   - Extraer prefijo si está presente en el nombre del archivo (formato `YYYY-MM-DD-PREFIX-rest.md`).
+   - Usa el parser común para obtener fecha, título, resumen, prefijo y tiempo ahorrado.
+   - Acepta headings `## [Fecha: YYYY-MM-DD] - Título` y `## [YYYY-MM-DD] - Título`.
+   - Acepta `Tiempo Ahorrado` y `Time Saved`.
+   - Excluye `INDEX.md` y deduplica por fecha + título, priorizando v2.
 3. Ordenar por fecha descendente (más reciente primero).
 
 #### Si v1 activo (o híbrido):
-1. Leer `.quinoto-spec/quinoto-spec-changelog.md`.
-2. Parsear entradas por bloques `## [Fecha:`.
-3. Extraer misma estructura que v2.
+1. Usa el mismo parser para leer `.quinoto-spec/quinoto-spec-changelog.md` si existe.
+2. Combina las entradas con v2 y reporta cualquier duplicado.
+3. Si ambos formatos existen, v2 es la fuente prioritaria.
 
 ---
 

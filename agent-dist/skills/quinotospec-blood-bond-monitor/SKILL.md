@@ -16,8 +16,8 @@ Monitorea la actividad del proyecto y detecta cuándo el usuario necesita una su
 ## Algoritmo de Monitoreo
 
 ### Paso 1 — Verificar Changelog
-1. Lee `.quinoto-spec/quinoto-spec-changelog.md`
-2. Extrae la fecha de la úlima entrada (formato `## [Fecha: YYYY-MM-DD]`)
+1. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json`.
+2. Usa la última entrada normalizada, independientemente de si es v1 o v2.
 3. Calcula días desde última actividad
 
 ### Paso 2 — Evaluar Inactividad

@@ -377,6 +377,7 @@ Crear la siguiente estructura:
 ```
 .quinoto-spec/
 ├── schema.yaml
+├── config.yaml
 ├── specs/
 │   └── README.md
 ├── discovery/
@@ -395,6 +396,19 @@ Crear `.quinoto-spec/schema.yaml` copiando `agent-dist/templates/schema-template
 El schema define el DAG de artefactos (propuesta, delta-specs, design, user-stories, tareas) y sus dependencias. El artifact engine (`quinotospec-artifact-engine`) usa este schema para calcular estado (done/ready/blocked).
 
 Personalizacion: `@quinotospec.schema-fork` permite adaptar el schema al flujo del equipo.
+
+### Configuración y AGENTS dinámico
+
+Crear `.quinoto-spec/config.yaml` desde `agent-dist/templates/config-template.yml`, resolviendo `PROJECT_NAME`, `STACK` y `LANGUAGE` con los datos del wizard. Mantener `workflows.active`, `workflows.optional`, `rules.strictness` y `extensions`.
+
+Después generar el archivo de referencia del proyecto:
+
+```bash
+python3 agent-dist/skills/quinotospec-update-agents/update_agents.py \
+  --root . --config .quinoto-spec/config.yaml --write
+```
+
+No editar `AGENTS.md` manualmente; cambiar `config.yaml` y regenerar.
 
 ### Specs README
 

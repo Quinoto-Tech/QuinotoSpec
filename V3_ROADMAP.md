@@ -1,20 +1,44 @@
-# QuinotoSpec v3.0 — Plan de Implementacion
+# QuinotoSpec v3.2 — Plan de Implementacion
 
 ## Resumen Ejecutivo
 
-Este documento detalla el plan de evolucion de QuinotoSpec desde v2.7.0 (Warband: Nórdicas) hacia v3.3.0, incorporando las mejores caracteristicas identificadas en el analisis competitivo de los 4 frameworks lideres del ecosistema:
+Este documento detalla el plan de evolucion de QuinotoSpec desde v3.2.0 (Warband: Hird Edition) hacia v3.3.0, incorporando las mejores caracteristicas identificadas en el analisis competitivo de los 4 frameworks lideres del ecosistema:
 
 - **Superpowers** (obra/superpowers) — Disciplina de ingenieria (TDD, debugging, verificacion)
 - **OpenSpec** (Fission-AI/OpenSpec) — Spec-driven con delta specs y artifact DAG
 - **Spec-Kit** (github/spec-kit) — Extensiones/presets, constitution, workflow engine
 - **BMAD-METHOD** (bmad-code-org/bmad-method) — Agentes con personalidad, party mode, scale-adaptive
 
-**Version actual:** 2.7.0
+**Version actual:** 3.2.0
 **Version objetivo:** 3.3.0
 **Fases:** 4 fases incrementales, cada una entregable independientemente
-**Progreso:** 29/151 items completados (19% — incluye tareas y criterios de aceptación; Fase 1 y Fase 4 permanecen sin implementar)
+**Progreso:** Gate 0 y Fase 1 están completos. F2.1/F2.2 fueron entregadas previamente; F2.3, F2.4 y F2.5 están implementadas y validadas. F3.2 queda completa con Party Mode integrado en bootstrap; F3.1, F3.3 y las tareas restantes de F3.4 siguen pendientes. La release permanece beta/RC por límites operativos externos.
 
-> ⚠️ **Nota de implementacion:** Las features F2.1 (Delta Specs), F2.2 (Artifact DAG) y F3.2 (Party Mode) se implementaron como versiones incrementales (v2.2.0 → v2.4.0) antes de Fase 1. Fase 1 permanece sin implementar. Ver [Conflictos con Dependencias](#conflictos-con-dependencias-conocidos) al final de este documento.
+> ⚠️ **Nota de implementacion:** Las features F2.1 (Delta Specs), F2.2 (Artifact DAG) y F3.2 (Party Mode) se implementaron como versiones incrementales (v2.2.0 → v2.4.0) antes de Fase 1. Gate 0, Fase 2 y F3.2 están completos; la release 3.2.0 conserva el estado beta/RC y F3.1/F3.3 siguen planificadas. Ver [Conflictos con Dependencias](#conflictos-con-dependencias-conocidos) al final de este documento.
+
+## Stability Gate 0 — Baseline and scope freeze (complete)
+
+La versión 3.2.0 queda clasificada como **beta / release candidate** de Hird Edition después de completar Gate 0, Fase 2 y F3.2. Gate 0 no añadió funcionalidades nuevas fuera de F1.1–F1.7; F2.3–F2.5 y F3.2 son las excepciones posteriores aprobadas:
+
+- [x] Inventario de workflows, skills, agentes, reglas y templates.
+- [x] Clasificación de capacidades como beta, experimental, prompt-only o demo.
+- [x] Registro de límites conocidos en `manifest.json` y `docs/ARCHITECTURE.md`.
+- [x] Contrato canónico de proposals, user stories, tasks, IDs y changelog mediante `quinotospec-contract/contract.py`.
+- [x] Gate determinista del contrato integrado en `validate-all.sh` y CI.
+- [x] Gates ejecutables para el resto de las reglas de gobernanza.
+  - [x] G0.1 — Dispatcher read-only para contrato, prefijo, changelog, acuerdo de producto, branches, rutas protegidas y configuración crítica.
+  - [x] G0.2 — Gates ejecutables para evidencia TDD/debug/verify, backup y decisiones humanas.
+    - [x] G0.2a — Motor de backup verificable con SHA-256, staging y restore transaccional.
+    - [x] G0.2b — Evidencia estructurada y fresca para TDD/debug/verify.
+    - [x] G0.2c — Decisiones humanas y aprobación explícita mediante registros JSON frescos y acotados.
+- [x] Installer transaccional con staging, ownership manifest, rollback y uninstall selectivo.
+- [x] Suite CI/release que ejecuta todos los tests, empaqueta el tarball, valida checksum y smoke test del artefacto extraído.
+
+G0.2c exige un registro JSON explícito, fresco y acotado por `subject`/`action`; `approved` es el único estado habilitante y el validador no prueba identidad ni ejecuta comandos.
+
+El installer exige staging verificado, manifest de ownership con hashes y rollback automático ante fallos; el uninstall solo elimina archivos gestionados intactos y rechaza instalaciones legacy sin manifest.
+
+La definición completa de la matriz de madurez está en [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ---
 
@@ -95,50 +119,53 @@ Skill meta que se inyecta automaticamente. Enseña al agente:
 
 #### Tareas
 
-- [ ] **T1.1.1** — Crear `agent-dist/bootstrap/quinotospec-bootstrap.md` — Skill meta con instrucciones de inicio de sesion, reglas, red flags, y referencia rapida a workflows/skills. Formato: frontmatter YAML + markdown.
+- [x] **T1.1.1** — Crear `agent-dist/bootstrap/quinotospec-bootstrap.md` — Skill meta con instrucciones de inicio de sesion, reglas, red flags, y referencia rapida a workflows/skills. Formato: frontmatter YAML + markdown.
   - Archivo: `agent-dist/bootstrap/quinotospec-bootstrap.md`
   
-- [ ] **T1.1.2** — Crear `agent-dist/hooks/session-start.sh` — Script bash que:
+- [x] **T1.1.2** — Crear `agent-dist/hooks/session-start.sh` — Script bash que:
   - Detecta `$PLUGIN_ROOT`
   - Lee `bootstrap/quinotospec-bootstrap.md` (stripped frontmatter)
   - Escapa para JSON embedding
   - Emite en formato especifico de plataforma (Cursor: `additional_context`, Claude: `hookSpecificOutput.additionalContext`, OpenCode/generic: `additionalContext`)
   - Archivo: `agent-dist/hooks/session-start.sh`
 
-- [ ] **T1.1.3** — Crear `agent-dist/hooks/run-hook.cmd` — Polyglot Windows/Unix batch+shell script (adaptado de Superpowers). Permite que el hook funcione en Windows cmd, Git Bash y MSYS2.
+- [x] **T1.1.3** — Crear `agent-dist/hooks/run-hook.cmd` — Polyglot Windows/Unix batch+shell script (adaptado de Superpowers). Permite que el hook funcione en Windows cmd, Git Bash y MSYS2.
   - Archivo: `agent-dist/hooks/run-hook.cmd`
 
-- [ ] **T1.1.4** — Crear `agent-dist/hooks/hooks.json` — Config de hook para Claude Code/Generic: SessionStart en startup|clear|compact, async false.
+- [x] **T1.1.4** — Crear `agent-dist/hooks/hooks.json` — Config de hook para Claude Code/Generic: SessionStart en startup|clear|compact, async false.
   - Archivo: `agent-dist/hooks/hooks.json`
 
-- [ ] **T1.1.5** — Crear `agent-dist/hooks/hooks-cursor.json` — Config de hook para Cursor: sessionStart, version 1.
+- [x] **T1.1.5** — Crear `agent-dist/hooks/hooks-cursor.json` — Config de hook para Cursor: sessionStart, version 1.
   - Archivo: `agent-dist/hooks/hooks-cursor.json`
 
-- [ ] **T1.1.6** — Crear `agent-dist/hooks/hooks-opencode.json` — Config de hook para OpenCode.
+- [x] **T1.1.6** — Crear `agent-dist/hooks/hooks-opencode.json` — Config de hook para OpenCode.
   - Archivo: `agent-dist/hooks/hooks-opencode.json`
 
-- [ ] **T1.1.7** — Crear `agent-dist/plugins/opencode/quinotospec-plugin.js` — Plugin JS para OpenCode:
+- [x] **T1.1.7** — Crear `agent-dist/plugins/opencode/quinotospec-plugin.js` — Plugin JS para OpenCode:
   - `config` hook: registra paths de skills/workflows/rules/agents en config vivo
   - `experimental.chat.messages.transform` hook: inyecta bootstrap en primer user message
   - Cache a nivel de modulo (leer bootstrap una sola vez)
   - Injection guard: no inyectar si ya esta presente
-  - Tool mapping: `TodoWrite` → `todowrite`, `Task` → subagentes
+  - Tool mapping: habilita `todowrite` y `task` como nombres canónicos para aliases de herramientas
   - Archivo: `agent-dist/plugins/opencode/quinotospec-plugin.js`
 
-- [ ] **T1.1.8** — Crear `.cursor-plugin/plugin.json` — Plugin manifest para Cursor con paths a skills, agents, commands, hooks.
+- [x] **T1.1.8** — Crear `.cursor-plugin/plugin.json` — Plugin manifest para Cursor con paths a skills, agents, commands, hooks.
   - Archivo: `.cursor-plugin/plugin.json`
 
-- [ ] **T1.1.9** — Actualizar `install.sh` — Agregar soporte para:
+- [x] **T1.1.9** — Actualizar `install.sh` — Agregar soporte para:
   - Copiar `agent-dist/hooks/` al directorio de config del IDE
   - Copiar `agent-dist/plugins/` para OpenCode
   - Copiar `.cursor-plugin/plugin.json` para Cursor
   - Registrar hooks en config del IDE
   - Archivo: `install.sh`
 
-- [ ] **T1.1.10** — Actualizar `manifest.json` — Agregar `bootstrap`, `hooks`, `plugins` a directories. Bump version a 3.0.0.
+- [x] **T1.1.10** — Actualizar `manifest.json` — Agregar `bootstrap`, `hooks`, `plugins` a directories.
   - Archivo: `manifest.json`
 
-- [ ] **T1.1.11** — Actualizar `AGENTS.md` — Referenciar que el bootstrap ahora es automatico, pero mantener AGENTS.md como referencia offline.
+- [x] **T1.1.10b** — Hacer bump de version a `3.0.0` cuando se complete la Fase 1 completa.
+  - Archivo: `manifest.json`, `.version`, `install.sh`, `CHANGELOG.md`
+
+- [x] **T1.1.11** — Actualizar `AGENTS.md` — Referenciar que el bootstrap ahora es automatico, pero mantener AGENTS.md como referencia offline.
   - Archivo: `AGENTS.md`
 
 ---
@@ -182,29 +209,29 @@ Estructura adaptada de Superpowers:
 #### Integracion con Workflows Existentes
 
 - `quinotospec.apply`: Agregar gate pre-implementacion que invoque `quinotospec-tdd`
-- `quinotospec-rules`: Agregar regla #13 "TDD Enforcement" con severidad STANDARD
+- `quinotospec-rules`: Agregar regla #14 "TDD Enforcement" con severidad STANDARD
 
 #### Tareas
 
-- [ ] **T1.2.1** — Crear `agent-dist/skills/quinotospec-tdd/SKILL.md` — Skill TDD completo con Iron Law, ciclo Red-Green-Refactor, tabla de racionalizaciones (12 entradas), tabla de Red Flags (12 entradas), verification checklist (8 items), seccion "When Stuck", integracion con debugging.
+- [x] **T1.2.1** — Crear `agent-dist/skills/quinotospec-tdd/SKILL.md` — Skill TDD completo con Iron Law, ciclo Red-Green-Refactor, tabla de racionalizaciones (12 entradas), tabla de Red Flags (12 entradas), verification checklist (8 items), seccion "When Stuck", integracion con debugging.
   - Archivo: `agent-dist/skills/quinotospec-tdd/SKILL.md`
 
-- [ ] **T1.2.2** — Crear `agent-dist/skills/quinotospec-tdd/testing-anti-patterns.md` — Referencia de anti-patrones: testing mock behavior vs real behavior, test-only methods in production, mocking without understanding dependencies, testing implementation details, over-mocking, slow tests, flaky tests, test interdependence.
+- [x] **T1.2.2** — Crear `agent-dist/skills/quinotospec-tdd/testing-anti-patterns.md` — Referencia de anti-patrones: testing mock behavior vs real behavior, test-only methods in production, mocking without understanding dependencies, testing implementation details, over-mocking, slow tests, flaky tests, test interdependence.
   - Archivo: `agent-dist/skills/quinotospec-tdd/testing-anti-patterns.md`
 
-- [ ] **T1.2.3** — Crear `agent-dist/skills/quinotospec-tdd/examples/tdd-typescript.md` — Ejemplo completo RED-GREEN-REFACTOR en TypeScript con Jest.
+- [x] **T1.2.3** — Crear `agent-dist/skills/quinotospec-tdd/examples/tdd-typescript.md` — Ejemplo completo RED-GREEN-REFACTOR en TypeScript con Jest.
   - Archivo: `agent-dist/skills/quinotospec-tdd/examples/tdd-typescript.md`
 
-- [ ] **T1.2.4** — Crear `agent-dist/skills/quinotospec-tdd/examples/tdd-python.md` — Ejemplo completo RED-GREEN-REFACTOR en Python con pytest.
+- [x] **T1.2.4** — Crear `agent-dist/skills/quinotospec-tdd/examples/tdd-python.md` — Ejemplo completo RED-GREEN-REFACTOR en Python con pytest.
   - Archivo: `agent-dist/skills/quinotospec-tdd/examples/tdd-python.md`
 
-- [ ] **T1.2.5** — Actualizar `agent-dist/rules/quinotospec-rules.md` — Agregar regla #13 "TDD Enforcement" (STANDARD): "Todo codigo de produccion DEBE tener un test que falle antes de ser escrito. El skill quinotospec-tdd DEBE ejecutarse antes de cualquier implementacion."
+- [x] **T1.2.5** — Actualizar `agent-dist/rules/quinotospec-rules.md` — Agregar regla #14 "TDD Enforcement" (STANDARD): "Todo codigo de produccion DEBE tener un test que falle antes de ser escrito. El skill quinotospec-tdd DEBE ejecutarse antes de cualquier implementacion."
   - Archivo: `agent-dist/rules/quinotospec-rules.md`
 
-- [ ] **T1.2.6** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Agregar gate pre-implementacion: "Antes de escribir codigo, ejecuta el skill `quinotospec-tdd`. Si no hay un test que falle, no puedes escribir codigo de produccion."
+- [x] **T1.2.6** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Agregar gate pre-implementacion: "Antes de escribir codigo, ejecuta el skill `quinotospec-tdd`. Si no hay un test que falle, no puedes escribir codigo de produccion."
   - Archivo: `agent-dist/workflows/quinotospec.apply.md`
 
-- [ ] **T1.2.7** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar quinotospec-tdd en la lista de skills esenciales.
+- [x] **T1.2.7** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar quinotospec-tdd en la lista de skills esenciales.
   - Archivo: `agent-dist/bootstrap/quinotospec-bootstrap.md`
 
 ---
@@ -253,23 +280,23 @@ agent-dist/skills/quinotospec-debug/
    - If 3+ fixes failed → question architecture
 6. **Supporting Techniques** (sub-archivos)
 7. **Tabla de Racionalizaciones:** 8 excusas comunes
-8. **Red Flags Table:** 12 senales de debugging ad-hoc
+8. **Red Flags Table:** 11 senales de debugging ad-hoc
 
 #### Tareas
 
-- [ ] **T1.3.1** — Crear `agent-dist/skills/quinotospec-debug/SKILL.md` — Skill de debugging con Iron Law, 4 fases, regla "3+ fixes → question architecture", tabla de racionalizaciones (8 entradas), Red Flags (11 entradas), integracion con TDD.
+- [x] **T1.3.1** — Crear `agent-dist/skills/quinotospec-debug/SKILL.md` — Skill de debugging con Iron Law, 4 fases, regla "3+ fixes → question architecture", tabla de racionalizaciones (8 entradas), Red Flags (11 entradas), integracion con TDD.
   - Archivo: `agent-dist/skills/quinotospec-debug/SKILL.md`
 
-- [ ] **T1.3.2** — Crear `agent-dist/skills/quinotospec-debug/root-cause-tracing.md` — Tecnica de trazado hacia atras: encontrar donde se origina el valor incorrecto, seguir la traza del call stack hasta la fuente, fijar en la fuente no en el sintoma.
+- [x] **T1.3.2** — Crear `agent-dist/skills/quinotospec-debug/root-cause-tracing.md` — Tecnica de trazado hacia atras: encontrar donde se origina el valor incorrecto, seguir la traza del call stack hasta la fuente, fijar en la fuente no en el sintoma.
   - Archivo: `agent-dist/skills/quinotospec-debug/root-cause-tracing.md`
 
-- [ ] **T1.3.3** — Crear `agent-dist/skills/quinotospec-debug/defense-in-depth.md` — Tecnica: agregar validacion en multiples capas despues de encontrar root cause para prevenir recurrencia.
+- [x] **T1.3.3** — Crear `agent-dist/skills/quinotospec-debug/defense-in-depth.md` — Tecnica: agregar validacion en multiples capas despues de encontrar root cause para prevenir recurrencia.
   - Archivo: `agent-dist/skills/quinotospec-debug/defense-in-depth.md`
 
-- [ ] **T1.3.4** — Crear `agent-dist/skills/quinotospec-debug/condition-based-waiting.md` — Tecnica: reemplazar timeouts arbitrarios con polling basado en condiciones (evita tests flaky).
+- [x] **T1.3.4** — Crear `agent-dist/skills/quinotospec-debug/condition-based-waiting.md` — Tecnica: reemplazar timeouts arbitrarios con polling basado en condiciones (evita tests flaky).
   - Archivo: `agent-dist/skills/quinotospec-debug/condition-based-waiting.md`
 
-- [ ] **T1.3.5** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar quinotospec-debug.
+- [x] **T1.3.5** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar quinotospec-debug.
   - Archivo: `agent-dist/bootstrap/quinotospec-bootstrap.md`
 
 ---
@@ -311,16 +338,16 @@ agent-dist/skills/quinotospec-verify-before-done/
 
 #### Tareas
 
-- [ ] **T1.4.1** — Crear `agent-dist/skills/quinotospec-verify-before-done/SKILL.md` — Skill con Iron Law, Gate Function (5 pasos), Common Failures table, Red Flags (8 items), Rationalization Prevention (7 excusas).
+- [x] **T1.4.1** — Crear `agent-dist/skills/quinotospec-verify-before-done/SKILL.md` — Skill con Iron Law, Gate Function (5 pasos), Common Failures table, Red Flags (8 items), Rationalization Prevention (7 excusas).
   - Archivo: `agent-dist/skills/quinotospec-verify-before-done/SKILL.md`
 
-- [ ] **T1.4.2** — Actualizar `agent-dist/skills/quinotospec-mark-done/SKILL.md` — Agregar paso: "Antes de marcar como completada, ejecuta `quinotospec-verify-before-done` para confirmar que la tarea fue realmente completada."
+- [x] **T1.4.2** — Actualizar `agent-dist/skills/quinotospec-mark-done/SKILL.md` — Agregar paso: "Antes de marcar como completada, ejecuta `quinotospec-verify-before-done` para confirmar que la tarea fue realmente completada."
   - Archivo: `agent-dist/skills/quinotospec-mark-done/SKILL.md`
 
-- [ ] **T1.4.3** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Agregar verificacion antes de Mark Done.
+- [x] **T1.4.3** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Agregar verificacion antes de Mark Done.
   - Archivo: `agent-dist/workflows/quinotospec.apply.md`
 
-- [ ] **T1.4.4** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar quinotospec-verify-before-done.
+- [x] **T1.4.4** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar quinotospec-verify-before-done.
   - Archivo: `agent-dist/bootstrap/quinotospec-bootstrap.md`
 
 ---
@@ -330,7 +357,7 @@ agent-dist/skills/quinotospec-verify-before-done/
 | Campo | Detalle |
 |-------|---------|
 | **Fuente** | Spec-Kit (`.specify/memory/constitution.md`, `/speckit.constitution`) |
-| **Problema actual** | QuinotoSpec tiene 13 reglas de gobernanza pero no una "constitucion fundacional" que guie todas las decisiones de arquitectura e implementacion |
+| **Problema actual** | QuinotoSpec tiene 18 reglas de gobernanza pero no una "constitucion fundacional" que guie todas las decisiones de arquitectura e implementacion |
 | **Solucion** | Workflow `/quinotospec.constitution` que crea `.quinoto-spec/constitution.md` con principios fundacionales que todos los workflows respetan |
 
 #### Arquitectura
@@ -377,7 +404,7 @@ agent-dist/templates/constitution-template.md       # Template con placeholders
 
 ## Gobernanza
 
-- Esta constitucion supersede cualquier otra practica
+- La constitucion no deroga reglas globales; solo añade restricciones más estrictas
 - Enmiendas requieren: documentacion, revision, aprobacion
 - Todos los PRs deben verificar compliance
 - La complejidad debe ser justificada
@@ -385,24 +412,27 @@ agent-dist/templates/constitution-template.md       # Template con placeholders
 
 #### Tareas
 
-- [ ] **T1.5.1** — Crear `agent-dist/templates/constitution-template.md` — Template con secciones: Principios Fundamentales, Restricciones Adicionales (seguridad, compliance, performance), Flujo de Desarrollo (review process, quality gates), Gobernanza. Con placeholders `{{PROJECT_NAME}}`, `{{STACK}}`, etc.
+- [x] **T1.5.1** — Crear `agent-dist/templates/constitution-template.md` — Template con secciones: Principios Fundamentales, Restricciones Adicionales (seguridad, compliance, performance), Flujo de Desarrollo (review process, quality gates), Gobernanza. Con placeholders `{{PROJECT_NAME}}`, `{{STACK}}`, etc.
   - Archivo: `agent-dist/templates/constitution-template.md`
 
-- [ ] **T1.5.2** — Crear `agent-dist/workflows/quinotospec.constitution.md` — Workflow que:
+- [x] **T1.5.2** — Crear `agent-dist/workflows/quinotospec.constitution.md` — Workflow que:
   - Pregunta por principios de codigo, testing, UX y performance
   - Genera `.quinoto-spec/constitution.md` desde el template
   - Integra con el discovery existente para stack-specific defaults
   - Valida que la constitucion sea consistente con las reglas existentes
   - Archivo: `agent-dist/workflows/quinotospec.constitution.md`
 
-- [ ] **T1.5.3** — Actualizar `agent-dist/workflows/quinotospec.review.md` — Agregar validacion de compliance constitucional en el checklist de revision.
+- [x] **T1.5.3** — Actualizar `agent-dist/workflows/quinotospec.review.md` — Agregar validacion de compliance constitucional en el checklist de revision.
   - Archivo: `agent-dist/workflows/quinotospec.review.md`
 
-- [ ] **T1.5.4** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Agregar gate: "Verifica que la implementacion respeta la constitucion en `.quinoto-spec/constitution.md`"
+- [x] **T1.5.4** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Agregar gate: "Verifica que la implementacion respeta la constitucion en `.quinoto-spec/constitution.md`"
   - Archivo: `agent-dist/workflows/quinotospec.apply.md`
 
-- [ ] **T1.5.5** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar `/quinotospec.constitution`.
+- [x] **T1.5.5** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar `/quinotospec.constitution`.
   - Archivo: `agent-dist/bootstrap/quinotospec-bootstrap.md`
+
+- [x] **T1.5.6** — Crear wrapper `agent-dist/skills/quinotospec-constitution/SKILL.md` para mantener la convención workflow/skill.
+  - Archivo: `agent-dist/skills/quinotospec-constitution/SKILL.md`
 
 ---
 
@@ -416,7 +446,7 @@ agent-dist/templates/constitution-template.md       # Template con placeholders
 
 #### Tareas
 
-- [ ] **T1.6.1** — Crear `agent-dist/skills/quinotospec-receive-review/SKILL.md` — Skill con:
+- [x] **T1.6.1** — Crear `agent-dist/skills/quinotospec-receive-review/SKILL.md` — Skill con:
   - Response Pattern (6 pasos: READ → UNDERSTAND → VERIFY → EVALUATE → RESPOND → IMPLEMENT)
   - Forbidden Responses (performative agreement prohibido)
   - Source-Specific Handling (human partner vs external reviewer)
@@ -426,7 +456,7 @@ agent-dist/templates/constitution-template.md       # Template con placeholders
   - Acknowledging Correct Feedback: "Fixed. [Brief description]" — no thanks, no flattery
   - Archivo: `agent-dist/skills/quinotospec-receive-review/SKILL.md`
 
-- [ ] **T1.6.2** — Actualizar `agent-dist/workflows/quinotospec.review.md` — Agregar referencia a `quinotospec-receive-review` para cuando el agente recibe feedback.
+- [x] **T1.6.2** — Actualizar `agent-dist/workflows/quinotospec.review.md` — Agregar referencia a `quinotospec-receive-review` para cuando el agente recibe feedback.
   - Archivo: `agent-dist/workflows/quinotospec.review.md`
 
 ---
@@ -441,7 +471,7 @@ agent-dist/templates/constitution-template.md       # Template con placeholders
 
 #### Tareas
 
-- [ ] **T1.7.1** — Crear `agent-dist/skills/quinotospec-worktree/SKILL.md` — Skill con:
+- [x] **T1.7.1** — Crear `agent-dist/skills/quinotospec-worktree/SKILL.md` — Skill con:
   - Step 0: Detect Existing Isolation (`GIT_DIR != GIT_COMMON`)
   - Step 1: Native Worktree Tools (preferred)
   - Step 2: Git Worktree Fallback
@@ -452,7 +482,7 @@ agent-dist/templates/constitution-template.md       # Template con placeholders
   - Sandbox fallback si hay permission error
   - Archivo: `agent-dist/skills/quinotospec-worktree/SKILL.md`
 
-- [ ] **T1.7.2** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Agregar opcion de crear worktree antes de implementar.
+- [x] **T1.7.2** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Agregar opcion de crear worktree antes de implementar.
   - Archivo: `agent-dist/workflows/quinotospec.apply.md`
 
 ---
@@ -461,29 +491,28 @@ agent-dist/templates/constitution-template.md       # Template con placeholders
 
 #### Tareas
 
-- [ ] **T1.8.1** — Actualizar `agent-dist/rules/quinotospec-rules.md` — Agregar nuevas reglas (el archivo ya tiene 13 secciones; numerar a continuación):
-  - Regla #14: TDD Enforcement (STANDARD)
-  - Regla #15: Debugging Root Cause First (STANDARD)
-  - Regla #16: Verification Before Completion (STANDARD)
-  - Regla #17: Constitutional Compliance (BLOCKING para merge)
+- [x] **T1.8.1** — Actualizar `agent-dist/rules/quinotospec-rules.md` — Agregar reglas #14 TDD, #15 Debugging y #16 Verification (BLOCKING).
   - Archivo: `agent-dist/rules/quinotospec-rules.md`
 
-- [ ] **T1.8.2** — Actualizar `manifest.json` — Bump a 3.0.0, actualizar conteos (skills: +6 = 33, workflows: +2 = 35, rules: +4 = 16), agregar nuevos directorios.
+- [x] **T1.8.1b** — Agregar regla #17 Constitutional Compliance después de implementar F1.5.
+  - Archivo: `agent-dist/rules/quinotospec-rules.md`
+
+- [x] **T1.8.2** — Actualizar `manifest.json` — Bump a 3.0.0 al completar la Fase 1; los conteos actuales y directorios F1.1 ya están agregados.
   - Archivo: `manifest.json`
 
-- [ ] **T1.8.3** — Actualizar `.version` — `3.0.0`.
+- [x] **T1.8.3** — Actualizar `.version` — `3.0.0`.
   - Archivo: `.version`
 
-- [ ] **T1.8.4** — Actualizar `CHANGELOG.md` — Entrada v3.0.0 documentando todos los features de Fase 1.
+- [x] **T1.8.4** — Actualizar `CHANGELOG.md` — Entrada v3.0.0 documentando todos los features de Fase 1.
   - Archivo: `CHANGELOG.md`
 
-- [ ] **T1.8.5** — Actualizar `README.md` y `README_EN.md` — Nuevos workflows y skills.
+- [x] **T1.8.5** — Actualizar `README.md` y `README_EN.md` — Nuevos workflows y skills.
   - Archivos: `README.md`, `README_EN.md`
 
-- [ ] **T1.8.6** — Actualizar `docs/ARCHITECTURE.md` — Nuevo diagrama con bootstrap, hooks, plugins.
+- [x] **T1.8.6** — Actualizar `docs/ARCHITECTURE.md` — Nuevo diagrama con bootstrap, hooks, plugins y gates.
   - Archivo: `docs/ARCHITECTURE.md`
 
-- [ ] **T1.8.7** — Actualizar `scripts/validate-all.sh` — Ajustar conteos esperados (workflows >= 35, skills >= 33, rules >= 16).
+- [x] **T1.8.7** — Actualizar `scripts/validate-all.sh` — Ajustar conteos esperados al baseline actual.
   - Archivo: `scripts/validate-all.sh`
 
 ---
@@ -747,34 +776,34 @@ hooks:
 
 #### Tareas
 
-- [ ] **T2.3.1** — Crear `agent-dist/skills/quinotospec-extension-manager/SKILL.md` — Skill que gestiona el ciclo de vida de extensiones: search, install, update, remove, list, info. Con soporte para catalog.json (curado) y catalog.community.json (descubrimiento).
-  - Archivo: `agent-dist/skills/quinotospec-extension-manager/SKILL.md`
+- [x] **T2.3.1** — Crear `agent-dist/skills/quinotospec-extension-manager/SKILL.md` y lifecycle ejecutable — search, install, update, remove, list, info, hooks y registro local.
+  - Archivos: `agent-dist/skills/quinotospec-extension-manager/SKILL.md`, `extension_manager.py`
 
-- [ ] **T2.3.2** — Crear `agent-dist/templates/extension-template.yml` — Template para crear nuevas extensiones.
+- [x] **T2.3.2** — Crear `agent-dist/templates/extension-template.yml` — Template para nuevas extensiones.
   - Archivo: `agent-dist/templates/extension-template.yml`
 
-- [ ] **T2.3.3** — Crear `agent-dist/templates/preset-template.yml` — Template para crear nuevos presets.
+- [x] **T2.3.3** — Crear `agent-dist/templates/preset-template.yml` — Template para nuevos presets.
   - Archivo: `agent-dist/templates/preset-template.yml`
 
-- [ ] **T2.3.4** — Crear `agent-dist/skills/quinotospec-template-resolver/SKILL.md` — Skill que implementa la 4-layer resolution stack: busca un template/command/skill caminando overrides → presets → extensions → core y retorna el primero que encuentra.
-  - Archivo: `agent-dist/skills/quinotospec-template-resolver/SKILL.md`
+- [x] **T2.3.4** — Crear `agent-dist/skills/quinotospec-template-resolver/SKILL.md` y resolver ejecutable — overrides → presets → extensions → core.
+  - Archivos: `agent-dist/skills/quinotospec-template-resolver/SKILL.md`, `template_resolver.py`
 
-- [ ] **T2.3.5** — Crear `agent-dist/workflows/quinotospec.extension-install.md` — Workflow para instalar una extension desde catalog o local.
+- [x] **T2.3.5** — Crear `agent-dist/workflows/quinotospec.extension-install.md` — instalación local/catálogo validada.
   - Archivo: `agent-dist/workflows/quinotospec.extension-install.md`
 
-- [ ] **T2.3.6** — Crear `agent-dist/workflows/quinotospec.preset-install.md` — Workflow para instalar un preset.
+- [x] **T2.3.6** — Crear `agent-dist/workflows/quinotospec.preset-install.md` — instalación de preset y prioridad.
   - Archivo: `agent-dist/workflows/quinotospec.preset-install.md`
 
-- [ ] **T2.3.7** — Actualizar workflows existentes para soportar hooks: agregar `before_*` y `after_*` hook execution en cada workflow del core.
+- [x] **T2.3.7** — Actualizar workflows existentes para soportar hooks before/after.
   - Archivos: `quinotospec.create-proposal.md`, `quinotospec.create-user-stories.md`, `quinotospec.create-tasks.md`, `quinotospec.apply.md`, `quinotospec.review.md`, `quinotospec.archive.md`
 
-- [ ] **T2.3.8** — Crear `extensions/catalog.json` — Catalog inicial vacio (curado).
+- [x] **T2.3.8** — Crear `extensions/catalog.json` — catálogo curado inicial.
   - Archivo: `extensions/catalog.json`
 
-- [ ] **T2.3.9** — Crear `extensions/catalog.community.json` — Catalog de extensiones comunitarias (vacio inicialmente, para descubrimiento).
+- [x] **T2.3.9** — Crear `extensions/catalog.community.json` — catálogo comunitario inicial.
   - Archivo: `extensions/catalog.community.json`
 
-- [ ] **T2.3.10** — Crear `extensions/EXTENSION-DEVELOPMENT-GUIDE.md` — Guia para desarrolladores de extensiones.
+- [x] **T2.3.10** — Crear `extensions/EXTENSION-DEVELOPMENT-GUIDE.md` — guía de desarrollo.
   - Archivo: `extensions/EXTENSION-DEVELOPMENT-GUIDE.md`
 
 ---
@@ -822,16 +851,16 @@ El comando `/quinotospec.update-agents` regenera `AGENTS.md` combinando:
 
 #### Tareas
 
-- [ ] **T2.4.1** — Crear `agent-dist/workflows/quinotospec.update-agents.md` — Workflow que regenera `AGENTS.md` desde `config.yaml`, listando workflows activos, skills, reglas, extensiones, y stack-specific defaults.
-  - Archivo: `agent-dist/workflows/quinotospec.update-agents.md`
+- [x] **T2.4.1** — Crear `agent-dist/workflows/quinotospec.update-agents.md` y skill ejecutable — regenera `AGENTS.md` desde `config.yaml`, inventory, extensiones y contexto.
+  - Archivos: `agent-dist/workflows/quinotospec.update-agents.md`, `agent-dist/skills/quinotospec-update-agents/`
 
-- [ ] **T2.4.2** — Crear `agent-dist/templates/AGENTS-template.md` — Template con placeholders `{{PROJECT_NAME}}`, `{{STACK}}`, `{{WORKFLOWS}}`, `{{SKILLS}}`, `{{RULES}}`, `{{EXTENSIONS}}`.
-  - Archivo: `agent-dist/templates/AGENTS-template.md`
+- [x] **T2.4.2** — Crear `agent-dist/templates/AGENTS-template.md` y `config-template.yml` — placeholders de proyecto, stack, workflows, skills, reglas y extensiones.
+  - Archivos: `agent-dist/templates/AGENTS-template.md`, `agent-dist/templates/config-template.yml`
 
-- [ ] **T2.4.3** — Actualizar `agent-dist/workflows/quinotospec.init.md` — Generar `config.yaml` inicial y `AGENTS.md` desde template.
-  - Archivo: `agent-dist/workflows/quinotospec.init.md`
+- [x] **T2.4.3** — Actualizar `agent-dist/workflows/quinotospec.init.md` y su skill — generan `config.yaml` y ejecutan update-agents.
+  - Archivos: `agent-dist/workflows/quinotospec.init.md`, `agent-dist/skills/quinotospec-init/SKILL.md`
 
-- [ ] **T2.4.4** — Actualizar `install.sh` — En lugar de copiar AGENTS.md estatico, ejecutar update-agents.
+- [x] **T2.4.4** — Actualizar `install.sh` — genera `AGENTS.md` desde configuración durante staging y lo incluye en ownership/rollback.
   - Archivo: `install.sh`
 
 ---
@@ -840,19 +869,19 @@ El comando `/quinotospec.update-agents` regenera `AGENTS.md` combinando:
 
 #### Tareas
 
-- [ ] **T2.5.1** — Actualizar `manifest.json` — Bump a 3.1.0, actualizar conteos (skills: +3 = 36, workflows: +8 = 43, templates: +5).
+- [x] **T2.5.1** — Actualizar `manifest.json` — Bump a 3.1.0 y sincronizar inventario: 43 workflows, 86 skills, 18 reglas, 9 agentes y 13 templates.
   - Archivo: `manifest.json`
 
-- [ ] **T2.5.2** — Actualizar `.version` — `3.1.0`.
+- [x] **T2.5.2** — Actualizar `.version` — `3.1.0`.
   - Archivo: `.version`
 
-- [ ] **T2.5.3** — Actualizar `CHANGELOG.md` — Entrada v3.1.0.
+- [x] **T2.5.3** — Actualizar `CHANGELOG.md` — Entrada v3.1.0.
   - Archivo: `CHANGELOG.md`
 
-- [ ] **T2.5.4** — Actualizar `scripts/validate-all.sh` — Ajustar conteos.
+- [x] **T2.5.4** — Actualizar `scripts/validate-all.sh` — Ajustar conteos y validar la suite completa de 20 suites.
   - Archivo: `scripts/validate-all.sh`
 
-- [ ] **T2.5.5** — Actualizar `CONTRIBUTING.md` — Agregar seccion "Desarrollo de Extensiones" y "Desarrollo de Presets".
+- [x] **T2.5.5** — Actualizar `CONTRIBUTING.md` — Agregar secciones "Desarrollo de Extensiones" y "Desarrollo de Presets".
   - Archivo: `CONTRIBUTING.md`
 
 ---
@@ -1018,8 +1047,8 @@ agent-dist/skills/quinotospec-party-orchestrator/  # Skill orquestador
 - [x] **T3.2.4** — Crear `agent-dist/skills/quinotospec-party-orchestrator/strategies/spawned-subagents.md` ✅ (v2.4.0)
   - Archivo: `agent-dist/skills/quinotospec-party-orchestrator/strategies/spawned-subagents.md`
 
-- [ ] **T3.2.5** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar Party Mode.
-  - **BLOQUEADO**: Bootstrap no existe (F1.1 sin implementar). Party Mode se descubre via AGENTS.md.
+- [x] **T3.2.5** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar Party Mode y el modo `--subagents`.
+  - Estado: completado; el bootstrap existe desde F1.1 y ahora anuncia el comando al iniciar sesión.
 
 ---
 
@@ -1053,13 +1082,13 @@ agent-dist/skills/quinotospec-party-orchestrator/  # Skill orquestador
 
 #### Tareas
 
-- [ ] **T3.4.1** — Actualizar `manifest.json` — Bump a 3.2.0, actualizar conteos (skills: +4 = 40, workflows: +3 = 46, agentes: 9 convertidos).
+- [x] **T3.4.1** — Actualizar `manifest.json` — Bump a 3.2.0 y registrar F3.2 como integración de bootstrap; el inventario permanece en 43 workflows, 86 skills, 18 reglas, 9 agentes y 13 templates.
   - Archivo: `manifest.json`
 
-- [ ] **T3.4.2** — Actualizar `.version` — `3.2.0`.
+- [x] **T3.4.2** — Actualizar `.version` — `3.2.0`.
   - Archivo: `.version`
 
-- [ ] **T3.4.3** — Actualizar `CHANGELOG.md` — Entrada v3.2.0.
+- [x] **T3.4.3** — Actualizar `CHANGELOG.md` — Entrada v3.2.0.
   - Archivo: `CHANGELOG.md`
 
 ---
@@ -1385,7 +1414,7 @@ quinotospec-package/
 │   │   └── quinotospec.workflow-run.md         # F4.5
 │   │   + (existing workflows updated)
 │   │
-│   ├── skills/                                 # skills del paquete (76 en v2.7.0; cada fase agrega las suyas)
+│   ├── skills/                                 # skills del paquete (86 en la línea base actual; cada fase agrega las suyas)
 │   │   ├── quinotospec-tdd/                    # F1.2
 │   │   │   ├── SKILL.md
 │   │   │   ├── testing-anti-patterns.md
@@ -1437,7 +1466,7 @@ quinotospec-package/
 │   │       └── victor.md                       # Test Writer (F3.1)
 │   │
 │   ├── rules/
-│   │   └── quinotospec-rules.md               # 16 reglas (F1.8)
+│   │   └── quinotospec-rules.md               # 18 reglas (G0.2c)
 │   │
 │   └── templates/                              # Templates expandidas
 │       ├── constitution-template.md            # F1.5
@@ -1469,25 +1498,26 @@ quinotospec-package/
 
 ### Fase 1 (v3.0.0) — Done when:
 
-- [ ] Bootstrap se inyecta automaticamente al iniciar sesion en OpenCode, Cursor y Claude Code
-- [ ] Skill TDD bloquea implementacion si no hay test que falle primero
-- [ ] Skill Debugging fuerza root cause investigation antes de fixes
-- [ ] Skill Verify-Before-Done bloquea claims sin evidencia fresca
-- [ ] `/quinotospec.constitution` genera `.quinoto-spec/constitution.md`
-- [ ] Skill Receive-Review elimina "performative agreement" de las respuestas del agente
-- [ ] Skill Worktree aisla el workspace durante implementacion
-- [ ] Los tests suite pasan con los nuevos componentes
-- [ ] `scripts/validate-all.sh --strict` pasa
+- [x] Bootstrap se inyecta automaticamente al iniciar sesion en OpenCode, Cursor y Claude Code
+- [x] Skill TDD bloquea implementacion si no hay test que falle primero
+- [x] Skill Debugging fuerza root cause investigation antes de fixes
+- [x] Skill Verify-Before-Done bloquea claims sin evidencia fresca
+- [x] `/quinotospec.constitution` genera `.quinoto-spec/constitution.md`
+- [x] Skill Receive-Review elimina "performative agreement" de las respuestas del agente
+- [x] Skill Worktree aisla el workspace durante implementacion
+- [x] Los tests suite pasan con los nuevos componentes
+- [x] `scripts/validate-all.sh --strict` pasa
 
 ### Fase 2 (v3.1.0) — Done when:
 
 - [x] Propuestas generan delta specs en lugar de specs completas *(shipped en v2.2.0)*
 - [x] `/quinotospec.archive` aplica merge de delta specs correctamente *(shipped en v2.2.0)*
 - [x] Artifact engine calcula estado DAG y bloquea artefactos sin dependencias *(shipped en v2.3.0)*
-- [ ] Sistema de extensiones: install, remove, update, list funcionales
-- [ ] 4-layer template resolution stack funciona
-- [ ] `/quinotospec.update-agents` regenera AGENTS.md dinamicamente
-- [ ] Una extension de prueba se instala y sus hooks se ejecutan
+- [x] Sistema de extensiones: install, remove, update, list funcionales
+- [x] 4-layer template resolution stack funciona
+- [x] `/quinotospec.update-agents` regenera AGENTS.md dinamicamente
+- [x] Una extension de prueba se instala y sus hooks se ejecutan
+- [x] F2.5 sincroniza la release 3.1.0, documentación, inventario y release smoke
 
 ### Fase 3 (v3.2.0) — Done when:
 
@@ -1495,6 +1525,7 @@ quinotospec-package/
 - [ ] 3-layer TOML merge funciona (defaults → team → personal)
 - [x] Party Mode ejecuta mesa redonda con al menos 3 agentes *(shipped en v2.4.0)*
 - [x] Modo `--subagents` spawn subagentes independientes *(shipped en v2.4.0 — spawned-subagents.md)*
+- [x] El bootstrap referencia `/quinotospec.party-mode` y su modo `--subagents`
 - [ ] `quinotospec-help` recomienda correctamente el proximo workflow
 - [x] `quinotospec-suggest-next` funciona tanto intra-propuesta como global
 
@@ -1512,22 +1543,23 @@ quinotospec-package/
 
 ## Resumen de Metricas
 
-| Metrica | v2.7.0 (actual) | v3.0.0 | v3.1.0 | v3.2.0 | v3.3.0 |
-|---------|--------|--------|--------|--------|--------|
-| Workflows | 39 | 35* | 43 | 46 | 53 |
-| Skills | 76 | 33* | 36* | 40* | 43* |
-| Reglas | 13 | 17 | 17 | 17 | 17 |
-| Agentes | 9 | 9 | 9 | 9 | 9 |
-| Templates | 7 | 7 | 7 | 8 | 11 |
+| Metrica | v3.2.0 (actual) | v3.3.0 |
+|---------|--------|--------|
+| Workflows | 43 | 53 |
+| Skills | 86 | 91* |
+| Reglas | 18 | 18 |
+| Agentes | 9 | 9 |
+| Templates | 13 | 15 |
 
-> \* Las columnas de objetivos (v3.0.0–v3.3.0) fueron definidas cuando el baseline era v2.1.0 (33 workflows / 27 skills). Los targets de skills ya fueron ampliamente superados (76 hoy). Tratar las columnas de versiones futuras como relativos ("cuántos agrega cada fase"), no como absolutos.
-| IDEs soportados | 4 | 4 (+hooks) | 4 (+hooks) | 4 (+hooks) | 4 (+hooks) |
-| Bootstrap | Manual | Automatico | Automatico | Automatico | Automatico |
-| Extensibilidad | No | No | Extensiones + Presets | Extensiones + Presets | Extensiones + Presets |
-| TDD Enforcement | No | Si | Si | Si | Si |
-| Debugging Sistematico | No | Si | Si | Si | Si |
-| Party Mode | No | No | No | Si | Si |
-| Scale Adaptive | No | No | No | No | Si |
+> \* El objetivo de skills se mantiene como referencia relativa; el baseline actual es 86. Las cifras de workflows, agentes y templates incluyen solo lo implementado.
+| IDEs soportados | 6 (+hooks) | 6 (+hooks) |
+| Bootstrap | Automático | Automático |
+| Extensibilidad | Extensiones + Presets | Extensiones + Presets |
+| TDD Enforcement | Prompt-only | Si |
+| Human Approval Gate | Beta | Beta |
+| Debugging Sistematico | Prompt-only | Si |
+| Party Mode | Si (bootstrap) | Si |
+| Scale Adaptive | No | Si |
 
 ---
 
@@ -1537,16 +1569,16 @@ Las features F2.1, F2.2 y F3.2 se implementaron como versiones incrementales (v2
 
 | Conflicto | Impacto | Mitigacion |
 |-----------|---------|------------|
-| **Sin F1.1 (Bootstrap)**: T3.2.5 bloqueada porque `agent-dist/bootstrap/` no existe | Bajo. Party Mode se descubre via AGENTS.md y comandos del IDE | Implementar F1.1 desbloquea T3.2.5 |
-| **Sin F1.5 (Constitution)**: Schema YAML referencia `constitution` como artefacto opcional | Nulo. El engine lo marca como optional y no bloquea nada | Constitution ya es opcional en el schema |
+| **F1.1 (Bootstrap)** | La integración inicial se completa, pero cada IDE requiere reinicio y versión compatible | Bajo | T3.2.5 completado; Party Mode queda referenciado en el contexto de sesión |
+| **F1.5 (Constitution)** | La constitution activa agrega gates de Apply, Review y Archive | Bajo | Constitution es opcional hasta que el proyecto la activa explícitamente |
 | **Sin F3.1 (Agentes con personalidad)**: Party Mode usa agentes existentes sin nombres humanos ni TOML | Bajo. Los agentes actuales ya tienen `## Personality` | F3.1 enriqueceria Party Mode pero no es bloqueante |
-| **Versionado inconsistente**: Roadmap asigna v3.0.0 a Fase 1 pero implementamos como v2.2.0→2.4.0 | Bajo. Semantic versioning correcto | Re-asignar versiones cuando se complete Fase 1 |
+| **Versionado inconsistente**: Roadmap asignaba v3.0.0 a Fase 1 pero la implementación histórica se hizo como v2.2.0→2.4.0 | Bajo | Resuelto en F1.8: release 3.0.0 Hird Edition sincronizado |
 
 ### Recomendacion para proxima sesion
 
-1. **F1.1** (Bootstrap) — Desbloquea T3.2.5, beneficia a todo el sistema
-2. **F1.2 + F1.3** (TDD + Debugging) — Maximo impacto en calidad de codigo generado por agentes
-3. **F3.1** (Agentes con personalidad) — Enriquece Party Mode con nombres humanos y TOML
+1. **F3.1** (Agentes con personalidad) — Enriquece Party Mode con nombres humanos y TOML
+2. **F3.3** (Navegación contextual) — Añade `quinotospec-help` para recomendar el siguiente workflow
+3. **Validar el release 3.2.0** — ejecutar el gate completo y smoke del paquete antes de publicar
 
 ---
 

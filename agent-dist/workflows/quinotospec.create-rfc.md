@@ -62,8 +62,9 @@ Si el usuario paso `--party`, ejecutar Party Mode despues de la confirmacion y a
    - Recomendaciones → `9. Plan de pruebas`
 
 Generacion del RFC:
-1. Usa el template base `.cursor/templates/rfc-template.md`.
-2. Genera `RFC_ID` con formato `RFC-YYYYMMDD-{{SLUG_UPPER}}` (ejemplo: `RFC-20260427-FEATURE-FLAGS`).
+1. Usa el template base `agent-dist/templates/rfc-template.md`.
+2. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict` antes de materializar el RFC o sus stories.
+3. Genera `RFC_ID` con formato `RFC-YYYYMMDD-{{SLUG_UPPER}}` (ejemplo: `RFC-20260427-FEATURE-FLAGS`).
 3. Si `.quinoto-spec/rfc/` no existe, crealo.
 4. Crea `.quinoto-spec/rfc/{{RFC_ID}}-{{SLUG}}.md`.
 5. Reemplaza placeholders del template:
@@ -98,8 +99,10 @@ Generacion del RFC:
    `## User Stories (entrada para create-tasks)`
 
    Contenido minimo:
-   - Una linea: `**Prefijo (QuinotoSpec):** {{PREFIX}}` (el valor de `PREFIX` de la pregunta 9).
-   - Una tabla con el **mismo formato** que `quinotospec.create-user-stories` (columnas: ID, User Story, Criterios de Aceptacion, Prioridad, Estimacion, Servicio). Los IDs deben seguir `US-{{PREFIX}}-001`, `US-{{PREFIX}}-002`, etc. (igual que en `create-user-stories`: si el prefijo es `AUTH-a1b2`, el primer ID es `US-AUTH-a1b2-001`).
+   - `**Proposal ID:** {{PROPOSAL_ID}}`
+   - `**Prefijo:** {{PREFIX}}`
+   - `**Estado:** proposed`
+   - Una tabla con el mismo formato que `quinotospec.create-user-stories` (columnas: ID, User Story, Criterios de Aceptacion, Prioridad, Estimacion, Servicio). Los IDs deben seguir `US-{{PREFIX}}-001`, `US-{{PREFIX}}-002`, etc. (si el prefijo es `AUTH-a1b2`, el primer ID es `US-AUTH-a1b2-001`).
 
 10. Enviar al usuario la ruta final del RFC generado, un resumen de 3 bullets con decisiones clave, y la **linea de comando sugerida** para generar tareas:
 

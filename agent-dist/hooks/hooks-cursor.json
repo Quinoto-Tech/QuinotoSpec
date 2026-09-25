@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "./agent-dist/hooks/session-start.sh --platform cursor"
+      }
+    ]
+  }
+}

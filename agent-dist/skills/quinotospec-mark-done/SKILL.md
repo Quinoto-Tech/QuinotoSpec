@@ -5,32 +5,42 @@ description: Automatiza el marcado de tareas como completadas, actualizando arch
 
 # Skill: Mark Done
 
-Usa esta skill cuando el usuario indica que una tarea técnica (`TSK-XXX`) ha sido completada. Actualiza los archivos de seguimiento y, si el elemento está 100% completo, lo mueve a `_archived/`.
+Usa esta skill cuando el usuario indica que una tarea técnica (`TSK-MNEM-suffix-NNN`) ha sido completada. Antes de modificar estados, ejecuta `quinotospec-verify-before-done`; después actualiza los archivos de seguimiento usando el contrato común y, si el elemento está 100% completo, lo mueve a `_archived/`.
 
 ## Instrucciones de Ejecución
 
 ### Modo Individual
 
+#### Paso 0 — Verificar antes de modificar estados
+
+1. Ejecuta `quinotospec-verify-before-done` con el `TASK_ID` y la evidencia de la tarea.
+2. Valida `.quinoto-spec/evidence/{{TASK_ID}}/verify-before-done.json` con `evidence_validate.py --kind verify-before-done --require --json`.
+3. Revisa cada criterio DoD, tests, lint, typecheck y el diff.
+4. Si falta evidencia o una verificación falla, detén el proceso y mantén la tarea en `in_progress` o `blocked`.
+5. Solo después de un gate exitoso continúa marcando el checkbox o moviendo archivos.
+
 #### Paso 1 — Marcar la tarea como completada
 
-1. Busca el `TSK-XXX` dado en el archivo de tareas correspondiente `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{US_ID}}_tasks.md`.
-2. Si el ID no existe, notifica al usuario y detén el proceso.
-3. Cambia el checkbox `[ ]` a `[x]` para esa tarea.
+1. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json` y localiza el `canonical_id` de la tarea.
+2. Busca el archivo `*_tasks.md` que contenga el task ID; no asumas que el nombre del archivo contiene el story ID.
+3. Si el ID no existe, notifica al usuario y detén el proceso.
+4. Cambia la columna `Estado` de `[ ]` a `[x]` para esa tarea. En legacy, cambia el checkbox o etiqueta de estado equivalente.
 
 #### Paso 2 — Verificar completitud del archivo de tareas
 
-- Cuenta los checkboxes `[ ]` restantes en el archivo.
-- Si **todas las tareas están completadas** (`[x]`):
-  1. Mueve el archivo a `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/_archived/{{US_ID}}_tasks.md`.
+- Consulta el contrato normalizado y cuenta tareas con `status: pending`, `blocked` o `unknown`.
+- Si todas las tareas de la story tienen `status: completed`:
+  1. Mueve el archivo a `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/_archived/{{TASKS_FILE}}`.
   2. Ve al Paso 3.
-- Si aún quedan tareas pendientes, ir directo al Paso 4.
+- Si aún quedan tareas pendientes, ve directo al Paso 4.
 
 #### Paso 3 — Verificar completitud de la User Story
 
-- Busca el `{{US_ID}}` correspondiente en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/user-stories.md`.
-- Si **todas las user stories de la propuesta están completadas**:
+- Busca la story por el campo `Historia Relacionada` de las tareas, no por similitud numérica.
+- Si todas las tareas de esa story están `completed` y no quedan stories con tareas pendientes:
   1. Mueve `user-stories.md` a `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/_archived/user-stories.md`.
   2. Actualiza el `**Estado:**` en `proposal.md` a `✅ Completada`.
+  3. Ejecuta nuevamente el validador del contrato antes de archivar la propuesta completa.
 
 #### Paso 4 — Registrar en el Changelog
 
@@ -40,15 +50,19 @@ Ejecuta la skill `quinotospec-update-changelog` con:
 
 ### Modo Bulk (Múltiples Tareas)
 
+#### Paso 0 — Verificar el lote
+
+Ejecuta `quinotospec-verify-before-done` y valida `evidence_validate.py` para cada tarea antes de modificar cualquier checkbox. Si una tarea falla el gate, procesa solo las tareas permitidas y reporta el bloqueo de las demás.
+
 Usa `--bulk` o `-b` para marcar múltiples tareas a la vez:
 
 ```bash
-/quinotospec-mark-done TSK-AUTH-001,TSK-AUTH-002,TSK-AUTH-003 --bulk
+/quinotospec-mark-done TSK-AUTH-a1b2-001,TSK-AUTH-a1b2-002,TSK-AUTH-a1b2-003 --bulk
 ```
 
 #### Paso 1 — Procesar lista de tareas
 
-1. Recibe array de IDs de tareas: `[TSK-AUTH-001, TSK-AUTH-002, ...]`
+1. Recibe array de IDs de tareas: `[TSK-AUTH-a1b2-001, TSK-AUTH-a1b2-002, ...]`
 2. Para cada ID:
    - Busca y marca como completada `[x]`
    - Acumula éxitos y errores
@@ -70,51 +84,31 @@ Después de procesar todas las tareas:
 Usa `--force` para mover a archive aunque no esté 100% completo:
 
 ```bash
-/quinotospec-mark-done US-AUTH-001 --force
+/quinotospec-mark-done US-AUTH-a1b2-001 --force
 ```
 
 ⚠️ **Advertencia**: Esto archivará el archivo de tareas aunque tenga tareas pendientes.
 
-## Validacion Pre-Completion (Tests)
+## Validacion Pre-Completion
 
-Antes de marcar una tarea como completada, verifica que los tests pasen:
+La validación completa se delega a `quinotospec-verify-before-done` y al contrato de evidencia:
 
-### Paso 0 - Ejecutar Tests del Stack
+1. Lee `01-stack-profile.md` para obtener los comandos del stack.
+2. Ejecuta tests focalizados y, cuando el riesgo lo requiera, la suite completa.
+3. Ejecuta lint y typecheck disponibles.
+4. Asocia cada criterio DoD con evidencia fresca.
+5. Si una comprobación falla o no puede ejecutarse, detén el cambio de estado y reporta el bloqueo.
 
-1. Lee `01-stack-profile.md` para obtener el comando de tests del proyecto
-2. Ejecuta los tests relacionados con la tarea:
-   - Si la tarea modifico archivos especificos, ejecuta tests que cubren esos archivos
-   - Si no se puede determinar scope, ejecuta suite completa
-3. Evalua resultados:
-   - **Todos pasan** -> Continua con Paso 1 normalmente
-   - **Algunos fallan** -> **DETEN** el proceso y reporta:
-     ```
-     X No se puede marcar TSK-AUTH-001 como completada: 3 tests fallando
-     - test_login_success: Expected 200, got 500
-     - test_token_validation: AssertionError
-     Corrige los tests o usa --skip-tests si es un falso positivo.
-     ```
-   - **No hay tests** -> Advierte pero permite continuar:
-     ```
-     ! No se detectaron tests para esta tarea. Se recomienda agregar tests.
-     ? Continuar sin tests? [y/N]
-     ```
-
-### Excepciones
-
-- Usa `--skip-tests` para saltar la validacion (solo con confirmacion del usuario)
-- Si el proyecto no tiene tests configurados, omite este check automaticamente
-- Para tareas de documentacion o configuracion, el check de tests se omite automaticamente
-
+`--skip-tests` solo puede usarse para una comprobación secundaria con confirmación explícita; nunca omite `quinotospec-verify-before-done`. Las tareas de documentación o configuración usan una validación determinista equivalente y deben justificar por qué no requieren un test de comportamiento.
 ## Flags
 
 | Flag | Descripcion |
 |------|-------------|
 | `--bulk` `-b` | Procesar multiples tareas separadas por coma |
-| `--force` `-f` | Forzar archive aunque no este completo |
-| `--skip-changelog` | No actualizar changelog (para testing) |
+| `--force` `-f` | Forzar archivado sin declarar `completed`; requiere confirmación doble |
+| `--skip-changelog` | No actualizar changelog (solo testing) |
 | `--dry-run` | Simular sin hacer cambios reales |
-| `--skip-tests` | Saltar validacion de tests (no recomendado) |
+| `--skip-tests` | Omitir solo una comprobación secundaria; no omite verify-before-done |
 
 ## Manejo de Errores
 

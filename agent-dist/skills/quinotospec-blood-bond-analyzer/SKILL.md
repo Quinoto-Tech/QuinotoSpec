@@ -13,7 +13,7 @@ Lee los siguientes archivos para construir el análisis:
 
 | Fuente | Ubicación |
 |--------|-----------|
-| Changelog | `.quinoto-spec/quinoto-spec-changelog.md` |
+| Changelog | `.quinoto-spec/changelog/` (v2) o `.quinoto-spec/quinoto-spec-changelog.md` (v1 legacy) |
 | Prefix Registry | `.quinoto-spec/prefix-registry.md` |
 | Proposals | `.quinoto-spec/proposals/*/proposal.md` |
 | User Stories | `.quinoto-spec/proposals/*/user-stories.md` |
@@ -52,10 +52,9 @@ Lee los siguientes archivos para construir el análisis:
 ## Algoritmo de Análisis
 
 ### Paso 1 — Recolección de Changelog
-1. Lee `.quinoto-spec/quinoto-spec-changelog.md`
-2. Parsea entradas con formato `## [Fecha: YYYY-MM-DD]`
-3. Extrae: fecha, título, IDs de tareas mencionadas
-4. Calcula días desde última actividad
+1. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json`.
+2. Usa la salida normalizada para fecha, título, IDs canónicos y resumen.
+3. Calcula días desde última actividad.
 
 ### Paso 2 — Análisis de Prefix
 1. Lee `.quinoto-spec/prefix-registry.md`
@@ -63,7 +62,7 @@ Lee los siguientes archivos para construir el análisis:
 3. Ordena por frecuencia descendente
 
 ### Paso 3 — Detección de Secuencias
-1. Para cada entrada del changelog, extrae el prefijo del TASK_ID (ej: TSK-AUTH-001 → AUTH)
+1. Para cada entrada del changelog, extrae el prefijo del TASK_ID (ej: TSK-AUTH-a1b2-001 → AUTH-a1b2)
 2. Construye secuencias de 2-3 prefixes consecutivos
 3. Detecta si hay patrones repetidos
 

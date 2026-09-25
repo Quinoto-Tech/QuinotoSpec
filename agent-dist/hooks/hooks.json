@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/agent-dist/hooks/session-start.sh --platform claude"
+          }
+        ]
+      }
+    ]
+  }
+}

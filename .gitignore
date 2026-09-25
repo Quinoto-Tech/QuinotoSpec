@@ -26,6 +26,7 @@ node_modules/
 
 # QuinotoSpec generated
 .quinoto-spec/backups/
+.quinoto-spec-backups/
 .quinoto-spec/changelog/INDEX.md
 temp_*
 agent-dist/.tmp/
@@ -33,6 +34,12 @@ agent-dist/.tmp/
 # IDE
 .vscode/
 .idea/
+.opencode/
+.cursor/
+.claude/
+.cline/
+.agents/
+.agent/
 
 # PDFs generados desde README.md / README_EN.md (no versionados)
 README.pdf

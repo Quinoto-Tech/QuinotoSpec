@@ -1,0 +1,14 @@
+schema_version: 1
+preset:
+  id: example-preset
+  name: Example Preset
+  version: 0.1.0
+  description: Replace with a concise description
+  priority: 100
+requires:
+  quinotospec_version: ">=3.1.0"
+provides:
+  commands: []
+  skills: []
+  hooks: []
+hooks: {}

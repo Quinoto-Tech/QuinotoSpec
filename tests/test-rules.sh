@@ -63,6 +63,11 @@ EXPECTED_RULES=(
     "Validación de Sintaxis Pre-Apply"
     "Protección de Archivos Archivados"
     "Blood-Bond Monitor"
+    "TDD Enforcement"
+    "Debugging Sistematico"
+    "Verificacion Antes de Completar"
+    "Constitutional Compliance"
+    "Aprobación Humana Estructurada"
 )
 
 echo ""

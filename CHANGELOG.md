@@ -6,6 +6,92 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 
 ---
 
+## [3.2.0] - 2026-09-25 - Warband: Hird Edition (Beta/RC)
+
+### Summary
+- Release 3.2.0 con la integración de F3.2 en el contexto de inicio de sesión.
+- La release mantiene el estado beta/RC; F3.1 y F3.3 permanecen fuera de este incremento.
+
+### Added
+- **Party Mode F3.2.5**: `/quinotospec.party-mode` y el modo `--subagents` ahora están referenciados por el bootstrap de sesión.
+- **Prueba de bootstrap**: verifica que Party Mode y sus opciones estén disponibles al iniciar sesión.
+
+### Changed
+- **Versión**: bump semver de `3.1.0` a `3.2.0` en manifest, installer, plugin Cursor, `.version` y documentación.
+- **Inventario**: 43 workflows, 86 skills, 18 reglas, 9 agentes y 13 templates; no se agregan componentes de F3.1/F3.3.
+- **Estado de fases**: F3.2 y la infraestructura F3.4 de esta release quedan completas; F3.1 y F3.3 siguen pendientes.
+- **Validación**: release package, smoke test, bootstrap y suite completa pasan antes de publicar.
+
+### Known limitations
+- La capacidad de orchestrar agentes y ejecutar subagentes depende del IDE y sus herramientas.
+- Las extensiones siguen siendo locales, sin firma ni descarga remota.
+- La release permanece beta/RC por límites operativos externos.
+
+**Tiempo Ahorrado**: ~1h (IA: ~15min vs Humano: ~1h)
+
+---
+
+## [3.1.0] - 2026-09-25 - Warband: Hird Edition (Beta/RC)
+
+### Summary
+- Cierre de la Fase 2: extensibilidad local, presets, resolución de templates y generación dinámica de `AGENTS.md`.
+- F2.5 sincroniza la versión, la documentación y el inventario del paquete; la release conserva su estado beta/RC.
+
+### Added
+- **Extensiones y presets F2.3**: extension manager transaccional, presets, catálogos locales, manifests y hooks explícitos.
+- **AGENTS dinámico F2.4**: `config.yaml`, template, workflow y generador atómico; el installer genera el archivo durante staging.
+- **Documentación de contribución F2.5**: guía para publicar y mantener extensiones sin red ni ejecución remota de hooks.
+
+### Changed
+- **Versión**: bump semver de `3.0.0` a `3.1.0` en manifest, installer, plugin Cursor y `.version`.
+- **Inventario**: 43 workflows, 86 skills, 18 reglas, 9 agentes y 13 templates.
+- **Estado de fases**: Gate 0 y Fase 2 marcados como completos; larelease permanece beta/RC por límites operativos externos.
+- **Validación**: la suite completa mantiene 20 suites, contrato estricto, release smoke y checks estáticos.
+
+### Known limitations
+- Las extensiones son locales y los hooks solo se ejecutan con confirmación explícita; no hay descarga remota ni firma de paquetes.
+- La identidad humana, disaster recovery multi-repo y endurecimiento de permisos siguen fuera del alcance.
+- Worktrees y algunas capacidades Nordic mantienen límites prompt-only, experimentales o de demostración.
+
+**Tiempo Ahorrado**: ~6h (IA: ~45min vs Humano: ~6h)
+
+---
+
+## [3.0.0] - 2026-09-24 - Warband: Hird Edition (Beta/RC)
+
+### Summary
+- Cierre de la Fase 1: contrato canónico de artefactos, disciplina de ingeniería, constitution, recepción verificable de feedback y aislamiento opcional con worktrees.
+- Release candidate de Hird Edition; Gate 0 completa sus gates observables y conserva límites operativos externos.
+
+### Added
+- **Artifact contract**: parser y validador canónico read-only para proposals, user stories, tasks, IDs, estados, relaciones y changelog v1/v2.
+- **Bootstrap de sesión**: hooks para OpenCode, Cursor, Claude Code y Generic, con plugin OpenCode y manifest de Cursor.
+- **Disciplina de ingeniería**: skills TDD, Debug, Verify Before Done, Constitution, Receive Review y Worktree.
+- **Constitution**: principios verificables con aprobación explícita y gates de Apply, Review y Archive.
+- **Worktrees**: detección de aislamiento existente, herramientas nativas, fallback Git, permisos seguros, sandbox y baseline limpia.
+- **Governance gate G0.1**: dispatcher read-only con salida JSON para contrato, prefijo, changelog, acuerdo de producto, branches, rutas protegidas y configuración crítica.
+- **Backup engine G0.2**: snapshots SHA-256, manifest verificable, staging/rename atómico, restore con backup de seguridad y cleanup seguro.
+- **Evidence gate G0.2b**: validador read-only para registros frescos y tipados de TDD, Debug y Verify-Before-Done; la ejecución real y las decisiones humanas siguen explícitas.
+- **Human approval gate G0.2c**: validador read-only para decisiones humanas `approved`, `rejected` o `deferred`, con scope, acción, responsable, fecha y justificación obligatorios.
+- **Transactional installer**: staging sibling, verificación previa al commit, manifest de ownership con SHA-256, rollback de configuración/AGENTS.md y uninstall selectivo que conserva archivos ajenos.
+- **Release package gate**: `package-release.sh` genera tarball sin caches y checksum SHA-256; `smoke-release.sh` instala, verifica, inspecciona ownership y desinstala desde el artefacto extraído.
+
+### Changed
+- **Inventario**: 40 workflows, 83 skills, 18 reglas, 9 agentes y 9 templates.
+- **Installer y runtime**: soporte de IDEs, hooks, plugins, bootstrap, preservation de configuración y verificación post-instalación.
+- **Validación**: contrato estricto, dispatcher de gobernanza read-only, evidencia TDD/debug/verify, aprobaciones humanas estructuradas, motor de backup, installer transaccional y release package gate integrados en CI, `validate-all.sh` y 18 suites de pruebas.
+- **Documentación**: README ES/EN, AGENTS.md, arquitectura y roadmap sincronizados con la línea base de Fase 1.
+
+### Known limitations
+- TDD, Debug y Verify tienen validación estructural de evidencia; Constitution, Receive Review y Worktree conservan componentes prompt-only.
+- El validador no ejecuta comandos ni reemplaza decisiones humanas explícitas.
+- El installer ya es transaccional y ownership-safe; disaster recovery multi-repo y endurecimiento de permisos siguen fuera de alcance.
+- Gate 0 queda completo; el release mantiene beta/RC por disaster recovery multi-repo, helpers experimentales y límites de identidad fuera del paquete.
+
+**Tiempo Ahorrado**: ~30h (IA: ~3h vs Humano: ~30h)
+
+---
+
 ## [2.7.0] - 2026-09-05 - Warband: Nórdicas
 
 ### Summary
@@ -215,7 +301,7 @@ v2.6.0 es la edicion "Yggdrasil - Tiwaz Rune": el analisis formal de entropia co
 
 ## Versiones Futuras (Roadmap)
 
-El roadmap vivo y único vive en [V3_ROADMAP.md](V3_ROADMAP.md) (plan v2.7.0 → v3.3.0: Fase 1 Engineering Fundamentals, Fase 2 Extensibility, Fase 3 Agents, Fase 4 Product). Esta sección ya no duplica su contenido para evitar planes divergentes.
+El roadmap vivo y único vive en [V3_ROADMAP.md](V3_ROADMAP.md) (plan v3.1.0 → v3.3.0: Fase 1 Engineering Fundamentals completada, Fase 2 Extensibility completada, Fase 3 Agents y Fase 4 Product). Esta sección ya no duplica su contenido para evitar planes divergentes.
 
 ---
 

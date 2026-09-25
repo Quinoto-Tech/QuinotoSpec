@@ -60,15 +60,19 @@ Debes completar los acuerdos de producto antes de crear propuestas:
 - **OpenCode**: Verifica que los archivos estan en `.opencode/commands/` (no `workflows/`)
 - **Cursor**: Verifica que estan en `.cursor/commands/`
 - **Cline**: Verifica que estan en `.cline/workflows/`
+- **Claude Code**: Verifica que `.claude/settings.json` contiene el hook `SessionStart` y que `.claude/hooks/session-start.sh` sea ejecutable
 - **Antigravity**: Verifica que estan en `.agents/workflows/` (o `.agents/skills/`)
 
 Reinstala con el flag correcto:
 ```bash
 ./install.sh --opencode
 ./install.sh --cursor
+./install.sh --claude
 ./install.sh --cline
 ./install.sh --antigravity
 ```
+
+La instalación es transaccional: si falla antes del commit, no modifica el destino; si falla durante el commit, el `EXIT trap` restaura la configuración y `AGENTS.md`. El manifest `.quinoto-spec/ownership.json` permite verificar o actualizar archivos gestionados. No borres ese manifest manualmente; un destino legacy sin manifest debe migrarse antes de usar `--uninstall`.
 
 ### Discovery desactualizado (> 30 dias)
 ```bash
@@ -91,11 +95,16 @@ QuinotoSpec detecta el stack pero no encuentra tests:
 
 ## Problemas de Changelog
 
-### Changelog vacio o no existe
+### Changelog v2 vacio o no existe
+
+Usa la skill para crear la primera entrada; no edites manualmente el changelog:
 ```bash
-# Crear manualmente
-touch .quinoto-spec/quinoto-spec-changelog.md
-echo "# QuinotoSpec Changelog" > .quinoto-spec/quinoto-spec-changelog.md
+/quinotospec-update-changelog --v2 --title "Changelog inicial" --summary "Se inicializo el historial del proyecto"
+```
+
+Para consultar el formato:
+```bash
+python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json
 ```
 
 ### Entradas con formato incorrecto
@@ -113,10 +122,10 @@ echo "# QuinotoSpec Changelog" > .quinoto-spec/quinoto-spec-changelog.md
 Si estas en un branch que no sigue la convencion:
 ```bash
 # Crear branch correcto
-/quinotospec-generate-github-branch --task-id TSK-AUTH-001
+/quinotospec-generate-github-branch --task-id TSK-AUTH-a1b2-001
 
 # O renombrar el actual
-git branch -m feature/TSK-AUTH-001-descripcion-correcta
+git branch -m feature/TSK-AUTH-a1b2-001-descripcion-correcta
 ```
 
 ### Conflictos de merge
@@ -156,5 +165,5 @@ git branch -m feature/TSK-AUTH-001-descripcion-correcta
 
 1. Revisa esta guia de troubleshooting
 2. Ejecuta `@quinotospec-validate --full` para diagnosticar
-3. Revisa `.quinoto-spec/quinoto-spec-changelog.md` para ver historial
+3. Consulta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para ver historial
 4. Abre un issue en https://github.com/Quinoto-Tech/QuinotoSpec/issues

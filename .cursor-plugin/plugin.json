@@ -1,0 +1,13 @@
+{
+  "name": "quinotospec",
+  "version": "3.2.0",
+  "description": "QuinotoSpec methodology and agent configuration",
+  "author": {
+    "name": "QuinotoTech"
+  },
+  "agents": "agent-dist/agents",
+  "skills": "agent-dist/skills",
+  "commands": "agent-dist/workflows",
+  "rules": "agent-dist/rules",
+  "hooks": "agent-dist/hooks/hooks-cursor.json"
+}

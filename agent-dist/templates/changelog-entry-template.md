@@ -1,9 +1,12 @@
 ---
-name: Changelog Entry Template
-description: Template for individual changelog entry files in changelog/ directory (v2 format)
+date: {{DATE}}
+prefix: {{PREFIX}}
+slug: {{SLUG}}
+format: v2
+type: change
 ---
 
-## [Fecha: {{DATE}}] - {{TITLE}}
+## [{{DATE}}] - {{TITLE}}
 
 ### Resumen
 {{SUMMARY}}

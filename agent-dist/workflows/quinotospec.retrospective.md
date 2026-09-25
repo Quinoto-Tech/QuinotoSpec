@@ -23,7 +23,7 @@ Objetivo: aprender de las propuestas completadas para mejorar la adopción de la
 
 ### Paso 2 — Extraer métricas del changelog
 
-1. Ejecutar `@quinotospec.changelog-view --json` para obtener todas las entradas (auto-detecta formato v1/v2).
+1. Ejecutar `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para obtener entradas normalizadas de v1/v2.
 2. Para cada propuesta archivada, filtrar sus entradas del JSON resultante.
 3. Extraer de cada entrada:
    - `**Tiempo Ahorrado**: ~{Tiempo Humano} (IA: {Tiempo IA} vs Humano: {Tiempo Humano})`

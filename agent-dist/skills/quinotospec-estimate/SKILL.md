@@ -62,8 +62,8 @@ La estimación difiere significativamente. ¿Revisar?
 
 Si se usa `--compare`:
 1. Leer `proposal.md` para obtener la estimación original
-2. Leer `.quinoto-spec/quinoto-spec-changelog.md` para encontrar entradas relacionadas
-3. Extraer `**Tiempo Ahorrado**` de las entradas del changelog
+2. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` y busca entradas relacionadas.
+3. Extraer `time_saved` de la salida normalizada, aceptando tanto `Tiempo Ahorrado` como `Time Saved`.
 4. Comparar tiempo estimado vs tiempo real
 5. Calcular precisión: `(real / estimado) * 100`
 6. Reportar:

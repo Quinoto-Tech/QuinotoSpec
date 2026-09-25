@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Cleanup Temp: Limpia archivos temporales y backups antiguos
+# Cleanup Temp: Limpia archivos temporales y cachés; los backups usan backup.py
 # Uso: ./scripts/cleanup-temp.sh [--days 7] [--dry-run]
 
 set -e
@@ -16,7 +16,7 @@ while [[ $# -gt 0 ]]; do
         --dry-run) DRY_RUN=true; shift ;;
         -h|--help)
             echo "Usage: $0 [--days N] [--dry-run]"
-            echo "  --days N     Keep backups newer than N days (default: 7)"
+            echo "  --days N     Keep temporary files newer than N days (default: 7)"
             echo "  --dry-run    Show what would be deleted without deleting"
             exit 0
             ;;
@@ -32,26 +32,17 @@ echo ""
 
 TOTAL_DELETED=0
 
-# 1. Clean old backups in .quinoto-spec/backups/ (if in a project context)
 echo "--- Backups ---"
-if [ -d "$PROJECT_ROOT/.quinoto-spec/backups" ]; then
-    OLD_BACKUPS=$(find "$PROJECT_ROOT/.quinoto-spec/backups" -maxdepth 1 -type d -mtime +"$DAYS" -name "backup-*" 2>/dev/null)
-    if [ -n "$OLD_BACKUPS" ]; then
-        while IFS= read -r backup; do
-            SIZE=$(du -sh "$backup" 2>/dev/null | cut -f1)
-            if [ "$DRY_RUN" = true ]; then
-                echo "  [DRY RUN] Would delete: $(basename "$backup") ($SIZE)"
-            else
-                rm -rf "$backup"
-                echo "  Deleted: $(basename "$backup") ($SIZE)"
-            fi
-            TOTAL_DELETED=$((TOTAL_DELETED + 1))
-        done <<< "$OLD_BACKUPS"
+if [ -d "$PROJECT_ROOT/.quinoto-spec-backups" ]; then
+    if [ "$DRY_RUN" = true ]; then
+        python3 -B "$PROJECT_ROOT/agent-dist/skills/quinotospec-backup/backup.py" cleanup --root "$PROJECT_ROOT" --store "$PROJECT_ROOT/.quinoto-spec-backups" --keep 5 --dry-run --json
     else
-        echo "  No backups older than $DAYS days"
+        echo "  Usa backup.py cleanup --keep 5 --yes para eliminar backups"
     fi
+elif [ -d "$PROJECT_ROOT/.quinoto-spec/backups" ]; then
+    echo "  Legacy store detected; migra a .quinoto-spec-backups/ antes de limpiar"
 else
-    echo "  No .quinoto-spec/backups/ directory found (not a project)"
+    echo "  No external backup store found"
 fi
 echo ""
 

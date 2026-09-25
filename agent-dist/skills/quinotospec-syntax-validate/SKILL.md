@@ -1,107 +1,73 @@
 ---
 name: quinotospec-syntax-validate
-description: Valida la sintaxis y estructura de archivos QuinotoSpec antes de ejecutar workflows.
+description: Valida proposals, user stories, tasks y changelog mediante el contrato común, con compatibilidad legacy.
 ---
 
 # Skill: Quinotospec Syntax Validate
 
-Valida que los archivos generados por workflows tengan la sintaxis correcta. Útil como pre-check antes de apply o cuando se importan archivos externos.
+Usa el contrato común antes de aplicar, archivar, distribuir o importar artefactos.
 
-## Checks de Sintaxis
-
-### 1. Proposal (.quinoto-spec/proposals/{slug}/proposal.md)
-
-Verifica:
-- ✅ Tiene campo `**ID:**` con formato correcto
-- ✅ Tiene campo `**Prefijo:**` matching prefix-registry
-- ✅ Tiene campo `**Estado:**` con valor válido
-- ✅ Tiene campo `**Fecha de Creación:**`
-- ✅ Tiene sección `## Descripción`
-- ✅ Tiene sección `## Solución Propuesta`
-
-**Errores comunes**:
-- Estado inválido (no es 🟢, 🔴, ✅)
-- Falta prefijo en registry
-
-### 2. User Stories (.quinoto-spec/proposals/{slug}/user-stories.md)
-
-Verifica:
-- ✅ Cada US tiene formato `## US-XXX-NN: Título`
-- ✅ Tiene columna `**Servicio:**` (para multi-repo)
-- ✅ Tiene checkbox list en `**Criterios de Aceptación:**`
-- ✅ No hay IDs duplicados
-
-### 3. Tasks (.quinoto-spec/proposals/{slug}/*_tasks.md)
-
-Verifica:
-- ✅ Cada tarea tiene formato `## TSK-XXX-NN`
-- ✅ Está referenciada a una US válida
-- ✅ Tiene checkboxes `[ ]` / `[x]`
-- ✅ Servicio coincide con el de la US padre
-- ✅ No hay orphan tasks (sin US padre)
-
-### 4. Changelog (.quinoto-spec/quinoto-spec-changelog.md)
-
-Verifica:
-- ✅ Formato de fecha ISO (YYYY-MM-DD)
-- ✅ Sección por versión con formato `[X.Y.Z]`
-- ✅ Tipo de cambio válido (Added, Changed, Deprecated, Removed, Fixed, Security)
-- ✅ No hay entradas duplicadas
-
-### 5. Discovery Files (.quinoto-spec/discovery/*.md)
-
-Verifica:
-- ✅ Cada archivo tiene `# Título` como H1
-- ✅ No está vacío (mínimo 100 caracteres)
-- ✅ Si es `08-product-and-agreements.md`, tiene contenido DoR/DoD
-
-### 6. Config Files (base-config.yml, sprint-config.yml)
-
-Verifica:
-- ✅ YAML válido (parseable)
-- ✅ Campos requeridos presentes
-- ✅ Tipos de datos correctos (strings, numbers, arrays)
-
-## Uso
+## Comando canónico
 
 ```bash
-# Validar una propuesta específica
-/quinotospec-syntax-validate --type proposal --slug auth-jwt
-
-# Validar todas las propuestas
-/quinotospec-syntax-validate --type all
-
-# Validar solo changelog
-/quinotospec-syntax-validate --type changelog
-
-# Validación estricta (falla en warnings)
-/quinotospec-syntax-validate --strict
+python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict
 ```
 
-## Output
+Para inspeccionar el modelo normalizado:
+
+```bash
+python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json
+```
+
+## Qué valida
+
+- Proposal: ID, prefijo, fecha, estado, prioridad, complejidad y servicios.
+- User stories: tabla canónica, IDs `US-MNEM-suffix-NNN`, criterios, prioridad, estimación y servicio.
+- Tasks: tabla canónica de 11 columnas, IDs `TSK-MNEM-suffix-NNN`, relación explícita con una story, dependencias y estado `[ ]`/`[x]`.
+- Changelog: v2 preferred, v1 accepted, frontmatter/heading, resumen y `Tiempo Ahorrado`/`Time Saved`.
+- Constitution: si existe, placeholders resueltos, estado explícito y principios verificables.
+- Integridad: IDs duplicados, prefijos no registrados, stories huérfanas y tareas sin story.
+
+## Compatibilidad
+
+El parser acepta tablas antiguas, bloques `## US-...`/`## TSK-...`, `**Estado**: completada`, IDs cortos y `all_tasks.md` como índice derivado. Los formatos legacy generan warnings; no se reescriben automáticamente.
+
+## Uso por tipo
+
+```bash
+/quinotospec-syntax-validate --type proposal --slug {{SLUG}}
+/quinotospec-syntax-validate --type user-stories --slug {{SLUG}}
+/quinotospec-syntax-validate --type tasks --slug {{SLUG}}
+/quinotospec-syntax-validate --type changelog
+/quinotospec-syntax-validate --type all --strict
+```
+
+## Flags
+
+- `--type`: limita la revisión a `proposal`, `user-stories`, `tasks`, `changelog` o `all`.
+- `--slug`: selecciona una propuesta concreta.
+- `--strict`: falla también con warnings.
+- `--json`: salida estable para CI.
+- `--fix`: solo permite correcciones de estructura seguras; no migra legacy automáticamente.
+
+## Integración
+
+Esta skill es precondición de:
+
+- `@quinotospec.apply`
+- `@quinotospec.archive`
+- `@quinotospec.distribute`
+- `@quinotospec.create-tasks`
+
+Un error bloquea el workflow. Un warning requiere confirmación explícita en modo estricto.
+
+## Salida
 
 ```json
 {
   "valid": true,
+  "blocking": false,
   "errors": [],
-  "warnings": [
-    { "file": "proposals/auth-jwt/proposal.md", "warning": "Fecha de creación con formato no estándar" }
-  ]
+  "warnings": []
 }
 ```
-
-## Integración con Workflows
-
-Esta skill debe ejecutarse como pre-condición en:
-- `@quinotospec.apply` - antes de ejecutar código
-- `@quinotospec.archive` - antes de archivar
-- `@quinotospec.distribute` - antes de distribuir a servicios
-
-## Flags
-
-| Flag | Descripción |
-|------|-------------|
-| `--type` | `proposal`, `user-stories`, `tasks`, `changelog`, `discovery`, `config`, `all` |
-| `--slug` | Slug específico (para proposal/tasks) |
-| `--strict` | Tratar warnings como errores |
-| `--fix` | Intentar auto-corrección cuando sea posible |

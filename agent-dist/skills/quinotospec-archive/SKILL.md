@@ -17,9 +17,11 @@ Este workflow permite archivar elementos de la especificación técnica que han 
 ### Instrucciones de Ejecución:
 
 1. **Validación previa (OBLIGATORIA)**:
-    - Lee `proposal.md` y verifica que el `**Estado:**` sea `✅ Completada` o equivalente a Done.
-    - Si quedan user stories o tareas sin completar (`[ ]` en los archivos de tareas), **advierte al usuario** y detén el proceso a menos que confirme explícitamente continuar.
-    - Genera un resumen rápido: cuántas historias y tareas contenía el elemento, cuántas fueron completadas vs pendientes. Documenta esto en el changelog.
+    - Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict`.
+    - Lee `proposal.md` y verifica el estado normalizado `completed` mediante el contrato; acepta `✅ Completada` y equivalentes legacy.
+    - Si quedan historias o tareas con estados `pending`, `blocked` o `unknown`, **advierte al usuario** y detén el proceso a menos que confirme explícitamente continuar.
+     - Genera un resumen con IDs canónicos, estados normalizados y archivo de origen.
+     - Si existe `.quinoto-spec/constitution.md` con estado `active`, verifica compliance constitucional antes de archivar; si no existe, registra una advertencia de compatibilidad.
 
 2. **Merge de Delta Specs** (solo si la propuesta tiene `delta-specs/`):
 

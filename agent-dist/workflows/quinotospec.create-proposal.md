@@ -7,14 +7,21 @@ description: crear una propuesta independiente
 Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `01-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `08-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global y **detectar posibles conflictos o solapamientos** de alcance (mismos archivos, dominios o flujos afectados); si detectas alguno, documéntalo al inicio de la propuesta bajo `**⚠️ Conflictos Detectados:**`.
 El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
 
+## Extension hooks
+
+Consulta los hooks `before_proposal` y `after_proposal` con `extension_manager.py hooks --point <point> --json`. Ejecuta únicamente hooks `auto` con `--run --yes` y reporta su exit code antes de continuar.
+
 **Flags:**
 - `--party [agents]`: Ejecuta Party Mode con los agentes especificados ANTES de generar la propuesta. El debate multi-agente enriquece la propuesta con perspectivas cruzadas. Si no se especifican agentes, se auto-seleccionan los mas relevantes segun el tema.
 - `--party-output <path>`: Donde guardar la transcripcion del Party Mode (default: `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/party-analysis.md`)
 
 PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
 PROPOSAL_SLUG: derivar de PROPOSAL_NAME en lowercase con palabras separadas por guión (ej. `rewards-stabilization`, `payment-timeout-fix`).
-DATE_PREFIX: fecha actual en formato YYYYMMDD.
+DATE_PREFIX: fecha actual en formato YYYY-MM-DD.
 Tu objetivo es generar una Propuesta Técnica específica para este tema, INTEGRADA con el resto del sistema.
+
+**Contrato de artefactos — OBLIGATORIO:**
+Antes de generar archivos, ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict`. El proposal debe incluir `**ID:**`, `**Prefijo:**`, `**Fecha de Creación:**`, `**Estado:**`, `**Prioridad:**`, `**Complejidad:**` y `**Servicios Afectados:**`. Si el validador devuelve un error, detén el workflow.
 
 **Paso Previo — Validación de Acuerdos de Producto (BLOQUEANTE):**
 
@@ -91,14 +98,15 @@ Debes crear una carpeta `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG
 
 1. **proposal.md**:
     - **Título**: `# Propuesta Técnica: {{PROPOSAL_NAME}}`
-    - **Metadatos iniciales (en este orden)**:
-        - `**Prefijo:** {{PREFIX}}`
-        - `**Fecha de Creación**: YYYY-MM-DD`
-        - `**Estado**: 🟡 Propuesta`
-        - `**Prioridad**: P1 | P2 | P3`
-        - `**Complejidad**: Baja | Media | Alta`
-        - `**Servicios Afectados**: [lista de servicios/sub-proyectos impactados, separados por comas. Ej: auth-service, user-service, gateway]`
-        - `**Party Mode**: ✅ Consejo multi-agente | — No ejecutado`
+     - **Metadatos iniciales (en este orden)**:
+         - `**ID:** {{DATE_PREFIX}}-{{PROPOSAL_SLUG}}`
+         - `**Prefijo:** {{PREFIX}}`
+         - `**Fecha de Creación:** YYYY-MM-DD`
+         - `**Estado:** 🟡 Propuesta`
+         - `**Prioridad:** P1 | P2 | P3`
+         - `**Complejidad:** Baja | Media | Alta`
+         - `**Servicios Afectados:** [lista de servicios/sub-proyectos impactados, separados por comas. Ej: auth-service, user-service, gateway]`
+         - `**Party Mode:** — No ejecutado`
     - **Separador**: `---`
     - **Party Mode Analysis** (SOLO si `--party`): Transcripcion resumida del consejo de agentes — consenso, disenso, recomendaciones. Ver seccion `Party Mode Analysis` arriba para formato.
     - **Resumen Ejecutivo**: Contexto, objetivo y valor. Si hubo Party Mode, incorporar la vision consensuada del consejo.

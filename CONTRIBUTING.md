@@ -17,6 +17,8 @@
   - [Crear una Nueva Skill](#crear-una-nueva-skill)
   - [Crear un Nuevo Workflow](#crear-un-nuevo-workflow)
   - [Crear un Nuevo Agent](#crear-un-nuevo-agent)
+  - [Desarrollo de Extensiones](#desarrollo-de-extensiones)
+  - [Desarrollo de Presets](#desarrollo-de-presets)
   - [Modificar Reglas Globales](#modificar-reglas-globales)
 - [Estándares de Código](#estándares-de-código)
   - [Convenciones de Naming](#convenciones-de-naming)
@@ -92,7 +94,7 @@ git remote add upstream https://github.com/Quinoto-Tech/QuinotoSpec.git
 git checkout -b feature/TSK-CONTRIB-001-tu-contribucion
 
 # 4. Instala QuinotoSpec en un proyecto de prueba
-./install.sh --opencode  # O --cursor, --cline
+./install.sh --opencode  # O --cursor, --claude, --cline
 ```
 
 ### Estructura del Proyecto
@@ -107,8 +109,11 @@ quinotospec-package/
 │   ├── skills/                    # Skills especializadas
 │   │   └── skill-name/
 │   │       └── SKILL.md
-│   └── workflows/                 # Flujos de trabajo
-│       └── quinotospec.workflow-name.md
+│   ├── workflows/                 # Flujos de trabajo
+│   │   └── quinotospec.workflow-name.md
+│   ├── bootstrap/                 # Contexto de inicio de sesión
+│   ├── hooks/                     # Hooks Cursor/Claude/OpenCode
+│   └── plugins/                   # Adaptadores de IDE
 ├── AGENTS.md                      # Guía para agentes
 ├── CHANGELOG.md                   # Historial de cambios
 ├── CONTRIBUTING.md                # Este archivo
@@ -258,7 +263,38 @@ Describe qué archivos se generan o modifican.
 - [ ] Output esperado definido
 - [ ] Ejemplos de uso
 - [ ] Errores comunes documentados
+- [ ] IDs, estados y relaciones usan el contrato común
+- [ ] Fixture o test de contrato actualizado
 - [ ] Actualizado en README.md
+
+### Desarrollo de Extensiones
+
+Las extensiones son paquetes locales que amplían workflows, skills, reglas o templates sin modificar el core. El formato oficial es `agent-dist/templates/extension-template.yml` y la referencia completa está en `extensions/EXTENSION-DEVELOPMENT-GUIDE.md`.
+
+#### Ciclo de vida
+
+1. Crear un directorio con `extension.yml` y un identificador único.
+2. Declarar la versión, los archivos disponibles y los hooks en el manifest.
+3. Validar el manifest con `quinotospec-extension-manager info <ID>`.
+4. Probar la instalación en un sandbox con `tests/test-extensions.sh`.
+5. Ejecutar los hooks solo con `--run --yes` y revisar su salida.
+
+El manager usa transactions con staging, valida hashes y evita sobrescribir archivos gestionados modificados. No descarga fuentes remotas y rechaza symlinks fuera del root autorizado.
+
+### Desarrollo de Presets
+
+Los presets son conjuntos opinados de extensiones, overrides y templates. Se declaran con `agent-dist/templates/preset-template.yml` y se publican en un catálogo local.
+
+#### Checklist
+
+- [ ] Manifest válido y versión semver.
+- [ ] Dependencias declaradas explícitamente.
+- [ ] Hooks before/after documentados y sin ejecución implícita.
+- [ ] Override order compatible: `overrides → presets → extensions → core`.
+- [ ] Tests de instalación, actualización, remoção y hooks.
+- [ ] Guía de contribución y changelog actualizados.
+
+---
 
 ### Modificar Reglas Globales
 
@@ -292,7 +328,7 @@ Las reglas globales están en `agent-dist/rules/quinotospec-rules.md`.
 | **Skills** | `quinotospec-<name>` | `quinotospec-mark-done` |
 | **Workflows** | `quinotospec.<name>.md` | `quinotospec.apply.md` |
 | **Agents** | `<name>.md` | `code-reviewer.md` |
-| **Branches** | `feature/<ID>-<desc>` | `feature/TSK-AUTH-001-add-login` |
+| **Branches** | `feature/<ID>-<desc>` | `feature/TSK-AUTH-a1b2-001-add-login` |
 | **Proposals** | `YYYY-MM-DD-<slug>` | `2024-04-15-auth-jwt` |
 
 ### Formato de Archivos

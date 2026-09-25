@@ -11,20 +11,39 @@ Debes ejecutar la tarea técnica especificada por el usuario y documentar EXACTA
 **Tarea a realizar:**
 `{{TASK_ID}}` — {{TASK_DESCRIPTION}}
 
+**Opciones opcionales de aislamiento:**
+- `USE_WORKTREE`: por defecto `false`; el usuario puede activarlo con `--worktree`.
+- `WORKTREE_PATH`: ruta opcional, activada con `--worktree-path`.
+- `BASE_REF`: referencia base explícita para crear el worktree; no la adivines.
+- Si `USE_WORKTREE=true`, invoca `quinotospec-worktree` y realiza todos los cambios, tests, changelog y mark-done dentro del worktree resultante.
+
 **Contexto Global OBLIGATORIO:**
 Antes de realizar cualquier cambio:
-1. Busca el `{{TASK_ID}}` en `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{US_ID}}_tasks.md` para obtener el contexto técnico completo de la tarea: historia relacionada, criterios de aceptación y detalles de implementación.
-2. Lee `.quinoto-spec/discovery/` para comprender el estado actual del proyecto (especialmente `01-stack-profile.md` para conocer el stack, comandos de test y convenciones).
-3. Lee `.quinoto-spec/proposals/` para alinear tu código con las propuestas técnicas aprobadas.
-4. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
+1. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict` y detén el workflow ante errores.
+2. Consulta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json`; localiza el `canonical_id` de `{{TASK_ID}}` y usa `story_id` como contexto, sin derivar la story por número.
+3. Lee el archivo `*_tasks.md` que contiene la tarea, la story asociada y la proposal.md de la propuesta.
+4. Lee `.quinoto-spec/discovery/` para comprender el estado actual del proyecto (especialmente `01-stack-profile.md` para conocer el stack, comandos de test y convenciones).
+5. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
+6. Si existe `.quinoto-spec/constitution.md` con estado `active`, lee sus principios y verifica que la tarea pueda cumplirlos; si no puede, detén el Apply y solicita una enmienda o decisión explícita.
 
 **Instrucciones de Ejecución:**
-1. **Confirmación requerida**: Antes de crear un branch, pregunta al usuario si desea crear uno nuevo. Si el usuario no quiere crear un branch, omite este paso y continúa trabajando en la rama actual.
-2. Si el usuario confirma, crea un branch con el nombre `feature/{{TASK_ID}}-slug-descriptivo` en kebab-case (ej. `feature/US-ABC-001-add-login-endpoint`) usando la skill `quinotospec-generate-github-branch`.
-3. Analiza el código actual y realiza los cambios necesarios para cumplir con la tarea descrita.
-4. **Verificación de Criterios de Aceptación (DoD)**: Antes de finalizar, revisa uno a uno los criterios de aceptación definidos en la tarea/historia y confirma que cada uno está cumplido. Si alguno no está cubierto, impleméntalo o documenta la excepción.
-5. **Ejecuta los tests del stack**: Usa el comando de tests detectado en `01-stack-profile.md` (ej. `npm test`, `pytest`, `bundle exec rspec`) y verifica que no haya regresiones. Si los tests fallan, corrígelos antes de continuar.
-6. **Revisión recomendada (opcional)**: Si se creó un branch en el paso 2, sugiere al usuario ejecutar `@quinotospec.review` con `TASK_ID={{TASK_ID}}` y `BRANCH_NAME={{nombre del branch creado}}` antes de mergear, para una revisión técnica independiente contra los criterios de aceptación. No es bloqueante — si el usuario prefiere omitirla, continúa con los pasos siguientes.
+1. **Confirmación requerida**: pregunta separadamente si se debe crear un branch nuevo y si se desea usar un worktree. Resuelve `BRANCH_NAME` y `BASE_REF`; no los inventes.
+2. **Constitution Gate**: si existe `.quinoto-spec/constitution.md` activo, verifica cada principio aplicable antes de modificar producción; si hay violación, detén el Apply.
+2b. **Human Approval Gate**: para configuración crítica, recuperación de archivo archivado u otra decisión humana, registra `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` después de la confirmación explícita y valida `human-approval` con `rules_enforce.py --require-approval --approval-id {{APPROVAL_ID}} --approval-subject {{SUBJECT}} --approval-action apply`; una confirmación conversacional no basta.
+3. **Worktree Gate (opcional)**: si `USE_WORKTREE=true` y el usuario confirma, invoca `quinotospec-worktree` con `TASK_ID`, `BRANCH_NAME`, `BASE_REF` y `WORKTREE_PATH` opcional. La skill reutiliza un aislamiento existente o crea uno seguro. Si el usuario lo rechaza, continúa en el checkout actual.
+4. Si `USE_WORKTREE=false` y el usuario confirmó crear un branch, usa `quinotospec-generate-github-branch`. Si `USE_WORKTREE=true`, no dupliques la creación del branch con `git checkout -b`.
+5. **Baseline y contexto**: después de crear o reutilizar un worktree, verifica su raíz, branch y disponibilidad de los artefactos; ejecuta la baseline de tests definida por `01-stack-profile.md`. Una baseline fallida bloquea TDD y activa `quinotospec-debug`.
+6. Si el cambio proviene de feedback de review, ejecuta primero `quinotospec-receive-review` y aplica solo los puntos verificados.
+7. **RED obligatorio**: para código de producción, ejecuta `quinotospec-tdd`, escribe el test mínimo y registra el fallo esperado antes de modificar producción. Guarda `.quinoto-spec/evidence/{{TASK_ID}}/tdd.json` y valida con `evidence_validate.py --kind tdd --require --json`.
+8. **GREEN mínimo**: implementa solo el comportamiento requerido, ejecuta el test focalizado y confirma que pasa.
+9. **REFACTOR**: mejora la estructura sin cambiar el comportamiento y vuelve a ejecutar los tests afectados.
+10. Si aparece un fallo después de implementar, cambia a `quinotospec-debug`; registra `.quinoto-spec/evidence/{{TASK_ID}}/debug.json` y valida con `evidence_validate.py --kind debug --require --json` antes del hotfix.
+11. **Verificación de Criterios de Aceptación (DoD)**: revisa uno a uno los criterios definidos en la tarea/historia y asocia a cada uno un comando o evidencia.
+12. **Calidad del stack**: ejecuta tests, lint y typecheck disponibles usando `01-stack-profile.md`; corrige regresiones antes de continuar.
+13. Ejecuta `quinotospec-verify-before-done`, guarda `.quinoto-spec/evidence/{{TASK_ID}}/verify-before-done.json` y valida con `evidence_validate.py --kind verify-before-done --require --json`; no continúes al changelog si la evidencia no está fresca.
+14. **Revisión recomendada (opcional)**: si se creó un branch, sugiere `@quinotospec.review` con `TASK_ID={{TASK_ID}}` y `BRANCH_NAME={{BRANCH_NAME}}` antes de mergear.
+
+Para documentación, configuración o migración sin comportamiento ejecutable, reemplaza el gate RED por una validación determinista equivalente y documenta la excepción. No implementes en el checkout original después de activar un worktree.
 
 **Instrucciones de Documentación (Changelog):**
 Una vez aplicados los cambios, DEBES ejecutar la skill `quinotospec-update-changelog`.
@@ -82,14 +101,11 @@ Si los tests fallan despues de implementar cambios:
 
 Después de completar una tarea y ejecutar `quinotospec-mark-done`, DEBES buscar y sugerir la siguiente tarea a ejecutar:
 
-1. **Lee el archivo de tareas**: `.quinoto-spec/proposals/{{PROPOSAL_SLUG}}/{{US_ID}}_tasks.md` (deriva el `US_ID` del `{{TASK_ID}}` dado, ej. si TASK_ID es `TSK-AUTH-001`, la historia es `US-AUTH-XXX`)
-
+1. **Lee el contrato normalizado**: usa `contract.py inspect --root . --json` y localiza la relación `story_id` de `{{TASK_ID}}`.
 2. **Encuentra la siguiente tarea**:
-   - Recorre las tareas en orden (por su ID numérico)
-   - Una tarea está lista para ejecutar si:
-     - No está marcada como completada (`[ ]` en lugar de `[x]`)
-     - Todas sus tareas dependientes están completadas
-   - La primera tarea que cumpla estas condiciones es la siguiente
+   - Recorre las tareas del archivo `*_tasks.md` en orden por `canonical_id`.
+   - Una tarea está lista si su estado normalizado es `pending` y todas sus dependencias están `completed`.
+   - La primera tarea que cumpla estas condiciones es la siguiente.
 
 3. **Formula la sugerencia**:
    - Si hay una siguiente tarea: *"¿Deseas continuar con la tarea `{{NEXT_TASK_ID}}` — {{NEXT_TASK_TITLE}}?"*

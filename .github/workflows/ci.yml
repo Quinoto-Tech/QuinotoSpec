@@ -22,11 +22,37 @@ jobs:
           brew install shellcheck bash
           echo "BASH_PATH=$(brew --prefix)/bin/bash" >> $GITHUB_ENV
 
-      - name: Run test suite
-        run: ${BASH_PATH:-bash} ./tests/run-all-tests.sh
+      - name: Run package gates
+        run: ${BASH_PATH:-bash} ./scripts/validate-all.sh --strict
 
-      - name: Validate all
-        run: ${BASH_PATH:-bash} ./scripts/validate-all.sh
+  compatibility:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.11"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Verify Python version
+        run: python --version
+      - name: Run gates on supported Python
+        run: ./scripts/validate-all.sh --strict
+
+  package-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+      - name: Build and smoke-test release archive
+        run: |
+          VERSION="$(python3 -c 'import json; print(json.load(open("manifest.json"))["version"])')"
+          bash scripts/package-release.sh "$VERSION" "$RUNNER_TEMP/quinotospec-dist"
+          bash scripts/smoke-release.sh "$RUNNER_TEMP/quinotospec-dist/quinotospec-$VERSION.tar.gz"
 
   lint-shell:
     runs-on: ubuntu-latest
@@ -36,14 +62,28 @@ jobs:
       - name: Shellcheck all bash scripts
         run: |
           FAILED=0
-          for f in install.sh scripts/*.sh tests/*.sh .githooks/*; do
+          for f in install.sh agent-dist/hooks/*.sh scripts/*.sh tests/*.sh .githooks/*; do
             if [ -f "$f" ]; then
-              if ! shellcheck -x "$f" 2>&1; then
+              if ! shellcheck -e SC2329 -x "$f" 2>&1; then
                 FAILED=1
               fi
             fi
           done
           exit $FAILED
+
+  lint-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate runtime JSON
+        run: |
+          for f in agent-dist/hooks/*.json .cursor-plugin/plugin.json; do
+            python3 -m json.tool "$f" >/dev/null
+          done
+
+      - name: Validate OpenCode plugin syntax
+        run: node --check agent-dist/plugins/opencode/quinotospec-plugin.js
 
   lint-docs:
     runs-on: ubuntu-latest
@@ -86,7 +126,7 @@ jobs:
           echo "All agents follow naming convention"
 
           echo "Checking templates presence..."
-          for t in proposal-template.md rfc-template.md delta-spec-template.md changelog-entry-template.md schema-template.yaml; do
+          for t in proposal-template.md rfc-template.md delta-spec-template.md changelog-entry-template.md schema-template.yaml constitution-template.md tiwaz-rune-report-template.md user-stories-template.md tasks-template.md; do
             if [ ! -f "agent-dist/templates/$t" ]; then
               echo "WARNING: expected template missing: $t"
             fi
@@ -100,7 +140,7 @@ jobs:
 
       - name: Verify directory structure
         run: |
-          REQUIRED_DIRS="agent-dist/workflows agent-dist/skills agent-dist/rules agent-dist/agents agent-dist/templates tests scripts"
+          REQUIRED_DIRS="agent-dist/workflows agent-dist/skills agent-dist/rules agent-dist/agents agent-dist/templates agent-dist/bootstrap agent-dist/hooks agent-dist/plugins tests scripts"
           for dir in $REQUIRED_DIRS; do
             if [ ! -d "$dir" ]; then
               echo "ERROR: Required directory missing: $dir"
@@ -111,7 +151,7 @@ jobs:
 
       - name: Verify critical files
         run: |
-          REQUIRED_FILES="install.sh AGENTS.md README.md LICENSE agent-dist/rules/quinotospec-rules.md"
+          REQUIRED_FILES="install.sh AGENTS.md README.md LICENSE agent-dist/rules/quinotospec-rules.md agent-dist/bootstrap/quinotospec-bootstrap.md agent-dist/hooks/session-start.sh agent-dist/hooks/hooks.json agent-dist/hooks/hooks-cursor.json agent-dist/hooks/hooks-opencode.json agent-dist/plugins/opencode/quinotospec-plugin.js agent-dist/workflows/quinotospec.constitution.md agent-dist/skills/quinotospec-constitution/SKILL.md agent-dist/skills/quinotospec-receive-review/SKILL.md agent-dist/skills/quinotospec-worktree/SKILL.md agent-dist/skills/quinotospec-rules-enforce/rules_enforce.py agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py agent-dist/skills/quinotospec-rules-enforce/approval_validate.py agent-dist/skills/quinotospec-backup/backup.py agent-dist/templates/constitution-template.md .cursor-plugin/plugin.json"
           for file in $REQUIRED_FILES; do
             if [ ! -f "$file" ]; then
               echo "ERROR: Required file missing: $file"

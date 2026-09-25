@@ -15,12 +15,25 @@ Uso:
 Solo stdlib. Offline (salvo subprocesos para analyzer/predictor).
 """
 import datetime
+import importlib.util
 import json
 import os
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+
+def load_contract():
+    path = Path(__file__).resolve().parents[1] / "quinotospec-contract" / "contract.py"
+    spec = importlib.util.spec_from_file_location("quinotospec_contract_shared", path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+CONTRACT = load_contract()
 
 
 def resolve_root(argv):
@@ -41,72 +54,39 @@ def resolve_root(argv):
 
 
 def parse_changelog_last_date(root: Path):
+    try:
+        entries, _ = CONTRACT.parse_changelog(root)
+    except (OSError, ValueError):
+        entries = []
     dates = []
     last_proposal = None
     last_task = None
-
-    changelog_dir = root / ".quinoto-spec" / "changelog"
-    if changelog_dir.exists():
-        for entry in sorted(changelog_dir.glob("*.md")):
-            text = entry.read_text(errors="ignore")
-            m = re.match(r"(\d{4}-\d{2}-\d{2})", entry.stem)
-            date_str = m.group(1) if m else None
-            m2 = re.search(r"##\s*\[Fecha:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\]", text)
-            if m2:
-                date_str = m2.group(1)
-            if date_str:
-                try:
-                    dates.append(datetime.date.fromisoformat(date_str))
-                except ValueError:
-                    pass
-                # Try to find proposal/task mentions
-                if not last_proposal:
-                    m_prop = re.search(r"propuesta\s*[`'\"]?([a-z0-9-]+)", text, re.I)
-                    if m_prop:
-                        last_proposal = m_prop.group(1)
-                if not last_task:
-                    m_task = re.search(r"TSK-[A-Za-z0-9]+-[0-9]+", text)
-                    if m_task:
-                        last_task = m_task.group(0)
-            else:
-                continue
-
-    legacy = root / ".quinoto-spec" / "quinoto-spec-changelog.md"
-    if legacy.exists():
-        text = legacy.read_text(errors="ignore")
-        for m in re.finditer(r"##\s*\[Fecha:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\]", text):
-            date_str = m.group(1)
-            try:
-                dates.append(datetime.date.fromisoformat(date_str))
-            except ValueError:
-                continue
-            snippet = text[m.start():m.start() + 1000]
-            if not last_task:
-                mt = re.search(r"TSK-[A-Za-z0-9]+-[0-9]+", snippet)
-                if mt:
-                    last_task = mt.group(0)
-            if not last_proposal:
-                mp = re.search(r"propuesta\s*[`'\"]?([a-z0-9-]+)", snippet, re.I)
-                if mp:
-                    last_proposal = mp.group(1)
-
-    # Fallback to proposal fechas if no changelog dates
+    for entry in entries:
+        try:
+            dates.append(datetime.date.fromisoformat(entry.date))
+        except ValueError:
+            continue
+        if last_proposal is None:
+            last_proposal = entry.path.split("/")[-1] if entry.path else None
+        if last_task is None:
+            raw = Path(entry.path)
+            if not raw.is_absolute():
+                raw = root / raw
+            text = raw.read_text(errors="ignore") if raw.exists() else ""
+            match = re.search(r"TSK-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*-\d+", text)
+            if match:
+                last_task = match.group(0)
     if not dates:
-        proposals_dir = root / ".quinoto-spec" / "proposals"
-        if proposals_dir.exists():
-            for proposal_md in proposals_dir.glob("*/proposal.md"):
-                if "_archived" in proposal_md.parts:
-                    continue
-                text = proposal_md.read_text(errors="ignore")
-                m = re.search(r"\*\*Fecha de Creaci[oó]n\*\*:?\s*([0-9]{4}-[0-9]{2}-[0-9]{2})", text)
-                if m:
-                    try:
-                        dates.append(datetime.date.fromisoformat(m.group(1)))
-                        if not last_proposal:
-                            last_proposal = proposal_md.parent.name
-                    except ValueError:
-                        pass
-
+        try:
+            proposals = CONTRACT.scan_project(root)["proposals"]
+        except (OSError, ValueError):
+            proposals = []
+        for proposal in proposals:
+            try:
+                dates.append(datetime.date.fromisoformat(proposal["date"]))
+                last_proposal = last_proposal or Path(proposal["path"]).parent.name
+            except ValueError:
+                pass
     if not dates:
         return None, last_proposal, last_task
     return max(dates), last_proposal, last_task

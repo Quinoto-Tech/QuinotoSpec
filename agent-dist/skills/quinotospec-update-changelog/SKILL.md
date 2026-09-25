@@ -5,12 +5,12 @@ description: Automates updating the changelog — v1 (single-file) or v2 (file-p
 
 # Skill: quinotospec-update-changelog
 
-Esta skill se encarga de estandarizar la actualización del changelog del proyecto. Soporta dos formatos:
+Esta skill estandariza el changelog del proyecto. El formato canónico es v2; v1 solo se conserva como adaptador de lectura/escritura para proyectos legacy:
 
-- **v1** (legacy): archivo único `.quinoto-spec/quinoto-spec-changelog.md`
-- **v2** (append-only): archivos individuales en `.quinoto-spec/changelog/YYYY-MM-DD-PREFIX-SLUG.md`
+- **v2 (canónico)**: archivos individuales en `.quinoto-spec/changelog/YYYY-MM-DD-PREFIX-SLUG.md`.
+- **v1 (legacy)**: archivo único `.quinoto-spec/quinoto-spec-changelog.md`.
 
-La skill detecta automáticamente el formato activo: si existe `.quinoto-spec/changelog/` → v2. Si solo existe `quinoto-spec-changelog.md` → v1.
+La skill detecta el formato activo, pero una entrada nueva en un proyecto con v2 siempre se escribe como archivo v2. Las entradas existentes nunca se eliminan. Usa `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para leer y deduplicar.
 
 ---
 
@@ -18,15 +18,15 @@ La skill detecta automáticamente el formato activo: si existe `.quinoto-spec/ch
 
 ```text
 IF .quinoto-spec/changelog/ EXISTS → usar v2
-ELSE IF .quinoto-spec/quinoto-spec-changelog.md EXISTS → usar v1
-ELSE → preguntar al usuario: "¿Qué formato querés usar? (v1/v2)"
-  Si v2 → crear changelog/ + primera entrada
-  Si v1 → crear quinoto-spec-changelog.md + primera entrada
+ELSE IF .quinoto-spec/quinoto-spec-changelog.md EXISTS → usar v1 legacy y advertir
+ELSE → usar v2 por defecto
 ```
 
 ---
 
 ## A. Modo v1 — Archivo Único (Legacy)
+
+Este modo solo se usa cuando el proyecto todavía no tiene `changelog/`. Las nuevas instalaciones deben migrar a v2.
 
 ### Uso Básico
 
@@ -72,6 +72,8 @@ Cuando necesites actualizar el changelog en formato v1, sigue estas instruccione
 ---
 
 ## B. Modo v2 — Archivos Individuales (Append-Only)
+
+El formato v2 es append-only. Una reversión se registra como una nueva entrada con `type: revert`; nunca se borra ni edita una entrada existente.
 
 ### B.1 — Crear Nueva Entrada
 
@@ -126,7 +128,7 @@ Cuando el proyecto usa formato v2, cada entrada es un archivo separado en `.quin
 ### B.3 — Ejemplos v2
 
 ```text
-@quinotospec-update-changelog --title "Task: TSK-AUTH-001 Login" --summary "Implementado login endpoint\nAgregados tests unitarios"
+@quinotospec-update-changelog --title "Task: TSK-AUTH-a1b2-001 Login" --summary "Implementado login endpoint\nAgregados tests unitarios"
 # → changelog/2026-06-12-AUTH-a1b2-login.md
 
 @quinotospec-update-changelog --v2 --title "Hotfix: CORS" --summary "Corregido CORS en producción"
@@ -158,7 +160,7 @@ En v2, valida todos los archivos en `changelog/`.
 ### --title y --summary
 Permite pasar título y resumen como parámetros en lugar de modo interactivo:
 ```
-/quinotospec-update-changelog --title "Task: TSK-AUTH-001" --summary "Implementado login endpoint\nAgregados tests unitarios"
+/quinotospec-update-changelog --title "Task: TSK-AUTH-a1b2-001" --summary "Implementado login endpoint\nAgregados tests unitarios"
 ```
 
 ---
