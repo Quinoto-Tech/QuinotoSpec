@@ -41,6 +41,9 @@ agent-dist/.tmp/
 .agents/
 .agent/
 
+# Kilo tooling (runtime local)
+.kilo/
+
 # PDFs generados desde README.md / README_EN.md (no versionados)
 README.pdf
 README_EN.pdf
