@@ -177,13 +177,40 @@ PY
 }
 
 reject_candidate_symlinks() {
-    if ! python3 - "$TRANSACTION_DIR/candidate" <<'PY'
+    local ide="$1"
+    if ! python3 - "$TRANSACTION_DIR/candidate" "$ide" <<'PY'
 import sys
 from pathlib import Path
 
 candidate = Path(sys.argv[1])
+ide = sys.argv[2]
+
+# Solo los paths gestionados por el instalador deben rechazar symlinks.
+# El resto del directorio de configuracion puede contener symlinks ajenos
+# (p. ej. node_modules/.bin de OpenCode) que no debemos tocar ni seguir.
+managed = {
+    "rules",
+    "skills",
+    "agents",
+    "templates",
+    "bootstrap",
+    "hooks",
+    "plugins",
+    "commands",
+    "workflows",
+    "quinotospec-plugin",
+    ".quinoto-spec",
+}
+if ide == "cursor":
+    managed.add("hooks.json")
+if ide == "claude":
+    managed.add("settings.json")
+
 for path in candidate.rglob("*"):
-    if path.is_symlink():
+    if not path.is_symlink():
+        continue
+    relative = path.relative_to(candidate)
+    if relative.parts and relative.parts[0] in managed:
         raise SystemExit("staged configuration contains a symlink: " + str(path))
 PY
     then
@@ -243,7 +270,8 @@ write_ownership_manifest() {
     local target_root="$3"
     local final_config="$4"
     local agents_managed="$5"
-    if ! python3 - "$DIR" "$candidate" "$ide" "$target_root" "$final_config" "$STAGED_AGENTS" "$agents_managed" <<'PY'
+    local installer_version="${6:-$INSTALLER_VERSION}"
+    if ! python3 - "$DIR" "$candidate" "$ide" "$target_root" "$final_config" "$STAGED_AGENTS" "$agents_managed" "$installer_version" <<'PY'
 import hashlib
 import json
 import sys
@@ -266,6 +294,7 @@ target_root = Path(sys.argv[4])
 final_config = Path(sys.argv[5])
 staged_agents = Path(sys.argv[6])
 agents_managed = sys.argv[7] == "true"
+installer_version = sys.argv[8]
 owned = set()
 
 
@@ -336,7 +365,7 @@ if agents_managed and staged_agents.is_file():
     agents = {"path": "AGENTS.md", "managed": True, "sha256": digest(staged_agents)}
 manifest = {
     "schema_version": 1,
-    "installer_version": "3.1.0",
+    "installer_version": installer_version,
     "ide": ide,
     "installed_at": datetime.now(timezone.utc).isoformat(),
     "owned": records,
@@ -439,8 +468,39 @@ show_help() {
     exit 0
 }
 
+print_installed_version() {
+    local config_dir="$1"
+    local manifest="$config_dir/.quinoto-spec/ownership.json"
+    [ -f "$manifest" ] || return 0
+    python3 - "$manifest" <<'PY' || true
+import json
+import sys
+from pathlib import Path
+
+try:
+    data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError):
+    raise SystemExit("Installed QuinotoSpec version: unknown (manifest unreadable)")
+version = data.get("installer_version", "unknown")
+ide = data.get("ide", "unknown")
+installed_at = data.get("installed_at", "unknown")
+print(f"Installed QuinotoSpec v{version} ({ide}) at {installed_at}")
+PY
+}
+
 show_version() {
+    local ide="${1:-}"
+    local global="${2:-false}"
     echo "QuinotoSpec Installer v${INSTALLER_VERSION}"
+    if [ -n "$ide" ]; then
+        local config_dir
+        config_dir=$(get_config_dir "$ide" "$global")
+        if [ -f "$config_dir/.quinoto-spec/ownership.json" ]; then
+            print_installed_version "$config_dir"
+        else
+            echo "No QuinotoSpec installation found at $config_dir"
+        fi
+    fi
     exit 0
 }
 
@@ -507,6 +567,7 @@ verify_installation() {
     local errors=0
 
     print_info "Verifying $ide_name installation at $config_dir..."
+    print_installed_version "$config_dir"
     echo ""
 
     # Check config directory exists
@@ -959,7 +1020,7 @@ for arg in "$@"; do
         --verify) VERIFY_ONLY=true ;;
         --uninstall) ACTION="uninstall" ;;
         --yes|-y) ASSUME_YES=true ;;
-        --version) show_version ;;
+        --version) ACTION="version" ;;
         -h|--help) show_help ;;
         *)
             print_error "Unknown option: $arg"
@@ -968,6 +1029,11 @@ for arg in "$@"; do
             ;;
     esac
 done
+
+# Handle version query (script version + installed version when an IDE is given)
+if [ "$ACTION" = "version" ]; then
+    show_version "$IDE_CHOICE" "$GLOBAL_INSTALL"
+fi
 
 print_header
 
@@ -1083,7 +1149,7 @@ if ! prepare_candidate; then
     print_error "Installation aborted because existing managed files were modified"
     exit 1
 fi
-if ! reject_candidate_symlinks; then
+if ! reject_candidate_symlinks "$IDE_CHOICE"; then
     print_error "Installation aborted because staged configuration contains a symlink"
     exit 1
 fi
@@ -1138,7 +1204,7 @@ if [ "$TARGET_ROOT/AGENTS.md" != "$DIR/AGENTS.md" ]; then
 else
     AGENTS_MANAGED=false
 fi
-if ! write_ownership_manifest "$config_dir" "$IDE_CHOICE" "$TARGET_ROOT" "$FINAL_CONFIG_DIR" "$AGENTS_MANAGED"; then
+if ! write_ownership_manifest "$config_dir" "$IDE_CHOICE" "$TARGET_ROOT" "$FINAL_CONFIG_DIR" "$AGENTS_MANAGED" "$INSTALLER_VERSION"; then
     print_error "Could not write the ownership manifest"
     exit 1
 fi

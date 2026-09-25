@@ -160,7 +160,8 @@ else
     fail "--verify failed after install: $OUT"
 fi
 
-if python3 - "$SANDBOX/.opencode/.quinoto-spec/ownership.json" "$SANDBOX/AGENTS.md" <<'PY'
+INSTALLER_VERSION_EXPECTED=$(grep -o 'INSTALLER_VERSION="[^"]*"' "$INSTALL" | head -1 | cut -d'"' -f2)
+if python3 - "$SANDBOX/.opencode/.quinoto-spec/ownership.json" "$SANDBOX/AGENTS.md" "$INSTALLER_VERSION_EXPECTED" <<'PY'
 import hashlib
 import json
 import sys
@@ -170,6 +171,7 @@ manifest = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
 assert manifest["schema_version"] == 1
 assert manifest["owned"]
 assert manifest["agents"]["managed"] is True
+assert manifest["installer_version"] == sys.argv[3], manifest["installer_version"]
 assert Path(sys.argv[2]).is_file()
 for item in manifest["owned"]:
     path = Path(sys.argv[1]).parent.parent / item["path"]
@@ -177,9 +179,15 @@ for item in manifest["owned"]:
     assert hashlib.sha256(path.read_bytes()).hexdigest() == item["sha256"], item["path"]
 PY
 then
-    pass "ownership manifest records hashes and AGENTS.md"
+    pass "ownership manifest records hashes, version and AGENTS.md"
 else
     fail "ownership manifest is incomplete or invalid"
+fi
+
+if OUT=$(cd "$SANDBOX" && bash "$INSTALL" --version --opencode 2>&1) && printf '%s' "$OUT" | grep -q "Installed QuinotoSpec v$INSTALLER_VERSION_EXPECTED"; then
+    pass "--version reports the installed version"
+else
+    fail "--version did not report installed version: $OUT"
 fi
 
 ROLLBACK_TARGET="$SANDBOX/rollback-target"
@@ -263,6 +271,22 @@ if [ "$SYMLINK_RC" -ne 0 ] && [ "$(<"$SYMLINK_TARGET/hooks-external.json")" = "e
     pass "installer refuses symlinked external configuration"
 else
     fail "symlink protection failed (rc=$SYMLINK_RC): $SYMLINK_OUT"
+fi
+
+# Foreign symlinks outside managed paths (eg. opencode's own node_modules/.bin)
+# must not block installation nor be modified.
+FOREIGN_TARGET="$SANDBOX/foreign-symlink-target"
+mkdir -p "$FOREIGN_TARGET/.opencode/node_modules/.bin"
+ln -s ../pkg/cli.js "$FOREIGN_TARGET/.opencode/node_modules/.bin/opencode"
+printf '{"custom":true}\n' > "$FOREIGN_TARGET/.opencode/opencode.jsonc"
+if OUT=$(cd "$FOREIGN_TARGET" && bash "$INSTALL" --opencode --yes 2>&1); then
+    if [ -L "$FOREIGN_TARGET/.opencode/node_modules/.bin/opencode" ] && [ -f "$FOREIGN_TARGET/.opencode/opencode.jsonc" ] && [ -f "$FOREIGN_TARGET/.opencode/skills/quinotospec-tdd/SKILL.md" ]; then
+        pass "foreign symlinks are ignored and preserved during install"
+    else
+        fail "foreign symlink or config was not preserved"
+    fi
+else
+    fail "installer rejected foreign symlink (rc=$?): $OUT"
 fi
 
 # ─────────────────────────────────────────────────────────────
