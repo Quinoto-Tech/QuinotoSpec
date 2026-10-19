@@ -1,12 +1,14 @@
 ---
 name: code-reviewer
 specialization: Code quality, best practices, security vulnerabilities
+description: Code quality, best practices, security vulnerabilities
 trigger_workflows:
   - quinotospec.tiwaz-rune
   - quinotospec.review
   - quinotospec.pre-commit
   - quinotospec.apply
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: Code Reviewer

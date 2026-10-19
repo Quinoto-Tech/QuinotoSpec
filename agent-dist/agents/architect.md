@@ -1,12 +1,14 @@
 ---
 name: architect
 specialization: System design, architecture patterns, technical decisions
+description: System design, architecture patterns, technical decisions
 trigger_workflows:
   - quinotospec.create-proposal
   - quinotospec.discovery
   - quinotospec.dependency-graph
   - quinotospec.tiwaz-rune
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: Architect

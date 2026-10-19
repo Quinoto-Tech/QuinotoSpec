@@ -1,11 +1,13 @@
 ---
 name: performance-optimizer
 specialization: Performance tuning, profiling, bottleneck detection
+description: Performance tuning, profiling, bottleneck detection
 trigger_workflows:
   - quinotospec.apply
   - quinotospec.mjolnir-refactor
   - quinotospec.tiwaz-rune
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: Performance Optimizer

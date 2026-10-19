@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-INSTALLER_VERSION="3.2.0"
+INSTALLER_VERSION="3.3.0"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(pwd)"
 TARGET_ROOT="$PROJECT_ROOT"
@@ -19,6 +19,8 @@ TRANSACTION_COMMITTED=false
 CONFIG_CREATED=false
 AGENTS_MANAGED=false
 STAGED_AGENTS=""
+OPENCODE_MAJOR=""
+OPENCODE_MAJOR_OVERRIDE=""
 
 # Colors
 RED='\033[0;31m'
@@ -271,7 +273,8 @@ write_ownership_manifest() {
     local final_config="$4"
     local agents_managed="$5"
     local installer_version="${6:-$INSTALLER_VERSION}"
-    if ! python3 - "$DIR" "$candidate" "$ide" "$target_root" "$final_config" "$STAGED_AGENTS" "$agents_managed" "$installer_version" <<'PY'
+    local opencode_major="${7:-}"
+    if ! python3 - "$DIR" "$candidate" "$ide" "$target_root" "$final_config" "$STAGED_AGENTS" "$agents_managed" "$installer_version" "$opencode_major" <<'PY'
 import hashlib
 import json
 import sys
@@ -295,6 +298,7 @@ final_config = Path(sys.argv[5])
 staged_agents = Path(sys.argv[6])
 agents_managed = sys.argv[7] == "true"
 installer_version = sys.argv[8]
+opencode_major = sys.argv[9] if len(sys.argv) > 9 else ""
 owned = set()
 
 
@@ -318,7 +322,11 @@ add_tree("agent-dist/plugins", "plugins")
 workflow_destination = "commands" if ide in {"cursor", "opencode", "claude"} else "workflows"
 add_tree("agent-dist/workflows", workflow_destination)
 if ide == "opencode":
-    owned.add("plugins/quinotospec-plugin.js")
+    if opencode_major == "2":
+        owned.add("plugins/quinotospec/index.js")
+        owned.add("plugins/quinotospec/package.json")
+    else:
+        owned.add("plugins/quinotospec-plugin.js")
 if ide == "cursor":
     add_tree("agent-dist/skills", "quinotospec-plugin/skills")
     add_tree("agent-dist/agents", "quinotospec-plugin/agents")
@@ -367,6 +375,7 @@ manifest = {
     "schema_version": 1,
     "installer_version": installer_version,
     "ide": ide,
+    "opencode_major": int(opencode_major) if opencode_major.isdigit() else None,
     "installed_at": datetime.now(timezone.utc).isoformat(),
     "owned": records,
     "external_config": external_config,
@@ -442,12 +451,13 @@ show_help() {
     echo ""
     echo "Installation Options:"
     echo "  --cursor          Install for Cursor"
-    echo "  --opencode        Install for OpenCode"
+    echo "  --opencode        Install for OpenCode (auto-detects v1/v2)"
     echo "  --claude          Install for Claude Code"
     echo "  --cline           Install for Cline"
     echo "  --antigravity     Install for Antigravity (AGY)"
     echo "  --generic         Install for Generic (.agent/)"
     echo "  --global, --root  Install globally in ~/.config/, ~/.cursor/, ~/.claude/ or ~/.gemini/config"
+    echo "  --opencode-major  Force OpenCode major version (1 or 2) instead of auto-detection"
     echo ""
     echo "Management Options:"
     echo "  --verify          Verify existing installation"
@@ -457,14 +467,15 @@ show_help() {
     echo "  -h, --help        Show this help"
     echo ""
     echo "Examples:"
-    echo "  $0 --opencode                    # Install for OpenCode (interactive path)"
-    echo "  $0 --cursor --global             # Install for Cursor globally"
-    echo "  $0 --claude                      # Install for Claude Code"
-    echo "  $0 --antigravity --global        # Install for Antigravity globally"
-    echo "  $0 --opencode --global           # Install for OpenCode globally"
-    echo "  $0 --verify --opencode --global  # Verify global OpenCode installation"
-    echo "  $0 --verify --antigravity --global # Verify global Antigravity installation"
-    echo "  $0 --uninstall --cursor          # Uninstall Cursor installation"
+    echo "  $0 --opencode                              # Install for OpenCode (interactive path)"
+    echo "  $0 --cursor --global                       # Install for Cursor globally"
+    echo "  $0 --claude                                # Install for Claude Code"
+    echo "  $0 --antigravity --global                  # Install for Antigravity globally"
+    echo "  $0 --opencode --global                     # Install for OpenCode globally"
+    echo "  $0 --verify --opencode --global            # Verify global OpenCode installation"
+    echo "  $0 --verify --antigravity --global         # Verify global Antigravity installation"
+    echo "  $0 --uninstall --cursor                    # Uninstall Cursor installation"
+    echo "  $0 --opencode --opencode-major 2           # Force OpenCode v2 install"
     exit 0
 }
 
@@ -582,7 +593,13 @@ verify_installation() {
     fi
 
     # Check critical directories
-    local dirs_to_check=("rules" "skills" "templates" "bootstrap" "hooks")
+    local dirs_to_check=("rules" "skills" "templates" "bootstrap")
+    if [ "$ide_name" = "opencode" ] && [ "$OPENCODE_MAJOR" = "2" ]; then
+        # v2 does not install hooks/
+        dirs_to_check=("rules" "skills" "templates" "bootstrap")
+    else
+        dirs_to_check=("rules" "skills" "templates" "bootstrap" "hooks")
+    fi
     for dir in "${dirs_to_check[@]}"; do
         if [ -d "$config_dir/$dir" ]; then
             print_success "Directory $dir/ exists"
@@ -629,20 +646,34 @@ verify_installation() {
         errors=$((errors + 1))
     fi
 
-    if [ -x "$config_dir/hooks/session-start.sh" ]; then
-        print_success "Session-start hook is executable"
+    if [ "$ide_name" = "opencode" ] && [ "$OPENCODE_MAJOR" = "2" ]; then
+        # v2: no session-start hook
+        :
     else
-        print_error "Session-start hook missing or not executable: hooks/session-start.sh"
-        errors=$((errors + 1))
+        if [ -x "$config_dir/hooks/session-start.sh" ]; then
+            print_success "Session-start hook is executable"
+        else
+            print_error "Session-start hook missing or not executable: hooks/session-start.sh"
+            errors=$((errors + 1))
+        fi
     fi
 
     case "$ide_name" in
         opencode)
-            if [ -f "$config_dir/plugins/quinotospec-plugin.js" ]; then
-                print_success "OpenCode bootstrap plugin exists"
+            if [ "$OPENCODE_MAJOR" = "2" ]; then
+                if [ -f "$config_dir/plugins/quinotospec/index.js" ] && [ -f "$config_dir/plugins/quinotospec/package.json" ]; then
+                    print_success "OpenCode v2 plugin exists (index.js + package.json)"
+                else
+                    print_error "OpenCode v2 plugin missing: plugins/quinotospec/index.js or package.json"
+                    errors=$((errors + 1))
+                fi
             else
-                print_error "OpenCode plugin missing: plugins/quinotospec-plugin.js"
-                errors=$((errors + 1))
+                if [ -f "$config_dir/plugins/quinotospec-plugin.js" ]; then
+                    print_success "OpenCode v1 bootstrap plugin exists"
+                else
+                    print_error "OpenCode v1 plugin missing: plugins/quinotospec-plugin.js"
+                    errors=$((errors + 1))
+                fi
             fi
             ;;
         cursor)
@@ -703,6 +734,205 @@ verify_installation() {
     return 0
 }
 
+# Directories the installer reserves for its own OpenCode v2 plugin. Files below
+# them are never reported as legacy, even when the ownership manifest is absent,
+# because the installer itself is the only writer of these paths.
+is_reserved_opencode_path() {
+    case "$1" in
+        */plugins/quinotospec/*) return 0 ;;
+        */plugins/opencode-v2/*) return 0 ;;
+    esac
+    return 1
+}
+
+# Print every path listed in the ownership manifest, one per line.
+# Returns 1 when the manifest is missing, unreadable or malformed.
+read_owned_paths() {
+    local config_dir="$1"
+    local manifest="$config_dir/.quinoto-spec/ownership.json"
+    if [ ! -f "$manifest" ]; then
+        return 1
+    fi
+    python3 - "$manifest" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+try:
+    data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+    raise SystemExit(1)
+if not isinstance(data, dict):
+    raise SystemExit(1)
+for item in data.get("owned", []):
+    if isinstance(item, dict) and isinstance(item.get("path"), str):
+        print(item["path"])
+PY
+}
+
+# True when the ownership manifest covers the given path.
+#
+# Membership is resolved with bash pattern matching against a pre-built array
+# instead of `printf | grep -Fxq`. Under `set -o pipefail` the pipeline is racy:
+# grep -q exits on the first match, printf dies with SIGPIPE, and pipefail turns
+# a successful lookup into a spurious failure that intermittently reports
+# managed files as leftovers.
+is_managed_path() {
+    local -a owned=($1)
+    local needle="$2"
+    local entry=""
+    for entry in ${owned[@]+"${owned[@]}"}; do
+        if [ "$entry" = "$needle" ]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+warn_legacy_opencode_artifacts() {
+    local config_dir="$1"
+    local legacy_files=()
+    local owned_paths=""
+    local relative=""
+
+    # Read the manifest so managed files are never mistaken for leftovers.
+    owned_paths="$(read_owned_paths "$config_dir")" || owned_paths=""
+
+    if [ -d "$config_dir/plugins" ]; then
+        while IFS= read -r -d '' file; do
+            is_reserved_opencode_path "$file" && continue
+            relative="${file#"$config_dir"/}"
+            is_managed_path "$owned_paths" "$relative" && continue
+            case "$file" in
+                */plugins/opencode/*) legacy_files+=("$file") ;;
+                */plugins/*.js) legacy_files+=("$file") ;;
+                */plugins/*.ts) legacy_files+=("$file") ;;
+                */plugins/*.js.disabled) legacy_files+=("$file") ;;
+                */plugins/*.ts.disabled) legacy_files+=("$file") ;;
+            esac
+        done < <(find "$config_dir/plugins" -type f -print0 2>/dev/null)
+    fi
+
+    # Check for package.json with @opencode-ai/plugin
+    if [ -f "$config_dir/package.json" ]; then
+        if grep -q '@opencode-ai/plugin' "$config_dir/package.json" 2>/dev/null; then
+            relative="package.json"
+            if ! is_managed_path "$owned_paths" "$relative"; then
+                legacy_files+=("$config_dir/package.json")
+            fi
+        fi
+    fi
+
+    # Check for opencode.jsonc/opencode.json mentioning plugin
+    for cfg in "$config_dir/opencode.json" "$config_dir/opencode.jsonc"; do
+        if [ -f "$cfg" ] && grep -q '"plugin"' "$cfg" 2>/dev/null; then
+            relative="${cfg#"$config_dir"/}"
+            if ! is_managed_path "$owned_paths" "$relative"; then
+                legacy_files+=("$cfg")
+            fi
+        fi
+    done
+
+    # Check for node_modules/bun.lock/package-lock.json
+    for extra in "$config_dir/node_modules" "$config_dir/bun.lock" "$config_dir/package-lock.json"; do
+        if [ -e "$extra" ]; then
+            relative="${extra#"$config_dir"/}"
+            if ! is_managed_path "$owned_paths" "$relative"; then
+                legacy_files+=("$extra")
+            fi
+        fi
+    done
+
+    if [ ${#legacy_files[@]} -eq 0 ]; then
+        return 0
+    fi
+
+    if [ -z "$owned_paths" ]; then
+        print_warning "Possible legacy OpenCode v1 artifacts (ownership manifest unreadable):"
+    else
+        print_warning "Legacy OpenCode v1 artifacts detected (not managed by installer):"
+    fi
+    for f in "${legacy_files[@]}"; do
+        echo "  $f"
+    done
+    echo ""
+    echo "  These files are not tracked by the QuinotoSpec ownership manifest and were not removed."
+    echo "  Review them, then delete only the ones you no longer need:"
+    for f in "${legacy_files[@]}"; do
+        echo "    rm -rf -- \"$f\""
+    done
+    echo ""
+}
+
+# Report files sitting inside QuinotoSpec-managed directories that the current
+# installation does not own. They are leftovers from a previous version or files
+# added by hand. The installer never deletes them.
+warn_unmanaged_orphans() {
+    local config_dir="$1"
+    local orphan_files=()
+    local manifest="$config_dir/.quinoto-spec/ownership.json"
+    local shown=0
+
+    [ -d "$config_dir/skills" ] || return 0
+    [ -f "$manifest" ] || return 0
+
+    # Set difference in a single python3 process: one process instead of one
+    # grep per scanned file, and no pipefail/SIGPIPE exposure.
+    while IFS= read -r relative; do
+        [ -n "$relative" ] || continue
+        orphan_files+=("$relative")
+    done < <(
+        python3 - "$config_dir" "$manifest" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+config_dir = Path(sys.argv[1])
+manifest = Path(sys.argv[2])
+try:
+    data = json.loads(manifest.read_text(encoding="utf-8"))
+except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+    raise SystemExit(0)
+owned = set()
+for item in data.get("owned", []):
+    if isinstance(item, dict) and isinstance(item.get("path"), str):
+        owned.add(item["path"])
+
+orphans = []
+for directory in ("skills", "templates", "agents", "commands", "bootstrap", "rules", "plugins"):
+    root = config_dir / directory
+    if not root.is_dir():
+        continue
+    for path in root.rglob("*"):
+        if not path.is_file() or path.is_symlink():
+            continue
+        relative = path.relative_to(config_dir).as_posix()
+        if relative not in owned:
+            orphans.append(relative)
+
+for relative in sorted(orphans):
+    print(relative)
+PY
+    )
+
+    if [ ${#orphan_files[@]} -eq 0 ]; then
+        return 0
+    fi
+
+    print_info "Unmanaged files inside QuinotoSpec directories (${#orphan_files[@]}, left untouched):"
+    for f in "${orphan_files[@]}"; do
+        shown=$((shown + 1))
+        if [ "$shown" -gt 20 ]; then
+            echo "  ... and $((${#orphan_files[@]} - 20)) more"
+            break
+        fi
+        echo "  $f"
+    done
+    echo ""
+    echo "  These are not part of the current installation. Review and remove them yourself if obsolete."
+    echo ""
+}
+
 install_runtime_components() {
     local config_dir="$1"
     local ide="$2"
@@ -710,16 +940,23 @@ install_runtime_components() {
     local hook_script="$config_dir/hooks/session-start.sh"
     local final_hook_script="$final_config_dir/hooks/session-start.sh"
 
-    mkdir -p "$config_dir/bootstrap" "$config_dir/hooks"
-    cp "$DIR/agent-dist/bootstrap/quinotospec-bootstrap.md" "$config_dir/bootstrap/quinotospec-bootstrap.md"
-    cp -R "$DIR/agent-dist/hooks/." "$config_dir/hooks/"
-    chmod +x "$hook_script" "$config_dir/hooks/run-hook.cmd"
-
     case "$ide" in
         opencode)
-            mkdir -p "$config_dir/plugins"
-            cp "$DIR/agent-dist/plugins/opencode/quinotospec-plugin.js" "$config_dir/plugins/quinotospec-plugin.js"
-            cp "$DIR/agent-dist/hooks/hooks-opencode.json" "$config_dir/hooks/hooks-opencode.json"
+            if [ "$OPENCODE_MAJOR" = "2" ]; then
+                mkdir -p "$config_dir/bootstrap"
+                cp "$DIR/agent-dist/bootstrap/quinotospec-bootstrap.md" "$config_dir/bootstrap/quinotospec-bootstrap.md"
+                mkdir -p "$config_dir/plugins/quinotospec"
+                cp "$DIR/agent-dist/plugins/opencode-v2/index.js" "$config_dir/plugins/quinotospec/index.js"
+                cp "$DIR/agent-dist/plugins/opencode-v2/package.json" "$config_dir/plugins/quinotospec/package.json"
+            else
+                mkdir -p "$config_dir/bootstrap" "$config_dir/hooks"
+                cp "$DIR/agent-dist/bootstrap/quinotospec-bootstrap.md" "$config_dir/bootstrap/quinotospec-bootstrap.md"
+                cp -R "$DIR/agent-dist/hooks/." "$config_dir/hooks/"
+                chmod +x "$hook_script" "$config_dir/hooks/run-hook.cmd"
+                mkdir -p "$config_dir/plugins"
+                cp "$DIR/agent-dist/plugins/opencode/quinotospec-plugin.js" "$config_dir/plugins/quinotospec-plugin.js"
+                cp "$DIR/agent-dist/hooks/hooks-opencode.json" "$config_dir/hooks/hooks-opencode.json"
+            fi
             ;;
         cursor)
             python3 - "$config_dir/hooks.json" "$final_hook_script" <<'PY'
@@ -816,6 +1053,66 @@ PY
             cp "$DIR/agent-dist/hooks/hooks.json" "$config_dir/hooks/hooks.json"
             ;;
     esac
+}
+
+detect_opencode_major() {
+    local major=""
+    if [ -n "$OPENCODE_MAJOR_OVERRIDE" ]; then
+        case "$OPENCODE_MAJOR_OVERRIDE" in
+            1|2) major="$OPENCODE_MAJOR_OVERRIDE" ;;
+            *) print_error "Invalid --opencode-major value: $OPENCODE_MAJOR_OVERRIDE (must be 1 or 2)"; exit 1 ;;
+        esac
+        echo "$major"
+        return 0
+    fi
+
+    if [ -n "${QUINOTOSPEC_OPENCODE_MAJOR:-}" ]; then
+        case "$QUINOTOSPEC_OPENCODE_MAJOR" in
+            1|2) major="$QUINOTOSPEC_OPENCODE_MAJOR" ;;
+            *) print_error "Invalid QUINOTOSPEC_OPENCODE_MAJOR: $QUINOTOSPEC_OPENCODE_MAJOR (must be 1 or 2)"; exit 1 ;;
+        esac
+        echo "$major"
+        return 0
+    fi
+
+    local bin=""
+    if [ -n "${OPENCODE_BIN:-}" ] && [ -x "$OPENCODE_BIN" ]; then
+        bin="$OPENCODE_BIN"
+    elif command -v opencode >/dev/null 2>&1; then
+        bin="$(command -v opencode)"
+    elif [ -x "$HOME/.opencode/bin/opencode" ]; then
+        bin="$HOME/.opencode/bin/opencode"
+    fi
+
+    if [ -z "$bin" ]; then
+        print_error "Could not find 'opencode' binary to detect major version."
+        print_error "Please ensure opencode is in PATH, set OPENCODE_BIN=/path/to/opencode, or pass --opencode-major 1|2"
+        exit 1
+    fi
+
+    local version_out
+    version_out=$("$bin" --version 2>/dev/null | head -1) || true
+    if [ -z "$version_out" ]; then
+        print_error "Failed to get version from '$bin --version'"
+        exit 1
+    fi
+
+    local major_ver
+    major_ver=$(echo "$version_out" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 | cut -d. -f1)
+    if [ -z "$major_ver" ]; then
+        major_ver=$(echo "$version_out" | grep -oE '^[0-9]+' | head -1)
+    fi
+    if [ -z "$major_ver" ]; then
+        print_error "Could not parse major version from opencode output: $version_out"
+        exit 1
+    fi
+
+    if [ "$major_ver" -ge 2 ]; then
+        major=2
+    else
+        major=1
+    fi
+    echo "$major"
 }
 
 get_config_dir() {
@@ -1008,8 +1305,8 @@ PY
 
 # Parse arguments
 IDE_CHOICE=""
-for arg in "$@"; do
-    case "$arg" in
+while [ $# -gt 0 ]; do
+    case "$1" in
         --cursor) IDE_CHOICE="cursor" ;;
         --opencode) IDE_CHOICE="opencode" ;;
         --claude) IDE_CHOICE="claude" ;;
@@ -1021,13 +1318,25 @@ for arg in "$@"; do
         --uninstall) ACTION="uninstall" ;;
         --yes|-y) ASSUME_YES=true ;;
         --version) ACTION="version" ;;
+        --opencode-major)
+            shift
+            if [ $# -eq 0 ]; then
+                print_error "--opencode-major requires a value (1 or 2)"
+                exit 1
+            fi
+            case "$1" in
+                1|2) OPENCODE_MAJOR_OVERRIDE="$1" ;;
+                *) print_error "Invalid --opencode-major value: $1 (must be 1 or 2)"; exit 1 ;;
+            esac
+            ;;
         -h|--help) show_help ;;
         *)
-            print_error "Unknown option: $arg"
+            print_error "Unknown option: $1"
             echo "Run $0 --help for usage"
             exit 1
             ;;
     esac
+    shift
 done
 
 # Handle version query (script version + installed version when an IDE is given)
@@ -1055,6 +1364,12 @@ if [ "$VERIFY_ONLY" = true ]; then
         print_error "--verify requires an IDE flag (--opencode, --cursor, --claude, --cline, --antigravity)"
         exit 1
     fi
+    # The main flow detects the OpenCode major further down, after this early-exit
+    # block, so verify_installation would otherwise see an empty OPENCODE_MAJOR and
+    # validate a v2 installation against v1 expectations.
+    if [ "$IDE_CHOICE" = "opencode" ]; then
+        OPENCODE_MAJOR=$(detect_opencode_major)
+    fi
     config_dir=$(get_config_dir "$IDE_CHOICE" "$GLOBAL_INSTALL")
     verify_target_root="$PROJECT_ROOT"
     if [ "$GLOBAL_INSTALL" = true ]; then
@@ -1066,6 +1381,10 @@ if [ "$VERIFY_ONLY" = true ]; then
         esac
     fi
     if verify_installation "$config_dir" "$IDE_CHOICE" "$verify_target_root"; then
+        if [ "$IDE_CHOICE" = "opencode" ]; then
+            warn_legacy_opencode_artifacts "$config_dir"
+            warn_unmanaged_orphans "$config_dir"
+        fi
         exit 0
     else
         exit 1
@@ -1115,7 +1434,7 @@ fi
 if [ -z "$IDE_CHOICE" ]; then
     echo ""
     echo "Select your IDE/AI Assistant:"
-    echo "  1) OpenCode"
+    echo "  1) OpenCode (auto-detect v1/v2)"
     echo "  2) Cursor"
     echo "  3) Claude Code"
     echo "  4) Cline"
@@ -1134,6 +1453,15 @@ if [ -z "$IDE_CHOICE" ]; then
         6) IDE_CHOICE="generic" ;;
         *) IDE_CHOICE="opencode" ;;
     esac
+fi
+
+if [ "$IDE_CHOICE" = "opencode" ]; then
+    OPENCODE_MAJOR=$(detect_opencode_major)
+    if [ -n "$OPENCODE_MAJOR_OVERRIDE" ] || [ -n "${QUINOTOSPEC_OPENCODE_MAJOR:-}" ]; then
+        print_info "OpenCode major $OPENCODE_MAJOR forced via flag/env"
+    else
+        print_info "OpenCode v$OPENCODE_MAJOR detected"
+    fi
 fi
 
 SOURCE_AGENT="$DIR/agent-dist"
@@ -1171,6 +1499,31 @@ case "$IDE_CHOICE" in
         fi
 
         install_runtime_components "$config_dir" "$IDE_CHOICE" "$FINAL_CONFIG_DIR"
+
+        if [ "$IDE_CHOICE" = "opencode" ] && [ "$OPENCODE_MAJOR" = "2" ]; then
+            # OpenCode v2 loads every plugin under plugins/, so the staged v2 plugin
+            # must not survive at its source path: install_runtime_components already
+            # placed it at plugins/quinotospec/. Leaving plugins/opencode-v2/ behind
+            # would register the same plugin id twice.
+            #
+            # Remove only the files this installer copied from agent-dist. A blanket
+            # `rm -rf` on these directories would also delete user files that happen
+            # to live under them, such as a legacy plugin from a v1 installation.
+            for staged in \
+                hooks/session-start.sh \
+                hooks/run-hook.cmd \
+                hooks/hooks.json \
+                hooks/hooks-opencode.json \
+                hooks/hooks-cursor.json \
+                plugins/opencode/quinotospec-plugin.js \
+                plugins/opencode-v2/index.js \
+                plugins/opencode-v2/package.json; do
+                rm -f "$config_dir/$staged"
+            done
+            for staged_dir in hooks plugins/opencode plugins/opencode-v2; do
+                rmdir "$config_dir/$staged_dir" 2>/dev/null || true
+            done
+        fi
         ;;
 
     *)
@@ -1204,7 +1557,7 @@ if [ "$TARGET_ROOT/AGENTS.md" != "$DIR/AGENTS.md" ]; then
 else
     AGENTS_MANAGED=false
 fi
-if ! write_ownership_manifest "$config_dir" "$IDE_CHOICE" "$TARGET_ROOT" "$FINAL_CONFIG_DIR" "$AGENTS_MANAGED" "$INSTALLER_VERSION"; then
+if ! write_ownership_manifest "$config_dir" "$IDE_CHOICE" "$TARGET_ROOT" "$FINAL_CONFIG_DIR" "$AGENTS_MANAGED" "$INSTALLER_VERSION" "$OPENCODE_MAJOR"; then
     print_error "Could not write the ownership manifest"
     exit 1
 fi
@@ -1247,12 +1600,17 @@ print_success "Installation complete for $(titlecase "$IDE_CHOICE")!"
 echo ""
 
 # Auto-verify installation
-print_info "Running post-installation verification..."
-echo ""
-VERIFY_RESULT=0
-if ! verify_installation "$config_dir" "$IDE_CHOICE"; then
-    VERIFY_RESULT=1
-fi
+    print_info "Running post-installation verification..."
+    echo ""
+    VERIFY_RESULT=0
+    if ! verify_installation "$config_dir" "$IDE_CHOICE"; then
+        VERIFY_RESULT=1
+    fi
+
+    if [ "$IDE_CHOICE" = "opencode" ]; then
+        warn_legacy_opencode_artifacts "$config_dir"
+        warn_unmanaged_orphans "$config_dir"
+    fi
 
 echo ""
 echo "======================================================================"

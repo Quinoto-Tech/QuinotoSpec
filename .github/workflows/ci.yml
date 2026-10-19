@@ -85,6 +85,9 @@ jobs:
       - name: Validate OpenCode plugin syntax
         run: node --check agent-dist/plugins/opencode/quinotospec-plugin.js
 
+      - name: Validate OpenCode v2 plugin syntax (ESM)
+        run: node --input-type=module --check agent-dist/plugins/opencode-v2/index.js 2>/dev/null || node --check agent-dist/plugins/opencode-v2/index.js 2>/dev/null
+
   lint-docs:
     runs-on: ubuntu-latest
     steps:

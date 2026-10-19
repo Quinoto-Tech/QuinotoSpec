@@ -11,6 +11,11 @@ FAIL=0
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 INSTALL="$REPO_ROOT/install.sh"
 
+# The default OpenCode round-trip below exercises the v1 layout (hooks +
+# plugins/quinotospec-plugin.js). Forcing the major version keeps the suite
+# deterministic even on machines where `opencode --version` reports v2.
+export QUINOTOSPEC_OPENCODE_MAJOR=1
+
 pass() { PASS=$((PASS + 1)); echo "  [PASS] $1"; }
 fail() { FAIL=$((FAIL + 1)); echo "  [FAIL] $1"; }
 
@@ -314,6 +319,233 @@ if [ "$UNINSTALL_RC" -ne 0 ] && [ -f "$SANDBOX/.opencode/rules/other.txt" ]; the
     pass "uninstall refuses dir without QuinotoSpec markers (exit $UNINSTALL_RC, files intact)"
 else
     fail "uninstall accepted a foreign .opencode dir (rc=$UNINSTALL_RC)"
+fi
+
+# Uninstall without markers must refuse (protect foreign dir)
+mkdir -p "$SANDBOX/.opencode/rules"
+echo "not quinoto" > "$SANDBOX/.opencode/rules/other.txt"
+UNINSTALL_RC=0
+(cd "$SANDBOX" && bash "$INSTALL" --uninstall --opencode --yes >/dev/null 2>&1) || UNINSTALL_RC=$?
+if [ "$UNINSTALL_RC" -ne 0 ] && [ -f "$SANDBOX/.opencode/rules/other.txt" ]; then
+    pass "uninstall refuses dir without QuinotoSpec markers (exit $UNINSTALL_RC, files intact)"
+else
+    fail "uninstall accepted a foreign .opencode dir (rc=$UNINSTALL_RC)"
+fi
+
+# ─────────────────────────────────────────────────────────────
+# OpenCode v2 round-trip (forced via env var, no binary required)
+# ─────────────────────────────────────────────────────────────
+V2_SANDBOX="$(mktemp -d)"
+trap 'rm -rf "$V2_SANDBOX"' EXIT
+
+echo "Testing OpenCode v2 install round-trip in sandbox: $V2_SANDBOX"
+
+if OUT=$(cd "$V2_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --opencode --yes 2>&1); then
+    pass "v2 install.sh --opencode --yes exits 0 (cwd=sandbox)"
+else
+    fail "v2 install.sh --opencode --yes failed: $OUT"
+fi
+
+if [ -d "$V2_SANDBOX/.opencode/commands" ]; then
+    pass "v2: workflows/ renamed to commands/"
+else
+    fail "v2: commands/ directory missing"
+fi
+
+if [ ! -d "$V2_SANDBOX/.opencode/hooks" ]; then
+    pass "v2: hooks/ not installed"
+else
+    fail "v2: hooks/ should not be installed"
+fi
+
+if [ -f "$V2_SANDBOX/.opencode/plugins/quinotospec/index.js" ] && [ -f "$V2_SANDBOX/.opencode/plugins/quinotospec/package.json" ]; then
+    pass "v2: plugin files installed (index.js + package.json)"
+else
+    fail "v2: plugin files missing"
+fi
+
+# Check ownership manifest has opencode_major = 2
+if python3 - "$V2_SANDBOX/.opencode/.quinoto-spec/ownership.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+manifest = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+assert manifest.get("opencode_major") == 2, f"opencode_major={manifest.get('opencode_major')}"
+for item in manifest.get("owned", []):
+    path = Path(sys.argv[1]).parent.parent / item["path"]
+    assert path.is_file(), item["path"]
+assert not any(item["path"].startswith("hooks/") for item in manifest.get("owned", [])), "hooks/ should not be in owned"
+print("manifest opencode_major=2 and no hooks/ in owned")
+PY
+then
+    pass "v2: ownership manifest has opencode_major=2 and no hooks/"
+else
+    fail "v2: ownership manifest check failed"
+fi
+
+# Verify mode
+if OUT=$(cd "$V2_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1); then
+    pass "v2: --verify passes after install"
+else
+    fail "v2: --verify failed: $OUT"
+fi
+
+# Uninstall v2
+if OUT=$(cd "$V2_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --uninstall --opencode --yes 2>&1); then
+    pass "v2: uninstall exits 0"
+else
+    fail "v2: uninstall failed: $OUT"
+fi
+
+if [ ! -e "$V2_SANDBOX/.opencode" ]; then
+    pass "v2: uninstall removes .opencode/ completely"
+else
+    fail "v2: .opencode/ still exists after uninstall"
+fi
+
+# Upgrade v1 -> v2: install v1, then v2
+UPGRADE_SANDBOX="$(mktemp -d)"
+trap 'rm -rf "$UPGRADE_SANDBOX"' EXIT
+
+echo "Testing v1 -> v2 upgrade in sandbox: $UPGRADE_SANDBOX"
+
+if OUT=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=1 bash "$INSTALL" --opencode --yes 2>&1); then
+    pass "upgrade: v1 install succeeds"
+else
+    fail "upgrade: v1 install failed: $OUT"
+fi
+
+# Add legacy artifacts
+printf '%s\n' 'legacy' > "$UPGRADE_SANDBOX/.opencode/plugins/opencode/legacy.js"
+printf '{"plugin":"old"}\n' > "$UPGRADE_SANDBOX/.opencode/opencode.jsonc"
+
+if OUT=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --opencode --yes 2>&1); then
+    pass "upgrade: v2 re-install succeeds"
+else
+    fail "upgrade: v2 re-install failed: $OUT"
+fi
+
+# Legacy artifacts should still exist (warning only, no deletion)
+if [ -f "$UPGRADE_SANDBOX/.opencode/plugins/opencode/legacy.js" ] && [ -f "$UPGRADE_SANDBOX/.opencode/opencode.jsonc" ]; then
+    pass "upgrade: legacy artifacts preserved (warning only)"
+else
+    fail "upgrade: legacy artifacts were deleted"
+fi
+
+# v1 artifacts should be gone, v2 artifacts present
+if [ ! -d "$UPGRADE_SANDBOX/.opencode/hooks" ] && [ ! -f "$UPGRADE_SANDBOX/.opencode/plugins/quinotospec-plugin.js" ] && [ -f "$UPGRADE_SANDBOX/.opencode/plugins/quinotospec/index.js" ]; then
+    pass "upgrade: v1 artifacts removed, v2 artifacts installed"
+else
+    fail "upgrade: v1/v2 artifact transition failed"
+fi
+
+# Verify v2
+if OUT=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1); then
+    pass "upgrade: v2 --verify passes"
+else
+    fail "upgrade: v2 --verify failed: $OUT"
+fi
+
+# ─────────────────────────────────────────────────────────────
+# Regression: managed plugin files must never be reported as legacy.
+# install.sh used to glob plugins/*.js without consulting the ownership
+# manifest, so it flagged the plugin it had just installed and printed a
+# destructive `rm -rf` for it.
+# ─────────────────────────────────────────────────────────────
+echo "Testing legacy/orphan reporting in sandbox: $UPGRADE_SANDBOX"
+
+CLEAN_OUT=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1)
+
+# The planted legacy artifacts are expected to trigger the warning. The
+# regression is narrower: files installed and owned by the installer must
+# never be listed as legacy/leftover candidates.
+if printf '%s' "$CLEAN_OUT" | grep -qE 'plugins/(quinotospec/|quinotospec-plugin\.js)'; then
+    fail "regression: managed plugin files reported as legacy artifacts"
+else
+    pass "regression: no false-positive legacy warning for managed files"
+fi
+
+# The duplicate plugin at its source path must not be deployed either.
+if [ -e "$UPGRADE_SANDBOX/.opencode/plugins/opencode-v2" ]; then
+    fail "regression: duplicate plugin deployed at plugins/opencode-v2"
+else
+    pass "regression: duplicate plugins/opencode-v2 not deployed"
+fi
+
+# And the manifest must not claim the path it no longer installs.
+if python3 - "$UPGRADE_SANDBOX/.opencode/.quinoto-spec/ownership.json" <<'PY'
+import json
+import sys
+from pathlib import Path
+manifest = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+owned = [item["path"] for item in manifest.get("owned", [])]
+assert owned.count("plugins/quinotospec/index.js") == 1, "expected exactly one v2 plugin entry"
+assert not any(p.startswith("plugins/opencode-v2/") for p in owned), owned
+print("ok")
+PY
+then
+    pass "regression: manifest owns the v2 plugin exactly once"
+else
+    fail "regression: manifest still claims plugins/opencode-v2"
+fi
+
+# True positive: a genuinely foreign plugin file must still be reported.
+printf '%s\n' 'foreign' > "$UPGRADE_SANDBOX/.opencode/plugins/foreign-v1.js"
+FOREIGN_OUT=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1)
+
+if printf '%s' "$FOREIGN_OUT" | grep -q 'Legacy OpenCode v1 artifacts' &&
+   printf '%s' "$FOREIGN_OUT" | grep -q 'plugins/foreign-v1.js'; then
+    pass "legacy reporting: genuine foreign plugin still detected"
+else
+    fail "legacy reporting: foreign plugin not reported (regression in detection)"
+fi
+
+# The suggestion must be a reviewable per-file command, not a blanket expansion.
+if printf '%s' "$FOREIGN_OUT" | grep -q 'rm -rf -- "'; then
+    pass "legacy reporting: deletion hint is per-file and quoted"
+else
+    fail "legacy reporting: deletion hint is not per-file/quoted"
+fi
+
+# Orphans inside managed directories must be reported but never removed.
+mkdir -p "$UPGRADE_SANDBOX/.opencode/skills/zz-stale-skill"
+printf '%s\n' 'stale' > "$UPGRADE_SANDBOX/.opencode/skills/zz-stale-skill/SKILL.md"
+ORPHAN_OUT=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1)
+
+if printf '%s' "$ORPHAN_OUT" | grep -q 'Unmanaged files inside QuinotoSpec directories' &&
+   printf '%s' "$ORPHAN_OUT" | grep -q 'skills/zz-stale-skill/SKILL.md'; then
+    pass "orphan reporting: unmanaged skill reported"
+else
+    fail "orphan reporting: unmanaged skill not reported"
+fi
+
+if [ -f "$UPGRADE_SANDBOX/.opencode/skills/zz-stale-skill/SKILL.md" ]; then
+    pass "orphan reporting: unmanaged skill left untouched"
+else
+    fail "orphan reporting: unmanaged skill was deleted by the installer"
+fi
+
+# Determinism: repeated runs must agree (a pipefail/SIGPIPE race used to make
+# managed files appear intermittently as orphans).
+DET_A=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1 | grep -A50 'Unmanaged files' | grep -c '^  [a-z]')
+DET_B=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1 | grep -A50 'Unmanaged files' | grep -c '^  [a-z]')
+DET_C=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1 | grep -A50 'Unmanaged files' | grep -c '^  [a-z]')
+
+if [ "$DET_A" = "$DET_B" ] && [ "$DET_B" = "$DET_C" ]; then
+    pass "orphan reporting: deterministic across 3 runs ($DET_A entries)"
+else
+    fail "orphan reporting: non-deterministic ($DET_A / $DET_B / $DET_C)"
+fi
+
+# Only the two planted leftovers should be listed; no managed file may appear.
+ORPHAN_LIST=$(cd "$UPGRADE_SANDBOX" && QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$INSTALL" --verify --opencode --yes 2>&1 |
+    sed -n '/Unmanaged files inside/,/^$/p' | grep '^  [a-z]' | sed 's/^  //')
+
+if printf '%s\n' "$ORPHAN_LIST" | grep -qvE '^(plugins/foreign-v1\.js|plugins/opencode/legacy\.js|skills/zz-stale-skill/SKILL\.md)$' &&
+   printf '%s\n' "$ORPHAN_LIST" | grep -q 'skills/zz-stale-skill/SKILL.md'; then
+    fail "orphan reporting: managed file reported as orphan: $ORPHAN_LIST"
+else
+    pass "orphan reporting: only genuine leftovers listed"
 fi
 
 echo ""

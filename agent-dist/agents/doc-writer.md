@@ -1,11 +1,13 @@
 ---
 name: doc-writer
 specialization: Technical writing, API docs, README generation
+description: Technical writing, API docs, README generation
 trigger_workflows:
   - quinotospec.discovery
   - quinotospec.onboard
   - quinotospec.create-prd
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: Doc Writer

@@ -1,11 +1,13 @@
 ---
 name: refactor-specialist
 specialization: Code refactoring, debt reduction, legacy modernization
+description: Code refactoring, debt reduction, legacy modernization
 trigger_workflows:
   - quinotospec.mjolnir-refactor
   - quinotospec.apply
   - quinotospec.tiwaz-rune
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: Refactor Specialist

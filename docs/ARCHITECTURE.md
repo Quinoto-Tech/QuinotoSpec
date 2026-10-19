@@ -144,9 +144,9 @@ Usuario -> IDE -> Agente -> Workflow -> Skills -> .quinoto-spec/
 
 ## Runtime de sesión F1.1
 
-`agent-dist/bootstrap/quinotospec-bootstrap.md` es la instrucción de contexto común. `agent-dist/hooks/session-start.sh` la entrega como JSON para Claude Code y Cursor; `agent-dist/plugins/opencode/quinotospec-plugin.js` la inyecta en el primer mensaje de OpenCode. `install.sh` copia los artefactos al target del IDE y conserva las configuraciones JSON existentes cuando agrega una entrada de hook.
+`agent-dist/bootstrap/quinotospec-bootstrap.md` es la instrucción de contexto común. `agent-dist/hooks/session-start.sh` la entrega como JSON para Claude Code y Cursor; `agent-dist/plugins/opencode/quinotospec-plugin.js` la inyecta en el primer mensaje de OpenCode v1. Para OpenCode v2, `agent-dist/plugins/opencode-v2/index.js` (plugin ESM sin dependencias externas) registra hooks `session.hook("context")` y `session.hook("compaction")` que inyectan el bootstrap en cada petición al modelo. `install.sh` detecta el major version de OpenCode (v1/v2) y copia el payload correspondiente al target del IDE, conservando las configuraciones JSON existentes cuando agrega una entrada de hook.
 
-El target de Claude Code es `.claude/` o `~/.claude/`; el de Cursor es `.cursor/` o `~/.cursor/`. Las versiones de IDE que no soportan hooks reciben los archivos como referencia y siguen usando `AGENTS.md`.
+El target de Claude Code es `.claude/` o `~/.claude/`; el de Cursor es `.cursor/` o `~/.cursor/`. OpenCode usa `.opencode/` (local) o `~/.config/opencode/` (global). Las versiones de IDE que no soportan hooks reciben los archivos como referencia y siguen usando `AGENTS.md`.
 
 ## Componentes
 
@@ -319,6 +319,6 @@ Las reglas tienen niveles de severidad:
 ### Agregar un Agente
 
 1. Crea `agent-dist/agents/<name>.md`
-2. Incluye frontmatter con `name`, `specialization`, `trigger_workflows`, `model_suggestion`
+2. Incluye frontmatter con `name`, `specialization`, `trigger_workflows`, `model_suggestion`, y opcionalmente `description` (alias de `specialization` para OpenCode v2) y `mode: subagent` (requerido por OpenCode v2 para que el agente sea lanzable como subagente)
 3. Documenta personalidad, capacidades, casos de uso
 4. Actualiza README.md

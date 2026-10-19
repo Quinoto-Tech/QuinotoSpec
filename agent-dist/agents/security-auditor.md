@@ -1,12 +1,14 @@
 ---
 name: security-auditor
 specialization: Security analysis, vulnerability detection, STRIDE/DREAD
+description: Security analysis, vulnerability detection, STRIDE/DREAD
 trigger_workflows:
   - quinotospec.tiwaz-rune
   - quinotospec.heimdallr
   - quinotospec.review
   - quinotospec.discovery
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: Security Auditor

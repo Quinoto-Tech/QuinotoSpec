@@ -19,8 +19,8 @@ fi
 TARGET_ROOT="$TEMP_ROOT/target"
 mkdir -p "$TARGET_ROOT"
 cd "$TARGET_ROOT"
-bash "$TEMP_ROOT/install.sh" --opencode --yes >/dev/null
-bash "$TEMP_ROOT/install.sh" --verify --opencode --yes >/dev/null
+QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$TEMP_ROOT/install.sh" --opencode --yes >/dev/null
+QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$TEMP_ROOT/install.sh" --verify --opencode --yes >/dev/null
 
 python3 - <<'PY'
 import json
@@ -30,10 +30,11 @@ manifest = json.loads(Path(".opencode/.quinoto-spec/ownership.json").read_text(e
 assert manifest["schema_version"] == 1
 assert manifest["owned"]
 assert manifest["agents"]["managed"] is True
+assert manifest.get("opencode_major") == 2, manifest.get("opencode_major")
 assert Path(".opencode/.quinoto-spec/ownership.json").is_file()
 PY
 
-bash "$TEMP_ROOT/install.sh" --uninstall --opencode --yes >/dev/null
+QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$TEMP_ROOT/install.sh" --uninstall --opencode --yes >/dev/null
 if [ -e ".opencode" ]; then
     printf 'ERROR: uninstall left an empty managed directory\n' >&2
     exit 1

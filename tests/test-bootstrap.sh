@@ -24,7 +24,9 @@ for file in \
     "$ROOT/agent-dist/hooks/hooks-opencode.json" \
     "$ROOT/agent-dist/hooks/run-hook.cmd" \
     "$ROOT/.cursor-plugin/plugin.json" \
-    "$PLUGIN"; do
+    "$PLUGIN" \
+    "$ROOT/agent-dist/plugins/opencode-v2/index.js" \
+    "$ROOT/agent-dist/plugins/opencode-v2/package.json"; do
     if [ -f "$file" ]; then
         pass "runtime artifact $(basename "$file")"
     else
@@ -113,6 +115,79 @@ NODE
     fi
 else
     echo "  [SKIP] Node.js not available; plugin runtime test skipped"
+fi
+
+# OpenCode v2 plugin test (ESM, zero-dep)
+V2_PLUGIN="$ROOT/agent-dist/plugins/opencode-v2/index.js"
+if command -v node >/dev/null 2>&1; then
+    if node --input-type=module --check "$V2_PLUGIN" 2>/dev/null; then
+        pass "OpenCode v2 plugin syntax (ESM)"
+    else
+        # Fallback: node --check with .mjs extension
+        if node --check "$V2_PLUGIN" 2>/dev/null; then
+            pass "OpenCode v2 plugin syntax (ESM)"
+        else
+            fail "OpenCode v2 plugin syntax (ESM)"
+        fi
+    fi
+
+    # Runtime test with dynamic import (requires ESM)
+    # Create a temp dir with proper OpenCode v2 structure: .opencode/plugins/quinotospec/ + .opencode/bootstrap/
+    V2_TEST_DIR=$(mktemp -d "${TMPDIR:-/tmp}/quinotospec-v2-test.XXXXXX")
+    mkdir -p "$V2_TEST_DIR/.opencode/plugins/quinotospec"
+    mkdir -p "$V2_TEST_DIR/.opencode/bootstrap"
+    cp "$ROOT/agent-dist/bootstrap/quinotospec-bootstrap.md" "$V2_TEST_DIR/.opencode/bootstrap/quinotospec-bootstrap.md"
+    cp "$V2_PLUGIN" "$V2_TEST_DIR/.opencode/plugins/quinotospec/index.js"
+    cp "$ROOT/agent-dist/plugins/opencode-v2/package.json" "$V2_TEST_DIR/.opencode/plugins/quinotospec/package.json"
+
+    V2_TEST_SCRIPT=$(cat <<'V2NODE'
+import fs from "node:fs";
+import path from "node:path";
+
+const pluginPath = process.argv[1];
+const root = process.argv[2];
+
+const mod = await import("file://" + path.resolve(pluginPath));
+const plugin = mod.default;
+
+let registeredHooks = [];
+let capturedEvent = null;
+
+const fakeCtx = {
+    location: { directory: root },
+    app: { version: "2.0.6" },
+    options: { verbose: true },
+    session: {
+        hook: async (name, callback) => {
+            registeredHooks.push(name);
+            if (name === "context") {
+                const event = { system: [] };
+                await callback(event);
+                capturedEvent = event;
+            }
+        },
+    },
+};
+
+await plugin.setup(fakeCtx);
+
+if (!registeredHooks.includes("context")) process.exit(1);
+if (!registeredHooks.includes("compaction")) process.exit(1);
+if (!capturedEvent || !capturedEvent.system) process.exit(1);
+if (!capturedEvent.system.some(p => p.type === "text" && p.text && p.text.includes("<quinotospec-bootstrap>"))) process.exit(1);
+if (capturedEvent.system.some(p => p.type === "text" && p.text && p.text.startsWith("---"))) process.exit(1);
+
+console.log("v2 plugin hooks:", registeredHooks);
+V2NODE
+)
+    if node --input-type=module -e "$V2_TEST_SCRIPT" "$V2_TEST_DIR/.opencode/plugins/quinotospec/index.js" "$V2_TEST_DIR/.opencode" 2>/dev/null; then
+        pass "OpenCode v2 plugin context/compaction hooks and bootstrap injection"
+    else
+        fail "OpenCode v2 plugin context/compaction hooks and bootstrap injection"
+    fi
+    rm -rf "$V2_TEST_DIR"
+else
+    echo "  [SKIP] Node.js not available; v2 plugin runtime test skipped"
 fi
 
 echo ""

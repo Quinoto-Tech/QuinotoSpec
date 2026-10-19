@@ -87,6 +87,14 @@ else
 fi
 TESTED=$((TESTED + 1))
 
+# Check 8b: install.sh tiene --opencode-major y detección de major
+if grep -q "\-\-opencode-major" "$INSTALL_SCRIPT" && grep -q "detect_opencode_major" "$INSTALL_SCRIPT"; then
+    echo "✅ install.sh tiene --opencode-major y detección de major version"
+else
+    echo "⚠️  install.sh podría no tener detección de major version OpenCode"
+fi
+TESTED=$((TESTED + 1))
+
 if grep -q "ownership.json" "$INSTALL_SCRIPT" && grep -q "previous-live" "$INSTALL_SCRIPT" && grep -q "candidate" "$INSTALL_SCRIPT"; then
     echo "✅ install.sh contiene staging, ownership manifest y rollback"
 else
@@ -143,6 +151,8 @@ for runtime_file in \
     "$PROJECT_ROOT/agent-dist/hooks/hooks-cursor.json" \
     "$PROJECT_ROOT/agent-dist/hooks/hooks-opencode.json" \
     "$PROJECT_ROOT/agent-dist/plugins/opencode/quinotospec-plugin.js" \
+    "$PROJECT_ROOT/agent-dist/plugins/opencode-v2/index.js" \
+    "$PROJECT_ROOT/agent-dist/plugins/opencode-v2/package.json" \
     "$PROJECT_ROOT/agent-dist/workflows/quinotospec.constitution.md" \
     "$PROJECT_ROOT/agent-dist/skills/quinotospec-constitution/SKILL.md" \
     "$PROJECT_ROOT/agent-dist/skills/quinotospec-receive-review/SKILL.md" \
@@ -169,6 +179,23 @@ for runtime_file in \
     fi
     TESTED=$((TESTED + 1))
 done
+
+echo ""
+echo "Verificando agentes (mode: subagent + description):"
+AGENTS_DIR="$PROJECT_ROOT/agent-dist/agents"
+if [ -d "$AGENTS_DIR" ]; then
+    for agent_file in "$AGENTS_DIR"/*.md; do
+        if [ -f "$agent_file" ]; then
+            if grep -q "mode: subagent" "$agent_file" && grep -q "^description:" "$agent_file"; then
+                echo "  ✅ $(basename "$agent_file") tiene mode: subagent y description"
+            else
+                echo "  ❌ $(basename "$agent_file") falta mode: subagent o description"
+                ERRORS=$((ERRORS + 1))
+            fi
+            TESTED=$((TESTED + 1))
+        fi
+    done
+fi
 
 echo ""
 echo "=========================================="

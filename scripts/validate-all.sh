@@ -122,6 +122,8 @@ RUNTIME_FILES=(
     "agent-dist/hooks/hooks-cursor.json"
     "agent-dist/hooks/hooks-opencode.json"
     "agent-dist/plugins/opencode/quinotospec-plugin.js"
+    "agent-dist/plugins/opencode-v2/index.js"
+    "agent-dist/plugins/opencode-v2/package.json"
     ".cursor-plugin/plugin.json"
 )
 for file in "${RUNTIME_FILES[@]}"; do
@@ -153,8 +155,14 @@ if command -v node >/dev/null 2>&1; then
         echo "  quinotospec-plugin.js: syntax ERROR"
         ERRORS=$((ERRORS + 1))
     fi
+    if node --input-type=module --check "$PROJECT_ROOT/agent-dist/plugins/opencode-v2/index.js" 2>/dev/null || node --check "$PROJECT_ROOT/agent-dist/plugins/opencode-v2/index.js" 2>/dev/null; then
+        echo "  opencode-v2/index.js: syntax OK"
+    else
+        echo "  opencode-v2/index.js: syntax ERROR"
+        ERRORS=$((ERRORS + 1))
+    fi
 else
-    echo "  quinotospec-plugin.js: Node.js unavailable, syntax check skipped"
+    echo "  plugins: Node.js unavailable, syntax checks skipped"
     WARNINGS=$((WARNINGS + 1))
 fi
 echo ""

@@ -1,11 +1,13 @@
 ---
 name: devops-engineer
 specialization: CI/CD, infrastructure, deployment, monitoring
+description: CI/CD, infrastructure, deployment, monitoring
 trigger_workflows:
   - quinotospec.discovery
   - quinotospec.release
   - quinotospec.pre-commit
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: DevOps Engineer

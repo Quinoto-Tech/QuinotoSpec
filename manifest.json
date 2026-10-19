@@ -1,6 +1,6 @@
 {
   "name": "quinotospec",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "edition": "Warband: Hird Edition",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
   "release_status": "beta-rc",
@@ -10,7 +10,7 @@
   "phase_2_status": "complete",
   "phase_3_status": "in_progress",
   "scope_policy": "freeze-new-features",
-  "approved_exceptions": ["F1.1-F1.7", "F2.3-F2.5", "F3.2"],
+  "approved_exceptions": ["F1.1-F1.7", "F2.3-F2.5", "F3.2", "F3.3"],
   "contract_version": 1,
   "workflows": 43,
   "skills": 86,
@@ -25,6 +25,7 @@
     "bootstrap": true,
     "session_hooks": true,
     "opencode_plugin": true,
+    "opencode_v2_plugin": true,
     "cursor_plugin": true,
     "tdd": true,
     "debugging": true,
@@ -64,7 +65,8 @@
     "artifact_contract": "beta",
     "bootstrap": "beta",
     "session_hooks": "beta",
-    "opencode_plugin": "experimental",
+    "opencode_plugin": "beta",
+    "opencode_v2_plugin": "beta",
     "cursor_plugin": "experimental",
     "tdd": "prompt-only",
     "debugging": "prompt-only",
@@ -99,7 +101,8 @@
     "Workflows and rules remain primarily agent instructions outside the dispatcher.",
     "Huginn & Muninn currently emits a demonstration score and is not a production entropy gate.",
     "Jormungandr, Skald, Norns, and installer runtime paths still require hardening.",
-    "Transactional installer rollback and ownership-safe uninstall are implemented; legacy installations without an ownership manifest require manual migration, and Bifrost/Battle Frenzy still require safety validation."
+    "Transactional installer rollback and ownership-safe uninstall are implemented; legacy installations without an ownership manifest require manual migration, and Bifrost/Battle Frenzy still require safety validation.",
+    "OpenCode v2 plugin uses a zero-dependency plain object export (no @opencode-ai/plugin import). This avoids requiring the user to have bun/npm and a package.json in their config directory, but relies on the OpenCode v2 loader accepting a plain {id, setup} object without Plugin.define()."
   ],
   "supported_ides": [
     "opencode",
@@ -122,13 +125,14 @@
     "templates": "agent-dist/templates",
     "bootstrap": "agent-dist/bootstrap",
     "hooks": "agent-dist/hooks",
-    "plugins": "agent-dist/plugins"
+    "plugins": "agent-dist/plugins",
+    "plugins_v2": "agent-dist/plugins/opencode-v2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Quinoto-Tech/QuinotoSpec"
   },
   "license": "MIT",
-  "release_date": "2026-09-25",
-  "changelog": "Warband: Hird Edition — Gate 0, Extensibilidad (F2) y Party Mode bootstrap (F3.2)"
+  "release_date": "2026-09-27",
+  "changelog": "Warband: Hird Edition — Gate 0, Extensibilidad (F2), Party Mode bootstrap (F3.2), OpenCode v2 support (F3.3)"
 }

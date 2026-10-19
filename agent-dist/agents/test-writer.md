@@ -1,10 +1,12 @@
 ---
 name: test-writer
 specialization: Testing strategies, TDD, test coverage, quality assurance
+description: Testing strategies, TDD, test coverage, quality assurance
 trigger_workflows:
   - quinotospec.apply
   - quinotospec.pre-commit
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: Test Writer

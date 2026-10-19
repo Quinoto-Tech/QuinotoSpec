@@ -1,10 +1,12 @@
 ---
 name: debugger
 specialization: Bug hunting, root cause analysis, log analysis
+description: Bug hunting, root cause analysis, log analysis
 trigger_workflows:
   - quinotospec.apply
   - quinotospec.review
 model_suggestion: opencode-go/mimo-v2-pro
+mode: subagent
 ---
 
 # Agent: Debugger

@@ -205,7 +205,10 @@ El instalador pregunta la ruta de destino y el IDE:
 | `--cline` | Cline | `.cline/` o `~/.config/cline/` (global) |
 | `--antigravity` | Antigravity (AGY) | `.agents/` o `~/.gemini/config/` (global) |
 | `--global`, `--root` | - | Instala en `~/.config/`, `~/.cursor/`, `~/.claude/` o `~/.gemini/config/` ignorando el directorio del proyecto |
+| `--opencode-major` | - | Fuerza major version OpenCode (1 o 2) en vez de auto-detectar |
 | (default) | Genérico | `.agent/` |
+
+OpenCode: `--opencode` detecta automáticamente v1 vs v2 (`opencode --version`). Usa `--opencode-major 2` para forzar v2 si el binario no está en PATH.
 
 Cada instalación se prepara en staging, se verifica y luego se confirma con un manifest `.quinoto-spec/ownership.json`. Si falla una etapa, `install.sh` restaura la configuración y `AGENTS.md`; el uninstall solo elimina archivos gestionados intactos y conserva archivos ajenos. Las instalaciones legacy sin manifest requieren migración manual.
 
