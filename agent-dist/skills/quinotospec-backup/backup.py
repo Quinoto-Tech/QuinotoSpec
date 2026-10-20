@@ -335,7 +335,7 @@ def list_backups(store: Path) -> Dict[str, Any]:
             except BackupError as error:
                 entries.append({"backup_id": manifest.parent.name, "valid": False, "error": str(error)})
     entries.sort(key=lambda item: item.get("created_at", ""), reverse=True)
-    return {"store": str(store), "backups": entries, "count": len(entries)}
+    return {"schema_version": SCHEMA_VERSION, "store": str(store), "backups": entries, "count": len(entries)}
 
 
 def copy_current_to_staging(current: Path, staged: Path) -> None:

@@ -11,6 +11,7 @@ TOTAL_SUITES=0
 PASSED_SUITES=0
 FAILED_SUITES=0
 FAILED_NAMES=()
+EXECUTED_SCRIPTS=()
 
 echo ""
 echo "╔══════════════════════════════════════════════╗"
@@ -23,6 +24,7 @@ run_suite() {
     local suite_script="$2"
     
     TOTAL_SUITES=$((TOTAL_SUITES + 1))
+    EXECUTED_SCRIPTS+=("$(basename "$suite_script")")
     
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "▶ Ejecutando: $suite_name"
@@ -59,6 +61,26 @@ run_suite "Worktree" "$SCRIPT_DIR/test-worktree.sh"
 run_suite "Checkers funcionales" "$SCRIPT_DIR/test-checkers.sh"
 run_suite "Artifact Contract" "$SCRIPT_DIR/test-contract.sh"
 run_suite "Skills Nordic" "$SCRIPT_DIR/test-nordic-skills.sh"
+run_suite "Help, Router y Agent Config" "$SCRIPT_DIR/test-help-and-routing.sh"
+
+# Verificar que todas las suites test-*.sh en disco hayan sido ejecutadas
+for disk_suite in "$SCRIPT_DIR"/test-*.sh; do
+    [ -f "$disk_suite" ] || continue
+    disk_name="$(basename "$disk_suite")"
+    was_executed=false
+    for executed in "${EXECUTED_SCRIPTS[@]}"; do
+        if [ "$executed" = "$disk_name" ]; then
+            was_executed=true
+            break
+        fi
+    done
+    if [ "$was_executed" = false ]; then
+        echo "❌ Suite huérfana no registrada en run-all-tests.sh: $disk_name"
+        TOTAL_SUITES=$((TOTAL_SUITES + 1))
+        FAILED_SUITES=$((FAILED_SUITES + 1))
+        FAILED_NAMES+=("Orphan: $disk_name")
+    fi
+done
 
 # Resumen final
 echo ""

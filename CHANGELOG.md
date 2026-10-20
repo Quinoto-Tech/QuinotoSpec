@@ -6,6 +6,40 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 
 ---
 
+## [3.3.0] - 2026-09-27 - Warband: Hird Edition (Beta/RC)
+
+### Summary
+- Release 3.3.0 con soporte nativo para OpenCode v2 (F3.3), navegación contextual (`quinotospec-help`, F3.5), routing adaptativo (`F4.2`) y configuración 3-layer de agentes (F3.1).
+- La release mantiene el estado beta/RC por límites operativos externos.
+
+### Added
+- **Soporte OpenCode v2 (F3.3)**: nuevo plugin ESM sin dependencias `agent-dist/plugins/opencode-v2/index.js` y `package.json` con hooks `session.hook("context")` y `session.hook("compaction")` para inyectar el bootstrap de sesión.
+- **Detección de versión de OpenCode en el instalador**: `detect_opencode_major` inspecciona `opencode --version` (v1 vs v2) y la bandera `--opencode-major` permite forzar la versión major instalada.
+- **Frontmatter de agentes compatible con OpenCode v2**: los 9 agentes en `agent-dist/agents/*.md` incluyen `description` y `mode: subagent`.
+- **Discovery inicial del paquete**: generación de los 8 documentos autoritativos en `.quinoto-spec/discovery/` con inventario y auditoría técnica.
+- **Navegación contextual global (F3.5)**: skill `quinotospec-help` con `help.py` (solo lectura, `--json`) y workflow `/quinotospec.help`; recomienda el siguiente comando exacto según discovery, propuestas y tareas.
+- **Routing adaptativo por complejidad (F4.2)**: skill `quinotospec-complexity-router` con `router.py` (Quick Fix / Simple / Complex / Enterprise) y workflow `/quinotospec.quick-dev`; integrado en `/quinotospec.apply` y en el bootstrap.
+- **Configuración 3-layer de agentes (F3.1)**: `agent-dist/config/agent-defaults.toml` con los 9 perfiles, helper `agent_config.py` con merge `defaults -> team -> personal` y workflow `/quinotospec.agent-config`.
+- **Helpers nórdicos reales (M7)**: `huginn-muninn/check.py` calcula entropía determinista, `norns/norns.py` detecta drift (`--check`/`--dry-run`/`--to`) y `skald/sync-readme.sh` sincroniza badges y valida paridad de README.
+
+### Changed
+- **Versión**: bump semver de `3.2.0` a `3.3.0` sincronizado en `manifest.json`, `install.sh`, `.cursor-plugin/plugin.json`, `.version`, `README.md`, `README_EN.md`, `docs/ARCHITECTURE.md` y `V3_ROADMAP.md`.
+- **Inventario**: 46 workflows y 89 skills tras F3.1/F3.5/F4.2, sincronizado en `manifest.json`, `scripts/validate-all.sh`, `install.sh` y badges.
+- **Validación y tests**: `validate-all.sh` verifica la versión en README, CHANGELOG, roadmap y arquitectura; `run-all-tests.sh` detecta suites huérfanas; nuevas suites `test-help-and-routing.sh` y ampliaciones de `test-nordic-skills.sh`.
+- **Instalador**: `AGENTS.md` global se instala dentro del directorio de cada IDE, lock atómico de concurrencia y `external_config` validado; el payload incluye `config/`.
+- **Jormungandr**: parser de `requires:` multilínea con Kahn real y sin `demo fallback`.
+
+### Known limitations
+- El plugin de OpenCode v2 exporta un objeto plano `{id, setup}` sin dependencias externas para no requerir `bun`/`npm` en el directorio de configuración del usuario.
+- Huginn & Muninn calcula métricas deterministas pero aún no persiste histórico ni contract drift.
+- Skald sincroniza badges y valida paridad; no traduce prosa entre locales.
+- Las extensiones siguen siendo locales, sin firma ni descarga remota.
+- La release permanece beta/RC por límites operativos externos.
+
+**Tiempo Ahorrado**: ~4h (IA: ~35min vs Humano: ~4h)
+
+---
+
 ## [3.2.0] - 2026-09-25 - Warband: Hird Edition (Beta/RC)
 
 ### Summary

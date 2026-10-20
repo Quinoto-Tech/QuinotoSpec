@@ -19,6 +19,7 @@ Para detectar el stack técnico, busca y analiza los siguientes archivos en la r
 - **PHP**: `composer.json`.
 - **Java/Kotlin**: `pom.xml`, `build.gradle`.
 - **Ruby**: `Gemfile`.
+- **Proyecto vacío / sin marcadores**: Si el directorio no contiene ninguno de los archivos de configuración anteriores ni código fuente, clasifica el estado como proyecto vacío (`empty-project`) y delega a `/quinotospec.init` para ofrecer scaffold interactivo.
 
 ### 2. Testing Frameworks
 - **Python**: `pytest`, `unittest`, `tox`.

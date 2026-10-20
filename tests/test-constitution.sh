@@ -59,7 +59,7 @@ else
     fail "bootstrap or constitutional rule integration missing"
 fi
 
-if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["workflows"] == 43; assert d["skills"] == 86; assert d["rules"] == 18; assert d["features"]["constitution"] is True' "$ROOT/manifest.json"; then
+if python3 -c 'import json,sys,pathlib; root=pathlib.Path(sys.argv[1]); d=json.load(open(root/"manifest.json")); assert d["workflows"] == len(list((root/"agent-dist/workflows").glob("*.md"))); assert d["skills"] == len([p for p in (root/"agent-dist/skills").iterdir() if p.is_dir()]); assert d["rules"] == sum(1 for line in (root/"agent-dist/rules/quinotospec-rules.md").read_text(encoding="utf-8").splitlines() if line.startswith("# ")); assert d["features"]["constitution"] is True' "$ROOT"; then
     pass "manifest constitution counts"
 else
     fail "manifest constitution counts"

@@ -89,6 +89,36 @@ for skill_dir in "$SKILLS_DIR"/*/; do
 done
 
 echo ""
+echo "--- Verificando fixtures de quinotospec-stack-detect ---"
+STACK_DETECT_SKILL="$SKILLS_DIR/quinotospec-stack-detect/SKILL.md"
+NODE_FIXTURE="$SCRIPT_DIR/fixtures/node-project"
+PYTHON_FIXTURE="$SCRIPT_DIR/fixtures/python-project"
+EMPTY_FIXTURE="$SCRIPT_DIR/fixtures/empty-project"
+
+mkdir -p "$EMPTY_FIXTURE"
+
+if [ -f "$NODE_FIXTURE/package.json" ] && grep -q "package.json" "$STACK_DETECT_SKILL"; then
+    echo "✅ Fixture node-project (package.json) conectada a quinotospec-stack-detect"
+else
+    echo "❌ Fixture node-project o regla package.json faltante en quinotospec-stack-detect"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -f "$PYTHON_FIXTURE/requirements.txt" ] && grep -q "requirements.txt" "$STACK_DETECT_SKILL"; then
+    echo "✅ Fixture python-project (requirements.txt) conectada a quinotospec-stack-detect"
+else
+    echo "❌ Fixture python-project o regla requirements.txt faltante en quinotospec-stack-detect"
+    ERRORS=$((ERRORS + 1))
+fi
+
+if [ -d "$EMPTY_FIXTURE" ] && [ ! -f "$EMPTY_FIXTURE/package.json" ] && [ ! -f "$EMPTY_FIXTURE/requirements.txt" ] && grep -q "empty-project" "$STACK_DETECT_SKILL"; then
+    echo "✅ Fixture empty-project conectada a quinotospec-stack-detect"
+else
+    echo "❌ Fixture empty-project o regla de proyecto vacío faltante en quinotospec-stack-detect"
+    ERRORS=$((ERRORS + 1))
+fi
+
+echo ""
 echo "=========================================="
 echo "Resultados: $TESTED skills testadas, $ERRORS errores"
 echo "=========================================="

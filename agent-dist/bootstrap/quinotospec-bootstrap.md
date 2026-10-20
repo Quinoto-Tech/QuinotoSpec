@@ -28,8 +28,37 @@ version: 1
 - `/quinotospec-receive-review` — recibir y verificar feedback técnico.
 - `/quinotospec-worktree` — aislar la implementación en un worktree Git seguro.
 - `/quinotospec.party-mode` — abrir una mesa redonda multi-agente; usa `--subagents` para análisis independiente.
+- `/quinotospec.help` — inspeccionar `.quinoto-spec/` y obtener el siguiente comando exacto.
+- `/quinotospec.quick-dev` — vía rápida para cambios Simple (tech-spec + TDD, sin user stories).
+- `/quinotospec.agent-config` — personalizar agentes con merge 3-layer.
 - `/quinotospec.update-agents` — regenerar AGENTS.md desde la configuración del proyecto.
 - `/quinotospec-mark-done` — comprobar evidencia y actualizar estados.
+
+## Navegación y routing adaptativo
+
+- `/quinotospec.help` es la brújula global: si no sabes si toca discovery, propuesta, stories, tareas o archivo, empieza ahí.
+- El `quinotospec-complexity-router` clasifica cada cambio en 4 tracks:
+  - **Quick Fix** → `/quinotospec.fix` (typos, config, un archivo).
+  - **Simple** → `/quinotospec.quick-dev` (2-3 archivos, un servicio).
+  - **Complex** → `/quinotospec.create-proposal` (multi-archivo, DB/auth/API).
+  - **Enterprise** → `/quinotospec.flow` con constitution gates y compliance.
+- Los gates de tests, TDD y `verify-before-done` aplican en todos los tracks; solo cambia la profundidad documental.
+
+## Agentes
+
+Los 9 agentes tienen personalidad base y pueden ajustarse sin editar el paquete:
+
+- **Alba** (`architect`) — Arquitecta de Sistemas
+- **Lucas** (`code-reviewer`) — Revisor de Código Senior
+- **Daniel** (`debugger`) — Debugger Senior
+- **Eva** (`devops-engineer`) — Ingeniera DevOps
+- **Mateo** (`doc-writer`) — Redactor Técnico
+- **Nora** (`performance-optimizer`) — Optimizadora de Performance
+- **Raul** (`refactor-specialist`) — Especialista en Refactor
+- **Sofia** (`security-auditor`) — Auditora de Seguridad
+- **Victor** (`test-writer`) — Escritor de Tests
+
+Configuración en 3 capas: `agent-dist/config/agent-defaults.toml` → `.quinoto-spec/agent-team.toml` → `.quinoto-spec/agent-personal.toml` (última capa gana).
 
 ## Reglas de ejecución
 

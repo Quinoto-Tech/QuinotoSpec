@@ -96,13 +96,14 @@ else
     fail "bootstrap integration missing"
 fi
 
-if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["skills"] == 86; assert d["features"]["worktree"] is True; assert d["capability_maturity"]["worktree"] == "prompt-only"' "$ROOT/manifest.json"; then
+if python3 -c 'import json,sys,pathlib; root=pathlib.Path(sys.argv[1]); d=json.load(open(root/"manifest.json")); assert d["skills"] == len([p for p in (root/"agent-dist/skills").iterdir() if p.is_dir()]); assert d["features"]["worktree"] is True; assert d["capability_maturity"]["worktree"] == "prompt-only"' "$ROOT"; then
     pass "manifest worktree metadata"
 else
     fail "manifest worktree metadata"
 fi
 
-if grep -q 'skills:86' "$ROOT/scripts/validate-all.sh" && grep -q 'skill_count" -lt 86' "$ROOT/install.sh"; then
+SKILLS_TOTAL=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["skills"])' "$ROOT/manifest.json")
+if grep -q "skills:$SKILLS_TOTAL" "$ROOT/scripts/validate-all.sh" && grep -q "skill_count\" -lt $SKILLS_TOTAL" "$ROOT/install.sh"; then
     pass "inventory thresholds synchronized"
 else
     fail "inventory thresholds not synchronized"

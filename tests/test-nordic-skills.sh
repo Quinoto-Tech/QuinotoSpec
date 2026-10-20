@@ -201,6 +201,61 @@ check "rank.py marca next_action='blocked (ciclo...)' cuando hay ciclo" $?
 echo ""
 
 # ==========================================================================
+# Jormungandr -- check.py directo (Kahn sobre YAML inline y multilínea)
+# ==========================================================================
+echo "--- Jormungandr (check.py directo) ---"
+
+JORM_CHECK="$PROJECT_ROOT/agent-dist/skills/quinotospec-jormungandr/check.py"
+JORM_TEMPLATE_OUT=$(python3 "$JORM_CHECK" "$PROJECT_ROOT/agent-dist/templates/schema-template.yaml" 2>&1)
+JORM_TEMPLATE_RC=$?
+if [ "$JORM_TEMPLATE_RC" -eq 0 ] && echo "$JORM_TEMPLATE_OUT" | grep -q "OK: DAG aciclico"; then
+    check "check.py valida schema-template.yaml con Kahn real (exit 0)" 0
+else
+    check "check.py valida schema-template.yaml con Kahn real (exit 0)" 1
+fi
+if ! echo "$JORM_TEMPLATE_OUT" | grep -q "demo fallback"; then
+    check "check.py sobre schema-template.yaml no usa demo fallback" 0
+else
+    check "check.py sobre schema-template.yaml no usa demo fallback" 1
+fi
+
+JORM_MULTI_CYCLE="$WORKDIR/jorm-multi-cycle.yaml"
+cat > "$JORM_MULTI_CYCLE" <<'EOF'
+artifacts:
+  - id: a
+    requires:
+      - b
+  - id: b
+    requires:
+      - a
+EOF
+JORM_MULTI_OUT=$(python3 "$JORM_CHECK" "$JORM_MULTI_CYCLE" 2>&1)
+JORM_MULTI_RC=$?
+if [ "$JORM_MULTI_RC" -eq 1 ] && echo "$JORM_MULTI_OUT" | grep -q "CYCLE:"; then
+    check "check.py detecta ciclo en formato multilínea (exit 1, CYCLE:)" 0
+else
+    check "check.py detecta ciclo en formato multilínea (exit 1, CYCLE:)" 1
+fi
+
+JORM_INLINE_CYCLE="$WORKDIR/jorm-inline-cycle.yaml"
+cat > "$JORM_INLINE_CYCLE" <<'EOF'
+artifacts:
+  - id: a
+    requires: [b]
+  - id: b
+    requires: [a]
+EOF
+JORM_INLINE_OUT=$(python3 "$JORM_CHECK" "$JORM_INLINE_CYCLE" 2>&1)
+JORM_INLINE_RC=$?
+if [ "$JORM_INLINE_RC" -eq 1 ] && echo "$JORM_INLINE_OUT" | grep -q "CYCLE:"; then
+    check "check.py detecta ciclo en formato inline (exit 1, CYCLE:)" 0
+else
+    check "check.py detecta ciclo en formato inline (exit 1, CYCLE:)" 1
+fi
+
+echo ""
+
+# ==========================================================================
 # Bifrost -- federación multi-repo (2 repos git efímeros + origin bare local)
 # ==========================================================================
 echo "--- Bifrost (federación multi-repo) ---"
@@ -291,6 +346,129 @@ AUTH_HEAD=$(git -C "$BIFROST_WORK/auth" rev-parse HEAD)
 git -C "$BIFROST_WORK/payments" notes --ref=quinotospec-events show "$AUTH_HEAD" > /dev/null 2>&1
 check "'payments' recibió efectivamente la nota de 'auth' via origin (git notes show)" $?
 
+# ==========================================================================
+# Huginn & Muninn -- metricas reales de entropia (no demo)
+# ==========================================================================
+echo "--- Huginn & Muninn (entropia real) ---"
+
+HUGINN_DIR="$PROJECT_ROOT/agent-dist/skills/quinotospec-huginn-muninn"
+
+HUGINN_ONE=$(bash "$HUGINN_DIR/check.sh" "$PROJECT_ROOT/agent-dist/skills/quinotospec-mimir" --json 2>&1)
+RC=0
+echo "$HUGINN_ONE" | python3 -c '
+import json, sys
+data = json.load(sys.stdin)
+assert data["files_analyzed"] > 0, "files_analyzed must be > 0"
+for key in ("S_final", "H_total", "S_proxy", "H_size", "H_testing"):
+    assert 0.0 <= data[key] <= 1.0, key + " out of range"
+assert data["status"] in ("HEALTHY", "WARNING", "CRITICAL")
+assert data["classification"] in ("baja", "media", "alta")
+' || RC=$?
+check "check.sh --json calcula metricas reales con claves y rangos validos" "$RC"
+
+HUGINN_TWO=$(bash "$HUGINN_DIR/check.sh" "$PROJECT_ROOT/agent-dist/skills/quinotospec-contract" --json 2>&1)
+RC=0
+python3 - "$HUGINN_ONE" "$HUGINN_TWO" <<'PY' || RC=$?
+import json
+import sys
+
+first = json.loads(sys.argv[1])
+second = json.loads(sys.argv[2])
+assert first["target"] != second["target"], "targets must differ"
+assert (
+    first["files_analyzed"] != second["files_analyzed"]
+    or first["S_final"] != second["S_final"]
+    or first["H_total"] != second["H_total"]
+), "distinct directories must not share cached/demo metrics"
+PY
+check "check.sh produce metricas distintas para directorios distintos (sin cache global)" "$RC"
+
+# ==========================================================================
+# Norns -- deteccion de drift de version
+# ==========================================================================
+echo "--- Norns (drift de version) ---"
+
+NORNS_SCRIPT="$PROJECT_ROOT/agent-dist/skills/quinotospec-norns/norns.py"
+
+NORNS_CHECK=$(python3 -B "$NORNS_SCRIPT" --check --root "$PROJECT_ROOT" 2>&1)
+RC=$?
+check "norns.py --check sobre el repo real no detecta drift" "$RC"
+
+NORNS_WORK="$WORKDIR/norns-fixture"
+mkdir -p "$NORNS_WORK/docs" "$NORNS_WORK/scripts" "$NORNS_WORK/.cursor-plugin"
+cp "$PROJECT_ROOT/.version" "$NORNS_WORK/.version"
+cp "$PROJECT_ROOT/manifest.json" "$NORNS_WORK/manifest.json"
+cp "$PROJECT_ROOT/install.sh" "$NORNS_WORK/install.sh"
+cp "$PROJECT_ROOT/.cursor-plugin/plugin.json" "$NORNS_WORK/.cursor-plugin/plugin.json"
+cp "$PROJECT_ROOT/README.md" "$NORNS_WORK/README.md"
+cp "$PROJECT_ROOT/README_EN.md" "$NORNS_WORK/README_EN.md"
+cp "$PROJECT_ROOT/CHANGELOG.md" "$NORNS_WORK/CHANGELOG.md"
+cp "$PROJECT_ROOT/V3_ROADMAP.md" "$NORNS_WORK/V3_ROADMAP.md"
+cp "$PROJECT_ROOT/docs/ARCHITECTURE.md" "$NORNS_WORK/docs/ARCHITECTURE.md"
+cp "$PROJECT_ROOT/scripts/validate-all.sh" "$NORNS_WORK/scripts/validate-all.sh"
+cp -R "$PROJECT_ROOT/agent-dist" "$NORNS_WORK/agent-dist"
+printf '3.9.9\n' > "$NORNS_WORK/.version"
+
+NORNS_DRIFT=$(python3 -B "$NORNS_SCRIPT" --check --root "$NORNS_WORK" 2>&1)
+NORNS_DRIFT_RC=$?
+RC=0
+if [ "$NORNS_DRIFT_RC" -ne 0 ] && echo "$NORNS_DRIFT" | grep -q "DRIFT:"; then
+    RC=0
+else
+    RC=1
+fi
+check "norns.py --check detecta drift cuando .version difiere" "$RC"
+
+VERSION_BEFORE=$(tr -d '[:space:]' < "$PROJECT_ROOT/.version")
+NORNS_DRY=$(python3 -B "$NORNS_SCRIPT" --to 3.9.0 --dry-run --root "$PROJECT_ROOT" 2>&1)
+RC=0
+echo "$NORNS_DRY" | grep -q "\[DRY-RUN\]" || RC=$?
+check "norns.py --to 3.9.0 --dry-run lista cambios" "$RC"
+VERSION_AFTER=$(tr -d '[:space:]' < "$PROJECT_ROOT/.version")
+if [ "$VERSION_BEFORE" = "$VERSION_AFTER" ]; then
+    RC=0
+else
+    RC=1
+fi
+check "norns.py --dry-run no modifica .version" "$RC"
+
+# ==========================================================================
+# Skald -- paridad de badges y estructura README
+# ==========================================================================
+echo "--- Skald (paridad README) ---"
+
+SKALD_SCRIPT="$PROJECT_ROOT/agent-dist/skills/quinotospec-skald/sync-readme.sh"
+
+SKALD_CHECK=$(bash "$SKALD_SCRIPT" --check --root "$PROJECT_ROOT" 2>&1)
+RC=$?
+check "sync-readme.sh --check sobre el repo real no detecta drift" "$RC"
+
+SKALD_WORK="$WORKDIR/skald-fixture"
+mkdir -p "$SKALD_WORK"
+cp "$PROJECT_ROOT/.version" "$SKALD_WORK/.version"
+cp "$PROJECT_ROOT/README.md" "$SKALD_WORK/README.md"
+cp "$PROJECT_ROOT/README_EN.md" "$SKALD_WORK/README_EN.md"
+cp -R "$PROJECT_ROOT/agent-dist" "$SKALD_WORK/agent-dist"
+sed -i.bak 's|badge/version-3\.3\.0-blue|badge/version-9.9.9-blue|' "$SKALD_WORK/README_EN.md"
+rm -f "$SKALD_WORK/README_EN.md.bak"
+
+SKALD_DRIFT=$(bash "$SKALD_SCRIPT" --check --root "$SKALD_WORK" 2>&1)
+SKALD_DRIFT_RC=$?
+RC=0
+if [ "$SKALD_DRIFT_RC" -ne 0 ] && echo "$SKALD_DRIFT" | grep -q "DRIFT:"; then
+    RC=0
+else
+    RC=1
+fi
+check "sync-readme.sh --check detecta badge desincronizado" "$RC"
+
+SKALD_SYNC=$(bash "$SKALD_SCRIPT" --root "$SKALD_WORK" 2>&1)
+RC=$?
+check "sync-readme.sh sin --check sincroniza badges y queda sin drift" "$RC"
+RC=0
+grep -q "badge/version-3.3.0-blue" "$SKALD_WORK/README_EN.md" || RC=$?
+check "sync-readme.sh restaura el badge de version correcto" "$RC"
+
 echo ""
 echo "=========================================="
 echo "Resultados: $TESTED checks, $ERRORS errores"
@@ -300,5 +478,5 @@ if [ $ERRORS -gt 0 ]; then
     exit 1
 fi
 
-echo "✅ Mimir, Valkyrie y Bifrost funcionan correctamente end-to-end"
+echo "✅ Mimir, Valkyrie, Bifrost, Huginn & Muninn, Norns y Skald funcionan correctamente end-to-end"
 exit 0

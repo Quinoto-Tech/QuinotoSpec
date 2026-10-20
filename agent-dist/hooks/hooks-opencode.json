@@ -2,7 +2,9 @@
   "name": "quinotospec-session-start",
   "version": 1,
   "platform": "opencode",
+  "deprecated": true,
+  "note": "Legacy OpenCode v1 hook metadata; runtime uses plugins/quinotospec-plugin.js (v1) or plugins/quinotospec/index.js (v2)",
   "events": ["session.start", "session.compacted"],
-  "command": "./agent-dist/hooks/session-start.sh",
+  "command": "./hooks/session-start.sh --platform opencode",
   "output": "additionalContext"
 }

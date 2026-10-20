@@ -148,20 +148,52 @@ def find_entropy_delta(root: Path, servicios):
     return delta
 
 
+def load_jormungandr():
+    path = Path(__file__).resolve().parents[1] / "quinotospec-jormungandr" / "check.py"
+    if not path.exists():
+        return None
+    spec = importlib.util.spec_from_file_location("quinotospec_jormungandr_shared", path)
+    if spec is None or spec.loader is None:
+        return None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+JORMUNGANDR = load_jormungandr()
+
+
 def detect_schema_cycle(root: Path):
-    """Misma logica Kahn que quinotospec-jormungandr/check.py, con parser robusto
-    para el estilo de lista YAML usado en schema-template.yaml (`requires:` en
-    bloque, no inline `[a, b]`)."""
+    """Delega en quinotospec-jormungandr/check.py (check_schema_dag) con fallback local."""
     schema = root / ".quinoto-spec" / "schema.yaml"
     if not schema.exists():
         return False, []
-    text = schema.read_text(errors="ignore")
+    if JORMUNGANDR is not None and hasattr(JORMUNGANDR, "check_schema_dag"):
+        has_cycle, nodes, ids = JORMUNGANDR.check_schema_dag(schema)
+        if not ids:
+            return False, []
+        return (True, nodes) if has_cycle else (False, [])
 
+    text = schema.read_text(errors="ignore")
     ids = []
     requires = {}
     cur = None
     in_requires = False
+    in_artifacts = True
     for line in text.splitlines():
+        m_top = re.match(r"^([A-Za-z0-9_-]+):\s*(?:.*)?$", line)
+        if m_top:
+            key = m_top.group(1)
+            cur = None
+            in_requires = False
+            if key == "artifacts":
+                in_artifacts = True
+            elif key not in ("name", "version", "contract_version", "description"):
+                in_artifacts = False
+            continue
+        if not in_artifacts:
+            continue
         m_id = re.match(r'\s*-\s+id:\s*(\S+)', line)
         if m_id:
             cur = m_id.group(1)

@@ -5,6 +5,8 @@ description: Sugiere la siguiente tarea a ejecutar analizando el archivo de tare
 
 # Skill: Suggest Next
 
+> Para navegación global (cuando no hay propuesta activa o no sabes qué workflow toca), usa primero `/quinotospec.help`. Esta skill resuelve la siguiente tarea *dentro* de una propuesta.
+
 Analiza el estado actual de las tareas de una propuesta y sugiere cuál debería ejecutarse a continuación, respetando dependencias y orden numérico.
 
 ## Instrucciones de Ejecución

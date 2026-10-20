@@ -73,7 +73,7 @@ else
     fail "apply delegation missing"
 fi
 
-if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["skills"] == 86; assert d["features"]["receive_review"] is True; assert d["capability_maturity"]["receive_review"] == "prompt-only"' "$ROOT/manifest.json"; then
+if python3 -c 'import json,sys,pathlib; root=pathlib.Path(sys.argv[1]); d=json.load(open(root/"manifest.json")); assert d["skills"] == len([p for p in (root/"agent-dist/skills").iterdir() if p.is_dir()]); assert d["features"]["receive_review"] is True; assert d["capability_maturity"]["receive_review"] == "prompt-only"' "$ROOT"; then
     pass "manifest receive-review metadata"
 else
     fail "manifest receive-review metadata"

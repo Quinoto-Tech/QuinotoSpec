@@ -448,7 +448,7 @@ def command_list(root: Path, kind: Optional[str]) -> Dict[str, Any]:
     registry = load_registry(root)
     values = [entry for entry in registry["installed"].values() if kind is None or entry.get("kind") == kind]
     values.sort(key=lambda item: item.get("id", ""))
-    return {"installed": values}
+    return {"schema_version": SCHEMA_VERSION, "installed": values, "items": values}
 
 
 def command_search(root: Path, query: str, catalog: Optional[str]) -> Dict[str, Any]:
@@ -541,8 +541,11 @@ def build_parser() -> argparse.ArgumentParser:
     remove.add_argument("--kind", choices=("extension", "preset"), default="extension")
     remove.add_argument("id")
     remove.add_argument("--yes", action="store_true")
+    # 6. extension_manager.py list --json
     listing = subparsers.add_parser("list")
     listing.add_argument("--kind", choices=("extension", "preset"))
+    listing.add_argument("--root", dest="sub_root")
+    listing.add_argument("--json", action="store_true", dest="sub_as_json")
     search = subparsers.add_parser("search")
     search.add_argument("query")
     search.add_argument("--catalog")
@@ -559,6 +562,10 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    if getattr(args, "sub_root", None):
+        args.root = args.sub_root
+    if getattr(args, "sub_as_json", False):
+        args.as_json = True
     root = Path(args.root).resolve()
     if not root.is_dir():
         print(json.dumps({"error": "project root is not a directory"}, ensure_ascii=False), file=sys.stderr)

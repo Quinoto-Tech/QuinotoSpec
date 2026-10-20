@@ -26,8 +26,9 @@ Antes de realizar cualquier cambio:
 2. Consulta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json`; localiza el `canonical_id` de `{{TASK_ID}}` y usa `story_id` como contexto, sin derivar la story por número.
 3. Lee el archivo `*_tasks.md` que contiene la tarea, la story asociada y la proposal.md de la propuesta.
 4. Lee `.quinoto-spec/discovery/` para comprender el estado actual del proyecto (especialmente `01-stack-profile.md` para conocer el stack, comandos de test y convenciones).
-5. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
-6. Si existe `.quinoto-spec/constitution.md` con estado `active`, lee sus principios y verifica que la tarea pueda cumplirlos; si no puede, detén el Apply y solicita una enmienda o decisión explícita.
+5. **Routing de complejidad**: ejecuta `python3 -B agent-dist/skills/quinotospec-complexity-router/router.py --files {N} --services {N} --json`. Si el track resultante es `quick_fix`, sugiere `/quinotospec.fix`; si es `simple`, sugiere `/quinotospec.quick-dev` en lugar de este workflow.
+6. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
+7. Si existe `.quinoto-spec/constitution.md` con estado `active`, lee sus principios y verifica que la tarea pueda cumplirlos; si no puede, detén el Apply y solicita una enmienda o decisión explícita.
 
 **Instrucciones de Ejecución:**
 1. **Confirmación requerida**: pregunta separadamente si se debe crear un branch nuevo y si se desea usar un worktree. Resuelve `BRANCH_NAME` y `BASE_REF`; no los inventes.

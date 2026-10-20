@@ -6,8 +6,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const MARKER = "<quinotospec-bootstrap>";
 
 function findRoot(location) {
+  const localCandidate =
+    location && typeof location.directory === "string" && location.directory
+      ? path.join(location.directory, ".opencode")
+      : null;
   const candidates = [
-    path.join(location.directory, ".opencode"),
+    ...(localCandidate ? [localCandidate] : []),
     path.resolve(__dirname, "../.."),
     path.resolve(__dirname, "../../.."),
   ];
@@ -29,16 +33,28 @@ function loadBootstrap(root) {
   return (match ? raw.slice(match[0].length) : raw).trim();
 }
 
-let cachedBootstrap = null;
+const bootstrapCache = new Map();
 function getBootstrap(root) {
-  if (cachedBootstrap === null) {
-    cachedBootstrap = loadBootstrap(root);
+  if (!bootstrapCache.has(root)) {
+    bootstrapCache.set(root, loadBootstrap(root));
   }
-  return cachedBootstrap;
+  return bootstrapCache.get(root);
 }
 
 function makeHook(bootstrap) {
   return (event) => {
+    if (!event || !Array.isArray(event.system)) {
+      return;
+    }
+    const alreadyInjected = event.system.some((entry) => {
+      if (typeof entry === "string") {
+        return entry.includes(MARKER);
+      }
+      return Boolean(entry && typeof entry.text === "string" && entry.text.includes(MARKER));
+    });
+    if (alreadyInjected) {
+      return;
+    }
     event.system.push({ type: "text", text: `${MARKER}\n${bootstrap}\n</quinotospec-bootstrap>` });
   };
 }

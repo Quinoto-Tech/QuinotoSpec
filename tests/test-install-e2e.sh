@@ -239,16 +239,34 @@ fi
 
 GLOBAL_TARGET="$SANDBOX/global-target"
 mkdir -p "$GLOBAL_TARGET/home" "$GLOBAL_TARGET/project"
-if OUT=$(cd "$GLOBAL_TARGET/project" && HOME="$GLOBAL_TARGET/home" bash "$INSTALL" --cursor --global --yes 2>&1) && [ -f "$GLOBAL_TARGET/home/.cursor/hooks.json" ]; then
-    pass "cursor global install uses ~/.cursor"
+if OUT=$(cd "$GLOBAL_TARGET/project" && HOME="$GLOBAL_TARGET/home" bash "$INSTALL" --cursor --global --yes 2>&1) && [ -f "$GLOBAL_TARGET/home/.cursor/hooks.json" ] && [ -f "$GLOBAL_TARGET/home/.cursor/AGENTS.md" ] && [ ! -e "$GLOBAL_TARGET/home/AGENTS.md" ]; then
+    pass "cursor global install uses ~/.cursor and places AGENTS.md inside ~/.cursor"
 else
-    fail "cursor global install failed: $OUT"
+    fail "cursor global install failed or placed AGENTS.md outside ~/.cursor: $OUT"
 fi
 
 if OUT=$(cd "$GLOBAL_TARGET/project" && HOME="$GLOBAL_TARGET/home" bash "$INSTALL" --verify --cursor --global --yes 2>&1); then
     pass "global verify uses the correct target root"
 else
     fail "global verify failed: $OUT"
+fi
+
+if OUT=$(cd "$GLOBAL_TARGET/project" && HOME="$GLOBAL_TARGET/home" bash "$INSTALL" --opencode --global --yes 2>&1) && [ -f "$GLOBAL_TARGET/home/.config/opencode/AGENTS.md" ] && [ ! -e "$GLOBAL_TARGET/home/.config/AGENTS.md" ]; then
+    pass "opencode global install places AGENTS.md in ~/.config/opencode/AGENTS.md and not ~/.config/AGENTS.md"
+else
+    fail "opencode global install failed or placed AGENTS.md in wrong path: $OUT"
+fi
+
+if OUT=$(cd "$GLOBAL_TARGET/project" && HOME="$GLOBAL_TARGET/home" bash "$INSTALL" --verify --opencode --global --yes 2>&1); then
+    pass "opencode global verify passes"
+else
+    fail "opencode global verify failed: $OUT"
+fi
+
+if OUT=$(cd "$GLOBAL_TARGET/project" && HOME="$GLOBAL_TARGET/home" bash "$INSTALL" --uninstall --opencode --global --yes 2>&1) && [ ! -e "$GLOBAL_TARGET/home/.config/opencode/AGENTS.md" ]; then
+    pass "opencode global uninstall removes ~/.config/opencode/AGENTS.md"
+else
+    fail "opencode global uninstall failed or left AGENTS.md behind: $OUT"
 fi
 
 CONFLICT_TARGET="$SANDBOX/conflict-target"
@@ -546,6 +564,34 @@ if printf '%s\n' "$ORPHAN_LIST" | grep -qvE '^(plugins/foreign-v1\.js|plugins/op
     fail "orphan reporting: managed file reported as orphan: $ORPHAN_LIST"
 else
     pass "orphan reporting: only genuine leftovers listed"
+fi
+
+# ─────────────────────────────────────────────────────────────
+# Concurrency lock: atomic lock directory in begin_transaction()
+# ─────────────────────────────────────────────────────────────
+LOCK_SANDBOX="$(mktemp -d)"
+trap 'rm -rf "$LOCK_SANDBOX"' EXIT
+
+echo "Testing installer concurrency lock in sandbox: $LOCK_SANDBOX"
+
+# Pre-create the lock directory before invoking install.sh (.opencode -> ..opencode.quinotospec.lock)
+LOCK_PATH="$LOCK_SANDBOX/..opencode.quinotospec.lock"
+mkdir -p "$LOCK_PATH"
+
+LOCK_OUT=$(cd "$LOCK_SANDBOX" && bash "$INSTALL" --opencode --yes 2>&1)
+LOCK_RC=$?
+
+if [ "$LOCK_RC" -ne 0 ] && printf '%s' "$LOCK_OUT" | grep -q "Another QuinotoSpec installation is already in progress" && [ -d "$LOCK_PATH" ] && [ ! -e "$LOCK_SANDBOX/.opencode" ]; then
+    pass "concurrency lock: refuses concurrent install without touching target or removing foreign lock"
+else
+    fail "concurrency lock: did not block or disturbed target/lock (rc=$LOCK_RC): $LOCK_OUT"
+fi
+
+rmdir "$LOCK_PATH"
+if OUT=$(cd "$LOCK_SANDBOX" && bash "$INSTALL" --opencode --yes 2>&1) && [ -d "$LOCK_SANDBOX/.opencode/skills" ] && [ ! -d "$LOCK_PATH" ]; then
+    pass "concurrency lock: installation succeeds and cleans up lock after lock removal"
+else
+    fail "concurrency lock: installation failed after lock removal: $OUT"
 fi
 
 echo ""

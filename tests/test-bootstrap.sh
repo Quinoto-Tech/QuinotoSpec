@@ -154,7 +154,7 @@ let registeredHooks = [];
 let capturedEvent = null;
 
 const fakeCtx = {
-    location: { directory: root },
+    location: { directory: path.dirname(root) },
     app: { version: "2.0.6" },
     options: { verbose: true },
     session: {
@@ -163,6 +163,9 @@ const fakeCtx = {
             if (name === "context") {
                 const event = { system: [] };
                 await callback(event);
+                await callback(event);
+                await callback({});
+                await callback(null);
                 capturedEvent = event;
             }
         },
@@ -174,8 +177,59 @@ await plugin.setup(fakeCtx);
 if (!registeredHooks.includes("context")) process.exit(1);
 if (!registeredHooks.includes("compaction")) process.exit(1);
 if (!capturedEvent || !capturedEvent.system) process.exit(1);
+if (capturedEvent.system.length !== 1) process.exit(1);
 if (!capturedEvent.system.some(p => p.type === "text" && p.text && p.text.includes("<quinotospec-bootstrap>"))) process.exit(1);
 if (capturedEvent.system.some(p => p.type === "text" && p.text && p.text.startsWith("---"))) process.exit(1);
+
+// Test null-safety of location ({} and undefined)
+let fallbackEvent = null;
+await plugin.setup({
+    location: {},
+    app: { version: "2.0.6" },
+    session: {
+        hook: async (name, callback) => {
+            if (name === "context") {
+                const ev = { system: [] };
+                await callback(ev);
+                fallbackEvent = ev;
+            }
+        },
+    },
+});
+if (!fallbackEvent || fallbackEvent.system.length !== 1) process.exit(1);
+
+await plugin.setup({
+    location: undefined,
+    app: { version: "2.0.6" },
+    session: {
+        hook: async () => {},
+    },
+});
+
+// Test per-root cache isolation
+const secondProject = path.join(path.dirname(root), "second-project");
+fs.mkdirSync(path.join(secondProject, ".opencode", "bootstrap"), { recursive: true });
+fs.writeFileSync(
+    path.join(secondProject, ".opencode", "bootstrap", "quinotospec-bootstrap.md"),
+    "# Second Project Bootstrap Marker\n",
+    "utf8"
+);
+
+let secondEvent = null;
+await plugin.setup({
+    location: { directory: secondProject },
+    app: { version: "2.0.6" },
+    session: {
+        hook: async (name, callback) => {
+            if (name === "context") {
+                const ev = { system: [] };
+                await callback(ev);
+                secondEvent = ev;
+            }
+        },
+    },
+});
+if (!secondEvent || !secondEvent.system[0].text.includes("Second Project Bootstrap Marker")) process.exit(1);
 
 console.log("v2 plugin hooks:", registeredHooks);
 V2NODE

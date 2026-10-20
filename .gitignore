@@ -51,3 +51,7 @@ README_EN.pdf
 # Mimir index (regenerable) -- doble patron: raiz del paquete + cualquier fixture/proyecto anidado
 .quinoto-spec/mimir/
 **/.quinoto-spec/mimir/
+
+# Agent personal overrides (3-layer config: defaults -> team -> personal)
+.quinoto-spec/agent-personal.toml
+.quinoto-spec/_config/agent-personal.toml

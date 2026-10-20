@@ -94,6 +94,9 @@ echo "  Created .version"
 for README in "$PROJECT_ROOT/README.md" "$PROJECT_ROOT/README_EN.md"; do
     if [ -f "$README" ]; then
         portable_sed "s/badge\/version-[0-9.]*-blue/badge\/version-$NEW_VERSION-blue/" "$README"
+        portable_sed "s/QuinotoSpec v[0-9.]* — Warband: Hird Edition/QuinotoSpec v$NEW_VERSION — Warband: Hird Edition/" "$README"
+        portable_sed "s/La versión [0-9.]* se publica/La versión $NEW_VERSION se publica/" "$README"
+        portable_sed "s/Version [0-9.]* is published/Version $NEW_VERSION is published/" "$README"
         portable_sed "s/badge\/skills-[0-9]*-purple/badge\/skills-$FS_SKILLS-purple/" "$README"
         portable_sed "s/badge\/rules-[0-9]*-red/badge\/rules-$FS_RULES-red/" "$README"
         portable_sed "s/badge\/workflows-[0-9]*-purple/badge\/workflows-$FS_WORKFLOWS-purple/" "$README"
@@ -104,6 +107,7 @@ done
 # 5. Sync docs/ARCHITECTURE.md
 ARCH="$PROJECT_ROOT/docs/ARCHITECTURE.md"
 if [ -f "$ARCH" ]; then
+    portable_sed "s/v[0-9.]* Hird Edition/v$NEW_VERSION Hird Edition/" "$ARCH"
     portable_sed "s/<-- [0-9]* workflows/<-- $FS_WORKFLOWS workflows/" "$ARCH"
     portable_sed "s/<-- [0-9]* skills.*/<-- $FS_SKILLS skills (40 core + $((FS_SKILLS - 40)) utilitarias)/" "$ARCH"
     portable_sed "s/<-- [0-9]* reglas/<-- $FS_RULES reglas/" "$ARCH"

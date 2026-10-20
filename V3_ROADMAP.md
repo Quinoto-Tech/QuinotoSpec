@@ -1,24 +1,24 @@
-# QuinotoSpec v3.2 — Plan de Implementacion
+# QuinotoSpec v3.3 — Plan de Implementacion
 
 ## Resumen Ejecutivo
 
-Este documento detalla el plan de evolucion de QuinotoSpec desde v3.2.0 (Warband: Hird Edition) hacia v3.3.0, incorporando las mejores caracteristicas identificadas en el analisis competitivo de los 4 frameworks lideres del ecosistema:
+Este documento detalla el plan de evolucion de QuinotoSpec desde v3.3.0 (Warband: Hird Edition) hacia v3.4.0, incorporando las mejores caracteristicas identificadas en el analisis competitivo de los 4 frameworks lideres del ecosistema:
 
 - **Superpowers** (obra/superpowers) — Disciplina de ingenieria (TDD, debugging, verificacion)
 - **OpenSpec** (Fission-AI/OpenSpec) — Spec-driven con delta specs y artifact DAG
 - **Spec-Kit** (github/spec-kit) — Extensiones/presets, constitution, workflow engine
 - **BMAD-METHOD** (bmad-code-org/bmad-method) — Agentes con personalidad, party mode, scale-adaptive
 
-**Version actual:** 3.2.0
-**Version objetivo:** 3.3.0
+**Version actual:** 3.3.0
+**Version objetivo:** 3.4.0
 **Fases:** 4 fases incrementales, cada una entregable independientemente
-**Progreso:** Gate 0 y Fase 1 están completos. F2.1/F2.2 fueron entregadas previamente; F2.3, F2.4 y F2.5 están implementadas y validadas. F3.2 queda completa con Party Mode integrado en bootstrap; F3.1, F3.3 y las tareas restantes de F3.4 siguen pendientes. La release permanece beta/RC por límites operativos externos.
+**Progreso:** Gate 0 y Fase 1 están completos. F2.1/F2.2 fueron entregadas previamente; F2.3, F2.4 y F2.5 están implementadas y validadas. F3.2 queda completa con Party Mode integrado en bootstrap y F3.3 completa el soporte nativo para OpenCode v2; F3.1 (configuracion 3-layer), F3.5 (`quinotospec-help`) y F4.2 (routing adaptativo) estan implementados. La release permanece beta/RC por límites operativos externos.
 
-> ⚠️ **Nota de implementacion:** Las features F2.1 (Delta Specs), F2.2 (Artifact DAG) y F3.2 (Party Mode) se implementaron como versiones incrementales (v2.2.0 → v2.4.0) antes de Fase 1. Gate 0, Fase 2 y F3.2 están completos; la release 3.2.0 conserva el estado beta/RC y F3.1/F3.3 siguen planificadas. Ver [Conflictos con Dependencias](#conflictos-con-dependencias-conocidos) al final de este documento.
+> ⚠️ **Nota de implementacion:** Las features F2.1 (Delta Specs), F2.2 (Artifact DAG) y F3.2 (Party Mode) se implementaron como versiones incrementales (v2.2.0 → v2.4.0) antes de Fase 1. Gate 0, Fase 2, F3.2 y F3.3 están completos; F3.1, F3.5 y F4.2 se implementaron en la release 3.3.0 y la release conserva el estado beta/RC. Ver [Conflictos con Dependencias](#conflictos-con-dependencias-conocidos) al final de este documento.
 
 ## Stability Gate 0 — Baseline and scope freeze (complete)
 
-La versión 3.2.0 queda clasificada como **beta / release candidate** de Hird Edition después de completar Gate 0, Fase 2 y F3.2. Gate 0 no añadió funcionalidades nuevas fuera de F1.1–F1.7; F2.3–F2.5 y F3.2 son las excepciones posteriores aprobadas:
+La versión 3.3.0 queda clasificada como **beta / release candidate** de Hird Edition después de completar Gate 0, Fase 2, F3.2 y F3.3. Gate 0 no añadió funcionalidades nuevas fuera de F1.1–F1.7; F2.3–F2.5, F3.2 y F3.3 son las excepciones posteriores aprobadas:
 
 - [x] Inventario de workflows, skills, agentes, reglas y templates.
 - [x] Clasificación de capacidades como beta, experimental, prompt-only o demo.
@@ -971,10 +971,10 @@ Merge: `defaults → team → personal` (ultimo gana). Los agentes leen la confi
   - Agregar secciones: Personalidad, Filosofia de Trabajo, Reglas Personales, Protocolo de Comunicacion
   - Archivos: `agent-dist/agents/converted/alba.md`, `daniel.md`, `eva.md`, `lucas.md`, `mateo.md`, `nora.md`, `raul.md`, `sofia.md`, `victor.md`
 
-- [ ] **T3.1.2** — Crear `agent-dist/templates/agent-defaults.toml` — Config defaults para los 9 agentes con personalidades, principios, y estilos de comunicacion.
+- [x] **T3.1.2** — Crear `agent-dist/config/agent-defaults.toml` — Config defaults para los 9 agentes con personalidades, principios, y estilos de comunicacion.
   - Archivo: `agent-dist/templates/agent-defaults.toml`
 
-- [ ] **T3.1.3** — Crear `agent-dist/skills/quinotospec-agent-config/SKILL.md` — Skill que:
+- [x] **T3.1.3** — Crear `agent-dist/skills/quinotospec-agent-config/SKILL.md` — Skill que:
   - Lee `agent-defaults.toml` + `agent-team.toml` + `agent-personal.toml`
   - Hace merge 3-layer (defaults → team → personal)
   - Aplica la config mergeada a la sesion del agente
@@ -984,7 +984,7 @@ Merge: `defaults → team → personal` (ultimo gana). Los agentes leen la confi
 - [ ] **T3.1.4** — Crear `agent-dist/skills/quinotospec-agent-customize/SKILL.md` — Skill que permite al usuario describir en lenguaje natural como quiere modificar un agente y genera el TOML correcto. Sin editar archivos a mano.
   - Archivo: `agent-dist/skills/quinotospec-agent-customize/SKILL.md`
 
-- [ ] **T3.1.5** — Crear `agent-dist/workflows/quinotospec.agent-configure.md` — Workflow interactivo que guia al usuario en la customizacion de agentes.
+- [x] **T3.1.5** — Crear `agent-dist/workflows/quinotospec.agent-config.md` — Workflow interactivo que guia al usuario en la customizacion de agentes.
   - Archivo: `agent-dist/workflows/quinotospec.agent-configure.md`
 
 - [ ] **T3.1.6** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Listar agentes con sus nombres y especialidades.
@@ -1052,7 +1052,43 @@ agent-dist/skills/quinotospec-party-orchestrator/  # Skill orquestador
 
 ---
 
-### F3.3 — Navegacion Contextual de Workflows
+### F3.3 — Soporte Nativo OpenCode v2
+
+| Campo | Detalle |
+|-------|---------|
+| **Fuente** | Hallazgos de Discovery F-01, F-04 (OpenCode v2.0.16+) |
+| **Problema actual** | El plugin de OpenCode v1 no es compatible con el loader ESM de OpenCode v2 y los agentes carecen del frontmatter requerido por v2 |
+| **Solucion** | Plugin ESM sin dependencias (`opencode-v2/index.js`), detección automática de major version en `install.sh` y metadatos `mode: subagent` / `description` en los 9 agentes |
+
+#### Tareas
+
+- [x] **T3.3.1** — Crear plugin ESM `agent-dist/plugins/opencode-v2/index.js` y `package.json` con hooks `session.hook("context")` y `session.hook("compaction")`.
+  - Archivo: `agent-dist/plugins/opencode-v2/index.js`
+
+- [x] **T3.3.2** — Añadir detección `detect_opencode_major` y bandera `--opencode-major` en `install.sh` para instalar el payload v1 o v2 según corresponda.
+  - Archivo: `install.sh`
+
+- [x] **T3.3.3** — Actualizar frontmatter con `mode: subagent` y `description` en `agent-dist/agents/*.md` para compatibilidad con OpenCode v2.
+  - Archivos: `agent-dist/agents/*.md`
+
+---
+
+### F3.4 — Actualizaciones de Infraestructura (Fase 3)
+
+#### Tareas
+
+- [x] **T3.4.1** — Actualizar `manifest.json` — Bump a 3.3.0 y registrar F3.2 (Party Mode bootstrap) y F3.3 (OpenCode v2 support); el inventario se amplia a 46 workflows, 89 skills, 18 reglas, 9 agentes y 13 templates con los artefactos de F3.1/F3.5/F4.2.
+  - Archivo: `manifest.json`
+
+- [x] **T3.4.2** — Actualizar `.version` — `3.3.0`.
+  - Archivo: `.version`
+
+- [x] **T3.4.3** — Actualizar `CHANGELOG.md` — Entradas v3.2.0 y v3.3.0.
+  - Archivo: `CHANGELOG.md`
+
+---
+
+### F3.5 — Navegacion Contextual de Workflows
 
 | Campo | Detalle |
 |-------|---------|
@@ -1062,7 +1098,7 @@ agent-dist/skills/quinotospec-party-orchestrator/  # Skill orquestador
 
 #### Tareas
 
-- [ ] **T3.3.1** — Crear `agent-dist/skills/quinotospec-help/SKILL.md` — Skill que:
+- [x] **T3.5.1** — Crear `agent-dist/skills/quinotospec-help/SKILL.md` — Skill que:
   - Escanea `.quinoto-spec/` para detectar artifacts existentes
   - Mapea artifacts a fases del ciclo QuinotoSpec
   - Recomienda el proximo workflow basado en precedencia
@@ -1070,26 +1106,11 @@ agent-dist/skills/quinotospec-party-orchestrator/  # Skill orquestador
   - Soporta preguntas abiertas: "termine la arquitectura, ¿que sigue?"
   - Archivo: `agent-dist/skills/quinotospec-help/SKILL.md`
 
-- [ ] **T3.3.2** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar quinotospec-help como comando "¿que sigue?".
+- [x] **T3.5.2** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Referenciar quinotospec-help como comando "¿que sigue?".
   - Archivo: `agent-dist/bootstrap/quinotospec-bootstrap.md`
 
-- [ ] **T3.3.3** — Actualizar `agent-dist/skills/quinotospec-suggest-next/SKILL.md` — Integrar con quinotospec-help para navegacion global ademas de intra-propuesta.
+- [x] **T3.5.3** — Actualizar `agent-dist/skills/quinotospec-suggest-next/SKILL.md` — Integrar con quinotospec-help para navegacion global ademas de intra-propuesta.
   - Archivo: `agent-dist/skills/quinotospec-suggest-next/SKILL.md`
-
----
-
-### F3.4 — Actualizaciones de Infraestructura (Fase 3)
-
-#### Tareas
-
-- [x] **T3.4.1** — Actualizar `manifest.json` — Bump a 3.2.0 y registrar F3.2 como integración de bootstrap; el inventario permanece en 43 workflows, 86 skills, 18 reglas, 9 agentes y 13 templates.
-  - Archivo: `manifest.json`
-
-- [x] **T3.4.2** — Actualizar `.version` — `3.2.0`.
-  - Archivo: `.version`
-
-- [x] **T3.4.3** — Actualizar `CHANGELOG.md` — Entrada v3.2.0.
-  - Archivo: `CHANGELOG.md`
 
 ---
 
@@ -1148,24 +1169,24 @@ El workflow `quinotospec.apply` (o un nuevo `quinotospec.quick-dev`) evalua la c
 
 #### Tareas
 
-- [ ] **T4.2.1** — Crear `agent-dist/skills/quinotospec-complexity-router/SKILL.md` — Skill que:
+- [x] **T4.2.1** — Crear `agent-dist/skills/quinotospec-complexity-router/SKILL.md` — Skill que:
   - Analiza el scope del cambio (archivos afectados, servicios, equipos)
   - Clasifica en Quick/Simple/Complex/Enterprise
   - Deriva al track correspondiente
   - Permite override manual del usuario
   - Archivo: `agent-dist/skills/quinotospec-complexity-router/SKILL.md`
 
-- [ ] **T4.2.2** — Crear `agent-dist/workflows/quinotospec.quick-dev.md` — Workflow de via rapida para bugs y cambios chicos:
+- [x] **T4.2.2** — Crear `agent-dist/workflows/quinotospec.quick-dev.md` — Workflow de via rapida para bugs y cambios chicos:
   - Comprimir intent (humano + modelo → un goal coherente)
   - Route al track mas seguro y pequeno
   - Implementacion autonoma con supervision minima
   - Diagnosticar fallos en la capa correcta (spec debil? regenerar spec. Logica? parche local)
   - Archivo: `agent-dist/workflows/quinotospec.quick-dev.md`
 
-- [ ] **T4.2.3** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Integrar complexity router: antes de implementar, el router decide el track.
+- [x] **T4.2.3** — Actualizar `agent-dist/workflows/quinotospec.apply.md` — Integrar complexity router: antes de implementar, el router decide el track.
   - Archivo: `agent-dist/workflows/quinotospec.apply.md`
 
-- [ ] **T4.2.4** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Explicar los 4 tracks y cuando usar cada uno.
+- [x] **T4.2.4** — Actualizar `agent-dist/bootstrap/quinotospec-bootstrap.md` — Explicar los 4 tracks y cuando usar cada uno.
   - Archivo: `agent-dist/bootstrap/quinotospec-bootstrap.md`
 
 ---
@@ -1349,10 +1370,10 @@ Fase 1 (v3.0.0) ─────────────────────�
   │             │  Agentes leen config desde artifact engine
   │             │  Party mode usa agentes convertidos
   │             │
-  │             └──► Fase 4 (v3.3.0) ────────────────────────────────
+  │             └──► Fase 4 (v3.4.0) ────────────────────────────────
   │                    │
   │                    │  Requiere: F2.1 (delta specs), F2.2 (engine),
-  │                    │            F3.1 (agentes), F3.3 (help)
+  │                    │            F3.1 (agentes), F3.5 (help)
   │                    │  Scale-adaptive usa complexity router
   │                    │  Workflow engine orquesta todos los workflows
   │                    │  SPEC kernel alimenta delta specs
@@ -1443,7 +1464,7 @@ quinotospec-package/
 │   │   ├── quinotospec-party-orchestrator/     # F3.2
 │   │   │   ├── SKILL.md
 │   │   │   └── strategies/
-│   │   ├── quinotospec-help/                   # F3.3
+│   │   ├── quinotospec-help/                   # F3.5
 │   │   │   └── SKILL.md
 │   │   ├── quinotospec-complexity-router/      # F4.2
 │   │   │   └── SKILL.md
@@ -1543,7 +1564,7 @@ quinotospec-package/
 
 ## Resumen de Metricas
 
-| Metrica | v3.2.0 (actual) | v3.3.0 |
+| Metrica | v3.3.0 (actual) | v3.4.0 |
 |---------|--------|--------|
 | Workflows | 43 | 53 |
 | Skills | 86 | 91* |
@@ -1577,8 +1598,8 @@ Las features F2.1, F2.2 y F3.2 se implementaron como versiones incrementales (v2
 ### Recomendacion para proxima sesion
 
 1. **F3.1** (Agentes con personalidad) — Enriquece Party Mode con nombres humanos y TOML
-2. **F3.3** (Navegación contextual) — Añade `quinotospec-help` para recomendar el siguiente workflow
-3. **Validar el release 3.2.0** — ejecutar el gate completo y smoke del paquete antes de publicar
+2. **F3.5** (Navegación contextual) — Añade `quinotospec-help` para recomendar el siguiente workflow
+3. **Validar el release 3.3.0** — ejecutar el gate completo y smoke del paquete antes de publicar
 
 ---
 

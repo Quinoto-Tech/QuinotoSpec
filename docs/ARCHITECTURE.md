@@ -8,7 +8,7 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 2. **Skills**: Capacidades especializadas reutilizables
 3. **Rules**: Restricciones inmutables que gobiernan el comportamiento
 
-**Estado de release:** beta / release candidate (v3.2.0 Hird Edition; Gate 0 + F3.2 bootstrap complete).
+**Estado de release:** beta / release candidate (v3.3.0 Hird Edition; Gate 0 + F3.2 + F3.3 complete).
 
 **Criterio de madurez:** la presencia de un artefacto en `agent-dist/` no implica que la capacidad sea production-ready. Cada componente debe declarar su estado y sus límites operativos.
 
@@ -23,8 +23,8 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 +--------+---------+
 |   agent-dist/    |  <-- Distribucion
 |  +-------------+ |
-|  | workflows/  | |  <-- 43 workflows
- |  | skills/     | |  <-- 86 skills (40 core + 46 utilitarias)
+|  | workflows/  | |  <-- 46 workflows
+ |  | skills/     | |  <-- 89 skills (40 core + 49 utilitarias)
 
  |  | rules/      | |  <-- 18 reglas
  |  | agents/     | |  <-- 9 agentes
@@ -80,8 +80,8 @@ Los estados significan lo siguiente:
 | Jormungandr | Beta | Helper offline | El fallback puede declarar un DAG válido sin analizarlo correctamente |
 | Party Mode | Experimental | Workflow + orquestador + bootstrap | El comportamiento depende del agente y de sus herramientas |
 | Tiwaz Rune | Prompt-only | Metodología + fórmulas | No existe un motor ejecutable completo de medición |
-| Huginn & Muninn | Demo | Gate CI | Emite un score de demostración y no calcula entropía real |
-| Norns / Skald | Experimental | Scripts | Sincronización atómica y generación de documentación incompletas |
+| Huginn & Muninn | Beta | Gate CI | Calcula entropía real con stdlib; aún no persiste histórico ni contract drift |
+| Norns / Skald | Beta | Scripts | `norns.py` detecta drift sin escribir; `sync-readme.sh` sincroniza badges y valida paridad de tablas |
 | Bifrost | Experimental | Git externo | Requiere dry-run, confirmación y allowlist de remotos |
 | Battle Frenzy / Blood-Bond | Experimental | Orquestación + datos locales | Requiere aislamiento de worktrees y política de privacidad |
 | Installer / backup | Beta | Bash transaccional + Python backup engine | Staging, ownership manifest y rollback implementados; disaster recovery multi-repo queda pendiente |
@@ -121,11 +121,11 @@ Las extensiones se almacenan en `.quinoto-spec/extensions/`, los presets en `.qu
 
 `scripts/package-release.sh` construye el artefacto sin caches y genera el archivo `.tar.gz.sha256`; `scripts/smoke-release.sh` extrae el tarball en un target separado y ejecuta install, verify, ownership validation y uninstall. CI prueba Python 3.8/3.11 y release publica el tarball junto a su checksum.
 
-## Línea base de Gate 0 + F2.5 + F3.2
+## Línea base de Gate 0 + F2.5 + F3.2 + F3.3
 
-- Inventario actual: 43 workflows, 86 skills, 9 agentes, 18 reglas, 13 templates, bootstrap, hooks y plugin OpenCode.
+- Inventario actual: 46 workflows, 89 skills, 9 agentes, 18 reglas, 13 templates, bootstrap, hooks y plugin OpenCode (v1 y v2).
 - Release status: `beta-rc`.
-- Alcance: congelado salvo F1.1–F1.7, F2.3–F2.5 y F3.2; F3.1 y F3.3 siguen pendientes.
+- Alcance: F1.1–F1.7, F2.3–F2.5, F3.2, F3.3 (OpenCode v2), F3.5 (`quinotospec-help`), F3.1 (3-layer agent config) y F4.2 (complexity router) implementados; el resto del roadmap v3.4 sigue pendiente.
 - Criterio de salida: contrato de artefactos, gates ejecutables, operaciones seguras, CI/release verificables y documentación sincronizada.
 
 ## Flujo de Datos
@@ -150,7 +150,7 @@ El target de Claude Code es `.claude/` o `~/.claude/`; el de Cursor es `.cursor/
 
 ## Componentes
 
-### Workflows (43)
+### Workflows (46)
 
 Los workflows se dividen en categorias:
 
@@ -241,7 +241,7 @@ El sistema coexiste con el formato anterior de propuestas.
 
 ---
 
-### Skills (86)
+### Skills (89)
 
 Organizadas por dominio:
 

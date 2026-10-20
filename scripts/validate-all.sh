@@ -1,20 +1,23 @@
 #!/bin/bash
 
 # Validate All: Ejecuta todas las validaciones del paquete QuinotoSpec
-# Uso: ./scripts/validate-all.sh [--strict]
+# Uso: ./scripts/validate-all.sh [--strict] [--allow-no-node]
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 STRICT=false
+ALLOW_NO_NODE="${QUINOTOSPEC_ALLOW_NO_NODE:-false}"
 
 for arg in "$@"; do
     case "$arg" in
         --strict) STRICT=true ;;
+        --allow-no-node) ALLOW_NO_NODE=true ;;
         -h|--help)
-            echo "Usage: $0 [--strict]"
-            echo "  --strict  Fail on warnings too"
+            echo "Usage: $0 [--strict] [--allow-no-node]"
+            echo "  --strict         Fail on warnings too (requires Node.js unless --allow-no-node is passed)"
+            echo "  --allow-no-node  Do not count missing Node.js as a warning under --strict"
             exit 0
             ;;
     esac
@@ -73,10 +76,34 @@ if [ -f "$PROJECT_ROOT/manifest.json" ]; then
     INSTALLER_VERSION=$(grep "INSTALLER_VERSION=" "$PROJECT_ROOT/install.sh" | head -1 | cut -d'"' -f2)
     VERSION_FILE=$(tr -d '[:space:]' < "$PROJECT_ROOT/.version")
     PLUGIN_VERSION=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$PROJECT_ROOT/.cursor-plugin/plugin.json")
-    if [ "$MANIFEST_VERSION" = "$INSTALLER_VERSION" ] && [ "$VERSION_FILE" = "$MANIFEST_VERSION" ] && [ "$PLUGIN_VERSION" = "$MANIFEST_VERSION" ]; then
+    VERSION_MISMATCH=false
+    if [ "$MANIFEST_VERSION" != "$INSTALLER_VERSION" ] || [ "$VERSION_FILE" != "$MANIFEST_VERSION" ] || [ "$PLUGIN_VERSION" != "$MANIFEST_VERSION" ]; then
+        echo "  MISMATCH: manifest=$MANIFEST_VERSION, installer=$INSTALLER_VERSION, .version=$VERSION_FILE, cursor-plugin=$PLUGIN_VERSION"
+        VERSION_MISMATCH=true
+    fi
+    if ! grep -q "version-$MANIFEST_VERSION-blue" "$PROJECT_ROOT/README.md" 2>/dev/null; then
+        echo "  MISMATCH: README.md missing badge version-$MANIFEST_VERSION-blue"
+        VERSION_MISMATCH=true
+    fi
+    if ! grep -q "version-$MANIFEST_VERSION-blue" "$PROJECT_ROOT/README_EN.md" 2>/dev/null; then
+        echo "  MISMATCH: README_EN.md missing badge version-$MANIFEST_VERSION-blue"
+        VERSION_MISMATCH=true
+    fi
+    if ! grep -q "^## \[$MANIFEST_VERSION\]" "$PROJECT_ROOT/CHANGELOG.md" 2>/dev/null; then
+        echo "  MISMATCH: CHANGELOG.md missing header ## [$MANIFEST_VERSION]"
+        VERSION_MISMATCH=true
+    fi
+    if ! grep -q "^\*\*Version actual:\*\* $MANIFEST_VERSION" "$PROJECT_ROOT/V3_ROADMAP.md" 2>/dev/null; then
+        echo "  MISMATCH: V3_ROADMAP.md missing **Version actual:** $MANIFEST_VERSION"
+        VERSION_MISMATCH=true
+    fi
+    if ! grep -q "v$MANIFEST_VERSION Hird Edition" "$PROJECT_ROOT/docs/ARCHITECTURE.md" 2>/dev/null; then
+        echo "  MISMATCH: docs/ARCHITECTURE.md missing v$MANIFEST_VERSION Hird Edition"
+        VERSION_MISMATCH=true
+    fi
+    if [ "$VERSION_MISMATCH" = false ]; then
         echo "  Versions consistent: $MANIFEST_VERSION"
     else
-        echo "  MISMATCH: manifest=$MANIFEST_VERSION, installer=$INSTALLER_VERSION, .version=$VERSION_FILE, cursor-plugin=$PLUGIN_VERSION"
         ERRORS=$((ERRORS + 1))
     fi
 else
@@ -87,7 +114,7 @@ echo ""
 
 # 5. Validar estructura de agent-dist
 echo "--- Structure Validation ---"
-EXPECTED_COUNTS=("workflows:43" "skills:86" "rules:18" "agents:9" "templates:13")
+EXPECTED_COUNTS=("workflows:46" "skills:89" "rules:18" "agents:9" "templates:13")
 for expected in "${EXPECTED_COUNTS[@]}"; do
     dir="${expected%%:*}"
     count="${expected##*:}"
@@ -162,8 +189,12 @@ if command -v node >/dev/null 2>&1; then
         ERRORS=$((ERRORS + 1))
     fi
 else
-    echo "  plugins: Node.js unavailable, syntax checks skipped"
-    WARNINGS=$((WARNINGS + 1))
+    if [ "$ALLOW_NO_NODE" = "true" ]; then
+        echo "  plugins: Node.js unavailable, syntax checks skipped (--allow-no-node active)"
+    else
+        echo "  plugins: Node.js unavailable, syntax checks skipped (WARNING: Node.js is required in --strict mode, or pass --allow-no-node)"
+        WARNINGS=$((WARNINGS + 1))
+    fi
 fi
 echo ""
 

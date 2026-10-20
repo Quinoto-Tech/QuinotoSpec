@@ -118,7 +118,7 @@ def build_replacements(inventory_root: Path, state_root: Path, config: Dict[str,
     active = list_value(workflows.get("active"))
     optional = list_value(workflows.get("optional"))
     available = set(core_workflows(inventory_root))
-    active = [item for item in active if item in available] or [item for item in available if item in {"constitution", "discovery", "proposal", "user-stories", "tasks", "apply", "review", "archive"}]
+    active = [item for item in active if item in available] or [item for item in sorted(available) if item in {"constitution", "discovery", "proposal", "user-stories", "tasks", "apply", "review", "archive"}]
     optional = [item for item in optional if item in available and item not in active]
     skills = core_skills(inventory_root)
     extensions = installed_extensions(state_root)

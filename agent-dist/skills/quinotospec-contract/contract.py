@@ -794,6 +794,7 @@ def validate_project(root: Path) -> Dict[str, Any]:
     errors = [item for item in diagnostics if item.severity == "error"]
     warnings = [item for item in diagnostics if item.severity == "warning"]
     return {
+        "schema_version": CONTRACT_VERSION,
         "valid": not errors,
         "blocking": bool(errors),
         "contract_version": CONTRACT_VERSION,

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# QuinotoSpec Installer v3.2.0
+# QuinotoSpec Installer v3.3.0
 # Instala QuinotoSpec en el IDE seleccionado con validación post-instalación
 
 set -euo pipefail
@@ -19,6 +19,8 @@ TRANSACTION_COMMITTED=false
 CONFIG_CREATED=false
 AGENTS_MANAGED=false
 STAGED_AGENTS=""
+LOCK_DIR=""
+LOCK_ACQUIRED=false
 OPENCODE_MAJOR=""
 OPENCODE_MAJOR_OVERRIDE=""
 
@@ -94,6 +96,9 @@ cleanup_transaction() {
     if [ -n "$TRANSACTION_DIR" ] && [ -d "$TRANSACTION_DIR" ]; then
         rm -rf -- "$TRANSACTION_DIR"
     fi
+    if [ "$LOCK_ACQUIRED" = true ] && [ -n "$LOCK_DIR" ] && [ -d "$LOCK_DIR" ]; then
+        rmdir "$LOCK_DIR" 2>/dev/null || true
+    fi
     exit "$status"
 }
 
@@ -107,6 +112,12 @@ begin_transaction() {
     local parent
     parent=$(dirname "$FINAL_CONFIG_DIR")
     mkdir -p "$parent"
+    LOCK_DIR="${parent}/.$(basename "$FINAL_CONFIG_DIR").quinotospec.lock"
+    if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+        print_error "Another QuinotoSpec installation is already in progress (lock: $LOCK_DIR)"
+        return 1
+    fi
+    LOCK_ACQUIRED=true
     TRANSACTION_DIR=$(mktemp -d "${parent}/.quinotospec-install.XXXXXX")
     mkdir -p "$TRANSACTION_DIR/candidate" "$TRANSACTION_DIR/candidate-root"
     trap cleanup_transaction EXIT
@@ -125,7 +136,7 @@ begin_transaction() {
 prepare_candidate() {
     local previous_manifest="$FINAL_CONFIG_DIR/.quinoto-spec/ownership.json"
     if [ -f "$previous_manifest" ]; then
-        if ! python3 - "$previous_manifest" "$TRANSACTION_DIR/candidate" <<'PY'
+        if ! python3 - "$previous_manifest" "$TRANSACTION_DIR/candidate" "$GLOBAL_INSTALL" <<'PY'
 import hashlib
 import json
 import sys
@@ -142,6 +153,7 @@ def digest(path):
 
 manifest_path = Path(sys.argv[1])
 candidate = Path(sys.argv[2])
+global_install = len(sys.argv) > 3 and sys.argv[3] == "true"
 try:
     data = json.loads(manifest_path.read_text(encoding="utf-8"))
 except (OSError, json.JSONDecodeError) as error:
@@ -165,6 +177,17 @@ for item in data.get("owned", []):
         if digest(target) != expected:
             raise SystemExit("managed file was modified outside the installer: " + relative)
         target.unlink()
+if global_install:
+    agents = data.get("agents")
+    if isinstance(agents, dict) and agents.get("managed"):
+        rel_agents = agents.get("path", "AGENTS.md")
+        agents_candidate = candidate / rel_agents
+        if agents_candidate.is_symlink():
+            raise SystemExit("managed AGENTS.md is a symlink")
+        if agents_candidate.is_file():
+            if digest(agents_candidate) != agents.get("sha256"):
+                raise SystemExit("managed AGENTS.md was modified outside the installer")
+            agents_candidate.unlink()
 for directory in sorted((path for path in candidate.rglob("*") if path.is_dir()), key=lambda path: len(path.parts), reverse=True):
     try:
         directory.rmdir()
@@ -200,6 +223,7 @@ managed = {
     "plugins",
     "commands",
     "workflows",
+    "config",
     "quinotospec-plugin",
     ".quinoto-spec",
 }
@@ -316,6 +340,7 @@ add_tree("agent-dist/rules", "rules")
 add_tree("agent-dist/skills", "skills")
 add_tree("agent-dist/agents", "agents")
 add_tree("agent-dist/templates", "templates")
+add_tree("agent-dist/config", "config")
 add_tree("agent-dist/bootstrap", "bootstrap")
 add_tree("agent-dist/hooks", "hooks")
 add_tree("agent-dist/plugins", "plugins")
@@ -432,6 +457,25 @@ for item in data.get("owned", []):
     path = config / relative
     if path.is_symlink() or not path.is_file() or digest(path) != item.get("sha256"):
         raise SystemExit("managed file is missing or modified: " + str(relative))
+for ext_item in data.get("external_config", []):
+    if not isinstance(ext_item, dict):
+        raise SystemExit("ownership manifest contains an invalid external_config entry")
+    ext_rel = ext_item.get("path")
+    if not isinstance(ext_rel, str) or not ext_rel:
+        continue
+    relative = Path(ext_rel)
+    if relative.is_absolute() or ".." in relative.parts:
+        raise SystemExit("external_config path is unsafe: " + ext_rel)
+    ext_path = config / relative
+    if ext_path.is_symlink():
+        raise SystemExit("external_config path is a symlink: " + ext_rel)
+    if ext_path.exists():
+        if not ext_path.is_file():
+            raise SystemExit("external_config path is not a regular file: " + ext_rel)
+        try:
+            json.loads(ext_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            raise SystemExit("external_config file is invalid JSON (" + ext_rel + "): " + str(error))
 agents = data.get("agents")
 if isinstance(agents, dict) and agents.get("managed"):
     path = target_root / agents.get("path", "AGENTS.md")
@@ -714,11 +758,11 @@ verify_installation() {
 
     echo ""
     echo "  Components: $workflow_count workflows, $skill_count skills"
-    if [ "$workflow_count" -lt 43 ]; then
+    if [ "$workflow_count" -lt 46 ]; then
         print_error "Installed workflow count is too low: $workflow_count"
         errors=$((errors + 1))
     fi
-    if [ "$skill_count" -lt 86 ]; then
+    if [ "$skill_count" -lt 89 ]; then
         print_error "Installed skill count is too low: $skill_count"
         errors=$((errors + 1))
     fi
@@ -778,14 +822,15 @@ PY
 # a successful lookup into a spurious failure that intermittently reports
 # managed files as leftovers.
 is_managed_path() {
-    local -a owned=($1)
+    local owned_list="$1"
     local needle="$2"
     local entry=""
-    for entry in ${owned[@]+"${owned[@]}"}; do
+    while IFS= read -r entry; do
+        [ -n "$entry" ] || continue
         if [ "$entry" = "$needle" ]; then
             return 0
         fi
-    done
+    done <<< "$owned_list"
     return 1
 }
 
@@ -899,7 +944,7 @@ for item in data.get("owned", []):
         owned.add(item["path"])
 
 orphans = []
-for directory in ("skills", "templates", "agents", "commands", "bootstrap", "rules", "plugins"):
+for directory in ("skills", "templates", "agents", "commands", "bootstrap", "rules", "plugins", "config"):
     root = config_dir / directory
     if not root.is_dir():
         continue
@@ -1008,7 +1053,7 @@ path = Path(sys.argv[1])
 manifest = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
 payload = {
     "name": "quinotospec",
-    "version": manifest.get("version", "3.2.0"),
+    "version": manifest.get("version", "3.3.0"),
     "description": "QuinotoSpec methodology and agent configuration",
     "author": {"name": "QuinotoTech"},
     "agents": "agents",
@@ -1141,10 +1186,23 @@ get_config_dir() {
     esac
 }
 
+get_agents_root() {
+    local ide="$1"
+    local global="$2"
+
+    if [ "$global" = true ]; then
+        get_config_dir "$ide" true
+    else
+        echo "$TARGET_ROOT"
+    fi
+}
+
 uninstall() {
     local ide="$1"
     local config_dir
+    local agents_root
     config_dir=$(get_config_dir "$ide" "$GLOBAL_INSTALL")
+    agents_root=$(get_agents_root "$ide" "$GLOBAL_INSTALL")
 
     print_info "Uninstalling QuinotoSpec from $config_dir..."
 
@@ -1169,7 +1227,7 @@ uninstall() {
         fi
     fi
 
-    if ! python3 - "$config_dir" "$TARGET_ROOT" <<'PY'
+    if ! python3 - "$config_dir" "$agents_root" <<'PY'
 import hashlib
 import json
 import sys
@@ -1371,15 +1429,7 @@ if [ "$VERIFY_ONLY" = true ]; then
         OPENCODE_MAJOR=$(detect_opencode_major)
     fi
     config_dir=$(get_config_dir "$IDE_CHOICE" "$GLOBAL_INSTALL")
-    verify_target_root="$PROJECT_ROOT"
-    if [ "$GLOBAL_INSTALL" = true ]; then
-        case "$IDE_CHOICE" in
-            cursor) verify_target_root="$HOME" ;;
-            claude) verify_target_root="$HOME/.claude" ;;
-            antigravity) verify_target_root="$HOME/.gemini" ;;
-            *) verify_target_root="$HOME/.config" ;;
-        esac
-    fi
+    verify_target_root=$(get_agents_root "$IDE_CHOICE" "$GLOBAL_INSTALL")
     if verify_installation "$config_dir" "$IDE_CHOICE" "$verify_target_root"; then
         if [ "$IDE_CHOICE" = "opencode" ]; then
             warn_legacy_opencode_artifacts "$config_dir"
@@ -1393,18 +1443,11 @@ fi
 
 # Determine target directory
 if [ "$GLOBAL_INSTALL" = true ]; then
-    if [ "$IDE_CHOICE" = "antigravity" ]; then
-        TARGET_ROOT="$HOME/.gemini"
-        print_info "Installing globally to ~/.gemini/config/"
-    elif [ "$IDE_CHOICE" = "cursor" ]; then
-        TARGET_ROOT="$HOME"
-        print_info "Installing globally to ~/.cursor/"
-    elif [ "$IDE_CHOICE" = "claude" ]; then
-        TARGET_ROOT="$HOME/.claude"
-        print_info "Installing globally to ~/.claude/"
+    if [ -n "$IDE_CHOICE" ]; then
+        TARGET_ROOT=$(get_agents_root "$IDE_CHOICE" true)
+        print_info "Installing globally to $TARGET_ROOT/"
     else
-        TARGET_ROOT="$HOME/.config"
-        print_info "Installing globally to ~/.config/"
+        print_info "Installing globally..."
     fi
 elif [ "$ASSUME_YES" = true ]; then
     print_info "Non-interactive mode: installing to current directory '$PROJECT_ROOT'"
@@ -1422,8 +1465,6 @@ else
         TARGET_ROOT="$USER_PATH"
     fi
 fi
-
-echo "Target: $TARGET_ROOT"
 
 # IDE Selection (interactive if not provided)
 if [ -z "$IDE_CHOICE" ] && [ "$ASSUME_YES" = true ]; then
@@ -1454,6 +1495,12 @@ if [ -z "$IDE_CHOICE" ]; then
         *) IDE_CHOICE="opencode" ;;
     esac
 fi
+
+if [ "$GLOBAL_INSTALL" = true ]; then
+    TARGET_ROOT=$(get_agents_root "$IDE_CHOICE" true)
+fi
+
+echo "Target: $TARGET_ROOT"
 
 if [ "$IDE_CHOICE" = "opencode" ]; then
     OPENCODE_MAJOR=$(detect_opencode_major)
@@ -1540,10 +1587,15 @@ if [ -f "$INSTALL_CONFIG" ]; then
 else
     CONFIG_SOURCE="$DIR/agent-dist/templates/config-template.yml"
 fi
+AGENTS_STATE_ROOT="$TARGET_ROOT"
+if [ ! -d "$AGENTS_STATE_ROOT" ]; then
+    AGENTS_STATE_ROOT="$TRANSACTION_DIR/candidate-root/$(basename "$TARGET_ROOT")"
+    mkdir -p "$AGENTS_STATE_ROOT"
+fi
 if ! python3 -B "$DIR/agent-dist/skills/quinotospec-update-agents/update_agents.py" \
-    --root "$TARGET_ROOT" \
+    --root "$AGENTS_STATE_ROOT" \
     --inventory-root "$DIR" \
-    --state-root "$TARGET_ROOT" \
+    --state-root "$AGENTS_STATE_ROOT" \
     --config "$CONFIG_SOURCE" \
     --template "$DIR/agent-dist/templates/AGENTS-template.md" \
     --output "$STAGED_AGENTS" \

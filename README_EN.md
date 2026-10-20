@@ -1,27 +1,27 @@
 # QuinotoSpec: Hird Edition
 
-> **STATUS: BETA / RELEASE CANDIDATE (HIRD EDITION; GATE 0 + F3.2)**
+> **STATUS: BETA / RELEASE CANDIDATE (HIRD EDITION; GATE 0 + F3.2 + F3.3)**
 > Methodology and agent configuration system for AI-assisted development.
 > "Proposal First" / "Context Slicing" workflow to maximize accuracy and minimize hallucinations.
 
 <div align="center">
 
-  ![Version](https://img.shields.io/badge/version-3.2.0-blue)
+  ![Version](https://img.shields.io/badge/version-3.3.0-blue)
   ![License](https://img.shields.io/badge/license-MIT-green)
-  ![Workflows](https://img.shields.io/badge/workflows-43-purple)
-  ![Skills](https://img.shields.io/badge/skills-86-purple)
+  ![Workflows](https://img.shields.io/badge/workflows-46-purple)
+  ![Skills](https://img.shields.io/badge/skills-89-purple)
   ![Rules](https://img.shields.io/badge/rules-18-red)
 
-  <img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.2.0 — Warband: Hird Edition" width="800" />
+  <img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.3.0 — Warband: Hird Edition" width="800" />
 
   <br/>
 
   <img src="docs/assets/tiwaz_rune.png" alt="The Tiwaz Rune — Entropy Analysis" width="400" />
 </div>
 
-## Maturity status (Gate 0 + F3.2)
+## Maturity status (Gate 0 + F3.2 + F3.3)
 
-Version 3.2.0 is published as a **beta / release candidate** of Hird Edition. Proposal First and Context Slicing are the product foundation, but some capabilities still depend on agent instructions or partial validators. F1.1–F1.7 add session bootstrap, engineering discipline with evidence validation, constitution, verified review feedback, and optional worktree isolation; Gate 0 includes a read-only dispatcher, validated technical evidence, verifiable backups, and structured human approvals. F2.3 and F2.4 add local extensions/presets, template resolution, and dynamic `AGENTS.md` generation; F3.2 integrates Party Mode into session bootstrap; the known limitations below remain in force.
+Version 3.3.0 is published as a **beta / release candidate** of Hird Edition. Proposal First and Context Slicing are the product foundation, but some capabilities still depend on agent instructions or partial validators. F1.1–F1.7 add session bootstrap, engineering discipline with evidence validation, constitution, verified review feedback, and optional worktree isolation; Gate 0 includes a read-only dispatcher, validated technical evidence, verifiable backups, and structured human approvals. F2.3 and F2.4 add local extensions/presets, template resolution, and dynamic `AGENTS.md` generation; F3.2 integrates Party Mode into session bootstrap and F3.3 adds native OpenCode v2 support; the known limitations below remain in force.
 
 | Surface | Status | Known limitation |
 |---------|--------|-----------------|
@@ -41,14 +41,14 @@ Version 3.2.0 is published as a **beta / release candidate** of Hird Edition. Pr
 | Nordic helpers | Experimental | Huginn & Muninn, Skald, and Norns need full implementation |
 | Installer, backup, and Git operations | Beta | Installer has staging, ownership manifest, and rollback; cross-repository disaster recovery remains out of scope |
 
-The full maturity matrix is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the artifact contract is in [`docs/ARTIFACT-CONTRACT.md`](docs/ARTIFACT-CONTRACT.md). F1.1–F1.7, F2.3–F2.5, and F3.2 are approved exceptions to the feature freeze: session bootstrap, engineering discipline, constitution, verified review feedback, worktrees, local extensibility, and Party Mode bootstrap; F3.1 and F3.3 remain planned.
+The full maturity matrix is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the artifact contract is in [`docs/ARTIFACT-CONTRACT.md`](docs/ARTIFACT-CONTRACT.md). F1.1–F1.7, F2.3–F2.5, F3.2, and F3.3 are approved exceptions to the feature freeze: session bootstrap, engineering discipline, constitution, verified review feedback, worktrees, local extensibility, Party Mode bootstrap, and native OpenCode v2 support; F3.1 and F3.5 remain planned.
 
 **Hird Edition** - The tree that connects the 9 realms of AI-assisted development. Now with **The Tiwaz Rune**: formal code entropy analysis.
 
 ## Table of Contents
 
 - [The Problem](#the-problem)
-- [Maturity status (Gate 0 + F3.2)](#maturity-status-gate-0--f32)
+- [Maturity status (Gate 0 + F3.2 + F3.3)](#maturity-status-gate-0--f32--f33)
 - [Use Cases](#use-cases)
 - [Why QuinotoSpec](#why-quinotospec)
 - [Installation](#installation)
@@ -329,6 +329,9 @@ Actions: Reads context → Confirms branch and worktree → Isolates and runs ba
 | **Heimdallr** | `@quinotospec.heimdallr` | STRIDE + DREAD threat analysis with mitigations |
 | **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Formal entropy analysis (Shannon v2 + proxy v1) with remediation plan |
 | **Fix** | `@quinotospec.fix` | Resolves bugs and minor fixes without formal proposal — fast, documented, with tests |
+| **Help** | `@quinotospec.help` | Inspects `.quinoto-spec/` and recommends the exact next command |
+| **Quick Dev** | `@quinotospec.quick-dev` | Fast lane for Simple changes: light tech-spec + TDD without user stories |
+| **Agent Config** | `@quinotospec.agent-config` | Configures agents with a 3-layer merge (defaults → team → personal) |
 | **Pre-commit** | `@quinotospec.pre-commit` | Quick pre-commit check (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automates version bump, changelog consolidation, and tagging |
 | **Init** | `@quinotospec.init` | Initializes `.quinoto-spec/` structure from scratch. If the project is empty, offers an interactive wizard to generate a scaffold with the desired stack |
@@ -571,6 +574,14 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **Conflict Detector** | `/quinotospec-conflict-detector` | Detects conflicts between active proposals |
 | **Estimate** | `/quinotospec-estimate` | Estimates proposal complexity |
 
+### Navigation and Configuration Skills
+
+| Skill | Command | Description |
+|-------|---------|-------------|
+| **Help** | `/quinotospec-help --json` | Recommends the next global command based on discovery, proposals, and tasks |
+| **Complexity Router** | `/quinotospec-complexity-router` | Classifies the change as Quick Fix / Simple / Complex / Enterprise |
+| **Agent Config** | `/quinotospec-agent-config` | 3-layer merge of agent personality and rules |
+
 ### Nordic Skills (v3.2.0 — Hird Edition)
 
 | Skill | Command | Description | Saga |
@@ -632,7 +643,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-The `quinotospec-update-changelog` skill is the traceability backbone: 36 of 43 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
+The `quinotospec-update-changelog` skill is the traceability backbone: 41 of 46 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
 
 #### Quick Tutorial — Nordic
 
@@ -833,9 +844,9 @@ graph LR
 - ✅ Party Mode: multi-agent roundtable integrated into create-proposal and create-rfc
 - ✅ Changelog v2: append-only, individual files, no merge conflicts
 - ✅ The Tiwaz Rune: formal entropy analysis (Shannon v2 + proxy v1) with remediation plan
-- ✅ Antigravity (AGY) — `.agents` / `~/.gemini/config` + 86 installed skills
+- ✅ Antigravity (AGY) — `.agents` / `~/.gemini/config` + 89 installed skills
 
-**Warband: Hird Edition (v3.2.0)** — Current (F3.2 beta/RC)
+**Warband: Hird Edition (v3.3.0)** — Current (F3.2 + F3.3 beta/RC)
 - ✅ **Norns** — atomic versioning without drift (syncs manifest, installer, docs, and CHANGELOG)
 - ✅ **Huginn & Muninn** — continuous Tiwaz + CI gate S≥0.76
 - ✅ **Skald** — living docs, unifies 5 onboard-* + bilingual sync
@@ -844,7 +855,7 @@ graph LR
 - ✅ **Bifrost** — multi-repo federation with git notes
 - ✅ **Mimir BM25** — exact `file:line` citation index without external LLM, offline stdlib
 
-**Next version (v3.3.0)** — Planned
+**Next version (v3.4.0)** — Planned
 
 The single source of truth for the v3 plan is [V3_ROADMAP.md](V3_ROADMAP.md): Phase 1 Engineering Fundamentals (bootstrap, TDD, debugging, constitution, worktrees), Phase 2 Extensibility (extensions/presets, dynamic AGENTS.md), Phase 3 Agents (named personalities + TOML config, contextual help), Phase 4 Product (PRFAQ, scale-adaptive router, YAML workflow engine).
 

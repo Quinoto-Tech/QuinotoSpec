@@ -2,20 +2,20 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-3.2.0-blue)
+![Version](https://img.shields.io/badge/version-3.3.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Claude%20%7C%20Cline%20%7C%20Antigravity-orange)
-![Workflows](https://img.shields.io/badge/workflows-43-purple)
-![Skills](https://img.shields.io/badge/skills-86-purple)
+![Workflows](https://img.shields.io/badge/workflows-46-purple)
+![Skills](https://img.shields.io/badge/skills-89-purple)
 ![Rules](https://img.shields.io/badge/rules-18-red)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
 
-**ESTADO: BETA / RELEASE CANDIDATE (HIRD EDITION; GATE 0 + F3.2)**
+**ESTADO: BETA / RELEASE CANDIDATE (HIRD EDITION; GATE 0 + F3.2 + F3.3)**
 
 Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA.
 Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y minimizar alucinaciones.
 
-<img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.2.0 — Warband: Hird Edition" width="800" />
+<img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.3.0 — Warband: Hird Edition" width="800" />
 
 <br/>
 
@@ -23,9 +23,9 @@ Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y
 
 </div>
 
-## Estado de madurez (Gate 0 + F3.2)
+## Estado de madurez (Gate 0 + F3.2 + F3.3)
 
-La versión 3.2.0 se publica como **beta / release candidate** de Hird Edition. La metodología Proposal First y Context Slicing es la base del producto, pero algunas capacidades aún dependen de instrucciones para agentes o de validadores parciales. F1.1–F1.7 añaden bootstrap, disciplina de ingeniería con validación de evidencia, constitution, recepción verificable de feedback y aislamiento opcional en worktrees; Gate 0 incorpora dispatcher read-only, evidencia técnica validada, backup verificable y aprobaciones humanas estructuradas. F2.3 y F2.4 añaden extensiones/presets locales, resolución de templates y generación dinámica de `AGENTS.md`; F3.2 integra Party Mode en el bootstrap; los límites conocidos se conservan abajo.
+La versión 3.3.0 se publica como **beta / release candidate** de Hird Edition. La metodología Proposal First y Context Slicing es la base del producto, pero algunas capacidades aún dependen de instrucciones para agentes o de validadores parciales. F1.1–F1.7 añaden bootstrap, disciplina de ingeniería con validación de evidencia, constitution, recepción verificable de feedback y aislamiento opcional en worktrees; Gate 0 incorpora dispatcher read-only, evidencia técnica validada, backup verificable y aprobaciones humanas estructuradas. F2.3 y F2.4 añaden extensiones/presets locales, resolución de templates y generación dinámica de `AGENTS.md`; F3.2 integra Party Mode en el bootstrap y F3.3 añade soporte nativo para OpenCode v2; los límites conocidos se conservan abajo.
 
 | Superficie | Estado | Límite conocido |
 |------------|--------|-----------------|
@@ -44,7 +44,7 @@ La versión 3.2.0 se publica como **beta / release candidate** de Hird Edition. 
 | Helpers Nordic | Experimental | Huginn & Muninn, Skald y Norns requieren implementación completa |
 | Installer, backup y operaciones Git | Beta | Installer con staging, ownership manifest y rollback; disaster recovery multi-repo queda fuera de alcance |
 
-La matriz completa de madurez está en [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) y el contrato de artefactos en [`docs/ARTIFACT-CONTRACT.md`](docs/ARTIFACT-CONTRACT.md). F1.1–F1.7, F2.3–F2.5 y F3.2 son las excepciones aprobadas del congelamiento: bootstrap, disciplina de ingeniería, constitution, recepción de feedback, worktrees, extensibilidad local y Party Mode bootstrap; F3.1 y F3.3 siguen planificadas.
+La matriz completa de madurez está en [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) y el contrato de artefactos en [`docs/ARTIFACT-CONTRACT.md`](docs/ARTIFACT-CONTRACT.md). F1.1–F1.7, F2.3–F2.5, F3.2 y F3.3 son las excepciones aprobadas del congelamiento: bootstrap, disciplina de ingeniería, constitution, recepción de feedback, worktrees, extensibilidad local, Party Mode bootstrap y soporte nativo para OpenCode v2; F3.1 y F3.5 siguen planificadas.
 
 ## Quick Start
 
@@ -70,7 +70,7 @@ cd QuinotoSpec
 ## Tabla de Contenido
 
 - [El Problema](#el-problema)
-- [Estado de madurez (Gate 0 + F3.2)](#estado-de-madurez-gate-0--f32)
+- [Estado de madurez (Gate 0 + F3.2 + F3.3)](#estado-de-madurez-gate-0--f32--f33)
 - [Casos de Uso](#casos-de-uso)
 - [Por Qué QuinotoSpec](#por-qué-quinotospec)
 - [Instalación](#instalación)
@@ -351,6 +351,9 @@ Acciones: Lee contexto → Confirma branch y worktree → Aísla y ejecuta basel
 | **Heimdallr** | `@quinotospec.heimdallr` | Análisis de amenazas STRIDE + DREAD con mitigaciones |
 | **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
 | **Fix** | `@quinotospec.fix` | Resuelve bugs y fixes menores sin propuesta formal — rápido, documentado, con tests |
+| **Help** | `@quinotospec.help` | Inspecciona `.quinoto-spec/` y recomienda el siguiente comando exacto |
+| **Quick Dev** | `@quinotospec.quick-dev` | Vía rápida para cambios Simple: tech-spec ligera + TDD sin user stories |
+| **Agent Config** | `@quinotospec.agent-config` | Configura agentes con merge 3-layer (defaults → team → personal) |
 | **Pre-commit** | `@quinotospec.pre-commit` | Check rápido pre-commit (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automatiza version bump, consolidación de changelog y tagging |
 | **Init** | `@quinotospec.init` | Inicializa estructura `.quinoto-spec/` desde cero. Si el proyecto está vacío, ofrece wizard interactivo para generar scaffold con el stack deseado |
@@ -593,6 +596,14 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **Conflict Detector** | `/quinotospec-conflict-detector` | Detecta conflictos entre propuestas activas |
 | **Estimate** | `/quinotospec-estimate` | Estima complejidad de propuestas |
 
+### Skills de Navegación y Configuración
+
+| Skill | Comando | Descripción |
+|-------|---------|-------------|
+| **Help** | `/quinotospec-help --json` | Recomienda el siguiente comando global según discovery, propuestas y tareas |
+| **Complexity Router** | `/quinotospec-complexity-router` | Clasifica el cambio en Quick Fix / Simple / Complex / Enterprise |
+| **Agent Config** | `/quinotospec-agent-config` | Merge 3-layer de personalidad y reglas de agentes |
+
 ### Skills Nórdicas (v3.2.0 — Hird Edition)
 
 | Skill | Comando | Descripción | Saga |
@@ -654,7 +665,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 36 de 43 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
+La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 41 de 46 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
 
 #### Tutorial rápido — Nórdicas
 
@@ -857,9 +868,9 @@ graph LR
 - ✅ Party Mode: mesa redonda multi-agente integrada en create-proposal y create-rfc
 - ✅ Changelog v2: append-only, archivos individuales, sin merge conflicts
 - ✅ The Tiwaz Rune: análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación
-- ✅ Antigravity (AGY) — soporte `.agents` / `~/.gemini/config` + 86 skills instaladas
+- ✅ Antigravity (AGY) — soporte `.agents` / `~/.gemini/config` + 89 skills instaladas
 
-**Warband: Hird Edition (v3.2.0)** — Actual (F3.2 beta/RC)
+**Warband: Hird Edition (v3.3.0)** — Actual (F3.2 + F3.3 beta/RC)
 - ✅ **Norns** — versionado atómico sin drift (sync de manifest, installer, docs y CHANGELOG)
 - ✅ **Huginn & Muninn** — observabilidad Tiwaz continua + gate CI S≥0.76
 - ✅ **Skald** — docs viva, unifica 5 onboard-* + sync README bilingüe
@@ -868,7 +879,7 @@ graph LR
 - ✅ **Bifrost** — federación multi-repo con git notes + status federado
 - ✅ **Mimir BM25** — índice cita-exacta `file:line` sin LLM externo, offline stdlib
 
-**Próximas versiones (v3.3.0)** — Planificadas
+**Próximas versiones (v3.4.0)** — Planificadas
 
 La fuente única del plan v3 es [V3_ROADMAP.md](V3_ROADMAP.md): Fase 1 Fundamentos de Ingeniería (bootstrap, TDD, debugging, constitution, worktrees), Fase 2 Extensibilidad (extensiones/presets, AGENTS.md dinámico), Fase 3 Agentes (personalidades con nombres + config TOML, ayuda contextual), Fase 4 Producto (PRFAQ, router scale-adaptive, workflow engine YAML).
 
