@@ -31,6 +31,25 @@ Antes de generar archivos, ejecuta `python3 agent-dist/skills/quinotospec-contra
    > "No puedo crear la propuesta porque no se han definido los Acuerdos de Producto (DoR/DoD) en `.quinoto-spec/discovery/08-product-and-agreements.md`. Por favor complétalo primero (o indícame explícitamente que quieres continuar sin ellos como excepción documentada)."
 4. Solo continúa al Paso 0 si el archivo tiene Definition of Ready (DoR) y Definition of Done (DoD) definidas con contenido real, o si el usuario confirmó explícitamente un override tras la advertencia anterior (en ese caso, documentar la excepción en `proposal.md` bajo `**⚠️ Excepción DoR/DoD:**` con el motivo dado por el usuario).
 
+**Paso Previo — Lectura dirigida del Discovery (OBLIGATORIA antes de redactar):**
+
+El Discovery no se limita a stack y acuerdos: cada sección técnica de la propuesta tiene un archivo de origen. Lee estos archivos antes de escribir, no solo `01` y `08`:
+
+| Sección de `proposal.md` | Fuente en `.quinoto-spec/discovery/` |
+|---|---|
+| Resumen Ejecutivo, Beneficios | `02-overview.md` (contexto, comandos, riesgos rápidos) |
+| Arquitectura y Diseño Técnico (diagrama de secuencia) | `03-architecture.md` |
+| Especificación Técnica Detallada, Impacto en el Sistema (endpoints y contratos) | `04-endpoints-and-openapi.md` |
+| Impacto en el Sistema (modelos de datos, integraciones externas) | `05-data-and-services.md` |
+| Riesgos y Mitigaciones, Plan de Verificación (CI, secretos, dependencias) | `06-devops-ci-security.md` |
+| Riesgos y Mitigaciones, Roadmap Futuro (deuda técnica ya conocida) | `07-findings-and-recommendations.md` |
+
+Reglas:
+1. Si el archivo existe, cita sus hallazgos concretos (endpoint, tabla, pipeline) en la sección correspondiente. No parafrasees generalidades.
+2. Si el archivo no existe o está vacío, declara el supuesto en esa sección; no inventes endpoints, tablas, pipelines ni integraciones que el discovery no documente.
+3. La falta de `02`–`07` NO es bloqueante (solo `08` lo es por regla de producto): se registra como supuesto y la propuesta continúa.
+4. Si existe `.quinoto-spec/specs/{{dominio}}/spec.md`, léelo junto con `04` y `05` para habilitar `MODIFIED`/`REMOVED` en los delta-specs (ver Paso Adicional).
+
 **Paso Previo (opcional) — Gate de Mimir (evitar duplicar decisiones):**
 
 Si existe `.quinoto-spec/mimir/index.json` (generado por `quinotospec-mimir`), ejecuta:
