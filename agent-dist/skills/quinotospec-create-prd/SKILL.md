@@ -52,7 +52,7 @@ version: 0.1
 |         |             |             |             |
 
 ## 3. Problem Statement
-- **陈述 del Problema**: Descripción clara del problema
+- **Declaración del Problema**: Descripción clara del problema
 - **Contexto**: Cuándo, dónde, cómo ocurre
 - **Impacto**: Cuantificación del dolor (tiempo, dinero, conversión)
 
@@ -80,7 +80,7 @@ version: 0.1
 
 ### Must Have
 - **COMO** [persona]
-- **QUIERO** [功能]
+- **QUIERO** [funcionalidad]
 - **PARA** [beneficio]
 - **CRITERIOS DE ACEPTACIÓN**:
   - [ ] Given... When... Then...

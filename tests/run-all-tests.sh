@@ -43,6 +43,7 @@ run_suite() {
 # Ejecutar cada suite de tests
 run_suite "Workflows" "$SCRIPT_DIR/test-workflows.sh"
 run_suite "Discovery Sources (create-proposal)" "$SCRIPT_DIR/test-discovery-sources.sh"
+run_suite "Encoding (sin CJK)" "$SCRIPT_DIR/test-encoding.sh"
 run_suite "Skills" "$SCRIPT_DIR/test-skills.sh"
 run_suite "Rules" "$SCRIPT_DIR/test-rules.sh"
 run_suite "Rules Enforce" "$SCRIPT_DIR/test-rules-enforce.sh"
