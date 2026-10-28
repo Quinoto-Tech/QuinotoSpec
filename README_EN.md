@@ -602,6 +602,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 @quinotospec-validate --full                                        # Precondition before critical workflows
 @quinotospec-syntax-validate --type proposal --slug {SLUG}          # Before applying code
 @quinotospec-mark-done --task-id TSK-AUTH-a1b2-001                 # After completing task
+@quinotospec.review-handoff 2026-09-24-add-login                  # Code review guide for the human reviewer
 @quinotospec-metrics --dashboard                                    # Metrics for retrospectives
 ```
 
@@ -846,7 +847,7 @@ graph LR
 - ✅ Party Mode: multi-agent roundtable integrated into create-proposal and create-rfc
 - ✅ Changelog v2: append-only, individual files, no merge conflicts
 - ✅ The Tiwaz Rune: formal entropy analysis (Shannon v2 + proxy v1) with remediation plan
-- ✅ Antigravity (AGY) — `.agents` / `~/.gemini/config` + 89 installed skills
+- ✅ Antigravity (AGY) — `.agents` / `~/.gemini/config` + 90 installed skills
 
 **Warband: Hird Edition (v3.3.0)** — Current (F3.2 + F3.3 beta/RC)
 - ✅ **Norns** — atomic versioning without drift (syncs manifest, installer, docs, and CHANGELOG)
