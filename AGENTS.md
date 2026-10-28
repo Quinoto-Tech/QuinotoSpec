@@ -113,6 +113,7 @@ Antes de Apply, ejecuta `quinotospec-tdd`; si una prueba falla, cambia a `quinot
 | `/quinotospec.create-prd` | Product Requirements Document |
 | `/quinotospec.create-rfc` | RFC interactivo con proposal seed. Soporta `--party` para debate multi-agente |
 | `/quinotospec.review` | Revisar branch/PR contra criterios |
+| `/quinotospec.review-handoff` | Generar la guia de code review para el revisor humano cuando una propuesta esta completada |
 | `/quinotospec.archive` | Archivar propuestas completadas y mergear delta specs |
 | `/quinotospec.status` | Dashboard de proyecto con estado DAG de artefactos |
 | `/quinotospec.specs-init` | Inicializar specs/ con requerimientos del sistema |

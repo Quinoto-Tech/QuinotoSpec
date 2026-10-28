@@ -120,6 +120,21 @@ Reescritura agresiva de modulos con alta deuda:
 
 Nota: Segun Regla #10, se crea backup automatico antes del refactor.
 
+## Handoff de Code Review a Humano
+
+Cuando una propuesta esta completada (todas sus tareas corrieron), genera una guia autonoma para la persona que hara el code review:
+
+```bash
+@quinotospec.review-handoff 2026-09-24-add-login
+@quinotospec.review-handoff 2026-09-24-add-login --output ./CODE_REVIEW.md   # copia adicional en la raiz
+@quinotospec.review-handoff 2026-08-01-refactor-api --archived               # propuesta ya archivada
+@quinotospec.review-handoff 2026-09-24-add-login --force --full-diff        # gap documentado + diff inline
+```
+
+La guia (`CODE_REVIEW_GUIDE.md` dentro de la propuesta) consolida en un solo archivo: resumen y alcance, criterios de aceptacion por story, tabla de tareas con archivos declarados, cambios en git (commits, diff stat, mapeo tarea a commits), historial del changelog del prefijo, evidencia de verificacion, delta specs, comandos para reproducir la verificacion y un checklist de revision listo para marcar.
+
+Orden del ciclo: `apply` → `mark-done` → `review-handoff` → code review humano (feedback via `quinotospec-receive-review`) → `archive`.
+
 ## Export/Import para Integracion
 
 ### Exportar a Jira
@@ -151,8 +166,9 @@ El agente se crea en `.quinoto-spec/agents/` con configuracion adaptada al proye
 @quinotospec.create-user-stories --slug {SLUG}  # 3. Generar stories
 @quinotospec.create-tasks --slug {SLUG}         # 4. Generar tareas
 @quinotospec.apply --task-id {TASK_ID}          # 5. Implementar
-@quinotospec.review                             # 6. Revisar
-@quinotospec.release                            # 7. Release
+@quinotospec.review-handoff {SLUG}              # 6. Guia de code review para el humano
+@quinotospec.review                             # 7. Revisar
+@quinotospec.release                            # 8. Release
 ```
 
 ### Auditoria Completa

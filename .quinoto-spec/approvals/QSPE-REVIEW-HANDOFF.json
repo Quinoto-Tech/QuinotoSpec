@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "approval_id": "QSPE-REVIEW-HANDOFF",
+  "subject": "agent-dist/workflows/quinotospec.review-handoff.md",
+  "action": "create",
+  "decision": "approved",
+  "requested_by": "agente (sesion de planificacion review-handoff)",
+  "decided_by": "barba (maintainer de QuinotoSpec)",
+  "rationale": "El maintainer aprobo en la sesion de planificacion crear el workflow review-handoff con implementacion directa sin propuesta formal, registrando esta excepcion a Proposal First y al freeze de features del manifest.",
+  "scope": "Nuevo workflow quinotospec.review-handoff + skill espejo quinotospec-review-handoff; actualizacion de conteos en manifest.json y validate-all.sh; config-template.yml, AGENTS.md, help.py routing, test-help-and-routing.sh, README/README_EN/ARCHITECTURE y changelog. Sin cambios de runtime del installer.",
+  "decided_at": "2026-10-28T16:26:44+00:00"
+}

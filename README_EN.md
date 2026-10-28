@@ -8,8 +8,8 @@
 
   ![Version](https://img.shields.io/badge/version-3.3.0-blue)
   ![License](https://img.shields.io/badge/license-MIT-green)
-  ![Workflows](https://img.shields.io/badge/workflows-46-purple)
-  ![Skills](https://img.shields.io/badge/skills-89-purple)
+  ![Workflows](https://img.shields.io/badge/workflows-47-purple)
+  ![Skills](https://img.shields.io/badge/skills-90-purple)
   ![Rules](https://img.shields.io/badge/rules-18-red)
 
   <img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.3.0 — Warband: Hird Edition" width="800" />
@@ -314,6 +314,7 @@ Actions: Reads context → Confirms branch and worktree → Isolates and runs ba
 | **Create Tasks** | `@quinotospec.create-tasks` | Generates technical tasks from user stories |
 | **Apply** | `@quinotospec.apply` | Implements a specific technical task |
 | **Review** | `@quinotospec.review` | Reviews branch/PR against acceptance criteria |
+| **Review Handoff** | `@quinotospec.review-handoff` | Generates the code review guide for the human reviewer once a proposal is complete |
 | **Archive** | `@quinotospec.archive` | Archives completed proposals, stories, or tasks |
 | **Status** | `@quinotospec.status` | Project status dashboard |
 | **Onboard** | `@quinotospec.onboard` | Generates onboarding document by role |
@@ -620,6 +621,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 | **create-tasks** | `update-changelog` |
 | **apply** | `generate-github-branch`, `update-changelog`, `mark-done`, `blood-bond-monitor` |
 | **review** | `update-changelog` |
+| **review-handoff** | `update-changelog` |
 | **archive** | `update-changelog` |
 | **status** | `blood-bond-analyzer`, `blood-bond-predictor`, `update-changelog` |
 | **onboard** | `onboard-{role}`, `update-changelog` |
@@ -643,7 +645,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-The `quinotospec-update-changelog` skill is the traceability backbone: 41 of 46 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
+The `quinotospec-update-changelog` skill is the traceability backbone: 42 of 47 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
 
 #### Quick Tutorial — Nordic
 

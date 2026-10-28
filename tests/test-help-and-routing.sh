@@ -40,7 +40,9 @@ for artifact in "$HELP" "$ROUTER" "$AGENT_CONFIG" "$DEFAULTS" \
     "$PROJECT_ROOT/agent-dist/skills/quinotospec-agent-config/SKILL.md" \
     "$PROJECT_ROOT/agent-dist/workflows/quinotospec.help.md" \
     "$PROJECT_ROOT/agent-dist/workflows/quinotospec.quick-dev.md" \
-    "$PROJECT_ROOT/agent-dist/workflows/quinotospec.agent-config.md"; do
+    "$PROJECT_ROOT/agent-dist/workflows/quinotospec.agent-config.md" \
+    "$PROJECT_ROOT/agent-dist/workflows/quinotospec.review-handoff.md" \
+    "$PROJECT_ROOT/agent-dist/skills/quinotospec-review-handoff/SKILL.md"; do
     [ -f "$artifact" ]
     check "existe $(basename "$(dirname "$artifact")")/$(basename "$artifact")" "$?"
 done
@@ -106,6 +108,25 @@ assert data["proposals"]["items"][0]["tasks"]["pending"] == 1
 assert data["proposals"]["items"][0]["tasks"]["completed"] == 1
 ' || RC=$?
 check "help.py recomienda la tarea pendiente concreta" "$RC"
+
+DONE_PROJECT="$WORKDIR/done-project"
+mkdir -p "$DONE_PROJECT/.quinoto-spec/discovery" "$DONE_PROJECT/.quinoto-spec/proposals/demo-abcd"
+printf '# stack\n' > "$DONE_PROJECT/.quinoto-spec/discovery/01-stack-profile.md"
+printf '# Proposal\n' > "$DONE_PROJECT/.quinoto-spec/proposals/demo-abcd/proposal.md"
+printf '# User stories\n' > "$DONE_PROJECT/.quinoto-spec/proposals/demo-abcd/user-stories.md"
+printf -- '- [x] TSK-DEMO-abcd-001 completada\n- [x] TSK-DEMO-abcd-002 completada\n' \
+    > "$DONE_PROJECT/.quinoto-spec/proposals/demo-abcd/US-DEMO-abcd-001_tasks.md"
+HELP_DONE=$(python3 -B "$HELP" --root "$DONE_PROJECT" --json 2>&1)
+RC=0
+echo "$HELP_DONE" | python3 -c '
+import json, sys
+data = json.load(sys.stdin)
+commands = [item["command"] for item in data["recommendations"]]
+assert "/quinotospec.review-handoff demo-abcd" in commands, commands
+assert "/quinotospec.archive demo-abcd" in commands, commands
+assert commands.index("/quinotospec.review-handoff demo-abcd") < commands.index("/quinotospec.archive demo-abcd"), commands
+' || RC=$?
+check "help.py recomienda review-handoff antes de archive con todo completado" "$RC"
 
 # ==========================================================================
 # Complexity Router

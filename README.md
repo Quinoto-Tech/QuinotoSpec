@@ -5,8 +5,8 @@
 ![Version](https://img.shields.io/badge/version-3.3.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Claude%20%7C%20Cline%20%7C%20Antigravity-orange)
-![Workflows](https://img.shields.io/badge/workflows-46-purple)
-![Skills](https://img.shields.io/badge/skills-89-purple)
+![Workflows](https://img.shields.io/badge/workflows-47-purple)
+![Skills](https://img.shields.io/badge/skills-90-purple)
 ![Rules](https://img.shields.io/badge/rules-18-red)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
 
@@ -336,6 +336,7 @@ Acciones: Lee contexto → Confirma branch y worktree → Aísla y ejecuta basel
 | **Create Tasks** | `@quinotospec.create-tasks` | Genera tareas técnicas desde historias de usuario |
 | **Apply** | `@quinotospec.apply` | Implementa una tarea técnica específica |
 | **Review** | `@quinotospec.review` | Revisa branch/PR contra criterios de aceptación |
+| **Review Handoff** | `@quinotospec.review-handoff` | Genera la guia de code review para el revisor humano cuando una propuesta esta completada |
 | **Archive** | `@quinotospec.archive` | Archiva propuestas, historias o tareas completadas |
 | **Status** | `@quinotospec.status` | Dashboard del estado del proyecto |
 | **Onboard** | `@quinotospec.onboard` | Genera documento de onboarding por rol |
@@ -623,6 +624,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 @quinotospec-validate --full                                        # Pre-condición antes de workflows críticos
 @quinotospec-syntax-validate --type proposal --slug {SLUG}          # Antes de aplicar código
 @quinotospec-mark-done --task-id TSK-AUTH-a1b2-001                 # Después de completar tarea
+@quinotospec.review-handoff 2026-09-24-add-login                  # Guía de code review para el revisor humano
 @quinotospec-metrics --dashboard                                    # Métricas para retrospectives
 ```
 
@@ -642,6 +644,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 | **create-tasks** | `update-changelog` |
 | **apply** | `generate-github-branch`, `update-changelog`, `mark-done`, `blood-bond-monitor` |
 | **review** | `update-changelog` |
+| **review-handoff** | `update-changelog` |
 | **archive** | `update-changelog` |
 | **status** | `blood-bond-analyzer`, `blood-bond-predictor`, `update-changelog` |
 | **onboard** | `onboard-{role}`, `update-changelog` |
@@ -665,7 +668,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 41 de 46 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
+La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 42 de 47 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
 
 #### Tutorial rápido — Nórdicas
 
@@ -868,7 +871,7 @@ graph LR
 - ✅ Party Mode: mesa redonda multi-agente integrada en create-proposal y create-rfc
 - ✅ Changelog v2: append-only, archivos individuales, sin merge conflicts
 - ✅ The Tiwaz Rune: análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación
-- ✅ Antigravity (AGY) — soporte `.agents` / `~/.gemini/config` + 89 skills instaladas
+- ✅ Antigravity (AGY) — soporte `.agents` / `~/.gemini/config` + 90 skills instaladas
 
 **Warband: Hird Edition (v3.3.0)** — Actual (F3.2 + F3.3 beta/RC)
 - ✅ **Norns** — versionado atómico sin drift (sync de manifest, installer, docs y CHANGELOG)

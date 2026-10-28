@@ -23,8 +23,8 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 +--------+---------+
 |   agent-dist/    |  <-- Distribucion
 |  +-------------+ |
-|  | workflows/  | |  <-- 46 workflows
- |  | skills/     | |  <-- 89 skills (40 core + 49 utilitarias)
+|  | workflows/  | |  <-- 47 workflows
+ |  | skills/     | |  <-- 90 skills (41 core + 49 utilitarias)
 
  |  | rules/      | |  <-- 18 reglas
  |  | agents/     | |  <-- 9 agentes
@@ -123,7 +123,7 @@ Las extensiones se almacenan en `.quinoto-spec/extensions/`, los presets en `.qu
 
 ## Línea base de Gate 0 + F2.5 + F3.2 + F3.3
 
-- Inventario actual: 46 workflows, 89 skills, 9 agentes, 18 reglas, 13 templates, bootstrap, hooks y plugin OpenCode (v1 y v2).
+- Inventario actual: 47 workflows, 90 skills, 9 agentes, 18 reglas, 13 templates, bootstrap, hooks y plugin OpenCode (v1 y v2).
 - Release status: `beta-rc`.
 - Alcance: F1.1–F1.7, F2.3–F2.5, F3.2, F3.3 (OpenCode v2), F3.5 (`quinotospec-help`), F3.1 (3-layer agent config) y F4.2 (complexity router) implementados; el resto del roadmap v3.4 sigue pendiente.
 - Criterio de salida: contrato de artefactos, gates ejecutables, operaciones seguras, CI/release verificables y documentación sincronizada.
@@ -162,7 +162,7 @@ Los workflows se dividen en categorias:
 - schema-fork: Crea schema YAML personalizado del DAG de artefactos
 
 **Gestion:**
-- archive, status, review, pre-commit, release
+- archive, status, review, review-handoff, pre-commit, release
 
 **Discovery:**
 - stack-discovery, refresh-discovery, dependency-graph
@@ -245,7 +245,7 @@ El sistema coexiste con el formato anterior de propuestas.
 
 Organizadas por dominio:
 
-**Core (wrappers de workflows, 40):** agent-train, apply, archive, backup, battle-frenzy, blood-bond, changelog-view, cleanup, constitution, create-prd, create-proposal, create-rfc, create-tasks, create-user-stories, dependency-graph, discovery, distribute, export, fix, health, heimdallr, import, init, migrate, mjolnir-refactor, onboard, party-mode, pre-commit, refresh-discovery, release, retrospective, review, schema-fork, specs-init, sprint-create, sprint-plan, sprints-init, stack-discovery, status, tiwaz-rune
+**Core (wrappers de workflows, 41):** agent-train, apply, archive, backup, battle-frenzy, blood-bond, changelog-view, cleanup, constitution, create-prd, create-proposal, create-rfc, create-tasks, create-user-stories, dependency-graph, discovery, distribute, export, fix, health, heimdallr, import, init, migrate, mjolnir-refactor, onboard, party-mode, pre-commit, refresh-discovery, release, retrospective, review, review-handoff, schema-fork, specs-init, sprint-create, sprint-plan, sprints-init, stack-discovery, status, tiwaz-rune
 
 **Basicas/utilitarias:** stack-detect, file-creation, generate-github-branch, mark-done, update-changelog, validate, entropy-calculator, contract
 

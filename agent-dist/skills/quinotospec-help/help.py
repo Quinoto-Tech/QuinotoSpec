@@ -200,8 +200,13 @@ def build_report(root, stale_days):
                 "high",
             )
             recommend(
+                "/quinotospec.review-handoff {}".format(slug),
+                "Generar la guia de code review para el revisor humano antes de archivar.",
+                "medium",
+            )
+            recommend(
                 "/quinotospec.archive {}".format(slug),
-                "Tras marcar done, archivar la propuesta y mergear delta specs.",
+                "Tras el code review humano, archivar la propuesta y mergear delta specs.",
                 "medium",
             )
 

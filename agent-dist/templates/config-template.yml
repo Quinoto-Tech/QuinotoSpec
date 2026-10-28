@@ -8,7 +8,7 @@ context:
   conventions: "{{CONVENTIONS}}"
   testing: "{{TESTING}}"
 workflows:
-  active: [constitution, discovery, proposal, user-stories, tasks, apply, review, archive]
+  active: [constitution, discovery, proposal, user-stories, tasks, apply, review, review-handoff, archive]
   optional: [battle-frenzy, heimdallr, mjolnir-refactor]
 rules:
   strictness: standard

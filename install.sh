@@ -758,11 +758,11 @@ verify_installation() {
 
     echo ""
     echo "  Components: $workflow_count workflows, $skill_count skills"
-    if [ "$workflow_count" -lt 46 ]; then
+    if [ "$workflow_count" -lt 47 ]; then
         print_error "Installed workflow count is too low: $workflow_count"
         errors=$((errors + 1))
     fi
-    if [ "$skill_count" -lt 89 ]; then
+    if [ "$skill_count" -lt 90 ]; then
         print_error "Installed skill count is too low: $skill_count"
         errors=$((errors + 1))
     fi
