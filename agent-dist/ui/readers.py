@@ -304,6 +304,17 @@ def read_changelog(root):
     return entries
 
 
+def read_discovery_file(root, name):
+    root = Path(root)
+    directory = (root / ".quinoto-spec" / "discovery").resolve()
+    target = (directory / name).resolve()
+    if directory not in target.parents and target != directory:
+        return {"name": name, "exists": False, "content": ""}
+    if not target.is_file():
+        return {"name": name, "exists": False, "content": ""}
+    return {"name": name, "exists": True, "content": _read(target)}
+
+
 def read_discovery(root):
     root = Path(root)
     directory = root / ".quinoto-spec" / "discovery"

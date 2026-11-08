@@ -150,6 +150,14 @@ class Handler(BaseHTTPRequestHandler):
             if route == "/changelog":
                 self._page("Changelog", "changelog", templates.changelog_page(summary))
                 return
+            if route.startswith("/discovery/"):
+                name = route[len("/discovery/"):].strip("/")
+                data = readers.read_discovery_file(State.root, name)
+                if not data["exists"]:
+                    self._send(404, templates.layout("No encontrada", "", '<div class="card empty">Archivo no encontrado: %s</div>' % templates.esc(name)))
+                    return
+                self._page(name, "discovery", templates.discovery_file_page(data))
+                return
             if route == "/discovery":
                 self._page("Discovery", "discovery", templates.discovery_page(summary))
                 return

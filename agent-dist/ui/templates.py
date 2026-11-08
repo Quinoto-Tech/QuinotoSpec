@@ -401,7 +401,10 @@ def discovery_page(summary):
     discovery = summary["discovery"]
     rows = []
     for item in discovery["files"]:
-        rows.append("<tr><td>%s</td><td>%s</td><td>%s bytes</td></tr>" % (esc(item["name"]), esc(item["date"]), esc(item["size"])))
+        rows.append(
+            "<tr><td><a href=\"/discovery/%s\">%s</a></td><td>%s</td><td>%s bytes</td></tr>"
+            % (esc(item["name"]), esc(item["name"]), esc(item["date"]), esc(item["size"]))
+        )
     table = (
         "<table><thead><tr><th>Archivo</th><th>Fecha</th><th>Tamaño</th></tr></thead><tbody>%s</tbody></table>" % "".join(rows)
         if rows
@@ -483,6 +486,15 @@ def projects_page(summary):
         else '<div class="card empty">Sin proyectos.</div>'
     )
     return "<h1>Proyectos</h1><p class=\"sub\">%s proyecto(s) · read-only</p>%s" % (len(projects), table)
+
+
+def discovery_file_page(data):
+    name = data["name"]
+    content = data["content"]
+    return (
+        "<h1>Discovery · %s</h1><p class=\"sub\"><a href=\"/discovery\">← Discovery</a></p>"
+        "<pre>%s</pre>" % (esc(name), esc(content))
+    )
 
 
 def constitution_page(constitution):
