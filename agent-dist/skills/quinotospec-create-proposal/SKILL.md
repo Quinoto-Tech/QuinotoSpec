@@ -65,6 +65,10 @@ Si el resultado top1 tiene `score > 2.5` y cita una decisión previa (`proposal.
 
 No es bloqueante — si no hay índice (`--check` falla o el archivo no existe), continúa sin advertencia. El usuario puede confirmar que la propuesta nueva es intencional y seguir adelante.
 
+**Paso Previo (recomendado) — Shootdown multi-lente (Elephant-Goldfish):**
+
+Antes de redactar la propuesta, intenta **derribar la idea** con lentes fijos (party-mode con subagentes aislados o revisores independientes): simplicidad/YAGNI, reuso, escalabilidad, fallos, seguridad, coste operativo y reversibilidad. Salida: `concepts_brief.md` con hipótesis, veredicto (GO / PIVOT / KILL) y cambios incorporados. Si el veredicto es KILL, detén la generación. Recomendado, no bloqueante, salvo track `enterprise`.
+
 **Paso 0 — Party Mode (opcional, solo si `--party`):**
 
 Si el usuario paso el flag `--party`, ejecuta Party Mode ANTES de generar la propuesta:

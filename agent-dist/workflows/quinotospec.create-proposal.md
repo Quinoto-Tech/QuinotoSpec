@@ -62,6 +62,22 @@ Si el resultado top1 tiene `score > 2.5` y cita una decisión previa (`proposal.
 
 No es bloqueante — si no hay índice (`--check` falla o el archivo no existe), continúa sin advertencia. El usuario puede confirmar que la propuesta nueva es intencional y seguir adelante.
 
+**Paso Previo (recomendado) — Shootdown multi-lente (Elephant-Goldfish):**
+
+Antes de redactar la propuesta, intenta **derribar la idea** con lentes fijos (puedes usar `@quinotospec.party-mode` con subagentes aislados o revisores independientes):
+
+| Lente | Pregunta |
+|-------|----------|
+| Simplicidad / YAGNI | ¿Existe una solución más pequeña que resuelva el 80%? |
+| Reuso | ¿Ya hay infraestructura o skills que cubren esto? |
+| Escalabilidad | ¿Qué pasa con 10× volumen o 10× repos? |
+| Fallos | ¿Cuál es el modo de fallo más probable y cómo se detecta? |
+| Seguridad | ¿Qué superficie nueva expone? |
+| Coste operativo | ¿Quién lo mantiene, cuánto cuesta por ejecución? |
+| Reversibilidad | ¿Se puede deshacer sin migración dolorosa? |
+
+Salida: `concepts_brief.md` con hipótesis, veredicto (GO / PIVOT / KILL) y los cambios incorporados a la propuesta. Si el veredicto es KILL, detén la generación. Es recomendado, no bloqueante, salvo que el routing de complejidad sea `enterprise`.
+
 **Paso 0 — Party Mode (opcional, solo si `--party`):**
 
 Si el usuario paso el flag `--party`, ejecuta Party Mode ANTES de generar la propuesta:

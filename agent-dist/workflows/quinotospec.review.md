@@ -32,6 +32,15 @@ Consulta `before_review` y `after_review` con `extension_manager.py hooks --poin
       git diff --name-only main...{{BRANCH_NAME}}
       ```
 
+2b. **Goldfish review (contexto aislado) — práctica Elephant-Goldfish**:
+    Antes del veredicto, lanza revisores con **contexto limpio** (subagentes aislados) que NO compartan este hilo ni el razonamiento previo:
+    - **Comprehension**: ¿la propuesta/tarea es auto-contenida o asume contexto no escrito?
+    - **Design Critic**: fallos de diseño, dependencias ocultas, modos de fallo, cuellos de botella.
+    - **Zoom Out**: simplicidad, YAGNI y reutilización de infraestructura existente.
+    - **Implementation Readiness**: rutas/archivos/firmas/tests concretos y verificables.
+    Consolida los hallazgos deduplicados en `.quinoto-spec/reviews/{{TASK_ID}}-goldfish.md` con severidad (BLOCKING / WARN / INFO).
+    Si el IDE no puede crear subagentes frescos, **detén la revisión** y reporta el límite; no simules la revisión con el mismo contexto.
+
 3. **Checklist de revisión**:
     Valida cada uno de los siguientes puntos y documenta el resultado (✅ / ❌ / ⚠️):
 
@@ -41,6 +50,7 @@ Consulta `before_review` y `after_review` con `extension_manager.py hooks --poin
     - [ ] **Archivos declarados**: ¿Los archivos modificados coinciden con los declarados en la columna "Archivos a Modificar" de la tarea?
     - [ ] **Sin regresiones**: ¿La suite de tests completa pasa sin errores?
     - [ ] **Compliance constitucional**: si la constitución está activa, ¿cada principio aplicable tiene evidencia o una excepción aprobada?
+    - [ ] **Goldfish review**: ¿existe `.quinoto-spec/reviews/{{TASK_ID}}-goldfish.md` con revisión de contexto limpio y no hay hallazgos BLOCKING sin resolver?
     - [ ] **Sin deuda técnica obvia**: ¿No hay TODOs sin resolver, console.logs, o código comentado que no debería estar?
 
 4. **Feedback recibido**:

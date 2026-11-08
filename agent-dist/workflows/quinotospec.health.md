@@ -75,6 +75,13 @@ Objetivo: ejecutar un chequeo técnico completo de integridad del sistema Quinot
 4. Consultar `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para la última entrada v1/v2.
 5. Si > 14 días sin entradas: *"⚠️ Sin actividad en changelog por {{N}} días."*
 
+### Paso 5b — Drift docs↔código (Elephant-Goldfish)
+
+1. Comparar rutas, símbolos y comandos citados en `specs/`, `discovery/`, `README*.md` y `docs/` contra el código real.
+2. Clasificar hallazgos: `INFO` (referencia menor), `WARN` (ruta o comando desactualizado), `BLOCKING` (spec aprobado contradice el código).
+3. Escribir `.quinoto-spec/reviews/drift-report.md` y, si hay `--json`, `.quinoto-spec/reviews/drift-report.json`.
+4. No corregir automáticamente: reportar y sugerir `@quinotospec.refresh-discovery` o actualizar el doc.
+
 ### Paso 6 — Chequear branches (requiere git)
 
 1. Ejecutar `git branch --merged` y detectar branches mergeados que no son `main`/`master`/`develop`.
