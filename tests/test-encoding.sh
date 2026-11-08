@@ -33,6 +33,9 @@ exts = {".md", ".sh", ".py", ".js", ".json", ".yml", ".yaml", ".toml"}
 for path in sorted(pathlib.Path(sys.argv[1]).rglob("*")):
     if not path.is_file() or path.suffix not in exts:
         continue
+    # Ignorar bibliotecas de terceros vendidas (minificadas) en static/
+    if "static" in path.parts or path.name.endswith(".min.js"):
+        continue
     try:
         text = path.read_text(encoding="utf-8")
     except (UnicodeDecodeError, OSError):
