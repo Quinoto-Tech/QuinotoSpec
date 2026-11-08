@@ -355,7 +355,7 @@ Acciones: Lee contexto → Confirma branch y worktree → Aísla y ejecuta basel
 | **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
 | **Fix** | `@quinotospec.fix` | Resuelve bugs y fixes menores sin propuesta formal — rápido, documentado, con tests |
 | **Help** | `@quinotospec.help` | Inspecciona `.quinoto-spec/` y recomienda el siguiente comando exacto |
-| **UI** | `@quinotospec.ui` | Dashboard web local read-only: propuestas, tareas, changelog, discovery y constitución |
+| **UI** | `@quinotospec.ui` | Dashboard web local read-only: propuestas, tareas, changelog, discovery y constitución *(en desarrollo)* |
 | **Quick Dev** | `@quinotospec.quick-dev` | Vía rápida para cambios Simple: tech-spec ligera + TDD sin user stories |
 | **Flow** | `@quinotospec.flow` | Orquestador Enterprise: SDLC completo con constitution gates, compliance y aprobación humana |
 | **Agent Config** | `@quinotospec.agent-config` | Configura agentes con merge 3-layer (defaults → team → personal) |
@@ -609,7 +609,7 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **Complexity Router** | `/quinotospec-complexity-router` | Clasifica el cambio en Quick Fix / Simple / Complex / Enterprise |
 | **Flow** | `/quinotospec-flow` | Orquestador Enterprise con constitution gates, compliance y aprobación humana |
 | **Agent Config** | `/quinotospec-agent-config` | Merge 3-layer de personalidad y reglas de agentes |
-| **UI** | `/quinotospec-ui` | Dashboard web local read-only sobre `.quinoto-spec/` (puerto 8765) |
+| **UI** | `/quinotospec-ui` | Dashboard web local read-only sobre `.quinoto-spec/` (puerto 8765) *(en desarrollo)* |
 
 ### Skills Nórdicas (v3.2.0 — Hird Edition)
 

@@ -354,7 +354,7 @@ Actions: Reads context → Confirms branch and worktree → Isolates and runs ba
 | **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Formal entropy analysis (Shannon v2 + proxy v1) with remediation plan |
 | **Fix** | `@quinotospec.fix` | Resolves bugs and minor fixes without formal proposal — fast, documented, with tests |
 | **Help** | `@quinotospec.help` | Inspects `.quinoto-spec/` and recommends the exact next command |
-| **UI** | `@quinotospec.ui` | Local read-only web dashboard: proposals, tasks, changelog, discovery and constitution |
+| **UI** | `@quinotospec.ui` | Local read-only web dashboard: proposals, tasks, changelog, discovery and constitution *(in development)* |
 | **Quick Dev** | `@quinotospec.quick-dev` | Fast lane for Simple changes: light tech-spec + TDD without user stories |
 | **Flow** | `@quinotospec.flow` | Enterprise orchestrator: full SDLC with constitution gates, compliance and human approval |
 | **Agent Config** | `@quinotospec.agent-config` | Configures agents with a 3-layer merge (defaults → team → personal) |
@@ -608,7 +608,7 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 | **Complexity Router** | `/quinotospec-complexity-router` | Classifies the change as Quick Fix / Simple / Complex / Enterprise |
 | **Flow** | `/quinotospec-flow` | Enterprise orchestrator with constitution gates, compliance and human approval |
 | **Agent Config** | `/quinotospec-agent-config` | 3-layer merge of agent personality and rules |
-| **UI** | `/quinotospec-ui` | Local read-only web dashboard over `.quinoto-spec/` (port 8765) |
+| **UI** | `/quinotospec-ui` | Local read-only web dashboard over `.quinoto-spec/` (port 8765) *(in development)* |
 
 ### Nordic Skills (v3.2.0 — Hird Edition)
 

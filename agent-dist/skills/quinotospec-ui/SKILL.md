@@ -1,6 +1,6 @@
 ---
 name: quinotospec-ui
-description: Dashboard web local read-only sobre .quinoto-spec/ — discovery, propuestas, tareas, changelog y constitución sin modificar archivos.
+description: Dashboard web local read-only sobre .quinoto-spec/ — discovery, propuestas, tareas, changelog y constitución sin modificar archivos. (En desarrollo)
 ---
 
 # Skill: QuinotoSpec UI

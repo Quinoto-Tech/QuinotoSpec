@@ -1,5 +1,5 @@
 ---
-description: Lanza el dashboard web local read-only de QuinotoSpec (discovery, propuestas, tareas, changelog y constitución) sin modificar archivos.
+description: Lanza el dashboard web local read-only de QuinotoSpec (discovery, propuestas, tareas, changelog y constitución) sin modificar archivos. [En desarrollo]
 ---
 
 # Workflow: QuinotoSpec UI
