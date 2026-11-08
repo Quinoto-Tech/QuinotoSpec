@@ -16,6 +16,8 @@ Consulta los hooks `before_proposal` y `after_proposal` con `extension_manager.p
 - `--party-output <path>`: Donde guardar la transcripcion del Party Mode (default: `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/party-analysis.md`)
 - `--goldfish`: ejecuta el Shootdown multi-lente con subagentes aislados antes de redactar (opcional, desactivado por defecto).
 
+**Interacción `--party` + `--goldfish`:** son complementarios. `--party` comparte contexto y busca consenso; `--goldfish` aísla contexto y busca puntos ciegos. Si se pasan ambos, ejecuta **primero `--party`** (enriquece la idea) y **después `--goldfish`** sobre el brief resultante (lo audita sin sesgo). No los ejecutes en paralelo ni dupliques la ronda: suma coste sin valor.
+
 PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
 PROPOSAL_SLUG: derivar de PROPOSAL_NAME en lowercase con palabras separadas por guión (ej. `rewards-stabilization`, `payment-timeout-fix`).
 DATE_PREFIX: fecha actual en formato YYYY-MM-DD.

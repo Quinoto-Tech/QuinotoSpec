@@ -17,6 +17,8 @@ El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DE
 **Flags:**
 - `--party [agents]`: Ejecuta Party Mode con los agentes especificados ANTES de generar la propuesta. El debate multi-agente enriquece la propuesta con perspectivas cruzadas. Si no se especifican agentes, se auto-seleccionan los mas relevantes segun el tema.
 - `--goldfish`: ejecuta el Shootdown multi-lente con subagentes aislados antes de redactar (opcional, desactivado por defecto).
+
+**Interacción `--party` + `--goldfish`:** complementarios. `--party` comparte contexto y busca consenso; `--goldfish` aísla contexto y busca puntos ciegos. Si se pasan ambos: primero `--party`, después `--goldfish` sobre el brief. No en paralelo.
 - `--party-output <path>`: Donde guardar la transcripcion del Party Mode (default: `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/party-analysis.md`)
 
 PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
