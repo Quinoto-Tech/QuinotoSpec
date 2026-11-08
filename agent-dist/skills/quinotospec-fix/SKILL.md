@@ -47,6 +47,7 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
      ```
 
 4. Leer `.quinoto-spec/discovery/01-stack-profile.md` (si existe) para conocer el stack, comandos de test y convenciones.
+4b. **Baseline de tests**: antes de tocar producción, ejecuta la suite de tests existente (o los tests de los archivos afectados) para establecer el estado inicial. Si ya fallan tests no relacionados, documéntalo como pre-existente y no los arregles en este fix. Si la baseline falla por el bug reportado, esa es la reproducción esperada.
 5. Ejecutar `quinotospec-debug` para reproducir, localizar la causa raíz y formular una hipótesis antes de tocar producción.
 6. Identificar los archivos involucrados en el bug.
 7. **Presentar análisis al usuario antes de tocar código** (BLOQUEANTE):
