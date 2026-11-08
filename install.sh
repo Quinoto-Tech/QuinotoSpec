@@ -171,6 +171,15 @@ for item in data.get("owned", []):
     if relative_path.is_absolute() or ".." in relative_path.parts or relative == ".quinoto-spec/ownership.json":
         raise SystemExit("ownership manifest path is unsafe: " + relative)
     target = candidate / relative_path
+    if "__pycache__" in relative_path.parts or relative.endswith((".pyc", ".pyo")):
+        if target.is_symlink():
+            target.unlink(missing_ok=True)
+        elif target.is_dir():
+            import shutil
+            shutil.rmtree(target, ignore_errors=True)
+        elif target.is_file():
+            target.unlink(missing_ok=True)
+        continue
     if target.is_symlink():
         raise SystemExit("managed path is a symlink: " + relative)
     if target.is_file():
@@ -331,6 +340,10 @@ def add_tree(relative_source, relative_destination):
     if not directory.is_dir():
         return
     for path in directory.rglob("*"):
+        if "__pycache__" in path.parts:
+            continue
+        if path.suffix in {".pyc", ".pyo"}:
+            continue
         if path.is_file() or path.is_symlink():
             relative = path.relative_to(directory)
             owned.add((Path(relative_destination) / relative).as_posix())
@@ -342,6 +355,7 @@ add_tree("agent-dist/agents", "agents")
 add_tree("agent-dist/templates", "templates")
 add_tree("agent-dist/config", "config")
 add_tree("agent-dist/lib", "lib")
+add_tree("agent-dist/ui", "ui")
 add_tree("agent-dist/bootstrap", "bootstrap")
 add_tree("agent-dist/hooks", "hooks")
 add_tree("agent-dist/plugins", "plugins")
@@ -360,6 +374,7 @@ if ide == "cursor":
     add_tree("agent-dist/rules", "quinotospec-plugin/rules")
     add_tree("agent-dist/hooks", "quinotospec-plugin/hooks")
     add_tree("agent-dist/lib", "quinotospec-plugin/lib")
+    add_tree("agent-dist/ui", "quinotospec-plugin/ui")
     owned.add("quinotospec-plugin/.cursor-plugin/plugin.json")
 records = []
 for relative in sorted(owned):
@@ -1038,13 +1053,14 @@ if not any(entry.get("command") == command for entry in entries if isinstance(en
     entries.append({"command": command})
 settings.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 PY
-            mkdir -p "$config_dir/quinotospec-plugin/.cursor-plugin" "$config_dir/quinotospec-plugin/skills" "$config_dir/quinotospec-plugin/agents" "$config_dir/quinotospec-plugin/commands" "$config_dir/quinotospec-plugin/rules" "$config_dir/quinotospec-plugin/hooks" "$config_dir/quinotospec-plugin/lib"
+            mkdir -p "$config_dir/quinotospec-plugin/.cursor-plugin" "$config_dir/quinotospec-plugin/skills" "$config_dir/quinotospec-plugin/agents" "$config_dir/quinotospec-plugin/commands" "$config_dir/quinotospec-plugin/rules" "$config_dir/quinotospec-plugin/hooks" "$config_dir/quinotospec-plugin/lib" "$config_dir/quinotospec-plugin/ui"
             cp -R "$config_dir/skills/." "$config_dir/quinotospec-plugin/skills/"
             cp -R "$config_dir/agents/." "$config_dir/quinotospec-plugin/agents/"
             cp -R "$config_dir/commands/." "$config_dir/quinotospec-plugin/commands/"
             cp -R "$config_dir/rules/." "$config_dir/quinotospec-plugin/rules/"
             cp -R "$config_dir/hooks/." "$config_dir/quinotospec-plugin/hooks/"
             cp -R "$config_dir/lib/." "$config_dir/quinotospec-plugin/lib/"
+            cp -R "$config_dir/ui/." "$config_dir/quinotospec-plugin/ui/"
             cp "$DIR/.cursor-plugin/plugin.json" "$config_dir/quinotospec-plugin/.cursor-plugin/plugin.json"
             python3 - "$config_dir/quinotospec-plugin/hooks/hooks-cursor.json" <<'PY'
 import json
@@ -1548,6 +1564,8 @@ case "$IDE_CHOICE" in
     cursor|opencode|claude|cline|antigravity)
         echo "Installing for $(titlecase "$IDE_CHOICE")..."
         cp -rf "$SOURCE_AGENT/." "$config_dir/"
+        find "$config_dir" -type d -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true
+        find "$config_dir" -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete 2>/dev/null || true
 
         if [ "$IDE_CHOICE" = "cursor" ] || [ "$IDE_CHOICE" = "opencode" ] || [ "$IDE_CHOICE" = "claude" ]; then
             if [ -d "$config_dir/workflows" ]; then
@@ -1591,6 +1609,8 @@ case "$IDE_CHOICE" in
     *)
         echo "Installing for Generic (.agent/)..."
         cp -rf "$SOURCE_AGENT/." "$config_dir/"
+        find "$config_dir" -type d -name '__pycache__' -prune -exec rm -rf {} + 2>/dev/null || true
+        find "$config_dir" -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete 2>/dev/null || true
         install_runtime_components "$config_dir" "generic" "$FINAL_CONFIG_DIR"
         ;;
 esac

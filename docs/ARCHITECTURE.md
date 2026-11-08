@@ -23,13 +23,14 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 +--------+---------+
 |   agent-dist/    |  <-- Distribucion
 |  +-------------+ |
-|  | workflows/  | |  <-- 48 workflows
- |  | skills/     | |  <-- 94 skills
+|  | workflows/  | |  <-- 49 workflows
+ |  | skills/     | |  <-- 95 skills
 
  |  | rules/      | |  <-- 18 reglas
  |  | agents/     | |  <-- 9 agentes
   |  | templates/  | |  <-- 13 templates
   |  | lib/        | |  <-- helpers compartidos (stdlib)
+  |  | ui/         | |  <-- dashboard web (read-only, stdlib)
   |  | bootstrap/  | |  <-- contexto de inicio
   |  | hooks/      | |  <-- hooks por IDE
   |  | plugins/    | |  <-- adaptador OpenCode
@@ -124,7 +125,7 @@ Las extensiones se almacenan en `.quinoto-spec/extensions/`, los presets en `.qu
 
 ## Línea base de Gate 0 + F2.5 + F3.2 + F3.3
 
-- Inventario actual: 48 workflows, 94 skills, 9 agentes, 18 reglas, 13 templates, bootstrap, hooks y plugin OpenCode (v1 y v2).
+- Inventario actual: 49 workflows, 95 skills, 9 agentes, 18 reglas, 13 templates, bootstrap, hooks y plugin OpenCode (v1 y v2).
 - Release status: `beta-rc`.
 - Alcance: F1.1–F1.7, F2.3–F2.5, F3.2, F3.3 (OpenCode v2), F3.5 (`quinotospec-help`), F3.1 (3-layer agent config) y F4.2 (complexity router) implementados; el resto del roadmap v3.4 sigue pendiente.
 - Criterio de salida: contrato de artefactos, gates ejecutables, operaciones seguras, CI/release verificables y documentación sincronizada.

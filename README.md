@@ -5,8 +5,8 @@
 ![Version](https://img.shields.io/badge/version-3.3.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Claude%20%7C%20Cline%20%7C%20Antigravity-orange)
-![Workflows](https://img.shields.io/badge/workflows-48-purple)
-![Skills](https://img.shields.io/badge/skills-94-purple)
+![Workflows](https://img.shields.io/badge/workflows-49-purple)
+![Skills](https://img.shields.io/badge/skills-95-purple)
 ![Rules](https://img.shields.io/badge/rules-18-red)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
 
@@ -355,6 +355,7 @@ Acciones: Lee contexto → Confirma branch y worktree → Aísla y ejecuta basel
 | **Tiwaz Rune** | `@quinotospec.tiwaz-rune` | Análisis formal de entropía (Shannon v2 + proxies v1) con plan de remediación |
 | **Fix** | `@quinotospec.fix` | Resuelve bugs y fixes menores sin propuesta formal — rápido, documentado, con tests |
 | **Help** | `@quinotospec.help` | Inspecciona `.quinoto-spec/` y recomienda el siguiente comando exacto |
+| **UI** | `@quinotospec.ui` | Dashboard web local read-only: propuestas, tareas, changelog, discovery y constitución |
 | **Quick Dev** | `@quinotospec.quick-dev` | Vía rápida para cambios Simple: tech-spec ligera + TDD sin user stories |
 | **Flow** | `@quinotospec.flow` | Orquestador Enterprise: SDLC completo con constitution gates, compliance y aprobación humana |
 | **Agent Config** | `@quinotospec.agent-config` | Configura agentes con merge 3-layer (defaults → team → personal) |
@@ -608,6 +609,7 @@ En un proyecto vacío, `@quinotospec.init` detecta que no hay código y ofrece w
 | **Complexity Router** | `/quinotospec-complexity-router` | Clasifica el cambio en Quick Fix / Simple / Complex / Enterprise |
 | **Flow** | `/quinotospec-flow` | Orquestador Enterprise con constitution gates, compliance y aprobación humana |
 | **Agent Config** | `/quinotospec-agent-config` | Merge 3-layer de personalidad y reglas de agentes |
+| **UI** | `/quinotospec-ui` | Dashboard web local read-only sobre `.quinoto-spec/` (puerto 8765) |
 
 ### Skills Nórdicas (v3.2.0 — Hird Edition)
 
@@ -672,7 +674,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 43 de 48 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
+La skill `quinotospec-update-changelog` es el núcleo de trazabilidad: 43 de 49 workflows la invocan para documentar sus acciones. **Norns** es el núcleo de versionado: sync atómico de los 7 archivos de versión.
 
 #### Tutorial rápido — Nórdicas
 

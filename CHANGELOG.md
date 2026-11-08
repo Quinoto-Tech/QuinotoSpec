@@ -16,6 +16,7 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 - **Lib común**: `agent-dist/lib/quinotospec_common.py` centraliza `resolve_root`, `load_module_from_path` y `load_contract_module` (antes duplicados en 7 scripts).
 - **Búsqueda real**: `quinotospec-search/search.py` delega en el índice BM25 de Mimir con filtros por tipo, prefijo, fecha y estado (`--json`, `--cite`).
 - **Paridad README**: `scripts/check-readme-parity.py` valida estructura ES/EN y está integrado en `validate-all.sh`.
+- **UI Fase 1 (read-only)**: `agent-dist/ui/` con `readers.py`, `templates.py` y `server.py` (solo stdlib); dashboard local con panel, propuestas, kanban de tareas, changelog, discovery, constitución y `/api/summary`. Skill `quinotospec-ui` + workflow `@quinotospec.ui` y suite `tests/test-ui.sh`.
 
 ### Changed
 - **Inventario**: 48 workflows y 94 skills; umbrales sincronizados y **derivados de `manifest.json`** en `install.sh` y `validate-all.sh`; badges de README ES/EN actualizados.
