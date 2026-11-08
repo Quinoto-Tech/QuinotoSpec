@@ -8,9 +8,11 @@
 
   ![Version](https://img.shields.io/badge/version-3.3.0-blue)
   ![License](https://img.shields.io/badge/license-MIT-green)
-  ![Workflows](https://img.shields.io/badge/workflows-47-purple)
-  ![Skills](https://img.shields.io/badge/skills-90-purple)
+  ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Claude%20%7C%20Cline%20%7C%20Antigravity-orange)
+  ![Workflows](https://img.shields.io/badge/workflows-48-purple)
+  ![Skills](https://img.shields.io/badge/skills-94-purple)
   ![Rules](https://img.shields.io/badge/rules-18-red)
+  ![Bash](https://img.shields.io/badge/bash-4.0%2B-yellow)
 
   <img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.3.0 — Warband: Hird Edition" width="800" />
 
@@ -44,6 +46,27 @@ Version 3.3.0 is published as a **beta / release candidate** of Hird Edition. Pr
 The full maturity matrix is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and the artifact contract is in [`docs/ARTIFACT-CONTRACT.md`](docs/ARTIFACT-CONTRACT.md). F1.1–F1.7, F2.3–F2.5, F3.2, and F3.3 are approved exceptions to the feature freeze: session bootstrap, engineering discipline, constitution, verified review feedback, worktrees, local extensibility, Party Mode bootstrap, and native OpenCode v2 support; F3.1 and F3.5 remain planned.
 
 **Hird Edition** - The tree that connects the 9 realms of AI-assisted development. Now with **The Tiwaz Rune**: formal code entropy analysis.
+
+## Quick Start
+
+```bash
+# 1. Clone the package
+git clone https://github.com/Quinoto-Tech/QuinotoSpec.git
+cd QuinotoSpec
+
+# 2. Install for your IDE
+./install.sh --opencode --global    # OpenCode
+./install.sh --cursor --global      # Cursor
+./install.sh --claude --global      # Claude Code
+./install.sh --cline --global       # Cline
+./install.sh --antigravity --global  # Antigravity (AGY)
+
+# 3. In your project, run discovery
+@quinotospec.discovery
+
+# 4. Create your first proposal
+@quinotospec.create-proposal
+```
 
 ## Table of Contents
 
@@ -186,7 +209,7 @@ The installer prompts for destination path and IDE:
 | `--opencode-major` | - | Force OpenCode major version (1 or 2) instead of auto-detection |
 | (default) | Generic | `.agent/` |
 
-OpenCode: `--opencode` auto-detects v1 vs v2 (`opencode --version`). Use `--opencode-major 2` to force v2 if the binary is not in PATH.
+OpenCode: `--opencode` auto-detects v1 vs v2 (`opencode --version`). Use `--opencode-major 2` to force v2 if the binary is not in PATH. The v1 path (`plugins/opencode/quinotospec-plugin.js`) is **legacy**: it is only installed with OpenCode 1.x and receives no new features; v2 is the recommended path.
 
 Each installation is prepared in staging, verified, and committed with a `.quinoto-spec/ownership.json` manifest. If a stage fails, `install.sh` restores the configuration and `AGENTS.md`; uninstall removes only intact managed files and preserves foreign files. Legacy installations without a manifest require manual migration.
 
@@ -332,6 +355,7 @@ Actions: Reads context → Confirms branch and worktree → Isolates and runs ba
 | **Fix** | `@quinotospec.fix` | Resolves bugs and minor fixes without formal proposal — fast, documented, with tests |
 | **Help** | `@quinotospec.help` | Inspects `.quinoto-spec/` and recommends the exact next command |
 | **Quick Dev** | `@quinotospec.quick-dev` | Fast lane for Simple changes: light tech-spec + TDD without user stories |
+| **Flow** | `@quinotospec.flow` | Enterprise orchestrator: full SDLC with constitution gates, compliance and human approval |
 | **Agent Config** | `@quinotospec.agent-config` | Configures agents with a 3-layer merge (defaults → team → personal) |
 | **Pre-commit** | `@quinotospec.pre-commit` | Quick pre-commit check (tests + validate + rules) |
 | **Release** | `@quinotospec.release` | Automates version bump, changelog consolidation, and tagging |
@@ -581,6 +605,7 @@ In an empty project, `@quinotospec.init` detects no code and offers an interacti
 |-------|---------|-------------|
 | **Help** | `/quinotospec-help --json` | Recommends the next global command based on discovery, proposals, and tasks |
 | **Complexity Router** | `/quinotospec-complexity-router` | Classifies the change as Quick Fix / Simple / Complex / Enterprise |
+| **Flow** | `/quinotospec-flow` | Enterprise orchestrator with constitution gates, compliance and human approval |
 | **Agent Config** | `/quinotospec-agent-config` | 3-layer merge of agent personality and rules |
 
 ### Nordic Skills (v3.2.0 — Hird Edition)
@@ -646,7 +671,7 @@ python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --s
 | **health** | `update-changelog` |
 | **cleanup** | `update-changelog` |
 
-The `quinotospec-update-changelog` skill is the traceability backbone: 42 of 47 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
+The `quinotospec-update-changelog` skill is the traceability backbone: 43 of 48 workflows call it to document their actions. **Norns** is the versioning backbone: atomic sync of 7 version files.
 
 #### Quick Tutorial — Nordic
 

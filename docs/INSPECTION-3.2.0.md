@@ -1,5 +1,7 @@
 # Cómo inspeccionar QuinotoSpec 3.2.0
 
+> **Documento histórico.** Describe el release `3.2.0`; el paquete ya está en `3.3.0`. Se conserva como referencia de ese snapshot y no se actualiza con releases nuevos.
+
 Esta guía explica cómo revisar el release `3.2.0` sin modificar el checkout principal. La release está marcada como **beta/RC** y su tag local es `v3.2.0`.
 
 ## Qué contiene el release

@@ -184,6 +184,13 @@ Descripción detallada de la skill.
 - Nota 2
 ```
 
+#### Idioma y estilo
+
+- **Idioma**: el cuerpo de skills, workflows, agentes y reglas se escribe en **español**. Los términos canónicos de artefactos (`proposal.md`, `## Current Requirements`, IDs `US-/TSK-`, nombres de flags) permanecen en inglés.
+- **Headings**: en español (`## Cuando usar`, `## Manejo de Errores`, `## Reglas`). Evita mezclar headings en inglés con cuerpo en español.
+- **Acentos**: la convención es español correcto con tildes y `ñ` en prosa Markdown. El código, TOML/JSON/YAML y frontmatter pueden omitirlos por compatibilidad; no conviertas esa diferencia en un cambio masivo.
+- **Paridad**: si una skill tiene workflow pareado (`agent-dist/workflows/quinotospec.<name>.md`), ambos deben mencionar los mismos scripts ejecutables; `scripts/check-skill-workflow-drift.py` lo valida en `validate-all.sh`.
+
 #### Checklist para Nueva Skill
 
 - [ ] Nombre descriptivo y único

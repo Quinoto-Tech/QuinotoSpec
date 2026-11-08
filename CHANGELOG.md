@@ -6,6 +6,37 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 
 ---
 
+## [Unreleased] - Higiene estructural (referencias, drift y assets)
+
+### Added
+- **`/quinotospec.flow` (prompt-only)**: workflow `quinotospec.flow.md` + skill `quinotospec-flow` para la ruta Enterprise que el complexity-router y el bootstrap ya recomendaban sin que existiera el comando. Orquesta las fases con gates: constitution, discovery fresco, propuesta (+ Heimdallr si es regulado), desglose, aprobación humana estructurada, ejecución con TDD/evidencia, compliance (metrics/Tiwaz) y cierre (review/review-handoff/archive).
+- **Skills para workflows huérfanos**: `quinotospec-quick-dev`, `quinotospec-extension-install` y `quinotospec-preset-install` con paridad funcional respecto a sus workflows.
+- **Gate anti-drift skill↔workflow**: `scripts/check-skill-workflow-drift.py` compara las referencias a scripts entre cada par y falla si una skill pierde capacidades; integrado en `validate-all.sh` y en la suite `tests/test-skill-workflow-drift.sh`.
+- **Test anti-referencias-muertas**: `test-help-and-routing.sh` verifica que el workflow recomendado por cada track del router exista en disco.
+- **Lib común**: `agent-dist/lib/quinotospec_common.py` centraliza `resolve_root`, `load_module_from_path` y `load_contract_module` (antes duplicados en 7 scripts).
+- **Búsqueda real**: `quinotospec-search/search.py` delega en el índice BM25 de Mimir con filtros por tipo, prefijo, fecha y estado (`--json`, `--cite`).
+- **Paridad README**: `scripts/check-readme-parity.py` valida estructura ES/EN y está integrado en `validate-all.sh`.
+
+### Changed
+- **Inventario**: 48 workflows y 94 skills; umbrales sincronizados y **derivados de `manifest.json`** en `install.sh` y `validate-all.sh`; badges de README ES/EN actualizados.
+- **Drift consolidado**: headings `# Workflow:` → `# Skill:` y secciones faltantes restauradas en `apply`, `archive`, `constitution`, `create-proposal`, `create-tasks`, `create-user-stories`, `import`, `retrospective`, `review`, `review-handoff`, `status`, `update-agents` y `agent-config`.
+- **Personas de agentes**: `agent-defaults.toml` es la fuente canónica; `agents/*.md` sincronizados con test de paridad.
+- **Idioma**: cuerpo de skills/agentes normalizado a español (`file-creation` traducido; headings en inglés corregidos); convención documentada en `CONTRIBUTING.md`.
+- **Assets**: `docs/assets/` reducido de 21MB a 3.1MB (downscale + optimize PNG); `berserker.png` renombrado a `berserker.jpg` (era un JPEG mal etiquetado). `package-release.sh` excluye del tarball las imágenes de marca no referenciadas.
+- **Link checker**: `check-links.sh` ahora escanea `docs/`, `examples/` y `extensions/` (103 links, 0 rotos).
+- **Release**: `smoke-release.sh` cubre las 5 rutas de IDE; `package-release.sh` tiene preflight (drift + links) y aviso de árbol sucio.
+- **Docs**: `INSPECTION-3.2.0.md` marcado como histórico; `ARCHITECTURE.md` refleja 48/94 y el nuevo `agent-dist/lib/`.
+
+### Fixed
+- `quinotospec-skald` ya no referencia un `skald-template.md` inexistente.
+- `quinotospec-migrate` alinea el rename de skill con `MIGRATION-GUIDE.md` (`quinotospec-generate-github-branch`).
+- Typos en `agent-dist/rules/quinotospec-rules.md` ("ADVIETE", "elDispatcher").
+
+### Removed
+- `legacy/v3/` (548KB sin trackear, con `__pycache__`, sin referencias en el paquete).
+
+---
+
 ## [3.3.0] - 2026-09-27 - Warband: Hird Edition (Beta/RC)
 
 ### Summary
