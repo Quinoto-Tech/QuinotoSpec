@@ -26,12 +26,17 @@ Debes implementar un cambio de complejidad **Simple** sin recorrer el ciclo comp
 | `--files` `N` | No | Archivos estimados (para re-ejecutar el router) |
 | `--services` `N` | No | Servicios afectados |
 | `--override simple` | No | Fuerza el track cuando el usuario lo decide |
+| `--party` | No | Mesa redonda multi-agente sobre el enfoque (opcional) |
+| `--goldfish` | No | Revisión con subagentes aislados del cambio (opcional) |
 
 **Invocación:**
 
 ```bash
 @quinotospec.quick-dev "Agregar validación de email en el formulario de contacto"
 @quinotospec.quick-dev --files 2 --services 1 "Cachear la respuesta de /health"
+@quinotospec.quick-dev --party "Elegir estrategia de cache para /health"
+@quinotospec.quick-dev --goldfish --files 3 "Refactor menor del parser"
+@quinotospec.quick-dev --party --goldfish "Cambio de contrato interno de utilidades"
 ```
 
 ---
@@ -47,6 +52,7 @@ Debes implementar un cambio de complejidad **Simple** sin recorrer el ciclo comp
 2. Si el track resultante es `complex` o `enterprise`, detener y proponer `/quinotospec.create-proposal`.
 3. Leer `.quinoto-spec/discovery/01-stack-profile.md` para obtener stack, comandos de test y convenciones.
 4. Leer `.quinoto-spec/constitution.md` si existe: sus principios aplican aunque no haya propuesta.
+5. **Party Mode (opcional, solo si `--party`)**: si hay dudas de enfoque o trade-offs, abre `@quinotospec.party-mode` sobre el cambio y guarda la transcripción en `.quinoto-spec/quick-dev/YYYYMMDD-hhmm-{slug}-party.md`; incorpora el consenso a la tech-spec. Sin el flag, omite.
 
 ## Paso 1 — Tech-spec ligera
 
@@ -75,6 +81,7 @@ La tech-spec no reemplaza a una propuesta: es un contrato mínimo y desechable p
 
 ## Paso 3 — Verificación
 
+0. **Goldfish review (opcional, solo si `--goldfish`)**: revisores con contexto limpio (subagentes aislados) sobre el diff + tests del cambio: ¿cumple el contrato de la tech-spec? ¿introduce regresiones o casos borde? Escribe `.quinoto-spec/reviews/{{SLUG}}-goldfish.md` con severidad (BLOCKING / WARN / INFO). Si no hay subagentes frescos, omite solo esta capa. Sin el flag, omite el paso.
 1. Ejecutar la suite relevante del stack (`npm test`, `pytest`, `go test ./...`, etc.).
 2. Ejecutar `bash scripts/validate-all.sh --strict` si el repositorio usa QuinotoSpec como paquete.
 3. Registrar evidencia en `.quinoto-spec/evidence/{ID}/` cuando exista un ID de tarea o fix.

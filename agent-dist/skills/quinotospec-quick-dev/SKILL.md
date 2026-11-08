@@ -20,11 +20,19 @@ description: Vía rápida para cambios Simple — tech-spec ligera, TDD RED-GREE
 - El router devuelve `complex` o `enterprise` -> usar `/quinotospec.create-proposal` (o `/quinotospec.flow`)
 - Cambios de esquema de datos, autenticación, API pública o compliance -> mínimo `complex`
 
+## Flags opcionales
+
+- `--party`: mesa redonda multi-agente sobre el enfoque (desactivado por defecto).
+- `--goldfish`: revisión con subagentes aislados del cambio (desactivado por defecto).
+
 ## Invocación
 
 ```bash
 @quinotospec.quick-dev "Agregar validación de email en el formulario de contacto"
 @quinotospec.quick-dev --files 2 --services 1 "Cachear la respuesta de /health"
+@quinotospec.quick-dev --party "Elegir estrategia de cache para /health"
+@quinotospec.quick-dev --goldfish --files 3 "Refactor menor del parser"
+@quinotospec.quick-dev --party --goldfish "Cambio de contrato interno de utilidades"
 ```
 
 ## Pasos de Ejecución
@@ -33,6 +41,7 @@ description: Vía rápida para cambios Simple — tech-spec ligera, TDD RED-GREE
 - Ejecutar `python3 -B agent-dist/skills/quinotospec-complexity-router/router.py --files {N} --services {N} --json`.
 - Si el track es `complex` o `enterprise`, detener y proponer `/quinotospec.create-proposal`.
 - Leer `.quinoto-spec/discovery/01-stack-profile.md` (stack, comandos de test, convenciones) y `.quinoto-spec/constitution.md` si existe.
+- **Party Mode (opcional, solo si `--party`)**: mesa redonda sobre el enfoque; guarda `.quinoto-spec/quick-dev/...-party.md` e incorpora el consenso. Sin el flag, omite.
 
 ### 2. Tech-spec ligera
 Crear `.quinoto-spec/quick-dev/YYYYMMDD-hhmm-{slug}.md` con: objetivo, archivos previstos, contrato (entradas/salidas), riesgos, plan de test y evidencia esperada. No reemplaza a una propuesta: es un contrato mínimo y desechable.
@@ -41,6 +50,7 @@ Crear `.quinoto-spec/quick-dev/YYYYMMDD-hhmm-{slug}.md` con: objetivo, archivos 
 Aplicar `quinotospec-tdd`: RED -> GREEN -> REFACTOR, registrando comando y salida de cada fase.
 
 ### 4. Verificación
+- **Goldfish review (opcional, solo si `--goldfish`)**: revisores con contexto limpio sobre el diff + tests; escribe `.quinoto-spec/reviews/{slug}-goldfish.md` con severidad. Sin el flag, omite.
 - Suite relevante del stack + `bash scripts/validate-all.sh --strict` si el repo usa QuinotoSpec como paquete.
 - Registrar evidencia en `.quinoto-spec/evidence/{ID}/` cuando exista un ID de tarea o fix.
 - Aplicar `quinotospec-verify-before-done` antes de declarar terminado.
