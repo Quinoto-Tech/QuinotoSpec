@@ -9,7 +9,7 @@ Este documento detalla el plan de evolucion de QuinotoSpec desde v3.3.0 (Warband
 - **Spec-Kit** (github/spec-kit) — Extensiones/presets, constitution, workflow engine
 - **BMAD-METHOD** (bmad-code-org/bmad-method) — Agentes con personalidad, party mode, scale-adaptive
 
-**Version actual:** 3.3.0
+**Version actual:** 3.4.0
 **Version objetivo:** 3.4.0
 **Fases:** 4 fases incrementales, cada una entregable independientemente
 **Progreso:** Gate 0 y Fase 1 están completos. F2.1/F2.2 fueron entregadas previamente; F2.3, F2.4 y F2.5 están implementadas y validadas. F3.2 queda completa con Party Mode integrado en bootstrap y F3.3 completa el soporte nativo para OpenCode v2; F3.1 (configuracion 3-layer), F3.5 (`quinotospec-help`) y F4.2 (routing adaptativo) estan implementados. La release permanece beta/RC por límites operativos externos.

@@ -179,6 +179,23 @@ class Handler(BaseHTTPRequestHandler):
             if route == "/constitution":
                 self._page("Constitución", "constitution", templates.constitution_page(readers.read_constitution(State.root)))
                 return
+            if route == "/specs":
+                self._page("Specs", "specs", templates.specs_page(summary))
+                return
+            if route.startswith("/specs/"):
+                domain = route[len("/specs/"):].strip("/")
+                data = readers.read_spec_file(State.root, domain)
+                if not data["exists"]:
+                    self._send(404, templates.layout("No encontrada", "", '<div class="card empty">Spec no encontrado: %s</div>' % templates.esc(domain)))
+                    return
+                self._page(domain, "specs", templates.spec_file_page(data))
+                return
+            if route == "/evidence":
+                self._page("Evidencia", "evidence", templates.evidence_page(summary))
+                return
+            if route == "/gates":
+                self._page("Gates", "gates", templates.gates_page(summary))
+                return
 
             self._send(404, templates.layout("No encontrado", "", '<div class="card empty">Ruta no encontrada.</div>'))
         except Exception as error:  # noqa: BLE001 - la UI no debe caerse por un archivo mal formado
@@ -193,6 +210,7 @@ def main(argv=None):
     parser.add_argument("--port", type=int, default=8765, help="Puerto (0 = efimero)")
     parser.add_argument("--no-browser", action="store_true", help="No abrir el navegador")
     parser.add_argument("--json", action="store_true", help="Imprimir el resumen JSON y salir")
+    parser.add_argument("--tui", action="store_true", help="Dashboard de terminal (TTY) y salir")
     parser.add_argument("--stop", action="store_true", help="Detener instancias en ejecucion del servidor UI y salir")
     args = parser.parse_args(argv)
 
@@ -237,6 +255,24 @@ def main(argv=None):
 
     State.roots = resolved
     State.root = resolved[0]
+    if args.tui:
+        print("\nQuinotoSpec TUI (read-only) — root: %s\n" % resolved[0])
+        if len(resolved) == 1:
+            summary = readers.build_summary(resolved[0])
+        else:
+            summary = readers.build_multi_summary(resolved)
+        counts = summary["counts"]
+        print("  Propuestas activas: %s" % counts.get("proposals_active", 0))
+        print("  User stories: %s" % counts.get("stories", 0))
+        print("  Tareas: %s (%s completadas)" % (counts.get("tasks", 0), counts.get("tasks_by_status", {}).get("completed", 0)))
+        print("  Specs: %s dominio(s)" % counts.get("specs_domains", 0))
+        print("  Changelog: %s entradas" % counts.get("changelog", 0))
+        d = summary["discovery"]
+        print("  Discovery: %s (%s)" % ("presente" if d.get("present") else "ausente", ("stale %s d" % d.get("age_days")) if d.get("stale") else "fresco"))
+        c = summary.get("constitution") or {}
+        print("  Constitución: %s (%s principios)" % ("presente" if c.get("present") else "ausente", c.get("principles", 0)))
+        print("\nAdministre: 'python3 -B agent-dist/ui/server.py --root . --port 8765' para web o '--stop' para apagar.")
+        return 0
     if args.json:
         if len(resolved) == 1:
             print(readers.to_json(resolved[0]))

@@ -481,7 +481,7 @@ cp "$PROJECT_ROOT/.version" "$SKALD_WORK/.version"
 cp "$PROJECT_ROOT/README.md" "$SKALD_WORK/README.md"
 cp "$PROJECT_ROOT/README_EN.md" "$SKALD_WORK/README_EN.md"
 cp -R "$PROJECT_ROOT/agent-dist" "$SKALD_WORK/agent-dist"
-sed -i.bak 's|badge/version-3\.3\.0-blue|badge/version-9.9.9-blue|' "$SKALD_WORK/README_EN.md"
+sed -i.bak 's|badge/version-3\.4\.0-blue|badge/version-9.9.9-blue|' "$SKALD_WORK/README_EN.md"
 rm -f "$SKALD_WORK/README_EN.md.bak"
 
 SKALD_DRIFT=$(bash "$SKALD_SCRIPT" --check --root "$SKALD_WORK" 2>&1)
@@ -498,7 +498,7 @@ SKALD_SYNC=$(bash "$SKALD_SCRIPT" --root "$SKALD_WORK" 2>&1)
 RC=$?
 check "sync-readme.sh sin --check sincroniza badges y queda sin drift" "$RC"
 RC=0
-grep -q "badge/version-3.3.0-blue" "$SKALD_WORK/README_EN.md" || RC=$?
+grep -q "badge/version-3.4.0-blue" "$SKALD_WORK/README_EN.md" || RC=$?
 check "sync-readme.sh restaura el badge de version correcto" "$RC"
 
 echo ""

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# QuinotoSpec Installer v3.3.0
+# QuinotoSpec Installer v3.4.0
 # Instala QuinotoSpec en el IDE seleccionado con validación post-instalación
 
 set -euo pipefail
 
-INSTALLER_VERSION="3.3.0"
+INSTALLER_VERSION="3.4.0"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(pwd)"
 TARGET_ROOT="$PROJECT_ROOT"
@@ -1084,7 +1084,7 @@ path = Path(sys.argv[1])
 manifest = json.loads(Path(sys.argv[2]).read_text(encoding="utf-8"))
 payload = {
     "name": "quinotospec",
-    "version": manifest.get("version", "3.3.0"),
+    "version": manifest.get("version", "3.4.0"),
     "description": "QuinotoSpec methodology and agent configuration",
     "author": {"name": "QuinotoTech"},
     "agents": "agents",

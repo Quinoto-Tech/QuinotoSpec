@@ -110,9 +110,15 @@ try:
         "/proposals": b"Sample Auth JWT",
         "/proposals/2026-01-10-sample-auth": b"User stories",
         "/tasks": b"kanban",
+        "/tasks?q=login": b"Buscar",
+        "/proposals?q=sample": b"Buscar",
         "/changelog": b"Changelog",
         "/discovery": b"Discovery",
         "/constitution": b"constituc",
+        "/specs": b"Specs",
+        "/evidence": b"Evidencia",
+        "/gates": b"Gates",
+        "/projects": b"Proyectos",
         "/static/style.css": b"--accent",
     }
     for route, marker in expectations.items():
@@ -141,6 +147,42 @@ check "endpoints HTTP responden y 404 funciona" "$RC"
 AFTER=$(find "$FIXTURE" -type f | wc -l)
 [ "$BEFORE" = "$AFTER" ]
 check "la UI no crea archivos en el proyecto (read-only)" "$?"
+
+# --- Features Fase 2: search, mermaid lazy, specs/evidence/gates, multi-root, --stop, --tui ---
+RC=0
+python3 -B "$UI_DIR/server.py" --root "$PROJECT_ROOT" --json | python3 -c '
+import json, sys
+d = json.load(sys.stdin)
+assert "specs" in d and "evidence_all" in d and "gates" in d, d.keys()
+assert d["counts"].get("specs_domains", 0) >= 1, d["counts"]
+' || RC=$?
+check "readers exponen specs/evidence/gates" "$RC"
+
+RC=0
+python3 -B "$UI_DIR/server.py" --roots "$FIXTURE,$EXAMPLE" --json | python3 -c '
+import json, sys
+d = json.load(sys.stdin)
+assert d.get("multi") is True
+assert d["counts"].get("projects") == 2
+' || RC=$?
+check "multi-root --roots agrega proyectos" "$RC"
+
+RC=0
+python3 -B "$UI_DIR/server.py" --root "$EXAMPLE" --tui | grep -q "TUI" || RC=$?
+check "--tui responde sin navegador" "$RC"
+
+RC=0
+python3 -B "$UI_DIR/server.py" --help | grep -q -- "--stop" || RC=$?
+check "--stop existe en ayuda" "$RC"
+
+grep -q "IntersectionObserver\|__mermaid" "$UI_DIR/templates.py"
+check "Mermaid lazy (IntersectionObserver) en templates" "$?"
+
+python3 -B "$PROJECT_ROOT/agent-dist/skills/quinotospec-rules-enforce/constitution_validate.py" --root "$PROJECT_ROOT" --json | grep -q '"valid": true'
+check "constitution gate presente y activo" "$?"
+
+python3 -B "$PROJECT_ROOT/agent-dist/skills/quinotospec-rules-enforce/tdd_validate.py" validate --task-id TSK-NONE-001 --root "$PROJECT_ROOT" --json | grep -q '"gate": "tdd"'
+check "tdd gate responde JSON" "$?"
 
 echo ""
 echo "=========================================="

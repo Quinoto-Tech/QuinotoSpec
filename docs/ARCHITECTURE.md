@@ -8,7 +8,7 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 2. **Skills**: Capacidades especializadas reutilizables
 3. **Rules**: Restricciones inmutables que gobiernan el comportamiento
 
-**Estado de release:** beta / release candidate (v3.3.0 Hird Edition; Gate 0 + F3.2 + F3.3 complete).
+**Estado de release:** beta / release candidate (v3.4.0 Hird Edition; Gate 0 + F3.2 + F3.3 complete).
 
 **Criterio de madurez:** la presencia de un artefacto en `agent-dist/` no implica que la capacidad sea production-ready. Cada componente debe declarar su estado y sus límites operativos.
 
@@ -24,7 +24,7 @@ QuinotoSpec es un sistema de configuracion de agentes basado en tres pilares:
 |   agent-dist/    |  <-- Distribucion
 |  +-------------+ |
 |  | workflows/  | |  <-- 49 workflows
- |  | skills/     | |  <-- 95 skills
+ |  | skills/     | |  <-- 95 skills (40 core + 55 utilitarias)
 
  |  | rules/      | |  <-- 18 reglas
  |  | agents/     | |  <-- 9 agentes
@@ -152,7 +152,7 @@ El target de Claude Code es `.claude/` o `~/.claude/`; el de Cursor es `.cursor/
 
 ## Componentes
 
-### Workflows (46)
+### Workflows (49)
 
 Los workflows se dividen en categorias:
 
@@ -243,7 +243,7 @@ El sistema coexiste con el formato anterior de propuestas.
 
 ---
 
-### Skills (89)
+### Skills (95)
 
 Organizadas por dominio:
 

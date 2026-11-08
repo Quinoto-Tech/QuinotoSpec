@@ -6,6 +6,28 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 
 ---
 
+## [3.4.0] - 2026-11-08 - Warband: Hird Edition
+
+### Summary
+- Release 3.4.0 con UI Fase 2 (multi-proyecto, búsqueda, detalle de tarea, Markdown y Mermaid), Specs Gate en Apply/Create-Proposal, Fix baseline de tests, --stop, y gates ejecutables TDD/Constitution.
+
+### Added
+- **UI Fase 2**: panel central multi-proyecto (`--roots`), búsqueda `?q=` en propuestas/tareas, vista `/projects`, `/tasks/<ID>`, `/discovery/<file>` con render Markdown y Mermaid, tema claro/oscuro, `--stop` para apagar instancias.
+- **Specs Gate**: Apply y Create-Proposal ahora leen `.quinoto-spec/specs/` vigentes y detienen el Apply si la tarea contradice un spec sin delta-spec correspondiente.
+- **Fix baseline**: `@quinotospec.fix` ejecuta la suite existente antes de tocar código (Paso 0.4b).
+- **Gates ejecutables**: `tdd_validate.py` y `constitution_validate.py` (Sprint 2).
+- **Huginn histórico**: `check.py --history` persiste métricas en `.quinoto-spec/metrics/entropy-history.jsonl` + tendencia.
+- **UI `/specs`, `/evidence`, `/gates`**: páginas de lectura para specs consolidados, evidencia por tarea y gates.
+- **Mermaid lazy**: carga diferida de `mermaid.min.js`.
+- **Bifrost DR**: `bifrost.py --backup` tar.gz federado cross-repo.
+- **Skald i18n**: `skald.py` con vocabulario ES→EN para paridad de badges y conceptos.
+- **TUI**: `server.py --tui` dashboard de terminal sin navegador.
+
+### Changed
+- `manifest.json`: `features.ui:true`, `features.specs_gate:true`, `capability_maturity.ui:"experimental"`, `scope_policy:"active"`, `approved_exceptions` extendidas.
+- `tests/test-encoding.sh`: excluye `static/*.min.js` vendidas.
+- Documentación marcada: UI *(en desarrollo)* en README, workflow y skill.
+
 ## [Unreleased] - Higiene estructural (referencias, drift y assets)
 
 ### Added

@@ -198,12 +198,30 @@ def analyze(root):
     }
 
 
+def load_history(hist_path):
+    if not hist_path.exists():
+        return []
+    rows = []
+    try:
+        for line in hist_path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                try:
+                    rows.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+    except OSError:
+        return []
+    return rows
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Huginn & Muninn — metricas de entropia sin LLM"
     )
     parser.add_argument("service_path", nargs="?", default=".", help="Directorio a analizar")
     parser.add_argument("--json", action="store_true", help="Emitir solo JSON")
+    parser.add_argument("--history", action="store_true", help="Persistir en .quinoto-spec/metrics/entropy-history.jsonl y calcular delta vs ultimo")
+    parser.add_argument("--trend", action="store_true", help="Mostrar tendencia 7/30 dias desde el historial")
     args = parser.parse_args(argv)
 
     root = Path(args.service_path)
@@ -217,6 +235,26 @@ def main(argv=None):
         return 1
 
     report = analyze(root)
+
+    if args.history:
+        hist_path = root / ".quinoto-spec" / "metrics" / "entropy-history.jsonl"
+        hist_path.parent.mkdir(parents=True, exist_ok=True)
+        rows = load_history(hist_path)
+        delta = round(report["S_final"] - rows[-1]["S_final"], 2) if rows else 0.0
+        entry = dict(report)
+        entry["delta_vs_prev"] = delta
+        import datetime
+
+        entry["recorded_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        with hist_path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        report["delta_vs_prev"] = delta
+        report["history_path"] = str(hist_path)
+        if args.trend:
+            recent = rows[-7:]
+            report["trend_7"] = {"n": len(recent), "avg_S": round(sum(r.get("S_final", 0) for r in recent) / max(1, len(recent)), 2)}
+            recent30 = rows[-30:]
+            report["trend_30"] = {"n": len(recent30), "avg_S": round(sum(r.get("S_final", 0) for r in recent30) / max(1, len(recent30)), 2)}
 
     if args.json:
         print(json.dumps(report, ensure_ascii=False))

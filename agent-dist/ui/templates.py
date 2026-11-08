@@ -23,6 +23,9 @@ NAV = (
     ("/changelog", "Changelog", "changelog"),
     ("/discovery", "Discovery", "discovery"),
     ("/constitution", "Constitución", "constitution"),
+    ("/specs", "Specs", "specs"),
+    ("/evidence", "Evidencia", "evidence"),
+    ("/gates", "Gates", "gates"),
 )
 
 STYLE = """
@@ -617,15 +620,24 @@ def render_markdown(text):
     return "\n".join(out)
 
 
+def _mermaid_lazy_script():
+    return (
+        '<script async src="/static/mermaid.min.js" onload="window.__mermaidReady=true;if(window.__mermaidInit)window.__mermaidInit();"></script>'
+        '<script>var __mermaidLoaded=false;function __loadMermaid(){if(__mermaidLoaded||window.__mermaidReady)window.__mermaidInit&&window.__mermaidInit();else{var s=document.createElement("link");s.rel="preload";s.as="script";s.href="/static/mermaid.min.js";document.head.appendChild(s);setTimeout(function(){if(window.__mermaidReady)window.__mermaidInit&&window.__mermaidInit();},800);}}'
+        'window.__mermaidInit=function(){try{if(!window.mermaid)return;mermaid.initialize({startOnLoad:false,theme:document.body.classList.contains("light")?"default":"dark"});document.querySelectorAll("div.mermaid").forEach(function(el){try{mermaid.run({nodes:[el]});}catch(e){}});}catch(e){}};'
+        'window.addEventListener("load",function(){var blocks=document.querySelectorAll("div.mermaid");if(!blocks.length)return;if("IntersectionObserver"in window){var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){__loadMermaid();io.disconnect();}});});blocks.forEach(function(b){io.observe(b);});}else{__loadMermaid();}});</script>'
+    )
+
+
 def discovery_file_page(data):
     name = data["name"]
     content = data["content"]
+    has_mermaid = 'class="mermaid"' in render_markdown(content)
+    script = _mermaid_lazy_script() if has_mermaid else ""
     return (
         "<h1>Discovery · %s</h1><p class=\"sub\"><a href=\"/discovery\">← Discovery</a></p>"
-        '<div class="card md-content">%s</div>'
-        '<script src="/static/mermaid.min.js"></script>'
-        '<script>window.addEventListener("load",function(){if(window.mermaid){try{mermaid.initialize({startOnLoad:true,theme:document.body.classList.contains("light")?"default":"dark"});mermaid.run();}catch(e){}}});</script>'
-        % (esc(name), render_markdown(content))
+        '<div class="card md-content">%s</div>%s'
+        % (esc(name), render_markdown(content), script)
     )
 
 
@@ -643,6 +655,61 @@ def constitution_page(constitution):
     status = badge(constitution["status"]) if constitution["status"] in STATUS_LABELS else esc(constitution["status_raw"] or "—")
     return (
         "<h1>Constitución</h1><p class=\"sub\">Estado: %s</p>%s"
-        '<details><summary>Ver documento completo</summary><pre>%s</pre></details>'
-        % (status, table, esc(constitution["content"]))
+        '<details><summary>Ver documento completo</summary><div class="card md-content">%s</div></details>'
+        % (status, table, render_markdown(constitution["content"]))
     )
+
+
+def specs_page(summary):
+    specs = summary.get("specs") or {"present": False, "domains": []}
+    if not specs["present"]:
+        return '<h1>Specs</h1><div class="alert warn">No existe <code>.quinoto-spec/specs/</code>. Ejecuta <code>@quinotospec.specs-init</code>.</div>'
+    rows = []
+    for d in specs["domains"]:
+        rows.append(
+            "<tr><td><a href=\"/specs/%s\">%s</a></td><td>%s</td><td>%s</td><td>%s bytes</td></tr>"
+            % (esc(d["domain"]), esc(d["title"]), esc(d["domain"]), esc(d["req_count"]), esc(d["size"]))
+        )
+    table = (
+        "<table><thead><tr><th>Spec</th><th>Dominio</th><th>Requirements</th><th>Tamaño</th></tr></thead><tbody>%s</tbody></table>" % "".join(rows)
+        if rows
+        else '<div class="card empty">Sin dominios de specs.</div>'
+    )
+    return "<h1>Specs consolidados</h1><p class=\"sub\">%s dominio(s)</p>%s" % (len(specs["domains"]), table)
+
+
+def spec_file_page(data):
+    return (
+        "<h1>Spec · %s</h1><p class=\"sub\"><a href=\"/specs\">← Specs</a></p>"
+        '<div class="card md-content">%s</div>%s' % (esc(data["domain"]), render_markdown(data["content"]), _mermaid_lazy_script() if "class=\"mermaid\"" in render_markdown(data["content"]) else "")
+    )
+
+
+def evidence_page(summary):
+    ev = summary.get("evidence_all") or {"present": False, "items": []}
+    if not ev["present"]:
+        return '<h1>Evidencia</h1><div class="card empty">Sin evidencia (<code>.quinoto-spec/evidence/</code> vacío).</div>'
+    steps = []
+    for item in ev["items"]:
+        files = []
+        for f in item["files"]:
+            files.append("<li>%s</li>" % esc(f["name"]))
+        steps.append("<div class=\"card\"><h3>%s</h3><ul>%s</ul></div>" % (esc(item["task_id"]), "".join(files)))
+    body = '<div class="grid">%s</div>' % "".join(steps) if steps else '<div class="card empty">Sin items.</div>'
+    return "<h1>Evidencia</h1><p class=\"sub\">%s tarea(s) con evidencia</p>%s" % (len(ev["items"]), body)
+
+
+def gates_page(summary):
+    gates = summary.get("gates") or {"present": True, "tasks": []}
+    rows = []
+    for t in gates["tasks"]:
+        cells = []
+        for g in t["gates"]:
+            cells.append("<td>%s</td>" % ("✅" if g["present"] else "⬜"))
+        rows.append("<tr><td>%s</td><td>%s</td>%s</tr>" % (esc(t["task_id"]), esc(t["proposal"]), "".join(cells)))
+    table = (
+        "<table><thead><tr><th>Tarea</th><th>Propuesta</th><th>TDD</th><th>Debug</th><th>Verify</th></tr></thead><tbody>%s</tbody></table>" % "".join(rows)
+        if rows
+        else '<div class="card empty">Sin tareas para auditar gates.</div>'
+    )
+    return "<h1>Gates</h1><p class=\"sub\">Evidencia fresca por tarea (✅ presente / ⬜ ausente)</p>%s" % table

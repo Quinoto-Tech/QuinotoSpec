@@ -296,6 +296,83 @@ def cmd_sync(root: Path, rest):
     return 0 if all("ERR:" not in r for r in results) else 1
 
 
+def cmd_backup(root: Path, rest):
+    """DR cross-repo: tar.gz de cada .quinoto-spec/ + federation.yaml con manifiesto SHA256."""
+    import tarfile
+    import tempfile
+    import datetime
+
+    fed = parse_federation(root)
+    if not fed:
+        print(f"Bifrost --backup: no existe {federation_path(root)}. Corre --init primero.")
+        return 1
+    out = None
+    if "--out" in rest:
+        i = rest.index("--out")
+        if i + 1 < len(rest):
+            out = rest[i + 1]
+    if not out:
+        stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        out = str(root / f".quinoto-spec-backups" / f"bifrost-dr-{stamp}.tar.gz")
+    out_path = Path(out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    entries = {}
+    import hashlib
+
+    def add_dir(arc_prefix, src_dir):
+        if not src_dir.is_dir():
+            entries[arc_prefix] = "MISSING"
+            return
+        for p in sorted(src_dir.rglob("*")):
+            if p.is_file():
+                arc = f"{arc_prefix}/{p.relative_to(src_dir)}"
+                entries[arc] = hashlib.sha256(p.read_bytes()).hexdigest()
+                tf.add(p, arcname=arc)
+
+    with tarfile.open(str(out_path), "w:gz") as tf:
+        # manifiesto
+        manifest = []
+        for r in fed.get("repos", []):
+            repo_root = (root / r["path"]).resolve()
+            role = r.get("role", r["path"])
+            add_dir(role, repo_root / ".quinoto-spec")
+            manifest.append(f"{role} :: {(repo_root / '.quinoto-spec')}")
+        add_dir("self", root / ".quinoto-spec")
+        # guardar manifiesto como primer archivo
+        man_text = "\n".join(f"{k} {v}" for k, v in sorted(entries.items())) + "\n"
+        man_bytes = man_text.encode("utf-8")
+        from io import BytesIO
+
+        info = tarfile.TarInfo(name="MANIFEST.sha256")
+        info.size = len(man_bytes)
+        tf.addfile(info, BytesIO(man_bytes))
+    print(f"Bifrost --backup: OK -> {out_path} ({len(entries)} archivos)")
+    return 0
+
+
+def cmd_restore(root: Path, rest):
+    import tarfile
+
+    src = None
+    if "--from" in rest:
+        i = rest.index("--from")
+        if i + 1 < len(rest):
+            src = rest[i + 1]
+    if not src or not Path(src).exists():
+        print("Bifrost --restore: falta --from <tar.gz existente>")
+        return 1
+    dest = root
+    if "--dest" in rest:
+        i = rest.index("--dest")
+        if i + 1 < len(rest):
+            dest = Path(rest[i + 1])
+    dest.mkdir(parents=True, exist_ok=True)
+    with tarfile.open(str(src), "r:gz") as tf:
+        tf.extractall(str(dest))
+    print(f"Bifrost --restore: OK -> {dest} (desde {src})")
+    return 0
+
+
 def main():
     root, rest = resolve_root(sys.argv[1:], ("QUINOTOSPEC_BIFROST_ROOT", "BIFROST_ROOT"))
     if "--init" in rest:
@@ -304,7 +381,11 @@ def main():
         sys.exit(cmd_status(root, rest))
     if "--sync" in rest:
         sys.exit(cmd_sync(root, rest))
-    print("Uso: bifrost.py --init|--status|--sync [--root PATH] [--repos p1:r1,p2:r2] [--name NOMBRE]")
+    if "--backup" in rest:
+        sys.exit(cmd_backup(root, rest))
+    if "--restore" in rest:
+        sys.exit(cmd_restore(root, rest))
+    print("Uso: bifrost.py --init|--status|--sync|--backup|--restore [--root PATH] [--repos p1:r1,p2:r2] [--name NOMBRE] [--out FILE] [--from TAR] [--dest DIR]")
     sys.exit(1)
 
 

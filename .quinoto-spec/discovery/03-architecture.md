@@ -1,6 +1,6 @@
 # Arquitectura: QuinotoSpec
 
-**Discovery Date:** 2026-09-27
+**Discovery Date:** 2026-11-08
 
 Guardar en: .quinoto-spec/discovery/03-architecture.md
 

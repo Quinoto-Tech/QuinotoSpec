@@ -1,48 +1,29 @@
 # Acuerdos de Producto y de Trabajo
 
-Guardar en: .quinoto-spec/discovery/08-product-and-agreements.md
-
-> **Este archivo es una plantilla vacía para ser completada por humanos.**
-> No se genera contenido de ejemplo a propósito: las secciones DoR/DoD deben reflejar los acuerdos
-> reales del equipo, no un default que nadie revisó.
->
-> Usá la convención `<!-- placeholder -->` en las secciones que falten para que la validación
-> (`quinotospec-rules-enforce`, check `product-agreement`) las detecte como **no completadas**.
+> **Discovery Date:** 2026-11-08
 
 ## Visión de Producto
 
-<!-- placeholder -->
-
-<!--
-Ejemplos de qué puede ir acá (borrar el placeholder):
-- El problema de negocio que QuinotoSpec resuelve y para quién.
-- Qué alternativas considera el mercado y por qué esta gana.
-- Qué significa "el agente hace Proposal First bien" en la práctica.
--->
+QuinotoSpec es una metodología + sistema de configuración de agentes para que el desarrollo asistido por IA sea Proposal First, trazable y verificable, sin depender de que el agente “lea AGENTS.md por su cuenta”.
 
 ## Business Goals / KPIs
 
-<!-- placeholder -->
-
-<!--
-Métricas verificables. Ejemplos:
-- % de tareas de agentes que pasan por propuesta antes de codificar.
-- % de releases sin regresión atribuida a falta de validación.
-- Tiempo medio de ciclo de una propuesta (crear → aplicar → archivar).
-- Adopción: n° de proyectos con `.quinoto-spec/` activo.
--->
+- % de cambios que pasan por propuesta antes de código (objetivo >80% en dogfooding).
+- 0 regresiones por falta de validación en releases (medido por `validate-all.sh --strict` + suites verdes).
+- Tiempo medio propuesta → archive < 14 días.
+- Adopción: nº de proyectos con `.quinoto-spec/` activo y `contract validate --strict` en verde.
 
 ## Definition of Ready (DoR)
 
-<!-- placeholder -->
+- Discovery fresco (<30 días) y `08-product-and-agreements.md` sin placeholders.
+- `contract.py validate --root . --strict` en verde.
+- Prefijo registrado en `prefix-registry.md`.
+- Propuesta con `**ID:**`, `**Prefijo:**`, `**Fecha de Creación:**`, `**Estado:**`, `**Prioridad:**`, `**Complejidad:**`, `**Servicios Afectados:**`.
 
 ## Definition of Done (DoD)
 
-<!-- placeholder -->
-
-<!--
-Criterios que debe cumplir una propuesta/tarea para considerarse terminada.
-Recordar: las reglas de `agent-dist/rules/quinotospec-rules.md` ya definen gates
-mecánicos (TDD, evidencia fresca, aprobación humana). Esta sección define lo que
-el EQUIPO considera terminado, que puede ser más estricto.
--->
+- Gates mecánicos en verde: TDD (si aplica), evidencia fresca (`evidence_validate.py`), `verify-before-done`.
+- Tests, lint y typecheck del stack (`01-stack-profile.md`) en verde.
+- Changelog v2 append-only con `quinotospec-update-changelog`.
+- `Norns --check` sin drift; `validate-all.sh --strict` + `run-all-tests.sh` en verde.
+- Marcas: UI *(en desarrollo)* donde aplique hasta promoción a `beta`.

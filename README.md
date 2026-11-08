@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-3.3.0-blue)
+![Version](https://img.shields.io/badge/version-3.4.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![IDEs](https://img.shields.io/badge/IDEs-OpenCode%20%7C%20Cursor%20%7C%20Claude%20%7C%20Cline%20%7C%20Antigravity-orange)
 ![Workflows](https://img.shields.io/badge/workflows-49-purple)
@@ -15,7 +15,7 @@
 Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA.
 Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y minimizar alucinaciones.
 
-<img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.3.0 — Warband: Hird Edition" width="800" />
+<img src="docs/assets/tiwaz.png" alt="QuinotoSpec v3.4.0 — Warband: Hird Edition" width="800" />
 
 <br/>
 
@@ -27,7 +27,7 @@ Flujo de trabajo "Proposal First" / "Context Slicing" para maximizar precision y
 
 ## Estado de madurez (Gate 0 + F3.2 + F3.3)
 
-La versión 3.3.0 se publica como **beta / release candidate** de Hird Edition. La metodología Proposal First y Context Slicing es la base del producto, pero algunas capacidades aún dependen de instrucciones para agentes o de validadores parciales. F1.1–F1.7 añaden bootstrap, disciplina de ingeniería con validación de evidencia, constitution, recepción verificable de feedback y aislamiento opcional en worktrees; Gate 0 incorpora dispatcher read-only, evidencia técnica validada, backup verificable y aprobaciones humanas estructuradas. F2.3 y F2.4 añaden extensiones/presets locales, resolución de templates y generación dinámica de `AGENTS.md`; F3.2 integra Party Mode en el bootstrap y F3.3 añade soporte nativo para OpenCode v2; los límites conocidos se conservan abajo.
+La versión 3.4.0 se publica como **beta / release candidate** de Hird Edition. La metodología Proposal First y Context Slicing es la base del producto, pero algunas capacidades aún dependen de instrucciones para agentes o de validadores parciales. F1.1–F1.7 añaden bootstrap, disciplina de ingeniería con validación de evidencia, constitution, recepción verificable de feedback y aislamiento opcional en worktrees; Gate 0 incorpora dispatcher read-only, evidencia técnica validada, backup verificable y aprobaciones humanas estructuradas. F2.3 y F2.4 añaden extensiones/presets locales, resolución de templates y generación dinámica de `AGENTS.md`; F3.2 integra Party Mode en el bootstrap y F3.3 añade soporte nativo para OpenCode v2; los límites conocidos se conservan abajo.
 
 | Superficie | Estado | Límite conocido |
 |------------|--------|-----------------|

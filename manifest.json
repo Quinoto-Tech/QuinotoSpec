@@ -1,6 +1,6 @@
 {
   "name": "quinotospec",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "edition": "Warband: Hird Edition",
   "description": "Metodologia y sistema de configuracion de agentes para desarrollo asistido por IA",
   "release_status": "beta-rc",
@@ -9,13 +9,18 @@
   "gate_0_status": "complete",
   "phase_2_status": "complete",
   "phase_3_status": "in_progress",
-  "scope_policy": "freeze-new-features",
+  "scope_policy": "active",
   "approved_exceptions": [
     "F1.1-F1.7",
     "F2.3-F2.5",
     "F3.2",
     "F3.3",
-    "HYG-A: quinotospec.flow prompt-only (resuelve referencias muertas del router Enterprise)"
+    "HYG-A: quinotospec.flow prompt-only (resuelve referencias muertas del router Enterprise)",
+    "UI-F2: quinotospec-ui multi-proyecto, busqueda, detalle, Markdown y Mermaid",
+    "SPECS-GATE: quinotospec.apply/create-proposal leen specs vigentes",
+    "FIX-BASELINE: quinotospec.fix ejecuta baseline de tests pre-fix",
+    "SPRINT2: tdd_validate.py, constitution_validate.py, Huginn history, UI /specs /evidence /gates",
+    "SPRINT3: Mermaid lazy, Bifrost DR, Skald i18n, TUI --tui"
   ],
   "contract_version": 1,
   "workflows": 49,
@@ -61,7 +66,20 @@
     "jormungandr": true,
     "valkyrie": true,
     "bifrost": true,
-    "mimir": true
+    "mimir": true,
+    "ui": true,
+    "ui_multi_project": true,
+    "ui_markdown": true,
+    "ui_mermaid": true,
+    "specs_gate": true,
+    "tdd_gate": true,
+    "constitution_gate": true,
+    "huginn_history": true,
+    "ui_specs_evidence_gates": true,
+    "bifrost_dr": true,
+    "skald_i18n": true,
+    "ui_tui": true,
+    "fix_baseline": true
   },
   "capability_maturity": {
     "core_methodology": "beta",
@@ -75,13 +93,26 @@
     "opencode_plugin": "beta",
     "opencode_v2_plugin": "beta",
     "cursor_plugin": "experimental",
-    "tdd": "prompt-only",
+    "tdd": "beta",
     "debugging": "prompt-only",
     "verify_before_done": "prompt-only",
-    "constitution": "prompt-only",
+    "constitution": "beta",
     "receive_review": "prompt-only",
     "review_handoff": "prompt-only",
     "worktree": "prompt-only",
+    "ui": "experimental",
+    "ui_multi_project": "experimental",
+    "ui_markdown": "experimental",
+    "ui_mermaid": "experimental",
+    "specs_gate": "beta",
+    "tdd_gate": "beta",
+    "constitution_gate": "beta",
+    "huginn_history": "beta",
+    "ui_specs_evidence_gates": "experimental",
+    "bifrost_dr": "experimental",
+    "skald_i18n": "beta",
+    "ui_tui": "experimental",
+    "fix_baseline": "beta",
     "governance_gate": "beta",
     "backup_engine": "beta",
     "evidence_gate": "beta",
@@ -105,13 +136,15 @@
   },
   "known_limitations": [
     "The read-only governance dispatcher covers observable contract, path, configuration, product-agreement, structured TDD/debug/verify evidence, and scoped human-approval records; command execution and identity proof remain outside the file-only validator.",
-    "The backup engine verifies and restores .quinoto-spec safely; cross-repository disaster recovery remains pending.",
+    "The backup engine verifies and restores .quinoto-spec safely; Bifrost --backup creates a federated tar.gz for cross-repo DR (restore remains manual).",
     "Workflows and rules remain primarily agent instructions outside the dispatcher.",
-    "Huginn & Muninn computes deterministic stdlib entropy metrics (H_size, H_testing, S_proxy) but does not yet track historical trends or contract drift.",
-    "Skald syncs README badges and verifies table parity; it does not translate prose between locales.",
+    "Huginn & Muninn computes deterministic stdlib entropy metrics (H_size, H_testing, S_proxy) and persists history with --history; contract drift tracking is still partial.",
+    "Skald syncs README badges and verifies table parity; skald.py provides a dictionary-based ES->EN concept mapping for parity checking, not full prose translation.",
     "Transactional installer rollback and ownership-safe uninstall are implemented; legacy installations without an ownership manifest require manual migration, and Bifrost/Battle Frenzy still require safety validation.",
     "OpenCode v2 plugin uses a zero-dependency plain object export (no @opencode-ai/plugin import). This avoids requiring the user to have bun/npm and a package.json in their config directory, but relies on the OpenCode v2 loader accepting a plain {id, setup} object without Plugin.define().",
-    "The OpenCode v1 plugin path (plugins/opencode/quinotospec-plugin.js) is legacy: it is only installed when OpenCode major is 1 and receives no new features. OpenCode v2 is the recommended path."
+    "The OpenCode v1 plugin path (plugins/opencode/quinotospec-plugin.js) is legacy: it is only installed when OpenCode major is 1 and receives no new features. OpenCode v2 is the recommended path.",
+    "UI is experimental and vendored mermaid.min.js (3.2M) is loaded lazily; server-side rendering and /specs|/evidence|/gates are partial.",
+    "TDD and Constitution gates are file-vectors (JSON+markdown) not command-executing validators."
   ],
   "supported_ides": [
     "opencode",
@@ -142,6 +175,6 @@
     "url": "https://github.com/Quinoto-Tech/QuinotoSpec"
   },
   "license": "MIT",
-  "release_date": "2026-09-27",
-  "changelog": "Warband: Hird Edition — Gate 0, Extensibilidad (F2), Party Mode bootstrap (F3.2), OpenCode v2 support (F3.3)"
+  "release_date": "2026-11-08",
+  "changelog": "Warband: Hird Edition 3.4.0 — UI Fase 2, Specs Gate, Fix Baseline, TDD/Constitution gates, Huginn history, Bifrost DR, Skald i18n, TUI"
 }

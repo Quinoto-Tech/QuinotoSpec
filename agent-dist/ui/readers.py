@@ -356,7 +356,7 @@ def read_constitution(root):
     match = re.search(r"\*\*Estado:\*\*\s*(.+)", text)
     raw = match.group(1).strip() if match else ""
     status = "active" if raw.lower().startswith("active") else ("draft" if "draft" in raw.lower() else "unknown")
-    principles = re.findall(r"\*\*([A-Z]{2,}-\d{2,})\*\*:\s*(.+)", text)
+    principles = re.findall(r"\*\*([A-Z]{2,}-\d{2,}):?\*\*:?\s*(.+)", text)
     return {
         "present": True,
         "status": status,
@@ -391,6 +391,9 @@ def build_summary(root):
     discovery = read_discovery(root)
     constitution = read_constitution(root)
     changelog = read_changelog(root)
+    specs = read_specs(root)
+    evidence = read_evidence_all(root)
+    gates = read_gates(root)
     total_tasks = _count_by_status(task["status"] for task in tasks)
     return {
         "root": str(root),
@@ -400,6 +403,9 @@ def build_summary(root):
         "constitution": {"present": constitution["present"], "status": constitution["status"], "principles": len(constitution["principles"])},
         "proposals": proposals,
         "changelog": changelog,
+        "specs": specs,
+        "evidence_all": evidence,
+        "gates": gates,
         "prefixes": read_prefix_registry(root),
         "counts": {
             "proposals": len(proposals),
@@ -408,9 +414,85 @@ def build_summary(root):
             "tasks": len(tasks),
             "tasks_by_status": total_tasks,
             "changelog": len(changelog),
+            "specs_domains": len(specs["domains"]),
             "evidence": len([task for task in tasks if task["evidence_count"] > 0]),
         },
     }
+
+
+def read_specs(root):
+    root = Path(root)
+    base = root / ".quinoto-spec" / "specs"
+    domains = []
+    if base.is_dir():
+        for domain_dir in sorted(base.iterdir()):
+            if not domain_dir.is_dir():
+                continue
+            spec_file = domain_dir / "spec.md"
+            if not spec_file.is_file():
+                continue
+            text = _read(spec_file)
+            title = first_heading(text) or domain_dir.name
+            requirements = []
+            for m in re.finditer(r"^###\s+Requirement:\s*(.+)$", text, re.M):
+                requirements.append(m.group(1).strip())
+            domains.append(
+                {
+                    "domain": domain_dir.name,
+                    "title": title,
+                    "requirements": requirements,
+                    "req_count": len(requirements),
+                    "size": spec_file.stat().st_size if spec_file.exists() else 0,
+                }
+            )
+    return {"present": base.is_dir(), "domains": domains}
+
+
+def read_spec_file(root, domain):
+    root = Path(root)
+    base = (root / ".quinoto-spec" / "specs").resolve()
+    target = (base / domain / "spec.md").resolve()
+    if base not in target.parents:
+        return {"exists": False, "content": "", "domain": domain}
+    if not target.is_file():
+        return {"exists": False, "content": "", "domain": domain}
+    return {"exists": True, "content": _read(target), "domain": domain}
+
+
+def read_evidence_all(root):
+    root = Path(root)
+    base = root / ".quinoto-spec" / "evidence"
+    items = []
+    if base.is_dir():
+        for task_dir in sorted(base.iterdir()):
+            if not task_dir.is_dir():
+                continue
+            files = []
+            for f in sorted(task_dir.iterdir()):
+                if f.is_file():
+                    try:
+                        txt = f.read_text(encoding="utf-8", errors="replace")
+                        if len(txt) > 5000:
+                            txt = txt[:5000] + "\n... [truncado]"
+                    except OSError:
+                        txt = ""
+                    files.append({"name": f.name, "content": txt})
+            items.append({"task_id": task_dir.name, "files": files})
+    return {"present": base.is_dir(), "items": items}
+
+
+def read_gates(root):
+    root = Path(root)
+    tasks = []
+    proposals = read_proposals(root)
+    for proposal in proposals:
+        for task in proposal["tasks"]:
+            gates = []
+            for kind in ("tdd", "debug", "verify-before-done"):
+                p = root / ".quinoto-spec" / "evidence" / task["id"] / (kind + ".json")
+                gates.append({"kind": kind, "present": p.is_file()})
+            tasks.append({"task_id": task["id"], "proposal": proposal["title"], "gates": gates})
+    return {"present": True, "tasks": tasks}
 
 
 def to_json(root):
@@ -449,6 +531,9 @@ def build_multi_summary(roots):
         "selected_project": None,
         "discovery": summaries[0]["discovery"] if summaries else {"present": False, "files": [], "project_date": "", "age_days": None, "stale": False},
         "constitution": summaries[0]["constitution"] if summaries else {"present": False, "status": "", "principles": 0},
+        "specs": summaries[0].get("specs", {"present": False, "domains": []}) if summaries else {"present": False, "domains": []},
+        "evidence_all": summaries[0].get("evidence_all", {"present": False, "items": []}) if summaries else {"present": False, "items": []},
+        "gates": summaries[0].get("gates", {"present": True, "tasks": []}) if summaries else {"present": True, "tasks": []},
         "proposals": all_proposals,
         "changelog": all_changelog,
         "prefixes": [prefix for summary in summaries for prefix in summary["prefixes"]],
@@ -459,6 +544,7 @@ def build_multi_summary(roots):
             "tasks": len(all_tasks),
             "tasks_by_status": _count_by_status(task["status"] for task in all_tasks),
             "changelog": len(all_changelog),
+            "specs_domains": sum(s["counts"].get("specs_domains", 0) for s in summaries),
             "evidence": len([task for task in all_tasks if task.get("evidence_count", 0) > 0]),
             "projects": len(summaries),
         },
