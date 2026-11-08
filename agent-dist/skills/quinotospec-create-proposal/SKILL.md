@@ -16,6 +16,7 @@ El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DE
 
 **Flags:**
 - `--party [agents]`: Ejecuta Party Mode con los agentes especificados ANTES de generar la propuesta. El debate multi-agente enriquece la propuesta con perspectivas cruzadas. Si no se especifican agentes, se auto-seleccionan los mas relevantes segun el tema.
+- `--goldfish`: ejecuta el Shootdown multi-lente con subagentes aislados antes de redactar (opcional, desactivado por defecto).
 - `--party-output <path>`: Donde guardar la transcripcion del Party Mode (default: `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/party-analysis.md`)
 
 PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
@@ -65,9 +66,9 @@ Si el resultado top1 tiene `score > 2.5` y cita una decisión previa (`proposal.
 
 No es bloqueante — si no hay índice (`--check` falla o el archivo no existe), continúa sin advertencia. El usuario puede confirmar que la propuesta nueva es intencional y seguir adelante.
 
-**Paso Previo (recomendado) — Shootdown multi-lente (Elephant-Goldfish):**
+**Paso Previo (opcional, solo si `--goldfish`) — Shootdown multi-lente (Elephant-Goldfish):**
 
-Antes de redactar la propuesta, intenta **derribar la idea** con lentes fijos (party-mode con subagentes aislados o revisores independientes): simplicidad/YAGNI, reuso, escalabilidad, fallos, seguridad, coste operativo y reversibilidad. Salida: `concepts_brief.md` con hipótesis, veredicto (GO / PIVOT / KILL) y cambios incorporados. Si el veredicto es KILL, detén la generación. Recomendado, no bloqueante, salvo track `enterprise`.
+Si no se pasó `--goldfish`, omite este paso. Si se pasó, intenta **derribar la idea** con lentes fijos (subagentes aislados o party-mode): simplicidad/YAGNI, reuso, escalabilidad, fallos, seguridad, coste operativo y reversibilidad. Salida: `concepts_brief.md` con hipótesis, veredicto (GO / PIVOT / KILL) y cambios incorporados. Si el veredicto es KILL, detén la generación.
 
 **Paso 0 — Party Mode (opcional, solo si `--party`):**
 

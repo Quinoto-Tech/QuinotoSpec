@@ -17,6 +17,9 @@ Consulta `before_review` y `after_review` con `extension_manager.py hooks --poin
 - `TASK_ID`: El ID de la tarea técnica asociada al branch (ej. `TSK-AUTH-001`).
 - `BRANCH_NAME`: El nombre del branch a revisar (ej. `feature/TSK-AUTH-001-add-login`).
 
+## Flags opcionales
+- `--goldfish [lentes]`: activa la revisión Goldfish con subagentes aislados (Comprehension, Design Critic, Zoom Out, Implementation Readiness). Por defecto **desactivada**, igual que `--party`. Si se pasa sin lentes, usa las 4 por defecto.
+
 **Instrucciones:**
 
 1. **Contexto de la revisión**:
@@ -35,14 +38,14 @@ Consulta `before_review` y `after_review` con `extension_manager.py hooks --poin
       git diff --name-only main...{{BRANCH_NAME}}
       ```
 
-2b. **Goldfish review (contexto aislado) — práctica Elephant-Goldfish**:
-    Antes del veredicto, lanza revisores con **contexto limpio** (subagentes aislados) que NO compartan este hilo:
+2b. **Goldfish review (opcional, solo si `--goldfish`) — práctica Elephant-Goldfish**:
+    Si no se pasó `--goldfish`, omite este paso. Si se pasó, lanza revisores con **contexto limpio** (subagentes aislados) que NO compartan este hilo:
     - **Comprehension**: ¿la propuesta/tarea es auto-contenida?
     - **Design Critic**: fallos de diseño, dependencias ocultas, modos de fallo.
     - **Zoom Out**: simplicidad, YAGNI, reutilización de infraestructura existente.
     - **Implementation Readiness**: rutas/archivos/firmas/tests concretos.
     Consolida hallazgos deduplicados en `.quinoto-spec/reviews/{{TASK_ID}}-goldfish.md` con severidad (BLOCKING / WARN / INFO).
-    Si no puede crear subagentes frescos, detén la revisión y reporta el límite; no simules la revisión.
+    Si no puede crear subagentes frescos, detén la revisión Goldfish y reporta el límite; no simules la revisión (el resto de la revisión puede continuar sin Goldfish).
 
 3. **Checklist de revisión**:
     Valida cada uno de los siguientes puntos y documenta el resultado (✅ / ❌ / ⚠️):
@@ -53,7 +56,7 @@ Consulta `before_review` y `after_review` con `extension_manager.py hooks --poin
     - [ ] **Archivos declarados**: ¿Los archivos modificados coinciden con los declarados en la columna "Archivos a Modificar" de la tarea?
     - [ ] **Sin regresiones**: ¿La suite de tests completa pasa sin errores?
     - [ ] **Compliance constitucional**: si la constitución está activa, ¿cada principio aplicable tiene evidencia o una excepción aprobada?
-    - [ ] **Goldfish review**: ¿existe `.quinoto-spec/reviews/{{TASK_ID}}-goldfish.md` con revisión de contexto limpio y no hay hallazgos BLOCKING sin resolver?
+    - [ ] **Goldfish review** *(solo si `--goldfish`)*: ¿existe `.quinoto-spec/reviews/{{TASK_ID}}-goldfish.md` y no hay hallazgos BLOCKING sin resolver?
     - [ ] **Sin deuda técnica obvia**: ¿No hay TODOs sin resolver, console.logs, o código comentado que no debería estar?
 
 4. **Feedback recibido**:
