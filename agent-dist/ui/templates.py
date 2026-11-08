@@ -547,13 +547,18 @@ def render_markdown(text):
             i += 1
             continue
         if stripped.startswith("```"):
+            lang = stripped[3:].strip().lower()
             code_lines = []
             i += 1
             while i < n and not lines[i].strip().startswith("```"):
                 code_lines.append(lines[i])
                 i += 1
             i += 1
-            out.append("<pre><code>%s</code></pre>" % html.escape("\n".join(code_lines)))
+            code = "\n".join(code_lines)
+            if lang == "mermaid":
+                out.append('<div class="mermaid">%s</div>' % html.escape(code))
+            else:
+                out.append("<pre><code>%s</code></pre>" % html.escape(code))
             continue
         m = re.match(r"^(#{1,6})\s+(.*)$", stripped)
         if m:
@@ -617,7 +622,10 @@ def discovery_file_page(data):
     content = data["content"]
     return (
         "<h1>Discovery · %s</h1><p class=\"sub\"><a href=\"/discovery\">← Discovery</a></p>"
-        '<div class="card md-content">%s</div>' % (esc(name), render_markdown(content))
+        '<div class="card md-content">%s</div>'
+        '<script src="/static/mermaid.min.js"></script>'
+        '<script>window.addEventListener("load",function(){if(window.mermaid){try{mermaid.initialize({startOnLoad:true,theme:document.body.classList.contains("light")?"default":"dark"});mermaid.run();}catch(e){}}});</script>'
+        % (esc(name), render_markdown(content))
     )
 
 

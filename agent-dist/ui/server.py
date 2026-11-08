@@ -104,8 +104,23 @@ class Handler(BaseHTTPRequestHandler):
             if route == "/api/summary":
                 self._send(200, json.dumps(State.refresh(self._project), ensure_ascii=False, indent=2), "application/json; charset=utf-8")
                 return
-            if route == "/static/style.css":
-                self._send(200, templates.STYLE, "text/css; charset=utf-8")
+            if route.startswith("/static/"):
+                name = route[len("/static/"):].strip("/")
+                static_dir = Path(__file__).resolve().parent / "static"
+                if name == "style.css":
+                    self._send(200, templates.STYLE, "text/css; charset=utf-8")
+                    return
+                target = (static_dir / name).resolve()
+                if static_dir.resolve() not in target.parents and target != static_dir.resolve():
+                    self._send(404, "not found")
+                    return
+                if target.is_file():
+                    import mimetypes
+
+                    mime = mimetypes.guess_type(str(target))[0] or "application/octet-stream"
+                    self._send(200, target.read_bytes(), mime)
+                    return
+                self._send(404, "not found")
                 return
 
             summary = State.refresh(self._project)
