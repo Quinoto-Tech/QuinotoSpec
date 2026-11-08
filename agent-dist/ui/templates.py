@@ -2,6 +2,7 @@
 """templates -- render HTML server-side para la UI (sin dependencias externas)."""
 
 import html
+import re
 
 STATUS_LABELS = {
     "proposed": "Propuesta",
@@ -88,6 +89,23 @@ body.light {
   --warn: #9a6700; --danger: #c0392b; --ok: #1f8a3a;
 }
 .theme-toggle { padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel2); color: var(--text); cursor: pointer; font-size: 12px; }
+.md-content { line-height: 1.6; }
+.md-content h1, .md-content h2, .md-content h3, .md-content h4 { color: var(--text); margin: 18px 0 8px; }
+.md-content h1 { font-size: 20px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.md-content h2 { font-size: 17px; }
+.md-content h3 { font-size: 15px; }
+.md-content p { margin: 8px 0; }
+.md-content ul, .md-content ol { margin: 8px 0; padding-left: 22px; }
+.md-content li { margin: 4px 0; }
+.md-content code { background: var(--panel2); padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.md-content pre { background: var(--panel2); padding: 12px; border-radius: 8px; overflow-x: auto; }
+.md-content pre code { background: none; padding: 0; }
+.md-content blockquote { border-left: 3px solid var(--accent); padding-left: 12px; color: var(--muted); margin: 8px 0; }
+.md-content hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.md-content table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+.md-content th, .md-content td { padding: 8px 10px; border: 1px solid var(--border); }
+.md-content th { background: var(--panel2); }
+.md-content a { color: var(--accent); }
 """
 
 
@@ -488,12 +506,118 @@ def projects_page(summary):
     return "<h1>Proyectos</h1><p class=\"sub\">%s proyecto(s) · read-only</p>%s" % (len(projects), table)
 
 
+def _inline_markdown(text):
+    # codigo inline
+    text = re.sub(r"`([^`]+)`", r"<code>\1</code>", text)
+    # negrita
+    text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
+    # italica
+    text = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", text)
+    # enlaces
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2" target="_blank" rel="noopener">\1</a>', text)
+    return text
+
+
+def _is_block_start(stripped):
+    if stripped == "":
+        return True
+    if stripped.startswith("```"):
+        return True
+    if re.match(r"^#{1,6}\s", stripped):
+        return True
+    if re.match(r"^(-{3,}|\*{3,}|_{3,})$", stripped):
+        return True
+    if stripped.startswith(">"):
+        return True
+    if re.match(r"^[-*+]\s", stripped):
+        return True
+    if re.match(r"^\d+\.\s", stripped):
+        return True
+    return False
+
+
+def render_markdown(text):
+    lines = (text or "").splitlines()
+    out = []
+    i = 0
+    n = len(lines)
+    while i < n:
+        stripped = lines[i].strip()
+        if stripped == "":
+            i += 1
+            continue
+        if stripped.startswith("```"):
+            code_lines = []
+            i += 1
+            while i < n and not lines[i].strip().startswith("```"):
+                code_lines.append(lines[i])
+                i += 1
+            i += 1
+            out.append("<pre><code>%s</code></pre>" % html.escape("\n".join(code_lines)))
+            continue
+        m = re.match(r"^(#{1,6})\s+(.*)$", stripped)
+        if m:
+            level = len(m.group(1))
+            out.append("<h%d>%s</h%d>" % (level, _inline_markdown(html.escape(m.group(2))), level))
+            i += 1
+            continue
+        if re.match(r"^(-{3,}|\*{3,}|_{3,})$", stripped):
+            out.append("<hr>")
+            i += 1
+            continue
+        if stripped.startswith(">"):
+            quote_lines = []
+            while i < n and lines[i].strip().startswith(">"):
+                quote_lines.append(lines[i].strip().lstrip(">").strip())
+                i += 1
+            out.append("<blockquote>%s</blockquote>" % "<br>".join(_inline_markdown(html.escape(l)) for l in quote_lines))
+            continue
+        if re.match(r"^[-*+]\s", stripped):
+            items = []
+            while i < n and re.match(r"^[-*+]\s", lines[i].strip()):
+                items.append(re.sub(r"^[-*+]\s+", "", lines[i].strip()))
+                i += 1
+            out.append("<ul>%s</ul>" % "".join("<li>%s</li>" % _inline_markdown(html.escape(it)) for it in items))
+            continue
+        if re.match(r"^\d+\.\s", stripped):
+            items = []
+            while i < n and re.match(r"^\d+\.\s", lines[i].strip()):
+                items.append(re.sub(r"^\d+\.\s+", "", lines[i].strip()))
+                i += 1
+            out.append("<ol>%s</ol>" % "".join("<li>%s</li>" % _inline_markdown(html.escape(it)) for it in items))
+            continue
+        # tabla simple (opcional)
+        if "|" in stripped and i + 1 < n and re.match(r"^\|?[\s\-:|]+\|?$", lines[i + 1].strip()):
+            header = [c.strip() for c in stripped.strip("|").split("|")]
+            i += 2
+            rows = []
+            while i < n and "|" in lines[i]:
+                cells = [c.strip() for c in lines[i].strip().strip("|").split("|")]
+                rows.append(cells)
+                i += 1
+            head_html = "".join("<th>%s</th>" % _inline_markdown(html.escape(h)) for h in header)
+            body_html = "".join(
+                "<tr>%s</tr>" % "".join("<td>%s</td>" % _inline_markdown(html.escape(c)) for c in row) for row in rows
+            )
+            out.append("<table><thead><tr>%s</tr></thead><tbody>%s</tbody></table>" % (head_html, body_html))
+            continue
+        para = []
+        while i < n and lines[i].strip() != "" and not _is_block_start(lines[i].strip()):
+            para.append(lines[i].strip())
+            i += 1
+        if para:
+            out.append("<p>%s</p>" % _inline_markdown(html.escape(" ".join(para))))
+            continue
+        i += 1
+    return "\n".join(out)
+
+
 def discovery_file_page(data):
     name = data["name"]
     content = data["content"]
     return (
         "<h1>Discovery · %s</h1><p class=\"sub\"><a href=\"/discovery\">← Discovery</a></p>"
-        "<pre>%s</pre>" % (esc(name), esc(content))
+        '<div class="card md-content">%s</div>' % (esc(name), render_markdown(content))
     )
 
 
