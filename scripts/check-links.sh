@@ -85,7 +85,8 @@ while IFS= read -r -d '' md_file; do
             check_internal_link "$link" "$md_file"
         fi
     done < <(grep -oE '\[[^]]*\]\([^)]+\)' "$md_file" 2>/dev/null | sed -E 's/.*\(([^)]+)\)/\1/' || true)
-done < <(find "$PROJECT_ROOT" -maxdepth 1 -name "*.md" -print0 2>/dev/null; find "$PROJECT_ROOT/agent-dist" -name "*.md" -print0 2>/dev/null)
+done < <(find "$PROJECT_ROOT" -maxdepth 1 -name "*.md" -print0 2>/dev/null; \
+         find "$PROJECT_ROOT/agent-dist" "$PROJECT_ROOT/docs" "$PROJECT_ROOT/examples" "$PROJECT_ROOT/extensions" -name "*.md" -print0 2>/dev/null)
 
 echo ""
 echo "=========================================="

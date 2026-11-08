@@ -16,6 +16,10 @@ Blood-Bond forma un "vínculo de sangre" con tu patrón de trabajo:
 - Predice qué viene después
 - Te avisa proactivamente cuando llevas mucho sin actividad
 
+## Arquitectura
+
+Los 4 entrypoints (`blood-bond`, `-analyzer`, `-predictor`, `-monitor`) comparten `agent-dist/lib/quinotospec_common.py` (`resolve_root`, `load_contract_module`); cada uno solo aporta su CLI y su lógica de dominio. No copies helpers: reutiliza el módulo común.
+
 ---
 
 ## Comandos

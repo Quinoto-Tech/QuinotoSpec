@@ -5,6 +5,8 @@ description: Generar o enmendar la constitución del proyecto con principios ver
 
 # Skill: QuinotoSpec Constitution
 
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.constitution.md`. Esta skill es la versión condensada e invocable; si agrega pasos al workflow, sincronizalos aqui.
+
 Usa esta skill cuando el usuario solicite definir, activar o enmendar `.quinoto-spec/constitution.md`.
 
 ## Contrato
@@ -32,6 +34,7 @@ Usa esta skill cuando el usuario solicite definir, activar o enmendar `.quinoto-
 - [ ] Los quality gates indican cómo verificarlos.
 - [ ] TDD y verify-before-done siguen siendo obligatorios.
 - [ ] La aprobación del usuario está registrada.
+- [ ] `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict` pasa sin errores (cuando existe `.quinoto-spec/`).
 - [ ] El estado final es `draft` o `active` de forma explícita.
 
 ## Integración

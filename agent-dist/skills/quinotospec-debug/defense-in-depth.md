@@ -1,4 +1,4 @@
-# Defense in depth
+# Defensa en profundidad
 
 ## Principio
 

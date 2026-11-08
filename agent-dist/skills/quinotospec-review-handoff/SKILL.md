@@ -3,15 +3,21 @@ name: quinotospec-review-handoff
 description: Genera una guia de code review para el revisor humano cuando una propuesta esta completada, consolidando propuesta, historias, tareas, evidencia, changelog y cambios en git en un solo archivo
 ---
 
-# Workflow: Review Handoff
+# Skill: Review Handoff
 
-Este workflow se ejecuta cuando una propuesta esta completada (todas sus tareas corrieron) y **antes** de `/quinotospec.archive`. Genera un archivo autonomo — `CODE_REVIEW_GUIDE.md` — que sirve de guia a la persona que hara el code review, consolidando en un solo documento todo el contexto disperso de `.quinoto-spec/` y del historial git.
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.review-handoff.md`. Esta skill es la versión condensada e invocable; si agrega pasos al workflow, sincronizalos aqui.
+
+Esta skill se ejecuta cuando una propuesta esta completada (todas sus tareas corrieron) y **antes** de `/quinotospec.archive`. Genera un archivo autonomo — `CODE_REVIEW_GUIDE.md` — que sirve de guia a la persona que hara el code review, consolidando en un solo documento todo el contexto disperso de `.quinoto-spec/` y del historial git.
 
 > ⚠️ Orden del ciclo: `apply` → `mark-done` → **`review-handoff`** (esta skill) → code review humano (feedback via `quinotospec-receive-review`) → `archive`.
 
 Diferencia con `/quinotospec.review`: ese workflow hace que **el agente** revise **una tarea/branch** contra sus criterios. Esta skill no revisa codigo: **prepara el terreno** para que **un humano** revise **la propuesta completa** con todo el contexto necesario.
 
-**Parametros Requeridos:**
+## Extension hooks
+
+Consulta `before_review_handoff` y `after_review_handoff` con `extension_manager.py hooks --point <point> --json`. Ejecuta hooks automaticos solo con `--run --yes` y adjunta sus resultados a la guia.
+
+## Parametros Requeridos
 - `PROPOSAL_SLUG`: El slug de la propuesta completada (ej. `2026-09-24-add-login`).
 
 **Flags:**

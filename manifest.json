@@ -10,10 +10,10 @@
   "phase_2_status": "complete",
   "phase_3_status": "in_progress",
   "scope_policy": "freeze-new-features",
-  "approved_exceptions": ["F1.1-F1.7", "F2.3-F2.5", "F3.2", "F3.3"],
+  "approved_exceptions": ["F1.1-F1.7", "F2.3-F2.5", "F3.2", "F3.3", "HYG-A: quinotospec.flow prompt-only (resuelve referencias muertas del router Enterprise)"],
   "contract_version": 1,
-  "workflows": 47,
-  "skills": 90,
+  "workflows": 48,
+  "skills": 94,
   "rules": 18,
   "agents": 9,
   "templates": 13,
@@ -104,7 +104,8 @@
     "Huginn & Muninn computes deterministic stdlib entropy metrics (H_size, H_testing, S_proxy) but does not yet track historical trends or contract drift.",
     "Skald syncs README badges and verifies table parity; it does not translate prose between locales.",
     "Transactional installer rollback and ownership-safe uninstall are implemented; legacy installations without an ownership manifest require manual migration, and Bifrost/Battle Frenzy still require safety validation.",
-    "OpenCode v2 plugin uses a zero-dependency plain object export (no @opencode-ai/plugin import). This avoids requiring the user to have bun/npm and a package.json in their config directory, but relies on the OpenCode v2 loader accepting a plain {id, setup} object without Plugin.define()."
+    "OpenCode v2 plugin uses a zero-dependency plain object export (no @opencode-ai/plugin import). This avoids requiring the user to have bun/npm and a package.json in their config directory, but relies on the OpenCode v2 loader accepting a plain {id, setup} object without Plugin.define().",
+    "The OpenCode v1 plugin path (plugins/opencode/quinotospec-plugin.js) is legacy: it is only installed when OpenCode major is 1 and receives no new features. OpenCode v2 is the recommended path."
   ],
   "supported_ides": [
     "opencode",

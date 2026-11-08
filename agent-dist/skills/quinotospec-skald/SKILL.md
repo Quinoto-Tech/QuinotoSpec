@@ -40,7 +40,7 @@ Skald lee `discovery/8 files + specs/ + schema.yaml` y genera `.quinoto-spec/onb
 | general | balanceado |
 | simple | lenguaje sin jerga, analogias |
 
-Template unico `agent-dist/templates/skald-template.md` con bloques condicionales `{{#role=developer}}...{{/role}}` — no 5 templates.
+Template unico con bloques condicionales `{{#role=developer}}...{{/role}}` — no 5 templates. Hoy vive inline en este `SKILL.md` (seccion Estructura); si se promueve a plantilla central ira en `agent-dist/templates/skald-template.md` (ubicacion futura, NO referenciarla hasta que exista).
 
 Compatibilidad: las 5 skills legacy `quinotospec-onboard-*` ahora son shims que invocan `quinotospec-skald --role X` (1 linea).
 
@@ -66,9 +66,7 @@ bash agent-dist/skills/quinotospec-skald/sync-readme.sh           # aplica sync
 ```
 agent-dist/skills/quinotospec-skald/
 ├── SKILL.md
-├── sync-readme.sh
-└── templates/
-    └── skald-template.md  (futuro, hoy inline)
+└── sync-readme.sh
 ```
 
 ## Reglas

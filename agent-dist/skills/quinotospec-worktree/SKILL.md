@@ -76,7 +76,7 @@ Antes de crear nada:
    Si el branch ya existe y está libre, adjúntalo sin crear otro branch. Nunca dupliques la creación del branch con `git checkout -b`.
 8. Cambia explícitamente el contexto operativo al worktree creado y repite las verificaciones del Step 0.
 
-## Project Setup
+## Configuracion del proyecto
 
 Después de aislar el workspace:
 

@@ -117,6 +117,38 @@ fi
 echo ""
 
 # ==========================================================================
+# quinotospec-search -- wrapper filtrado sobre el indice BM25 de Mimir
+# ==========================================================================
+echo "--- Search (wrapper filtrado sobre Mimir) ---"
+SEARCH_SKILL="$PROJECT_ROOT/agent-dist/skills/quinotospec-search/search.py"
+
+# Reindexar la fixture (el drift anterior la dejo STALE)
+python3 -B "$MIMIR_DIR/index.py" --root "$MIMIR_WORK" --full >/dev/null 2>&1 || true
+
+FILTERED=$(python3 -B "$SEARCH_SKILL" --root "$MIMIR_WORK" --query "TOTP" --type spec 2>&1)
+RC=0
+echo "$FILTERED" | grep -q "delta-specs/auth/spec.md" || RC=$?
+check "search.py --type spec encuentra el delta-spec de auth" "$RC"
+
+FILTERED_JSON=$(python3 -B "$SEARCH_SKILL" --root "$MIMIR_WORK" --query "TOTP" --json 2>&1)
+RC=0
+echo "$FILTERED_JSON" | python3 -c '
+import json, sys
+data = json.load(sys.stdin)
+assert data["schema_version"] == 1
+assert data["count"] >= 1
+assert data["results"][0]["file"]
+' || RC=$?
+check "search.py --json devuelve schema_version y resultados" "$RC"
+
+NO_MATCH=$(python3 -B "$SEARCH_SKILL" --root "$MIMIR_WORK" --query "qxzvwplm" 2>&1)
+RC=0
+echo "$NO_MATCH" | grep -q "Sin resultados" || RC=$?
+check "search.py sin coincidencias reporta vacio" "$RC"
+
+echo ""
+
+# ==========================================================================
 # Valkyrie -- triage y scoring de propuestas
 # ==========================================================================
 echo "--- Valkyrie (triage/scoring) ---"

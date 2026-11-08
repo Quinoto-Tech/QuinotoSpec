@@ -3,7 +3,9 @@ name: quinotospec-update-agents
 description: Genera AGENTS.md dinámicamente desde config.yaml, inventario activo, extensiones y contexto de discovery.
 ---
 
-# Update Agents
+# Skill: Update Agents
+
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.update-agents.md`. Esta skill expone la capacidad de regeneración; cualquier divergencia se resuelve sincronizando este archivo con el workflow.
 
 Regenera el `AGENTS.md` del proyecto sin editarlo manualmente.
 

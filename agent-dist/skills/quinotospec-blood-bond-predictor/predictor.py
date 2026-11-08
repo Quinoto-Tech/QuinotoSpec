@@ -23,23 +23,11 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "lib"))
+from quinotospec_common import resolve_root  # noqa: E402
+
 TASK_ID_PATTERN = re.compile(r"TSK-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*-\d+")
 
-def resolve_root(argv):
-    args = list(argv)
-    root = None
-    if "--root" in args:
-        i = args.index("--root")
-        if i + 1 < len(args):
-            root = args[i + 1]
-            del args[i:i + 2]
-        else:
-            del args[i:i + 1]
-    if root is None:
-        root = os.environ.get("QUINOTOSPEC_BLOOD_BOND_ROOT") or os.environ.get("BLOOD_BOND_ROOT")
-    if root is None:
-        root = "."
-    return Path(root).resolve(), args
 
 
 def parse_args(rest):
@@ -399,7 +387,7 @@ def generate_markdown(analysis, suggestions, alerts, limit):
 
 
 def main():
-    root, rest = resolve_root(sys.argv[1:])
+    root, rest = resolve_root(sys.argv[1:], ("QUINOTOSPEC_BLOOD_BOND_ROOT", "BLOOD_BOND_ROOT"))
     force, limit = parse_args(rest)
 
     blood_dir = root / ".quinoto-spec" / "blood-bond"

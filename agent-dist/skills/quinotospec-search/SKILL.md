@@ -1,78 +1,53 @@
 ---
 name: quinotospec-search
-description: Busqueda inteligente en todo el directorio .quinoto-spec/ con filtros avanzados por tipo, estado, fecha y prefijo.
+description: Búsqueda filtrada sobre el índice BM25 de Mimir con citas file:line, filtros por tipo, prefijo, fecha y estado.
 ---
 
 # Skill: quinotospec-search
 
-Busqueda inteligente y filtrada dentro del directorio `.quinoto-spec/` del proyecto. Permite encontrar propuestas, tareas, user stories y archivos de discovery rapidamente.
+Busqueda inteligente y filtrada dentro de `.quinoto-spec/` y del changelog del proyecto. **Backend unico: el indice BM25 de `quinotospec-mimir`** — esta skill no mantiene un motor paralelo, solo agrega filtros que el indice no aplica por si solo.
 
-## Instrucciones de Ejecucion
+> Fuente de verdad del scoring: `agent-dist/skills/quinotospec-mimir/search.py` (BM25, `k1=1.5`, `b=0.75`, solo stdlib). Esta skill construye/usa `.quinoto-spec/mimir/index.json` y filtra `chunk` por metadatos.
 
-### Paso 1 - Identificar Parametros
-Recibe los siguientes parametros del usuario:
-- `--query`: Texto o patron a buscar (requerido)
-- `--type`: Tipo de archivo (`proposal`, `task`, `story`, `discovery`, `all`) (default: `all`)
-- `--status`: Filtrar por estado (`en-curso`, `completada`, `archivada`) (opcional)
-- `--since`: Filtrar por fecha minima (formato: `YYYY-MM-DD`) (opcional)
-- `--prefix`: Filtrar por prefijo de propuesta (ej. `AUTH`, `PAY`) (opcional)
-- `--output`: Formato de salida (`text`, `json`) (default: `text`)
+## Cuando usar
 
-### Paso 2 - Ejecutar Busqueda
-1. Determina el directorio raiz del proyecto (donde esta `.quinoto-spec/`)
-2. Segun `--type`, busca en:
-   - `proposal`: `.quinoto-spec/proposals/*/proposal.md`
-   - `task`: `.quinoto-spec/proposals/*/*_tasks.md`
-   - `story`: `.quinoto-spec/proposals/*/user-stories.md`
-   - `discovery`: `.quinoto-spec/discovery/*.md`
-   - `all`: Todos los anteriores
-3. Aplica filtros adicionales (`--status`, `--since`, `--prefix`)
-4. Para cada resultado, extrae:
-   - Ruta del archivo
-   - Linea donde aparece el match
-   - Contexto (2 lineas antes y despues)
-   - Estado del elemento (si aplica)
+- Buscar un termino en discovery, specs, propuestas y changelog con cita `file:line`
+- Localizar tareas o stories por prefijo antes de abrir una propuesta
+- Encontrar decisiones previas (evita duplicar con `mimir --trace`)
 
-### Paso 3 - Formatear Resultados
-- **Modo text**: Muestra resultados en formato legible con colores
-- **Modo json**: Muestra array JSON con estructura estandar
+## Invocacion
 
-## Ejemplos
-
-### Busqueda Basica
-```
-/quinotospec-search --query "autenticacion"
-```
-
-### Busqueda Filtrada por Tipo
-```
-/quinotospec-search --query "login" --type task
-```
-
-### Busqueda por Prefijo y Estado
-```
-/quinotospec-search --query "endpoint" --prefix AUTH --status en-curso
-```
-
-### Busqueda con Output JSON
-```
-/quinotospec-search --query "security" --output json
+```bash
+python3 -B agent-dist/skills/quinotospec-search/search.py --root . --query "autenticacion"
+python3 -B agent-dist/skills/quinotospec-search/search.py --root . --query "login" --type task
+python3 -B agent-dist/skills/quinotospec-search/search.py --root . --query "endpoint" --prefix AUTH --since 2026-01-01
+python3 -B agent-dist/skills/quinotospec-search/search.py --root . --query "security" --json --limit 5
+python3 -B agent-dist/skills/quinotospec-search/search.py --root . --query "criterios" --cite
 ```
 
 ## Parametros
 
-| Parametro | Descripcion | Requerido | Default |
-|-----------|-------------|-----------|---------|
-| `--query` | Texto o patron a buscar | Si | N/A |
-| `--type` | Tipo de archivo (proposal, task, story, discovery, all) | No | all |
-| `--status` | Estado (en-curso, completada, archivada) | No | N/A |
-| `--since` | Fecha minima (YYYY-MM-DD) | No | N/A |
-| `--prefix` | Prefijo de propuesta (ej. AUTH) | No | N/A |
-| `--output` | Formato de salida (text, json) | No | text |
+| Parametro | Descripcion | Default |
+|-----------|-------------|---------|
+| `--query TEXT` | Texto a buscar (tambien acepta la query como posicional) | requerido |
+| `--type` | `all`, `proposal`, `task`, `story`, `discovery`, `spec` | `all` |
+| `--prefix` | Prefijo de propuesta (ej. `AUTH`, `PAY`) | — |
+| `--since` | Fecha minima `YYYY-MM-DD` (usa metadato `fecha` o prefijo del nombre) | — |
+| `--status` | Estado declarado (`En Curso`, `Completada`, `Archivada`) | — |
+| `--limit N` | Maximo de resultados | `10` |
+| `--cite` | Incluye hasta 6 lineas de contexto por resultado | off |
+| `--json` | Salida JSON con estructura estable | off |
 
-## Notas Importantes
+## Comportamiento
 
-- La busqueda es case-insensitive por defecto
-- Soporta expresiones regulares en `--query`
-- Si `.quinoto-spec/` no existe, reporta error sugestivo: "Ejecuta @quinotospec.discovery primero"
-- Resultados ordenados por relevancia (mas coincidencias primero)
+1. **Indice**: si `.quinoto-spec/mimir/index.json` no existe, ejecuta `quinotospec-mimir/index.py` una vez para construirlo. Si sospechas staleness, corre `index.py --full`.
+2. **Scoring**: delega en `quinotospec-mimir/search.py` (`bm25_search`), sin re-tokenizar el corpus por su cuenta.
+3. **Filtros**: se aplican sobre los metadatos del `chunk` (archivo, prefijo, fecha) y, para `--status`, sobre el `**Estado:**` del archivo de la propuesta.
+4. **Salida**: `file:line_start-line_end`, score y metadatos en texto; array JSON con `schema_version: 1` en modo `--json`.
+
+## Notas
+
+- La busqueda es case-insensitive; los terminos siguen la tokenizacion BM25 de Mimir (sin stopwords externas).
+- Si `.quinoto-spec/` no existe, el indice queda vacio: ejecuta `@quinotospec.discovery` primero.
+- Para linaje de un prefijo (propuesta → stories → tareas → changelog) usa `/quinotospec-mimir --trace PREFIX`.
+- `INDEX.md` y `.quinoto-spec/mimir/` son artefactos regenerables, no fuente de verdad.

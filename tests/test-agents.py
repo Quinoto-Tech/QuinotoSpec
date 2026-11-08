@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -61,6 +62,20 @@ class AgentsTests(unittest.TestCase):
             code, result = self.run_generator(root, "--config", str(root / ".quinoto-spec/config.yaml"), "--check")
             self.assertEqual(code, 1)
             self.assertTrue(result["changed"])
+
+    def test_agent_personality_parity(self):
+        """agent-defaults.toml es la fuente canonica; agents/*.md debe coincidir."""
+        defaults = (ROOT / "agent-dist/config/agent-defaults.toml").read_text(encoding="utf-8")
+        blocks = {}
+        for match in re.finditer(r"^\[agents\.([a-z-]+)\]\n(.*?)(?=^\[|\Z)", defaults, re.M | re.S):
+            personality = re.search(r'^personality = "(.*)"$', match.group(2), re.M)
+            if personality:
+                blocks[match.group(1)] = personality.group(1)
+        self.assertEqual(len(blocks), 9, blocks)
+        for key, personality in blocks.items():
+            content = (ROOT / "agent-dist/agents" / (key + ".md")).read_text(encoding="utf-8")
+            section = content.split("## Personalidad", 1)[1].split("\n## ", 1)[0].strip()
+            self.assertEqual(section, personality, key)
 
     def test_registry_extensions_are_rendered(self):
         with tempfile.TemporaryDirectory() as directory:

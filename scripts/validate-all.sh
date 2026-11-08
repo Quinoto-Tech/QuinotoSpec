@@ -113,32 +113,78 @@ fi
 echo ""
 
 # 5. Validar estructura de agent-dist
+# Los conteos esperados vienen de manifest.json (fuente unica); el disco debe
+# coincidir EXACTAMENTE para que no existan inventarios desincronizados.
 echo "--- Structure Validation ---"
-EXPECTED_COUNTS=("workflows:47" "skills:90" "rules:18" "agents:9" "templates:13")
-for expected in "${EXPECTED_COUNTS[@]}"; do
-    dir="${expected%%:*}"
-    count="${expected##*:}"
-    case "$dir" in
-        skills)
-            actual=$(find "$PROJECT_ROOT/agent-dist/$dir" -type f -name "SKILL.md" 2>/dev/null | wc -l)
-            ;;
-        rules)
-            actual=$(grep -c '^# ' "$PROJECT_ROOT/agent-dist/rules/quinotospec-rules.md" 2>/dev/null || true)
-            ;;
-        templates)
-            actual=$(find "$PROJECT_ROOT/agent-dist/$dir" -maxdepth 1 -type f \( -name "*.md" -o -name "*.yaml" -o -name "*.yml" \) 2>/dev/null | wc -l)
-            ;;
-        *)
-            actual=$(find "$PROJECT_ROOT/agent-dist/$dir" -maxdepth 1 -type f -name "*.md" 2>/dev/null | wc -l)
-            ;;
-    esac
-    if [ "$actual" -ge "$count" ]; then
-        echo "  $dir: $actual files (expected >= $count)"
-    else
-        echo "  $dir: $actual files (expected >= $count) - MISSING"
-        ERRORS=$((ERRORS + 1))
-    fi
-done
+if [ ! -f "$PROJECT_ROOT/manifest.json" ]; then
+    echo "  manifest.json not found: no hay fuente de conteos"
+    ERRORS=$((ERRORS + 1))
+elif ! command -v python3 >/dev/null 2>&1; then
+    echo "  python3 not found: no se pueden derivar conteos"
+    ERRORS=$((ERRORS + 1))
+else
+    mapfile -t EXPECTED_COUNTS < <(python3 -B - "$PROJECT_ROOT/manifest.json" <<'PY'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+for key in ("workflows", "skills", "rules", "agents", "templates"):
+    print("%s:%s" % (key, data[key]))
+PY
+)
+    for expected in "${EXPECTED_COUNTS[@]}"; do
+        dir="${expected%%:*}"
+        count="${expected##*:}"
+        case "$dir" in
+            skills)
+                actual=$(find "$PROJECT_ROOT/agent-dist/$dir" -type f -name "SKILL.md" 2>/dev/null | wc -l)
+                ;;
+            rules)
+                actual=$(grep -c '^# ' "$PROJECT_ROOT/agent-dist/rules/quinotospec-rules.md" 2>/dev/null || true)
+                ;;
+            templates)
+                actual=$(find "$PROJECT_ROOT/agent-dist/$dir" -maxdepth 1 -type f \( -name "*.md" -o -name "*.yaml" -o -name "*.yml" \) 2>/dev/null | wc -l)
+                ;;
+            *)
+                actual=$(find "$PROJECT_ROOT/agent-dist/$dir" -maxdepth 1 -type f -name "*.md" 2>/dev/null | wc -l)
+                ;;
+        esac
+        actual=$((actual))
+        if [ "$actual" -eq "$count" ]; then
+            echo "  $dir: $actual files (manifest: $count)"
+        elif [ "$actual" -gt "$count" ]; then
+            echo "  $dir: $actual files > manifest $count - actualiza manifest.json"
+            ERRORS=$((ERRORS + 1))
+        else
+            echo "  $dir: $actual files < manifest $count - faltan archivos"
+            ERRORS=$((ERRORS + 1))
+        fi
+    done
+fi
+echo ""
+
+# 5b. Validar drift funcional skill <-> workflow
+echo "--- Skill/Workflow Drift ---"
+DRIFT_ARGS=(--root "$PROJECT_ROOT")
+if [ "$STRICT" = true ]; then
+    DRIFT_ARGS+=(--warnings-as-errors)
+fi
+if python3 -B "$SCRIPT_DIR/check-skill-workflow-drift.py" "${DRIFT_ARGS[@]}"; then
+    echo "  Drift check OK"
+else
+    echo "  DRIFT: una skill perdio capacidades presentes en su workflow"
+    ERRORS=$((ERRORS + 1))
+fi
+echo ""
+
+# 5c. Validar paridad estructural README ES/EN
+echo "--- README Parity (ES/EN) ---"
+if python3 -B "$SCRIPT_DIR/check-readme-parity.py" --root "$PROJECT_ROOT"; then
+    echo "  README parity OK"
+else
+    echo "  DRIFT: README.md y README_EN.md difieren en estructura"
+    ERRORS=$((ERRORS + 1))
+fi
 echo ""
 
 # 6. Validar runtime de bootstrap

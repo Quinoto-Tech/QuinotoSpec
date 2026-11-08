@@ -3,7 +3,13 @@ name: quinotospec-archive
 description: Archiva propuestas, user stories o planes de tareas
 ---
 
-# Workflow: Archive
+# Skill: Archive
+
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.archive.md`. Esta skill es la versión invocable; si agrega pasos al workflow, sincronizalos aqui.
+
+## Extension hooks
+
+Consulta `before_archive` y `after_archive` con `extension_manager.py hooks --point <point> --json`. No muevas artefactos si un hook automático falla; requiere `--run --yes` y evidencia del resultado.
 
 Este workflow permite archivar elementos de la especificación técnica que han sido completados para limpiar el espacio de trabajo.
 

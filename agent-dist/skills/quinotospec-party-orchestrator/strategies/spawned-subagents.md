@@ -1,6 +1,6 @@
-# Strategy: Spawned Subagents
+# Estrategia: Subagentes Lanzados
 
-## When to Use
+## Cuando usar
 
 - Analisis profundo que requiere contexto aislado
 - Cuando se necesita independencia real entre agentes (no sesgo de grupo)
@@ -8,7 +8,7 @@
 - Temas complejos que requieren razonamiento extenso
 - Cuando hay suficiente presupuesto de tokens para multiples subagentes
 
-## How It Works
+## Como funciona
 
 Cada agente es un subagente independiente con su propio contexto aislado. No comparten sesion con el orquestador ni entre ellos. El orquestador recolecta resultados y los comparte en rondas posteriores.
 
@@ -131,9 +131,9 @@ Formato: viñetas con "Accion: [que] | Responsable: [quien] | Prioridad: [P1/P2/
 
 ---
 
-## Prompt Construction Guidelines
+## Guias para construir prompts
 
-### Context Injection
+### Inyeccion de contexto
 
 Cada subagente recibe:
 
@@ -152,7 +152,7 @@ Cada subagente recibe:
    - El FOCUS si existe
    - Lo que el usuario quiere obtener de la discusion
 
-### Context Size Management
+### Gestion del tamano del contexto
 
 - El contexto compartido debe ser < 1000 tokens.
 - Si discovery + specs + proposals excede esto, resumir.
@@ -171,7 +171,7 @@ Cada subagente recibe:
 
 ---
 
-## Comparacion con Voiced by Orchestrator
+## Comparacion con Voiced by Orchestrator (voz del orquestador)
 
 | Dimension | Voiced | Spawned |
 |-----------|--------|---------|

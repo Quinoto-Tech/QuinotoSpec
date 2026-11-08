@@ -16,7 +16,6 @@ Solo stdlib. Unicas llamadas de red posibles son los `git push/fetch` explicitos
 de --sync (heredan la configuracion de remotos de cada repo).
 """
 import hashlib
-import importlib.util
 import json
 import os
 import re
@@ -24,35 +23,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-
-def load_contract():
-    path = Path(__file__).resolve().parents[1] / "quinotospec-contract" / "contract.py"
-    spec = importlib.util.spec_from_file_location("quinotospec_contract_shared", path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "lib"))
+from quinotospec_common import load_contract_module, resolve_root  # noqa: E402
 
 
-CONTRACT = load_contract()
+
+
+CONTRACT = load_contract_module(__file__)
 NOTES_REF = "refs/notes/quinotospec-events"
 
 
-def resolve_root(argv):
-    args = list(argv)
-    root = None
-    if "--root" in args:
-        i = args.index("--root")
-        if i + 1 < len(args):
-            root = args[i + 1]
-            del args[i:i + 2]
-        else:
-            del args[i:i + 1]
-    if root is None:
-        root = os.environ.get("QUINOTOSPEC_BIFROST_ROOT") or os.environ.get("BIFROST_ROOT")
-    if root is None:
-        root = "."
-    return Path(root).resolve(), args
 
 
 def sha1_of(path: Path):
@@ -317,7 +297,7 @@ def cmd_sync(root: Path, rest):
 
 
 def main():
-    root, rest = resolve_root(sys.argv[1:])
+    root, rest = resolve_root(sys.argv[1:], ("QUINOTOSPEC_BIFROST_ROOT", "BIFROST_ROOT"))
     if "--init" in rest:
         sys.exit(cmd_init(root, rest))
     if "--status" in rest:

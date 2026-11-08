@@ -15,7 +15,7 @@ Calcula métricas de compliance del equipo respecto a las reglas de QuinotoSpec.
 - **Cálculo**: (Entradas de changelog / Total de tareas completadas) * 100
 - **Target**: > 90%
 
-### 2. Prefix Registry Usage
+### 2. Uso del registro de prefijos
 
 - **Métrica**: ¿Todas las propuestas tienen prefijo registrado?
 - **Cálculo**: (Propuestas con prefijo / Total propuestas) * 100

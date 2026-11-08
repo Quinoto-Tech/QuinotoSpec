@@ -22,22 +22,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "lib"))
+from quinotospec_common import resolve_root  # noqa: E402
 
-def resolve_root(argv):
-    args = list(argv)
-    root = None
-    if "--root" in args:
-        i = args.index("--root")
-        if i + 1 < len(args):
-            root = args[i + 1]
-            del args[i:i + 2]
-        else:
-            del args[i:i + 1]
-    if root is None:
-        root = os.environ.get("QUINOTOSPEC_BLOOD_BOND_ROOT") or os.environ.get("BLOOD_BOND_ROOT")
-    if root is None:
-        root = "."
-    return Path(root).resolve(), args
+
 
 
 def find_scripts():
@@ -192,7 +180,7 @@ def show_full(root: Path):
 
 
 def main():
-    root, rest = resolve_root(sys.argv[1:])
+    root, rest = resolve_root(sys.argv[1:], ("QUINOTOSPEC_BLOOD_BOND_ROOT", "BLOOD_BOND_ROOT"))
 
     is_suggest = "--suggest" in rest
     is_profile = "--profile" in rest

@@ -1,17 +1,18 @@
 ---
 name: quinotospec-file-creation
-description: Standards and guidelines for creating files, specifically temporary scripts.
+description: Estandares y convenciones para crear archivos, en especial scripts temporales.
 ---
 
-# File Creation & Scripts
+# Creacion de Archivos y Scripts
 
-## Temporary Scripts
-When creating scripts for one-off tasks, data migrations, temporary interactions (e.g., with PDFs, or APIs), or testing snippets:
+## Scripts temporales
+Cuando crees scripts para tareas puntuales, migraciones de datos, interacciones temporales (por ejemplo con PDFs o APIs) o snippets de prueba:
 
-1.  **Location**: ALWAYS place them in the `.quinoto-spec/scripts/` directory at the project root.
-2.  **Naming Convention**: Prefix the filename with `temp_`.
-    -   Example: `.quinoto-spec/scripts/temp_read_pdf.py`
+1. **Ubicacion**: SIEMPRE en el directorio `.quinoto-spec/scripts/` en la raiz del proyecto.
+2. **Convencion de nombre**: prefija el archivo con `temp_`.
+    - Ejemplo: `.quinoto-spec/scripts/temp_read_pdf.py`
 
-## Usage
-- Do not create script files in the project root.
-- Ensure the `.quinoto-spec/scripts/` directory exists before writing.
+## Uso
+- No crees archivos de script en la raiz del proyecto.
+- Verifica que el directorio `.quinoto-spec/scripts/` exista antes de escribir.
+- Los scripts temporales no se commitean: limpialos al terminar la tarea (o usa `scripts/cleanup-temp.sh`).

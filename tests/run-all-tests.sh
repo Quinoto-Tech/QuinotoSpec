@@ -64,6 +64,7 @@ run_suite "Checkers funcionales" "$SCRIPT_DIR/test-checkers.sh"
 run_suite "Artifact Contract" "$SCRIPT_DIR/test-contract.sh"
 run_suite "Skills Nordic" "$SCRIPT_DIR/test-nordic-skills.sh"
 run_suite "Help, Router y Agent Config" "$SCRIPT_DIR/test-help-and-routing.sh"
+run_suite "Skill-Workflow Drift" "$SCRIPT_DIR/test-skill-workflow-drift.sh"
 
 # Verificar que todas las suites test-*.sh en disco hayan sido ejecutadas
 for disk_suite in "$SCRIPT_DIR"/test-*.sh; do

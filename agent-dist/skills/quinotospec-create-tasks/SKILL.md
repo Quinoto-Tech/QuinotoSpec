@@ -3,7 +3,13 @@ name: quinotospec-create-tasks
 description: crea tareas a partir de user stories o desde un RFC (create-rfc)
 ---
 
-# Workflow: Create Tasks
+# Skill: Create Tasks
+
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.create-tasks.md`. Esta skill es la versión invocable; si agrega pasos al workflow, sincronizalos aqui.
+
+## Extension hooks
+
+Consulta `before_tasks` y `after_tasks` con `extension_manager.py hooks --point <point> --json`. Ejecuta hooks automáticos solo con `--run --yes`.
 
 Este workflow genera un plan de tareas técnicas derivado de user stories.
 

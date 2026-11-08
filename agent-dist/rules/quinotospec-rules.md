@@ -61,7 +61,7 @@ trigger: always_on
 # Validación de Sintaxis Pre-Apply
 - **ANTES** de ejecutar `quinotospec.apply`:
     - Ejecuta `quinotospec-syntax-validate --type proposal --slug {SLUG}` para validar la propuesta.
-    - Si la validación de sintaxis falla → **ADVIETE al usuario** con los errores encontrados.
+    - Si la validación de sintaxis falla → **ADVIERTA al usuario** con los errores encontrados.
     - Permite continuar solo si el usuario confirma explícitamente ("¿Continuar a pesar de los errores de sintaxis? [y/N]").
 - Esto previene aplicar tareas basadas en propuestas mal formadas que pueden llevar a implementaciones incorrectas.
 
@@ -108,7 +108,7 @@ trigger: always_on
 # Aprobación Humana Estructurada (BLOQUEANTE)
 - Cuando una regla, configuración crítica, cambio de constitución o movimiento protegido requiera decisión humana, registra un JSON en `.quinoto-spec/approvals/<APPROVAL_ID>.json` antes de habilitar el gate.
 - El registro debe incluir `schema_version`, `approval_id`, `decision`, `subject`, `action`, `requested_by`, `decided_by`, `decided_at`, `rationale` y `scope`.
-- `decision` solo puede ser `approved`, `rejected` o `deferred`; únicamente `approved` habilita el gate y elDispatcher debe verificar que `subject` y `action` coincidan exactamente con la operación.
+- `decision` solo puede ser `approved`, `rejected` o `deferred`; únicamente `approved` habilita el gate y el dispatcher debe verificar que `subject` y `action` coincidan exactamente con la operación.
 - Una aprobación explícita en el chat, una bandera CLI o un texto genérico no sustituyen el registro estructurado cuando se exige este gate.
 - El validador es read-only: no demuestra identidad ni ejecuta comandos; una aprobación vencida, ausente, fuera de alcance o no aprobada bloquea la operación.
 - Usa `approval_validate.py` y registra el ID, actor, fecha, alcance y justificación; nunca edites una aprobación existente para reutilizarla en otra operación.

@@ -73,5 +73,6 @@ verbosity = "alto"
 - Nunca modificar `agent-dist/config/agent-defaults.toml` para personalizar: usar las capas 2/3.
 - `agent-personal.toml` debe estar en `.gitignore`.
 - Un TOML invalido debe fallar con mensaje claro y no aplicar una config parcial.
+- Si la capa es de equipo, registrar la decision con `/quinotospec.update-changelog`.
 - Hot-reload: el helper se ejecuta en cada activacion; no se cachea entre invocaciones.
 - El parser minimo (Python 3.8-3.10) soporta tablas, strings, ints, bools y arrays de escalares.

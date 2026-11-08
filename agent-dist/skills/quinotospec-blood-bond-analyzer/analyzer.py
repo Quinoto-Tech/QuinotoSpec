@@ -18,43 +18,22 @@ Genera: .quinoto-spec/blood-bond/analysis.json
 Solo stdlib. Offline.
 """
 import datetime
-import importlib.util
 import json
-import os
 import re
 import sys
 from collections import Counter
 from pathlib import Path
 
-
-def load_contract():
-    path = Path(__file__).resolve().parents[1] / "quinotospec-contract" / "contract.py"
-    spec = importlib.util.spec_from_file_location("quinotospec_contract_shared", path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "lib"))
+from quinotospec_common import load_contract_module, resolve_root  # noqa: E402
 
 
-CONTRACT = load_contract()
+
+
+CONTRACT = load_contract_module(__file__)
 SPANISH_DAYS = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
 
 
-def resolve_root(argv):
-    args = list(argv)
-    root = None
-    if "--root" in args:
-        i = args.index("--root")
-        if i + 1 < len(args):
-            root = args[i + 1]
-            del args[i:i + 2]
-        else:
-            del args[i:i + 1]
-    if root is None:
-        root = os.environ.get("QUINOTOSPEC_BLOOD_BOND_ROOT") or os.environ.get("BLOOD_BOND_ROOT")
-    if root is None:
-        root = "."
-    return Path(root).resolve(), args
 
 
 def parse_changelog(root: Path):
@@ -381,7 +360,7 @@ def analyze_sprint(total_tasks, avg_per_session, completion_rate):
 
 
 def main():
-    root, rest = resolve_root(sys.argv[1:])
+    root, rest = resolve_root(sys.argv[1:], ("QUINOTOSPEC_BLOOD_BOND_ROOT", "BLOOD_BOND_ROOT"))
     force = "--force" in rest
     output_path = None
     if "--output" in rest:

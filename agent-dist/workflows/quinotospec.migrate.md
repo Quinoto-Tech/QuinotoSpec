@@ -43,7 +43,7 @@ Segun la version destino, aplica los cambios necesarios:
 **Migracion v1.0 -> v2.0:**
 - Agregar directorio `agents/` con 9 agentes pre-configurados
 - Actualizar `quinotospec-rules.md` con 4 nuevas reglas (#9-#12)
-- Renombrar skill `generate-github-branch` -> `quinotospec-generate-branch`
+- Renombrar skill `generate-github-branch` -> `quinotospec-generate-github-branch`
 - Agregar nuevas skills: search, stats, diff, sync
 - Agregar nuevos workflows: migrate, backup, export, import
 - Actualizar `AGENTS.md` con nueva seccion de agentes

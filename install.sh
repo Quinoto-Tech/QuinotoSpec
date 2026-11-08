@@ -341,6 +341,7 @@ add_tree("agent-dist/skills", "skills")
 add_tree("agent-dist/agents", "agents")
 add_tree("agent-dist/templates", "templates")
 add_tree("agent-dist/config", "config")
+add_tree("agent-dist/lib", "lib")
 add_tree("agent-dist/bootstrap", "bootstrap")
 add_tree("agent-dist/hooks", "hooks")
 add_tree("agent-dist/plugins", "plugins")
@@ -358,6 +359,7 @@ if ide == "cursor":
     add_tree("agent-dist/workflows", "quinotospec-plugin/commands")
     add_tree("agent-dist/rules", "quinotospec-plugin/rules")
     add_tree("agent-dist/hooks", "quinotospec-plugin/hooks")
+    add_tree("agent-dist/lib", "quinotospec-plugin/lib")
     owned.add("quinotospec-plugin/.cursor-plugin/plugin.json")
 records = []
 for relative in sorted(owned):
@@ -758,12 +760,24 @@ verify_installation() {
 
     echo ""
     echo "  Components: $workflow_count workflows, $skill_count skills"
-    if [ "$workflow_count" -lt 47 ]; then
-        print_error "Installed workflow count is too low: $workflow_count"
+    # Umbrales derivados de manifest.json (fuente unica); fallback si no hay python3.
+    local min_workflows=48 min_skills=94
+    if [ -f "$DIR/manifest.json" ] && command -v python3 >/dev/null 2>&1; then
+        read -r min_workflows min_skills <<< "$(python3 -B - "$DIR/manifest.json" <<'PY'
+import json
+import sys
+
+data = json.load(open(sys.argv[1]))
+print(data.get("workflows", 48), data.get("skills", 94))
+PY
+)"
+    fi
+    if [ "$workflow_count" -lt "$min_workflows" ]; then
+        print_error "Installed workflow count is too low: $workflow_count (manifest: $min_workflows)"
         errors=$((errors + 1))
     fi
-    if [ "$skill_count" -lt 90 ]; then
-        print_error "Installed skill count is too low: $skill_count"
+    if [ "$skill_count" -lt "$min_skills" ]; then
+        print_error "Installed skill count is too low: $skill_count (manifest: $min_skills)"
         errors=$((errors + 1))
     fi
 
@@ -1024,12 +1038,13 @@ if not any(entry.get("command") == command for entry in entries if isinstance(en
     entries.append({"command": command})
 settings.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 PY
-            mkdir -p "$config_dir/quinotospec-plugin/.cursor-plugin" "$config_dir/quinotospec-plugin/skills" "$config_dir/quinotospec-plugin/agents" "$config_dir/quinotospec-plugin/commands" "$config_dir/quinotospec-plugin/rules" "$config_dir/quinotospec-plugin/hooks"
+            mkdir -p "$config_dir/quinotospec-plugin/.cursor-plugin" "$config_dir/quinotospec-plugin/skills" "$config_dir/quinotospec-plugin/agents" "$config_dir/quinotospec-plugin/commands" "$config_dir/quinotospec-plugin/rules" "$config_dir/quinotospec-plugin/hooks" "$config_dir/quinotospec-plugin/lib"
             cp -R "$config_dir/skills/." "$config_dir/quinotospec-plugin/skills/"
             cp -R "$config_dir/agents/." "$config_dir/quinotospec-plugin/agents/"
             cp -R "$config_dir/commands/." "$config_dir/quinotospec-plugin/commands/"
             cp -R "$config_dir/rules/." "$config_dir/quinotospec-plugin/rules/"
             cp -R "$config_dir/hooks/." "$config_dir/quinotospec-plugin/hooks/"
+            cp -R "$config_dir/lib/." "$config_dir/quinotospec-plugin/lib/"
             cp "$DIR/.cursor-plugin/plugin.json" "$config_dir/quinotospec-plugin/.cursor-plugin/plugin.json"
             python3 - "$config_dir/quinotospec-plugin/hooks/hooks-cursor.json" <<'PY'
 import json

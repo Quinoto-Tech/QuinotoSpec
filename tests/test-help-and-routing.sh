@@ -180,6 +180,20 @@ assert data["rationale"]
 ' || RC=$?
 check "router --json expone workflow y rationale" "$RC"
 
+# Guarda anti-referencias-muertas: el workflow recomendado por cada track debe existir
+RC=0
+TRACK_NAME=""
+for TRACK_NAME in quick_fix simple complex enterprise; do
+    RECOMMENDED=$(python3 -B "$ROUTER" --files "$([ "$TRACK_NAME" = quick_fix ] && echo 1 || { [ "$TRACK_NAME" = simple ] && echo 2 || { [ "$TRACK_NAME" = complex ] && echo 8 || echo 30; }; })" \
+        $([ "$TRACK_NAME" = enterprise ] && echo "--regulated") --json | \
+        python3 -c 'import json,sys; print(json.load(sys.stdin)["recommended_workflow"].lstrip("/"))')
+    if [ ! -f "$PROJECT_ROOT/agent-dist/workflows/$RECOMMENDED.md" ]; then
+        RC=1
+        echo "     Referencia muerta: el track $TRACK_NAME recomienda /$RECOMMENDED y no existe"
+    fi
+done
+check "el workflow recomendado de cada track existe (sin referencias muertas)" "$RC"
+
 # ==========================================================================
 # Agent Config 3-layer
 # ==========================================================================

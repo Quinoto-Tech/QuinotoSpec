@@ -15,6 +15,7 @@ Objetivo: aprender de las propuestas completadas para mejorar la adopción de la
 
 ### Paso 1 — Recolectar datos de propuestas completadas
 
+0. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para obtener entradas normalizadas de v1/v2 antes de cruzar duraciones.
 1. Listar todas las carpetas en `.quinoto-spec/proposals/_archived/`.
 2. Para cada propuesta archivada, leer `proposal.md` y extraer:
    - **Título**, **Prioridad**, **Complejidad**

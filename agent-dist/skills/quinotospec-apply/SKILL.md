@@ -3,10 +3,20 @@ name: quinotospec-apply
 description: aplicar la tarea correspondiente
 ---
 
-# Workflow: Apply
+# Skill: Apply
+
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.apply.md`. Esta skill es la versión invocable; si agrega pasos al workflow, sincronizalos aqui.
 
 [INSTRUCCIÓN MAESTRA]
 Debes ejecutar la tarea técnica especificada por el usuario y documentar EXACTAMENTE los cambios realizados en el archivo de registro.
+
+## Extension hooks
+
+Consulta `before_apply` y `after_apply` con `extension_manager.py hooks --point <point> --json`. Ejecuta únicamente hooks automáticos con `--run --yes`; un fallo bloquea el cierre y se registra en evidencia.
+
+## Routing de complejidad
+
+Antes de implementar, ejecuta `python3 -B agent-dist/skills/quinotospec-complexity-router/router.py --files {N} --services {N} --json`. Si el track resultante es `quick_fix`, sugiere `/quinotospec.fix`; si es `simple`, sugiere `/quinotospec.quick-dev` en lugar de este workflow.
 
 **Tarea a realizar:**
 `{{TASK_ID}}` — {{TASK_DESCRIPTION}}

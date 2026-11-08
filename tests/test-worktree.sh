@@ -103,8 +103,12 @@ else
 fi
 
 SKILLS_TOTAL=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["skills"])' "$ROOT/manifest.json")
-if grep -q "skills:$SKILLS_TOTAL" "$ROOT/scripts/validate-all.sh" && grep -q "skill_count\" -lt $SKILLS_TOTAL" "$ROOT/install.sh"; then
-    pass "inventory thresholds synchronized"
+if grep -q 'manifest.json' "$ROOT/scripts/validate-all.sh" && \
+   grep -q 'EXPECTED_COUNTS' "$ROOT/scripts/validate-all.sh" && \
+   grep -q 'manifest.json' "$ROOT/install.sh" && \
+   grep -q 'min_skills' "$ROOT/install.sh" && \
+   ! grep -q "skills:90\"" "$ROOT/scripts/validate-all.sh"; then
+    pass "inventory thresholds synchronized (derivados de manifest.json)"
 else
     fail "inventory thresholds not synchronized"
 fi

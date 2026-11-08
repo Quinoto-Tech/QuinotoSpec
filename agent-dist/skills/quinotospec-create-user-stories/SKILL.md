@@ -3,7 +3,13 @@ name: quinotospec-create-user-stories
 description: Generar user stories basadas en una propuesta existente
 ---
 
-# Workflow: Create User Stories
+# Skill: Create User Stories
+
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.create-user-stories.md`. Esta skill es la versión invocable; si agrega pasos al workflow, sincronizalos aqui.
+
+## Extension hooks
+
+Consulta `before_user_stories` y `after_user_stories` con `extension_manager.py hooks --point <point> --json`. Ejecuta hooks automáticos solo con `--run --yes` y registra sus resultados.
 
 Este workflow genera user stories derivadas de una propuesta técnica existente.
 Requiere que la propuesta (`proposal.md`) ya haya sido creada.

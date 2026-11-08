@@ -3,7 +3,13 @@ name: quinotospec-create-proposal
 description: crear una propuesta independiente
 ---
 
-# Workflow: Create Proposal
+# Skill: Create Proposal
+
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.create-proposal.md`. Esta skill es la versión invocable; si agrega pasos al workflow, sincronizalos aqui.
+
+## Extension hooks
+
+Consulta los hooks `before_proposal` y `after_proposal` con `extension_manager.py hooks --point <point> --json`. Ejecuta únicamente hooks `auto` con `--run --yes` y reporta su exit code antes de continuar.
 
 Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `01-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `08-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global y **detectar posibles conflictos o solapamientos** de alcance (mismos archivos, dominios o flujos afectados); si detectas alguno, documéntalo al inicio de la propuesta bajo `**⚠️ Conflictos Detectados:**`.
 El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".

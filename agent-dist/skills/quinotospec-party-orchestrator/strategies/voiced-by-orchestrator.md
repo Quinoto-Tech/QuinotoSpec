@@ -1,13 +1,13 @@
-# Strategy: Voiced by Orchestrator
+# Estrategia: Voz del Orquestador
 
-## When to Use
+## Cuando usar
 
 - Discusiones rapidas (< 10 minutos)
 - Exploracion de ideas y brainstorming
 - Cuando no se necesita analisis independiente profundo
 - Cuando la velocidad es prioridad sobre la profundidad
 
-## How It Works
+## Como funciona
 
 El agente principal (orquestador) voicea a 2-4 agentes en un solo hilo de conversacion. El orquestador cambia de "voz" entre agentes, manteniendo a cada uno en caracter. No se spawn subagentes — todo ocurre en el contexto del agente principal.
 

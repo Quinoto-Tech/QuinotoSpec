@@ -1,4 +1,4 @@
-# Root-cause tracing
+# Trazado de causa raiz
 
 ## Flujo
 

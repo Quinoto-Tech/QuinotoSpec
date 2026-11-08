@@ -10,6 +10,7 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
 ### Instrucciones de Ejecución:
 
 1. **Análisis de Propuestas**:
+    - Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json` para leer el estado canónico de propuestas, stories y tareas.
     - Escanea el directorio `.quinoto-spec/proposals/` (activas) y `.quinoto-spec/proposals/_archived/` (archivadas).
     - Clasifica propuestas activas: 🟡 Propuesta, 🟢 En Curso, ✅ Completada.
     - Extrae prioridad y complejidad de cada `proposal.md`.
@@ -17,6 +18,7 @@ Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que
     - Lee `**Discovery Date:**` en `.quinoto-spec/discovery/01-stack-profile.md`. Si han pasado más de 30 días desde esa fecha → marcarlo como alerta en la sección `🚨 Alertas y Bloqueos` con el mensaje: *"⏰ El discovery tiene [N] días de antigüedad. Considera ejecutar `@quinotospec.refresh-discovery`."*
 
 2. **Cálculo de Progreso y Velocidad**:
+     - Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` y filtra por fecha para estimar la velocidad del equipo.
      - Para cada propuesta activa, busca archivos de tareas (`*_tasks.md`).
      - Calcula el porcentaje de completitud basado en los checkboxes `[x]` vs `[ ]`.
      - Ejecuta `@quinotospec.changelog-view --days 7 --json` y `@quinotospec.changelog-view --days 30 --json` para estimar la velocidad del equipo (auto-detecta formato v1/v2).

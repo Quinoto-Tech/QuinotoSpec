@@ -8,3 +8,4 @@ trap 'rm -rf "$OUTPUT_DIR"' EXIT
 
 bash "$ROOT/scripts/package-release.sh" "$VERSION" "$OUTPUT_DIR"
 bash "$ROOT/scripts/smoke-release.sh" "$OUTPUT_DIR/quinotospec-$VERSION.tar.gz"
+python3 -B "$ROOT/scripts/check-readme-parity.py" --root "$ROOT"

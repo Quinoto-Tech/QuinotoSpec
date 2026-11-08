@@ -5,7 +5,7 @@ description: Computa el estado del DAG de artefactos basado en el schema YAML â€
 
 # Artifact Dependency Graph Engine
 
-## Overview
+## Descripcion general
 
 Lee `.quinoto-spec/schema.yaml` y computa el estado de cada artefacto para una propuesta dada, basandose en la existencia de archivos en el filesystem y las dependencias declaradas en el schema.
 

@@ -16,6 +16,7 @@ if tar -tzf "$ARCHIVE" | grep -Eq '(^|/)__pycache__/|(^|/)[^/]+\.pyc$|(^|/)(\.py
     exit 1
 fi
 
+# --- OpenCode (v2): install -> verify -> ownership manifest -> uninstall ---
 TARGET_ROOT="$TEMP_ROOT/target"
 mkdir -p "$TARGET_ROOT"
 cd "$TARGET_ROOT"
@@ -36,7 +37,24 @@ PY
 
 QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$TEMP_ROOT/install.sh" --uninstall --opencode --yes >/dev/null
 if [ -e ".opencode" ]; then
-    printf 'ERROR: uninstall left an empty managed directory\n' >&2
+    printf 'ERROR: uninstall left an empty managed directory (opencode)\n' >&2
     exit 1
 fi
+
+# --- Resto de IDEs: install -> verify -> uninstall en un target aislado ---
+roundtrip() {
+    local ide="$1"
+    local dir="$TEMP_ROOT/target-$ide"
+    mkdir -p "$dir"
+    cd "$dir"
+    bash "$TEMP_ROOT/install.sh" "--$ide" --yes >/dev/null
+    bash "$TEMP_ROOT/install.sh" --verify "--$ide" --yes >/dev/null
+    bash "$TEMP_ROOT/install.sh" --uninstall "--$ide" --yes >/dev/null
+    printf '  %s: install -> verify -> uninstall OK\n' "$ide"
+}
+
+for ide in cursor claude cline antigravity; do
+    roundtrip "$ide"
+done
+
 printf 'Release smoke test passed: %s\n' "$ARCHIVE"

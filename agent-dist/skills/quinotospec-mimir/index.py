@@ -17,11 +17,13 @@ Solo stdlib. Offline. Sin dependencias externas.
 """
 import hashlib
 import json
-import os
 import re
 import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "lib"))
+from quinotospec_common import resolve_root  # noqa: E402
 
 HEADING_RE = re.compile(r'^#{1,6}\s+\S')
 YAML_KEY_RE = re.compile(r'^[A-Za-z_][\w-]*:')
@@ -53,22 +55,6 @@ SOURCE_GLOBS = [
 ]
 
 
-def resolve_root(argv):
-    """Extrae --root de argv si esta presente; devuelve (root_path, argv_restante)."""
-    args = list(argv)
-    root = None
-    if "--root" in args:
-        i = args.index("--root")
-        if i + 1 < len(args):
-            root = args[i + 1]
-            del args[i:i + 2]
-        else:
-            del args[i:i + 1]
-    if root is None:
-        root = os.environ.get("QUINOTOSPEC_MIMIR_ROOT") or os.environ.get("MIMIR_ROOT")
-    if root is None:
-        root = "."
-    return Path(root).resolve(), args
 
 
 def discover_files(root: Path):
@@ -147,7 +133,7 @@ def build_chunks_for_file(path: Path, root: Path):
 
 
 def main():
-    root, rest = resolve_root(sys.argv[1:])
+    root, rest = resolve_root(sys.argv[1:], ("QUINOTOSPEC_MIMIR_ROOT", "MIMIR_ROOT"))
     full = "--full" in rest
 
     spec_dir = root / ".quinoto-spec"

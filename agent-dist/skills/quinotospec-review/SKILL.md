@@ -3,11 +3,17 @@ name: quinotospec-review
 description: Revisa un branch o PR contra los criterios de aceptación de la tarea y la propuesta correspondiente
 ---
 
-# Workflow: Review
+# Skill: Review
 
-Este workflow guía al agente para realizar una revisión técnica de código antes de mergear, validando contra los criterios definidos en la especificación.
+> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.review.md`. Esta skill es la versión invocable; si agrega pasos al workflow, sincronizalos aqui.
 
-**Parámetros Requeridos:**
+Esta skill guía al agente para realizar una revisión técnica de código antes de mergear, validando contra los criterios definidos en la especificación.
+
+## Extension hooks
+
+Consulta `before_review` y `after_review` con `extension_manager.py hooks --point <point> --json`. Ejecuta hooks automáticos solo con `--run --yes` y adjunta sus resultados al reporte.
+
+## Parámetros Requeridos
 - `TASK_ID`: El ID de la tarea técnica asociada al branch (ej. `TSK-AUTH-001`).
 - `BRANCH_NAME`: El nombre del branch a revisar (ej. `feature/TSK-AUTH-001-add-login`).
 

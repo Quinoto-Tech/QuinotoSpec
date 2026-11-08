@@ -20,6 +20,7 @@ Consulta `before_archive` y `after_archive` con `extension_manager.py hooks --po
 ### Instrucciones de Ejecución:
 
 1. **Validación previa (OBLIGATORIA)**:
+    - Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict`; si falla, detén el archivado.
     - Lee `proposal.md` y verifica que el `**Estado:**` sea `✅ Completada` o equivalente a Done.
     - Si quedan user stories o tareas sin completar (`[ ]` en los archivos de tareas), **advierte al usuario** y detén el proceso a menos que confirme explícitamente continuar.
      - Genera un resumen rápido: cuántas historias y tareas contenía el elemento, cuántas fueron completadas vs pendientes. Documenta esto en el changelog.

@@ -16,43 +16,22 @@ score = 0.30*impact + 0.25*urgency + 0.20*risk_inverse + 0.15*debt_relief + 0.10
 Solo stdlib. Offline.
 """
 import datetime
-import importlib.util
 import json
-import os
 import re
 import sys
 from collections import defaultdict, deque
 from pathlib import Path
 
-
-def load_contract():
-    path = Path(__file__).resolve().parents[1] / "quinotospec-contract" / "contract.py"
-    spec = importlib.util.spec_from_file_location("quinotospec_contract_shared", path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "lib"))
+from quinotospec_common import load_module_from_path, load_contract_module, resolve_root  # noqa: E402
 
 
-CONTRACT = load_contract()
+
+
+CONTRACT = load_contract_module(__file__)
 PRIORITY_WEIGHT = {"P1": 1.0, "P2": 0.5, "P3": 0.0}
 
 
-def resolve_root(argv):
-    args = list(argv)
-    root = None
-    if "--root" in args:
-        i = args.index("--root")
-        if i + 1 < len(args):
-            root = args[i + 1]
-            del args[i:i + 2]
-        else:
-            del args[i:i + 1]
-    if root is None:
-        root = os.environ.get("QUINOTOSPEC_VALKYRIE_ROOT") or os.environ.get("VALKYRIE_ROOT")
-    if root is None:
-        root = "."
-    return Path(root).resolve(), args
 
 
 def _field(text, pattern, default=None):
@@ -152,13 +131,7 @@ def load_jormungandr():
     path = Path(__file__).resolve().parents[1] / "quinotospec-jormungandr" / "check.py"
     if not path.exists():
         return None
-    spec = importlib.util.spec_from_file_location("quinotospec_jormungandr_shared", path)
-    if spec is None or spec.loader is None:
-        return None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+    return load_module_from_path(path, "quinotospec_jormungandr_shared")
 
 
 JORMUNGANDR = load_jormungandr()
@@ -278,7 +251,7 @@ def suggest_next_task(prop_dir: Path):
 
 
 def main():
-    root, rest = resolve_root(sys.argv[1:])
+    root, rest = resolve_root(sys.argv[1:], ("QUINOTOSPEC_VALKYRIE_ROOT", "VALKYRIE_ROOT"))
     as_json = "--json" in rest
     suggest = "--suggest-next" in rest
 

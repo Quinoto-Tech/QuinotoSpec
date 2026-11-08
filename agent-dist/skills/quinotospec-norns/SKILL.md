@@ -36,7 +36,7 @@ Lee y compara:
 | `docs/ARCHITECTURE.md` | diagrama `workflows/skills/rules` + headings `Workflows (N)` | igual a FS |
 | `CHANGELOG.md` | `## [X.Y.Z]` existe para version actual | — |
 | `V3_ROADMAP.md` | `Version actual:` | igual a `.version` |
-| `scripts/validate-all.sh` | `EXPECTED_COUNTS` | igual a FS |
+| `scripts/validate-all.sh` | `EXPECTED_COUNTS` (derivado de `manifest.json`) | igual a FS |
 | `agent-dist/templates/schema-template.yaml` | `template:` refs existen | — |
 
 Si hay mismatch → reporta tabla `OK/DRIFT` y sale con codigo 1 en `--check`.

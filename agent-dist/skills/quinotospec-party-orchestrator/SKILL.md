@@ -5,7 +5,7 @@ description: Orquesta mesas redondas multi-agente — maneja turnos, genera deba
 
 # Party Orchestrator
 
-## Overview
+## Descripcion general
 
 El orquestador gestiona la ejecucion de una mesa redonda multi-agente. No participa en la discusion — facilita que los agentes interactuen en caracter, mantiene la discusion productiva, y detecta problemas de dinamica grupal (groupthink, impasse, dominacion).
 

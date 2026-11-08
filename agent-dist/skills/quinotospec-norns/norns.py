@@ -166,12 +166,20 @@ def build_checks(root):
     if expected_counts:
         for key, value in re.findall(r"\"?([a-z]+):(\d+)\"?", expected_counts.group(1)):
             declared[key] = int(value)
+    # Desde F2 validate-all.sh deriva los conteos de manifest.json (fuente unica).
+    counts_derived = bool(re.search(r"EXPECTED_COUNTS", validate_text)) and "manifest.json" in validate_text
     for key in COUNT_KEYS:
+        if declared:
+            declared_value = declared.get(key, "<missing>")
+        elif counts_derived:
+            declared_value = counts[key]
+        else:
+            declared_value = "<missing>"
         add_check(
             checks,
             "scripts/validate-all.sh:EXPECTED_COUNTS " + key,
             counts[key],
-            declared.get(key, "<missing>"),
+            declared_value,
         )
 
     schema, references = template_references(root)

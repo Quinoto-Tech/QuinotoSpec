@@ -1,4 +1,4 @@
-# Condition-based waiting
+# Espera basada en condicion
 
 ## Principio
 
