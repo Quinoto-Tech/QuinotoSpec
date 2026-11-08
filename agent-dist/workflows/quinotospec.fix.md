@@ -14,6 +14,8 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
 | Descripción del bug/fix | Sí | Qué problema hay y qué comportamiento se espera |
 | `--task` `TASK_ID` | No | Si el fix pertenece a una tarea existente en una propuesta |
 | `--skip-tests` | No | Omitir ejecución de tests (solo para cambios triviales) |
+| `--party` | No | Mesa redonda multi-agente sobre causa raíz / enfoque (opcional) |
+| `--goldfish` | No | Revisión con subagentes aislados del fix propuesto (opcional) |
 
 **Invocación:**
 
@@ -22,6 +24,9 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
 @quinotospec.fix "Corregir validación de email en el formulario de registro"
 @quinotospec.fix --task TSK-AUTH-003 "Agregar manejo de error en el catch block"
 @quinotospec.fix --skip-tests "Corregir typo en mensaje de bienvenida"
+@quinotospec.fix --party "Bug intermitente en el scheduler"
+@quinotospec.fix --goldfish "Fallo de concurrencia en el carrito"
+@quinotospec.fix --party --goldfish "Race condition en pagos"
 ```
 
 ---
@@ -48,6 +53,7 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
 4. Leer `.quinoto-spec/discovery/01-stack-profile.md` (si existe) para conocer el stack, comandos de test y convenciones.
 4b. **Baseline de tests**: antes de tocar producción, ejecuta la suite de tests existente (o los tests de los archivos afectados) para establecer el estado inicial. Si ya fallan tests no relacionados, documéntalo como pre-existente y no los arregles en este fix. Si la baseline falla por el bug reportado, esa es la reproducción esperada.
 5. Ejecutar `quinotospec-debug` para reproducir, localizar la causa raíz y formular una hipótesis antes de tocar producción.
+5b. **Party Mode (opcional, solo si `--party`)**: si el bug es ambiguo o hay varias causas raíz posibles, abre una mesa redonda (`@quinotospec.party-mode`) sobre "causa raíz y enfoque del fix". Guarda la transcripción en `.quinoto-spec/fixes/YYYYMMDD-hhmm-{slug}-party.md` e incorpora el consenso al análisis. Si no se pasó `--party`, omite este paso.
 6. Identificar los archivos involucrados en el bug.
 7. **Presentar análisis al usuario antes de tocar código** (BLOQUEANTE):
    - Archivos que se modificarán
@@ -72,6 +78,7 @@ Debes corregir el bug o implementar el fix menor descrito por el usuario, docume
 
 > Omitir si `--skip-tests`.
 
+0. **Goldfish review (opcional, solo si `--goldfish`)**: antes de cerrar, lanza revisores con **contexto limpio** (subagentes aislados) sobre el diff del fix + el test de regresión: ¿resuelve la causa raíz? ¿introduce regresiones? ¿hay un caso borde no cubierto? Escribe `.quinoto-spec/reviews/{{FIX_SLUG}}-goldfish.md` con severidad (BLOCKING / WARN / INFO). Si no hay subagentes frescos, omite solo esta capa y repórtalo. Si no se pasó `--goldfish`, omite este paso.
 1. Ejecutar el comando de tests del stack detectado:
    - `npm test`, `pytest`, `bundle exec rspec`, `go test ./...`, `cargo test`
 2. Si hay tests existentes para los archivos modificados, ejecutarlos específicamente:
