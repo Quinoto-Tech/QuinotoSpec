@@ -26,6 +26,7 @@ Dashboard web local que presenta el estado de `.quinoto-spec/` en el navegador. 
 | `--host HOST` | No | Host de escucha (default: `127.0.0.1`) |
 | `--port N` | No | Puerto (default: `8765`; `0` = efímero) |
 | `--no-browser` | No | No abrir el navegador automáticamente |
+| `--stop` | No | Detener instancias en ejecución del servidor UI y salir |
 | `--json` | No | Imprimir el resumen JSON y salir |
 
 ## Paso 1 — Verificar el proyecto

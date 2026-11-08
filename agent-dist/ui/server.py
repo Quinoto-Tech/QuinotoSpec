@@ -193,7 +193,42 @@ def main(argv=None):
     parser.add_argument("--port", type=int, default=8765, help="Puerto (0 = efimero)")
     parser.add_argument("--no-browser", action="store_true", help="No abrir el navegador")
     parser.add_argument("--json", action="store_true", help="Imprimir el resumen JSON y salir")
+    parser.add_argument("--stop", action="store_true", help="Detener instancias en ejecucion del servidor UI y salir")
     args = parser.parse_args(argv)
+
+    if args.stop:
+        stopped = 0
+        import os as _os
+
+        try:
+            import subprocess as _sp
+
+            result = _sp.run(["pgrep", "-f", "agent-dist/ui/server.py"], capture_output=True, text=True)
+            for pid in result.stdout.split():
+                if pid == str(_os.getpid()):
+                    continue
+                try:
+                    _os.kill(int(pid), 15)
+                    stopped += 1
+                except (ProcessLookupError, ValueError):
+                    pass
+        except FileNotFoundError:
+            for entry in _os.listdir("/proc"):
+                if not entry.isdigit():
+                    continue
+                try:
+                    with open(_os.path.join("/proc", entry, "cmdline"), "rb") as fh:
+                        cmdline = fh.read()
+                except OSError:
+                    continue
+                if b"agent-dist/ui/server.py" in cmdline and entry != str(_os.getpid()):
+                    try:
+                        _os.kill(int(entry), 15)
+                        stopped += 1
+                    except (ProcessLookupError, ValueError):
+                        pass
+        print("Servidores UI detenidos: %d" % stopped)
+        return 0
 
     roots = [p.strip() for p in args.roots.split(",") if p.strip()] if args.roots else [args.root]
     resolved = [Path(r).resolve() for r in roots]
