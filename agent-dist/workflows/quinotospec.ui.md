@@ -33,7 +33,7 @@ Dashboard web local que presenta el estado de `.quinoto-spec/` en el navegador. 
 
 1. Comprobar que existe `agent-dist/ui/server.py`.
 2. Si no existe `.quinoto-spec/`, advertir que la UI mostrará un proyecto vacío (no es un error).
-3. Si el proyecto tiene varios repositorios (Bifrost), lanzar una instancia por `--root` (el panel central multi-proyecto llega en una fase posterior).
+3. Si el proyecto tiene varios repositorios (Bifrost), usa `--roots "r1,r2"` para el panel central multi-proyecto (o una instancia por `--root`).
 
 ## Paso 2 — Lanzar el servidor
 
@@ -51,7 +51,7 @@ Para varios repositorios (Bifrost) usa `--roots "ruta1,ruta2"` (o varias instanc
 
 ## Paso 4 — Cierre
 
-1. Detener el servidor (Ctrl+C).
+1. Detener el servidor (Ctrl+C) o `python3 -B agent-dist/ui/server.py --stop`.
 2. No registrar cambios en el changelog: la UI es read-only y no produce modificaciones.
 
 ## Reglas
