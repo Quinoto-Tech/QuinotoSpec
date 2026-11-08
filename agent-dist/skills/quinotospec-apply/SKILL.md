@@ -33,12 +33,14 @@ Antes de realizar cualquier cambio:
 2. Consulta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json`; localiza el `canonical_id` de `{{TASK_ID}}` y usa `story_id` como contexto, sin derivar la story por número.
 3. Lee el archivo `*_tasks.md` que contiene la tarea, la story asociada y la proposal.md de la propuesta.
 4. Lee `.quinoto-spec/discovery/` para comprender el estado actual del proyecto (especialmente `01-stack-profile.md` para conocer el stack, comandos de test y convenciones).
+4b. **Specs vigentes**: si existe `.quinoto-spec/specs/`, lee los `spec.md` de los dominios afectados y verifica que la implementación se alinee con los requirements consolidados; si hay contradicción, detén el Apply y solicita actualizar el spec (vía delta-specs) o una enmienda explícita.
 5. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
 6. Si existe `.quinoto-spec/constitution.md` con estado `active`, lee sus principios y verifica que la tarea pueda cumplirlos; si no puede, detén el Apply y solicita una enmienda o decisión explícita.
 
 **Instrucciones de Ejecución:**
 1. **Confirmación requerida**: pregunta separadamente si se debe crear un branch nuevo y si se desea usar un worktree. Resuelve `BRANCH_NAME` y `BASE_REF`; no los inventes.
 2. **Constitution Gate**: si existe `.quinoto-spec/constitution.md` activo, verifica cada principio aplicable antes de modificar producción; si hay violación, detén el Apply.
+2c. **Specs Gate**: si existe `.quinoto-spec/specs/` para los dominios afectados, verifica que la tarea no contradiga los requirements consolidados; si la tarea implica un cambio de comportamiento respecto al spec vigente, asegúrate de que la propuesta incluya el `delta-specs/` correspondiente (ADDED/MODIFIED/REMOVED) o solicita actualizar el spec antes de continuar.
 2b. **Human Approval Gate**: para configuración crítica, recuperación de archivo archivado u otra decisión humana, registra `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` después de la confirmación explícita y valida `human-approval` con `rules_enforce.py --require-approval --approval-id {{APPROVAL_ID}} --approval-subject {{SUBJECT}} --approval-action apply`; una confirmación conversacional no basta.
 3. **Worktree Gate (opcional)**: si `USE_WORKTREE=true` y el usuario confirma, invoca `quinotospec-worktree` con `TASK_ID`, `BRANCH_NAME`, `BASE_REF` y `WORKTREE_PATH` opcional. La skill reutiliza un aislamiento existente o crea uno seguro. Si el usuario lo rechaza, continúa en el checkout actual.
 4. Si `USE_WORKTREE=false` y el usuario confirmó crear un branch, usa `quinotospec-generate-github-branch`. Si `USE_WORKTREE=true`, no dupliques la creación del branch con `git checkout -b`.

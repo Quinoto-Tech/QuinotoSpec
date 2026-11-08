@@ -48,7 +48,8 @@ Reglas:
 1. Si el archivo existe, cita sus hallazgos concretos (endpoint, tabla, pipeline) en la sección correspondiente. No parafrasees generalidades.
 2. Si el archivo no existe o está vacío, declara el supuesto en esa sección; no inventes endpoints, tablas, pipelines ni integraciones que el discovery no documente.
 3. La falta de `02`–`07` NO es bloqueante (solo `08` lo es por regla de producto): se registra como supuesto y la propuesta continúa.
-4. Si existe `.quinoto-spec/specs/{{dominio}}/spec.md`, léelo junto con `04` y `05` para habilitar `MODIFIED`/`REMOVED` en los delta-specs (ver Paso Adicional).
+4. Si existe `.quinoto-spec/specs/{{dominio}}/spec.md`, léelo junto con `04` y `05` para habilitar `MODIFIED`/`REMOVED` en los delta-specs (ver Paso Adicional). Revisa si la propuesta altera, elimina o renombra requirements vigentes; si lo hace, documéntalo explícitamente en los delta-specs correspondientes.
+5. Si la propuesta contradice un spec vigente y no incluye el delta correspondiente, detén la generación y solicita al usuario decidir: ajustar la propuesta al spec vigente o registrar el cambio como MODIFIED/REMOVED en los delta-specs.
 
 **Paso Previo (opcional) — Gate de Mimir (evitar duplicar decisiones):**
 
