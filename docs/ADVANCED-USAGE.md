@@ -147,6 +147,34 @@ Orden del ciclo: `apply` → `mark-done` → `review-handoff` → code review hu
 @quinotospec.import --source github-issues --repo owner/repo --label enhancement
 ```
 
+## Elephant-Goldfish (Revision con contexto limpio)
+
+Inspirado en el modelo *Elephant-Goldfish* de Google: el **Elephant** tiene contexto profundo y redacta; los **Goldfish** son subagentes con **contexto aislado** que auditan sin la conversacion previa. Objetivo: evitar sesgo de confirmacion y contaminacion de contexto.
+
+Se integra en el flujo existente mediante flags **opcionales** (desactivados por defecto, igual que `--party`):
+
+| Comando | `--party` | `--goldfish` | Artefacto de `--goldfish` |
+|---------|-----------|--------------|---------------------------|
+| `create-proposal` | Debate previo | Shootdown multi-lente | `concepts_brief.md` (GO/PIVOT/KILL) |
+| `review` | — | Revision aislada | `.quinoto-spec/reviews/<TASK_ID>-goldfish.md` |
+| `fix` | Causa raiz / enfoque | Auditoria del diff | `.quinoto-spec/reviews/<fix>-goldfish.md` |
+| `quick-dev` | Enfoque | Auditoria del cambio | `.quinoto-spec/reviews/<slug>-goldfish.md` |
+
+```bash
+@quinotospec.create-proposal "Agregar webhooks" --goldfish
+@quinotospec.review TASK_ID=TSK-AUTH-001 BRANCH_NAME=feature/TSK-AUTH-001 --goldfish
+@quinotospec.fix --party --goldfish "Race condition en pagos"
+@quinotospec.quick-dev --goldfish "Refactor menor del parser"
+```
+
+Reglas:
+
+- Si se pasan ambos, ejecutar `--party` primero (enriquece) y `--goldfish` despues (audita); nunca en paralelo.
+- `--goldfish` necesita subagentes frescos; si el IDE no puede crearlos, se omite solo esa capa (o se detiene en `review`), sin simularla.
+- Sin flags, el flujo base no cambia.
+
+La version en ingles esta documentada en `README_EN.md` (seccion *Elephant-Goldfish*).
+
 ## Personalizacion de Agentes
 
 Crear agente personalizado:

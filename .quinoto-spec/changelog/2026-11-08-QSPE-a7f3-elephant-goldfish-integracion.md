@@ -15,5 +15,6 @@ type: feature
 - `quick-dev` (workflow + skill): flags opcionales `--party` (enfoque de la tech-spec) y `--goldfish` (revisión aislada del cambio antes de verificación).
 - `health`: nuevo **Paso 5b Drift docs↔código** con severidad INFO/WARN/BLOCKING y `drift-report.md/.json`.
 - Sin skills/workflows nuevos: la práctica se suma al flujo existente (49 workflows / 95 skills sin cambios de inventario).
+- Documentación bilingüe: sección *Elephant-Goldfish* en `README.md` (ES) y `README_EN.md` (EN) con tabla de flags y reglas de interacción; guía avanzada en `docs/ADVANCED-USAGE.md`.
 
 **Tiempo Ahorrado**: ~3h (IA: ~25min vs Humano: ~3h)

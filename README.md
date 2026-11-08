@@ -432,6 +432,50 @@ Reune agentes especializados en una mesa redonda para discutir, debatir y colabo
 @quinotospec.create-rfc "Feature flags en staging" --party
 ```
 
+#### Elephant-Goldfish (Revisión con contexto limpio)
+
+Inspirado en el modelo *Elephant-Goldfish* de Google, separa dos roles para evitar el sesgo del agente que redacta y revisa en el mismo hilo:
+
+- **Elephant**: contexto profundo, explora y redacta (propuesta, tech-spec o fix).
+- **Goldfish**: revisores con **contexto aislado** (subagentes frescos) que auditan sin la conversación previa.
+- **Humano**: decide los trade-offs y aprueba.
+
+A diferencia de `--party` (contexto compartido, busca consenso), `--goldfish` aísla el contexto y busca **puntos ciegos**.
+
+```bash
+# Revisión de una propuesta/tech-spec con lentes frescas
+@quinotospec.create-proposal "Agregar webhooks" --goldfish
+
+# Shootdown del brief + auditoría posterior
+@quinotospec.create-proposal "Rediseñar pagos" --party --goldfish
+
+# Revisión de código con Goldfish (además del checklist)
+@quinotospec.review TASK_ID=TSK-AUTH-001 BRANCH_NAME=feature/TSK-AUTH-001 --goldfish
+
+# Fix: causa raíz ambigua y/o auditoría del diff
+@quinotospec.fix --party "Bug intermitente en el scheduler"
+@quinotospec.fix --goldfish "Race condition en pagos"
+
+# Quick Dev: enfoque y auditoría del cambio
+@quinotospec.quick-dev --party "Elegir estrategia de cache"
+@quinotospec.quick-dev --goldfish "Refactor menor del parser"
+```
+
+**Flags opcionales (desactivados por defecto, igual que `--party`):**
+
+| Comando | `--party` | `--goldfish` | Efecto de `--goldfish` |
+|---------|-----------|--------------|------------------------|
+| `create-proposal` | Debate previo | Shootdown multi-lente | `concepts_brief.md` con veredicto GO/PIVOT/KILL |
+| `review` | — | Revisión aislada | `.quinoto-spec/reviews/<TASK_ID>-goldfish.md` |
+| `fix` | Causa raíz / enfoque | Auditoría del diff | `.quinoto-spec/reviews/<fix>-goldfish.md` |
+| `quick-dev` | Enfoque de la tech-spec | Auditoría del cambio | `.quinoto-spec/reviews/<slug>-goldfish.md` |
+
+**Reglas de interacción:**
+
+- Si se pasan `--party` y `--goldfish` juntos, ejecutar **primero `--party`** (enriquece) y **después `--goldfish`** (audita). Nunca en paralelo.
+- `--goldfish` requiere subagentes frescos. Si el IDE no puede crearlos, se omite solo esa capa (en `fix`/`quick-dev`) o se detiene la capa Goldfish (en `review`); no se simula.
+- Ambos son opcionales: sin flags, el flujo base no cambia.
+
 #### Blood-Bond (Predicción Proactiva)
 
 Analiza patrones de trabajo y predice siguientes acciones.

@@ -431,6 +431,50 @@ Brings specialized agents together for in-character roundtable discussion and de
 @quinotospec.create-rfc "Feature flags in staging" --party
 ```
 
+#### Elephant-Goldfish (Fresh-Context Review)
+
+Inspired by Google's *Elephant-Goldfish* model, this separates two roles to avoid the bias of an agent that both drafts and reviews in the same thread:
+
+- **Elephant**: deep context, explores and drafts (proposal, tech-spec, or fix).
+- **Goldfish**: reviewers with **isolated context** (fresh subagents) that audit without the prior conversation.
+- **Human**: decides trade-offs and approves.
+
+Unlike `--party` (shared context, seeks consensus), `--goldfish` isolates context and hunts for **blind spots**.
+
+```bash
+# Review a proposal/tech-spec with fresh lenses
+@quinotospec.create-proposal "Add webhooks" --goldfish
+
+# Brief shootdown + follow-up audit
+@quinotospec.create-proposal "Redesign payments" --party --goldfish
+
+# Code review with Goldfish (on top of the checklist)
+@quinotospec.review TASK_ID=TSK-AUTH-001 BRANCH_NAME=feature/TSK-AUTH-001 --goldfish
+
+# Fix: ambiguous root cause and/or diff audit
+@quinotospec.fix --party "Intermittent scheduler bug"
+@quinotospec.fix --goldfish "Race condition in payments"
+
+# Quick Dev: approach and change audit
+@quinotospec.quick-dev --party "Choose caching strategy"
+@quinotospec.quick-dev --goldfish "Minor parser refactor"
+```
+
+**Optional flags (off by default, like `--party`):**
+
+| Command | `--party` | `--goldfish` | `--goldfish` effect |
+|---------|-----------|--------------|---------------------|
+| `create-proposal` | Prior debate | Multi-lens shootdown | `concepts_brief.md` with GO/PIVOT/KILL verdict |
+| `review` | — | Isolated review | `.quinoto-spec/reviews/<TASK_ID>-goldfish.md` |
+| `fix` | Root cause / approach | Diff audit | `.quinoto-spec/reviews/<fix>-goldfish.md` |
+| `quick-dev` | Tech-spec approach | Change audit | `.quinoto-spec/reviews/<slug>-goldfish.md` |
+
+**Interaction rules:**
+
+- If `--party` and `--goldfish` are both passed, run **`--party` first** (enrich) and **`--goldfish` after** (audit). Never in parallel.
+- `--goldfish` requires fresh subagents. If the IDE cannot create them, only that layer is skipped (`fix`/`quick-dev`) or the Goldfish layer stops (`review`); it is never simulated.
+- Both are optional: without flags, the base flow is unchanged.
+
 #### Blood-Bond (Proactive Prediction)
 
 Analyzes work patterns and predicts next actions.
