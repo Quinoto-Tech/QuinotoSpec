@@ -30,11 +30,13 @@ echo "Test: Skill <-> Workflow Drift"
 echo "=========================================="
 echo ""
 
-[ -f "$CHECKER" ]
-check "checker existe" "$?"
+CHECKER_RC=0
+if [ ! -f "$CHECKER" ]; then CHECKER_RC=1; fi
+check "checker existe" "$CHECKER_RC"
 
-python3 -B "$CHECKER" --root "$PROJECT_ROOT" --warnings-as-errors >/dev/null 2>&1
-check "el paquete no tiene drift funcional skill<->workflow" "$?"
+CHECK_RC=0
+python3 -B "$CHECKER" --root "$PROJECT_ROOT" --warnings-as-errors >/dev/null 2>&1 || CHECK_RC=$?
+check "el paquete no tiene drift funcional skill<->workflow" "$CHECK_RC"
 
 FIXTURE="$(mktemp -d "$SCRIPT_DIR/temp_drift.XXXXXX")"
 trap 'rm -rf "$FIXTURE"' EXIT INT TERM

@@ -59,8 +59,10 @@ FS_RULES=$(grep -c "^# " "$PROJECT_ROOT/agent-dist/rules/quinotospec-rules.md" 2
 FS_TEMPLATES=$(find "$PROJECT_ROOT/agent-dist/templates" -maxdepth 1 -type f \( -name "*.md" -o -name "*.yaml" -o -name "*.yml" \) 2>/dev/null | wc -l | tr -d ' ')
 
 portable_sed() {
-    # $1 = sed expr, $2 = file — portable macOS/Linux
-    sed -i.bak "$1" "$2" 2>/dev/null || sed -i "$1" "$2"
+    # $1 = sed expr, $2 = file
+    # `sed -i.bak` funciona igual en GNU y BSD/macOS; el fallback `sed -i` era
+    # GNU-only y ademas nunca se alcanzaba.
+    sed -i.bak "$1" "$2"
     rm -f "$2.bak" 2>/dev/null || true
 }
 

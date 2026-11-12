@@ -34,6 +34,22 @@ check() {
     fi
 }
 
+# touch_days_ago <file> <dias>
+# Ajusta el mtime sin usar `touch -d` (GNU) ni `touch -t` (BSD/macOS):
+# python3 es dependencia dura del paquete y se comporta igual en ambas plataformas.
+touch_days_ago() {
+    python3 - "$1" "$2" <<'PY'
+import os
+import sys
+import time
+
+path = sys.argv[1]
+days = int(sys.argv[2])
+timestamp = time.time() - days * 86400
+os.utime(path, (timestamp, timestamp))
+PY
+}
+
 for artifact in "$HELP" "$ROUTER" "$AGENT_CONFIG" "$DEFAULTS" \
     "$PROJECT_ROOT/agent-dist/skills/quinotospec-help/SKILL.md" \
     "$PROJECT_ROOT/agent-dist/skills/quinotospec-complexity-router/SKILL.md" \
@@ -79,7 +95,7 @@ check "help.py recomienda init en un proyecto vacio" "$RC"
 STALE_PROJECT="$WORKDIR/stale-project"
 mkdir -p "$STALE_PROJECT/.quinoto-spec/discovery"
 printf '# stack\n' > "$STALE_PROJECT/.quinoto-spec/discovery/01-stack-profile.md"
-touch -d "90 days ago" "$STALE_PROJECT/.quinoto-spec/discovery/01-stack-profile.md"
+touch_days_ago "$STALE_PROJECT/.quinoto-spec/discovery/01-stack-profile.md" 90
 HELP_STALE=$(python3 -B "$HELP" --root "$STALE_PROJECT" --json 2>&1)
 RC=0
 echo "$HELP_STALE" | python3 -c '
@@ -146,27 +162,34 @@ for case in \
     expected="${case##*|}"
     # shellcheck disable=SC2086
     actual=$(router_track $args)
-    [ "$actual" = "$expected" ]
-    check "router $args -> $expected" "$?"
+    RC=0
+    if [ "$actual" != "$expected" ]; then RC=1; fi
+    check "router $args -> $expected" "$RC"
 done
 
-[ "$(router_track --files 1 --auth)" = "complex" ]
-check "router escala a complex ante --auth" "$?"
+RC=0
+if [ "$(router_track --files 1 --auth)" != "complex" ]; then RC=1; fi
+check "router escala a complex ante --auth" "$RC"
 
-[ "$(router_track --files 1 --db)" = "complex" ]
-check "router escala a complex ante --db" "$?"
+RC=0
+if [ "$(router_track --files 1 --db)" != "complex" ]; then RC=1; fi
+check "router escala a complex ante --db" "$RC"
 
-[ "$(router_track --files 1 --public-api)" = "complex" ]
-check "router escala a complex ante --public-api" "$?"
+RC=0
+if [ "$(router_track --files 1 --public-api)" != "complex" ]; then RC=1; fi
+check "router escala a complex ante --public-api" "$RC"
 
-[ "$(router_track --files 2 --regulated)" = "enterprise" ]
-check "router escala a enterprise ante --regulated" "$?"
+RC=0
+if [ "$(router_track --files 2 --regulated)" != "enterprise" ]; then RC=1; fi
+check "router escala a enterprise ante --regulated" "$RC"
 
-[ "$(router_track --files 1 --services 3)" = "enterprise" ]
-check "router escala a enterprise con >2 servicios" "$?"
+RC=0
+if [ "$(router_track --files 1 --services 3)" != "enterprise" ]; then RC=1; fi
+check "router escala a enterprise con >2 servicios" "$RC"
 
-[ "$(router_track --files 1 --override enterprise)" = "enterprise" ]
-check "router respeta --override enterprise" "$?"
+RC=0
+if [ "$(router_track --files 1 --override enterprise)" != "enterprise" ]; then RC=1; fi
+check "router respeta --override enterprise" "$RC"
 
 ROUTER_JSON=$(python3 -B "$ROUTER" --files 2 --services 1 --json 2>&1)
 RC=0
@@ -184,8 +207,17 @@ check "router --json expone workflow y rationale" "$RC"
 RC=0
 TRACK_NAME=""
 for TRACK_NAME in quick_fix simple complex enterprise; do
-    RECOMMENDED=$(python3 -B "$ROUTER" --files "$([ "$TRACK_NAME" = quick_fix ] && echo 1 || { [ "$TRACK_NAME" = simple ] && echo 2 || { [ "$TRACK_NAME" = complex ] && echo 8 || echo 30; }; })" \
-        $([ "$TRACK_NAME" = enterprise ] && echo "--regulated") --json | \
+    case "$TRACK_NAME" in
+        quick_fix) TRACK_FILES=1 ;;
+        simple) TRACK_FILES=2 ;;
+        complex) TRACK_FILES=8 ;;
+        *) TRACK_FILES=30 ;;
+    esac
+    ROUTER_ARGS=(--files "$TRACK_FILES")
+    if [ "$TRACK_NAME" = "enterprise" ]; then
+        ROUTER_ARGS+=(--regulated)
+    fi
+    RECOMMENDED=$(python3 -B "$ROUTER" "${ROUTER_ARGS[@]}" --json | \
         python3 -c 'import json,sys; print(json.load(sys.stdin)["recommended_workflow"].lstrip("/"))')
     if [ ! -f "$PROJECT_ROOT/agent-dist/workflows/$RECOMMENDED.md" ]; then
         RC=1

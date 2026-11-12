@@ -97,6 +97,23 @@ git checkout -b feature/TSK-CONTRIB-001-tu-contribucion
 ./install.sh --opencode  # O --cursor, --claude, --cline
 ```
 
+### Gates locales (mismos que CI)
+
+```bash
+# Suite completa + contrato + versiones + links + estructura
+./scripts/validate-all.sh --strict
+
+# Shellcheck con la version fijada en .shellcheck-version
+./scripts/lint-shell.sh
+
+# Portabilidad Linux <-> macOS (detecta comandos GNU-only)
+bash tests/test-portability.sh
+```
+
+Los scripts se mantienen compatibles con **GNU/Linux y macOS (BSD)**. `install.sh` requiere bash 4.0+ (macOS trae bash 3.2: `brew install bash`), pero el resto del tooling evita `mapfile`, `grep -P`, `touch -d`, `date -d`, `stat -c` y `sed -i` sin sufijo. `tests/test-portability.sh` falla si aparece cualquiera de esos patrones.
+
+La versión de shellcheck está fijada en `.shellcheck-version` porque el set de checks cambia entre releases (por ejemplo SC2317): CI descarga esa versión exacta y el hook de pre-commit la exige localmente. El hook `.githooks/pre-commit` (instalable con `./scripts/install-hooks.sh`) corre shellcheck sobre los `.sh` staged.
+
 ### Estructura del Proyecto
 
 ```

@@ -83,6 +83,21 @@ if echo "$STAGED_FILES" | grep -q "^install\.sh$"; then
     fi
 fi
 
+# Check shell scripts with the pinned shellcheck version
+if echo "$STAGED_FILES" | grep -qE '(\.sh$|^\.githooks/)'; then
+    echo "  Checking shell scripts..."
+    if command -v shellcheck >/dev/null 2>&1; then
+        if bash "$PROJECT_ROOT/scripts/lint-shell.sh" --quiet; then
+            echo "    shellcheck: OK"
+        else
+            echo "    ERROR: shellcheck issues or version mismatch (see .shellcheck-version)"
+            ERRORS=$((ERRORS + 1))
+        fi
+    else
+        echo "    shellcheck not installed, skipping (CI still enforces it)"
+    fi
+fi
+
 if [ $ERRORS -gt 0 ]; then
     echo ""
     echo "Pre-commit check failed with $ERRORS errors"

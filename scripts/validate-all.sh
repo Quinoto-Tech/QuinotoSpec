@@ -123,7 +123,11 @@ elif ! command -v python3 >/dev/null 2>&1; then
     echo "  python3 not found: no se pueden derivar conteos"
     ERRORS=$((ERRORS + 1))
 else
-    mapfile -t EXPECTED_COUNTS < <(python3 -B - "$PROJECT_ROOT/manifest.json" <<'PY'
+    # Sin `mapfile`: no existe en bash 3.2 (bash de sistema en macOS).
+    EXPECTED_COUNTS=()
+    while IFS= read -r manifest_line; do
+        [ -n "$manifest_line" ] && EXPECTED_COUNTS+=("$manifest_line")
+    done < <(python3 -B - "$PROJECT_ROOT/manifest.json" <<'PY'
 import json
 import sys
 

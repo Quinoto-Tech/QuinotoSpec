@@ -424,6 +424,9 @@ NORNS_SCRIPT="$PROJECT_ROOT/agent-dist/skills/quinotospec-norns/norns.py"
 
 NORNS_CHECK=$(python3 -B "$NORNS_SCRIPT" --check --root "$PROJECT_ROOT" 2>&1)
 RC=$?
+if [ "$RC" -ne 0 ]; then
+    echo "$NORNS_CHECK"
+fi
 check "norns.py --check sobre el repo real no detecta drift" "$RC"
 
 NORNS_WORK="$WORKDIR/norns-fixture"
@@ -473,6 +476,9 @@ SKALD_SCRIPT="$PROJECT_ROOT/agent-dist/skills/quinotospec-skald/sync-readme.sh"
 
 SKALD_CHECK=$(bash "$SKALD_SCRIPT" --check --root "$PROJECT_ROOT" 2>&1)
 RC=$?
+if [ "$RC" -ne 0 ]; then
+    echo "$SKALD_CHECK"
+fi
 check "sync-readme.sh --check sobre el repo real no detecta drift" "$RC"
 
 SKALD_WORK="$WORKDIR/skald-fixture"
@@ -496,6 +502,9 @@ check "sync-readme.sh --check detecta badge desincronizado" "$RC"
 
 SKALD_SYNC=$(bash "$SKALD_SCRIPT" --root "$SKALD_WORK" 2>&1)
 RC=$?
+if [ "$RC" -ne 0 ]; then
+    echo "$SKALD_SYNC"
+fi
 check "sync-readme.sh sin --check sincroniza badges y queda sin drift" "$RC"
 RC=0
 grep -q "badge/version-3.4.0-blue" "$SKALD_WORK/README_EN.md" || RC=$?

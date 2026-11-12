@@ -68,7 +68,14 @@ for workflow in "$WORKFLOWS_DIR"/*.md; do
     fi
     
     # Check 7: No tiene caracteres de control no imprimibles
-    if grep -Pq '[\x00-\x08\x0B\x0C\x0E-\x1F]' "$workflow" 2>/dev/null; then
+    # python3 en lugar de `grep -P` (PCRE no existe en el grep de macOS/BSD).
+    if ! python3 -B -c '
+import re
+import sys
+
+text = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+sys.exit(1 if re.search(r"[\x00-\x08\x0B\x0C\x0E-\x1F]", text) else 0)
+' "$workflow"; then
         echo "❌ $filename: Contiene caracteres de control no imprimibles"
         errors_in_file=1
     fi

@@ -59,17 +59,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Shellcheck all bash scripts
+      # Version fijada en .shellcheck-version: el runner trae una version distinta
+      # y el set de checks cambia entre releases (falsos positivos como SC2317).
+      - name: Install pinned shellcheck
         run: |
-          FAILED=0
-          for f in install.sh agent-dist/hooks/*.sh scripts/*.sh tests/*.sh .githooks/*; do
-            if [ -f "$f" ]; then
-              if ! shellcheck -e SC2329 -x "$f" 2>&1; then
-                FAILED=1
-              fi
-            fi
-          done
-          exit $FAILED
+          set -euo pipefail
+          version="$(tr -d '[:space:]' < .shellcheck-version)"
+          url="https://github.com/koalaman/shellcheck/releases/download/v${version}/shellcheck-v${version}.linux.x86_64.tar.xz"
+          curl -fsSL --retry 3 --retry-delay 2 -o /tmp/shellcheck.tar.xz "$url"
+          tar -xJf /tmp/shellcheck.tar.xz -C /tmp
+          sudo install "/tmp/shellcheck-v${version}/shellcheck" /usr/local/bin/shellcheck
+          shellcheck --version
+
+      - name: Shellcheck all bash scripts
+        run: ./scripts/lint-shell.sh
 
   lint-runtime:
     runs-on: ubuntu-latest
@@ -154,7 +157,7 @@ jobs:
 
       - name: Verify critical files
         run: |
-          REQUIRED_FILES="install.sh AGENTS.md README.md LICENSE agent-dist/rules/quinotospec-rules.md agent-dist/bootstrap/quinotospec-bootstrap.md agent-dist/hooks/session-start.sh agent-dist/hooks/hooks.json agent-dist/hooks/hooks-cursor.json agent-dist/hooks/hooks-opencode.json agent-dist/plugins/opencode/quinotospec-plugin.js agent-dist/workflows/quinotospec.constitution.md agent-dist/skills/quinotospec-constitution/SKILL.md agent-dist/skills/quinotospec-receive-review/SKILL.md agent-dist/skills/quinotospec-worktree/SKILL.md agent-dist/skills/quinotospec-rules-enforce/rules_enforce.py agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py agent-dist/skills/quinotospec-rules-enforce/approval_validate.py agent-dist/skills/quinotospec-backup/backup.py agent-dist/templates/constitution-template.md .cursor-plugin/plugin.json"
+          REQUIRED_FILES="install.sh AGENTS.md README.md LICENSE agent-dist/rules/quinotospec-rules.md agent-dist/bootstrap/quinotospec-bootstrap.md agent-dist/hooks/session-start.sh agent-dist/hooks/hooks.json agent-dist/hooks/hooks-cursor.json agent-dist/hooks/hooks-opencode.json agent-dist/plugins/opencode/quinotospec-plugin.js agent-dist/workflows/quinotospec.constitution.md agent-dist/skills/quinotospec-constitution/SKILL.md agent-dist/skills/quinotospec-receive-review/SKILL.md agent-dist/skills/quinotospec-worktree/SKILL.md agent-dist/skills/quinotospec-rules-enforce/rules_enforce.py agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py agent-dist/skills/quinotospec-rules-enforce/approval_validate.py agent-dist/skills/quinotospec-backup/backup.py agent-dist/templates/constitution-template.md .cursor-plugin/plugin.json .shellcheck-version scripts/lint-shell.sh tests/test-portability.sh"
           for file in $REQUIRED_FILES; do
             if [ ! -f "$file" ]; then
               echo "ERROR: Required file missing: $file"
