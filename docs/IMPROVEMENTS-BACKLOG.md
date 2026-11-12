@@ -1,5 +1,7 @@
 # Backlog de Mejoras Técnicas y Funcionales — QuinotoSpec v3.3.0
 
+> **Documento histórico.** Snapshot del análisis hecho sobre `3.3.0` (2026-10-20); `M1`–`M8` ya están implementadas y el paquete está en `3.4.0`. Los conteos citados abajo (**46 workflows / 89 skills**) corresponden a ese momento: hoy el inventario es **49 workflows / 95 skills** (`manifest.json` es la fuente de verdad). No se actualiza con releases nuevos.
+
 **Fecha de análisis**: `2026-10-20`  
 **Versión analizada**: `3.3.0` (post-commit `c4e021d` — *feat(opencode): soporte OpenCode v2 y release 3.3.0 (F3.3)*)  
 **Estado general del paquete**: Funcional en runtime e instalador multi-IDE, pero con **drift de versión** tras el bump parcial a `3.3.0`, un **falso positivo crítico** en la detección de ciclos de DAG (`Jormungandr`), una desviación en la ruta global de `AGENTS.md` en `install.sh` y oportunidades de endurecimiento en el plugin de OpenCode v2, el runner de tests y los helpers nórdicos.
