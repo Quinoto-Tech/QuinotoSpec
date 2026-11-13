@@ -20,7 +20,8 @@
     "SPECS-GATE: quinotospec.apply/create-proposal leen specs vigentes",
     "FIX-BASELINE: quinotospec.fix ejecuta baseline de tests pre-fix",
     "SPRINT2: tdd_validate.py, constitution_validate.py, Huginn history, UI /specs /evidence /gates",
-    "SPRINT3: Mermaid lazy, Bifrost DR, Skald i18n, TUI --tui"
+    "SPRINT3: Mermaid lazy, Bifrost DR, Skald i18n, TUI --tui",
+    "PWRE: review visual con Playwright (app/MCP) experimental, sin dependencias obligatorias"
   ],
   "contract_version": 1,
   "workflows": 49,
@@ -79,7 +80,8 @@
     "bifrost_dr": true,
     "skald_i18n": true,
     "ui_tui": true,
-    "fix_baseline": true
+    "fix_baseline": true,
+    "playwright_review": true
   },
   "capability_maturity": {
     "core_methodology": "beta",
@@ -113,6 +115,7 @@
     "skald_i18n": "beta",
     "ui_tui": "experimental",
     "fix_baseline": "beta",
+    "playwright_review": "experimental",
     "governance_gate": "beta",
     "backup_engine": "beta",
     "evidence_gate": "beta",
@@ -144,7 +147,8 @@
     "OpenCode v2 plugin uses a zero-dependency plain object export (no @opencode-ai/plugin import). This avoids requiring the user to have bun/npm and a package.json in their config directory, but relies on the OpenCode v2 loader accepting a plain {id, setup} object without Plugin.define().",
     "The OpenCode v1 plugin path (plugins/opencode/quinotospec-plugin.js) is legacy: it is only installed when OpenCode major is 1 and receives no new features. OpenCode v2 is the recommended path.",
     "UI is experimental and vendored mermaid.min.js (3.2M) is loaded lazily; server-side rendering and /specs|/evidence|/gates are partial.",
-    "TDD and Constitution gates are file-vectors (JSON+markdown) not command-executing validators."
+    "TDD and Constitution gates are file-vectors (JSON+markdown) not command-executing validators.",
+    "Playwright Review is experimental: the app backend requires Node 18+ and Chromium; the MCP backend depends on IDE support and may require a restart. It never installs without explicit consent."
   ],
   "supported_ides": [
     "opencode",

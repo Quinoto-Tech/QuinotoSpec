@@ -16,6 +16,12 @@ Consulta `before_review` y `after_review` con `extension_manager.py hooks --poin
 
 **Flags opcionales:**
 - `--goldfish [lentes]`: activa la revisión Goldfish con subagentes aislados (Comprehension, Design Critic, Zoom Out, Implementation Readiness). Por defecto **desactivada**, igual que `--party`. Si se pasa sin lentes, usa las 4 por defecto.
+- `--playwright`: activa el review visual de la propuesta en la UI local. Por defecto usa backend `auto` (app y luego MCP).
+- `--playwright-backend auto|app|mcp`: fuerza el backend.
+- `--install-playwright`: autoriza instalar Playwright app + Chromium tras confirmación.
+- `--install-playwright-mcp`: autoriza configurar Playwright MCP en el IDE.
+- `--no-install-prompt`: si falta Playwright, omite el review visual sin preguntar.
+- `--require-playwright`: si falta Playwright, falla en vez de omitir.
 
 **Instrucciones:**
 
@@ -44,6 +50,28 @@ Consulta `before_review` y `after_review` con `extension_manager.py hooks --poin
     Consolida los hallazgos deduplicados en `.quinoto-spec/reviews/{{TASK_ID}}-goldfish.md` con severidad (BLOCKING / WARN / INFO).
     Si el IDE no puede crear subagentes frescos, **detén la revisión Goldfish** y reporta el límite; no simules la revisión con el mismo contexto (el resto de la revisión puede continuar sin Goldfish).
 
+2c. **Playwright visual review (opcional, solo si `--playwright`)**:
+    Si no se pasó `--playwright`, **omite este paso**. Si se pasó:
+
+    1. Ejecuta el doctor:
+       ```bash
+       python3 -B agent-dist/skills/quinotospec-review/playwright_doctor.py --root . --check --json
+       ```
+    2. Ejecuta el review visual:
+       ```bash
+       python3 -B agent-dist/skills/quinotospec-review/playwright_review.py \
+         --root . --proposal {{PROPOSAL_SLUG}} --task-id {{TASK_ID}} --json
+       ```
+    3. Si el resultado es `action_required` (falta Playwright), **pregunta al usuario**:
+       - instalar Playwright app (`--install-playwright`),
+       - configurar Playwright MCP (`--install-playwright-mcp`),
+       - omitir el review visual (`--no-install-prompt`).
+       No instales nada sin confirmación. `--yes` no autoriza instalaciones.
+    4. Si el resultado es `skipped`, continúa con el review estándar y registra la decisión.
+    5. Si el resultado es `pass` o `warn`, adjunta `.quinoto-spec/reviews/{{PROPOSAL_SLUG}}-playwright.md`.
+    6. Si el resultado es `fail`, trátalo como **BLOCKING**: errores de consola, `pageerror`, HTTP distinto de 200, Mermaid roto o requests fallidos impiden aprobar el review.
+    7. Si el backend es `mcp`, usa las herramientas Playwright MCP del IDE y guarda la evidencia en `.quinoto-spec/reviews/`. Si el IDE pide reinicio, detente y pídelo; no simules resultados.
+
 3. **Checklist de revisión**:
     Valida cada uno de los siguientes puntos y documenta el resultado (✅ / ❌ / ⚠️):
 
@@ -54,6 +82,7 @@ Consulta `before_review` y `after_review` con `extension_manager.py hooks --poin
     - [ ] **Sin regresiones**: ¿La suite de tests completa pasa sin errores?
     - [ ] **Compliance constitucional**: si la constitución está activa, ¿cada principio aplicable tiene evidencia o una excepción aprobada?
     - [ ] **Goldfish review** *(solo si `--goldfish`)*: ¿existe `.quinoto-spec/reviews/{{TASK_ID}}-goldfish.md` y no hay hallazgos BLOCKING sin resolver?
+    - [ ] **Playwright visual review** *(solo si `--playwright`)*: ¿existe `.quinoto-spec/reviews/{{PROPOSAL_SLUG}}-playwright.md` y el resultado es `pass`, `warn` o `skipped` con decisión registrada?
     - [ ] **Sin deuda técnica obvia**: ¿No hay TODOs sin resolver, console.logs, o código comentado que no debería estar?
 
 4. **Feedback recibido**:

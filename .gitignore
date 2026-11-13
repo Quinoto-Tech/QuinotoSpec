@@ -28,6 +28,9 @@ node_modules/
 .quinoto-spec/backups/
 .quinoto-spec-backups/
 .quinoto-spec/changelog/INDEX.md
+.quinoto-spec/reviews/.artifacts/
+**/.quinoto-spec/reviews/.artifacts/
+tests/fixtures/**/.quinoto-spec/reviews/
 temp_*
 agent-dist/.tmp/
 
@@ -55,3 +58,4 @@ README_EN.pdf
 # Agent personal overrides (3-layer config: defaults -> team -> personal)
 .quinoto-spec/agent-personal.toml
 .quinoto-spec/_config/agent-personal.toml
+agent-dist/skills/quinotospec-review/e2e/test-results/

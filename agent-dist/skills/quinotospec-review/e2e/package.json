@@ -1,0 +1,14 @@
+{
+  "name": "quinotospec-playwright-review",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Harness Playwright opcional para el review visual de propuestas QuinotoSpec",
+  "scripts": {
+    "test": "playwright test",
+    "install-browser": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}

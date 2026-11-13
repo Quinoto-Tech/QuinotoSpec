@@ -156,6 +156,49 @@ jobs:
           done
           echo "Templates check done"
 
+  ui-playwright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Detect UI/review changes
+        id: changes
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            BASE="origin/${{ github.base_ref }}"
+          elif [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            BASE="${{ github.event.before }}"
+          else
+            BASE="HEAD~1"
+          fi
+          if git diff --name-only "$BASE...HEAD" | grep -qE '^(agent-dist/ui/|agent-dist/skills/quinotospec-review/|tests/test-review-playwright|tests/fixtures/quinoto-spec-playwright|tests/test-ui.sh|\.github/workflows/ci\.yml)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v7
+        if: steps.changes.outputs.run == 'true'
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: agent-dist/skills/quinotospec-review/e2e/package-lock.json
+
+      - name: Install Playwright Chromium
+        if: steps.changes.outputs.run == 'true'
+        working-directory: agent-dist/skills/quinotospec-review/e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Run Playwright review suite
+        if: steps.changes.outputs.run == 'true'
+        run: QS_RUN_PLAYWRIGHT=1 bash tests/test-review-playwright.sh
+
   structure:
     runs-on: ubuntu-latest
     steps:

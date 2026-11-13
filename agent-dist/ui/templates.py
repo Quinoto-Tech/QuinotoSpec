@@ -39,7 +39,7 @@ body { margin: 0; background: var(--bg); color: var(--text);
   font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
-header { display: flex; align-items: center; gap: 24px; padding: 14px 28px;
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; padding: 14px 28px;
   background: var(--panel); border-bottom: 1px solid var(--border); position: sticky; top: 0; }
 .brand { font-weight: 700; letter-spacing: .5px; color: #fff; }
 .brand span { color: var(--accent); }
@@ -84,8 +84,11 @@ tr:last-child td { border-bottom: none; }
 .entry ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
 pre { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; overflow: auto; white-space: pre-wrap; }
 footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px; }
-.two { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.two { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; min-width: 0; }
+.two > div { min-width: 0; }
+.table-wrap { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; }
 @media (max-width: 900px) { .kanban { grid-template-columns: 1fr 1fr; } .two { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { header { gap: 12px; padding: 12px 16px; } nav { order: 3; width: 100%; } main { padding: 18px; } }
 body.light {
   --bg: #f4f7fa; --panel: #ffffff; --panel2: #eef2f7; --border: #d5dde6;
   --text: #1a2330; --muted: #5a6b80; --accent: #0066cc; --accent2: #1f8a3a;
@@ -100,12 +103,15 @@ body.light {
 .md-content p { margin: 8px 0; }
 .md-content ul, .md-content ol { margin: 8px 0; padding-left: 22px; }
 .md-content li { margin: 4px 0; }
-.md-content code { background: var(--panel2); padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.md-content code { background: var(--panel2); padding: 1px 6px; border-radius: 4px; font-size: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+.card code { overflow-wrap: anywhere; word-break: break-word; }
 .md-content pre { background: var(--panel2); padding: 12px; border-radius: 8px; overflow-x: auto; }
 .md-content pre code { background: none; padding: 0; }
 .md-content blockquote { border-left: 3px solid var(--accent); padding-left: 12px; color: var(--muted); margin: 8px 0; }
 .md-content hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 .md-content table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+.md-content .table-wrap { overflow-x: auto; margin: 10px 0; }
+.md-content .table-wrap table { margin: 0; }
 .md-content th, .md-content td { padding: 8px 10px; border: 1px solid var(--border); }
 .md-content th { background: var(--panel2); }
 .md-content a { color: var(--accent); }
@@ -125,7 +131,7 @@ def layout(title, active, content, project_name="", projects=None, selected_proj
     links = []
     for href, label, key in NAV:
         cls = ' class="active"' if key == active else ""
-        links.append('<a href="%s"%s>%s</a>' % (href, cls, esc(label)))
+        links.append('<a href="%s"%s data-testid="nav-%s">%s</a>' % (href, cls, esc(key), esc(label)))
     selector = ""
     if projects and len(projects) > 1:
         options = ['<option value="">Todos los proyectos</option>']
@@ -137,7 +143,7 @@ def layout(title, active, content, project_name="", projects=None, selected_proj
             '<select onchange="var u=new URL(location.href);'
             'if(this.value) u.searchParams.set(\'project\',this.value);'
             'else u.searchParams.delete(\'project\'); location.href=u.toString();"'
-            ' style="margin-right:8px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;">'
+            ' data-testid="project-selector" style="margin-right:8px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;">'
             '%s</select>' % "".join(options)
         )
     header_right = selector + esc(project_name)
@@ -152,8 +158,8 @@ def layout(title, active, content, project_name="", projects=None, selected_proj
 <body>
 <header>
   <div class="brand">Quinoto<span>Spec</span> UI</div>
-  <nav>%s</nav>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted)">%s<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">Tema</button></div>
+  <nav data-testid="main-nav">%s</nav>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted)">%s<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" data-testid="theme-toggle">Tema</button></div>
 </header>
 <main>
 %s
@@ -278,13 +284,14 @@ def proposals_page(summary, q=""):
         header_cells.append("<th>Proyecto</th>")
     header_cells += ["<th>Propuesta</th>", "<th>Estado</th>", "<th>Prefijo</th>", "<th>Fecha</th>", "<th>Prioridad</th>", "<th>Servicios</th>", "<th>Archivada</th>"]
     table = (
-        "<table><thead><tr>%s</tr></thead><tbody>%s</tbody></table>" % ("".join(header_cells), "".join(rows))
+        '<table data-testid="proposal-list"><thead><tr>%s</tr></thead><tbody>%s</tbody></table>' % ("".join(header_cells), "".join(rows))
         if rows
-        else '<div class="card empty">No hay propuestas.</div>'
+        else '<div class="card empty" data-testid="proposal-list-empty">No hay propuestas.</div>'
     )
     search = (
         '<form method="get" style="margin-bottom:12px;display:flex;gap:8px;">'
-        '<input name="q" value="%s" placeholder="Buscar propuestas..." style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);">'
+        '<label for="proposal-search" style="position:absolute;left:-9999px;">Buscar propuestas</label>'
+        '<input id="proposal-search" name="q" data-testid="proposal-search" value="%s" placeholder="Buscar propuestas..." style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);">'
         '<button type="submit" style="padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;">Buscar</button>'
         '</form>' % esc(q)
     )
@@ -301,7 +308,7 @@ def proposal_page(proposal):
     for story in proposal["stories"]:
         stories.append("<tr><td>%s</td><td>%s</td></tr>" % (esc(story["id"]), esc(story["title"])))
     stories_table = (
-        "<table><thead><tr><th>Story</th><th>Título</th></tr></thead><tbody>%s</tbody></table>" % "".join(stories)
+        '<div class="table-wrap"><table><thead><tr><th>Story</th><th>Título</th></tr></thead><tbody>%s</tbody></table></div>' % "".join(stories)
         if stories
         else '<div class="card empty">Sin user stories.</div>'
     )
@@ -313,7 +320,7 @@ def proposal_page(proposal):
             % (esc(task["id"]), esc(task["title"]), badge(task["status"]), esc(task["story"]), esc(task["files"]), esc(evidence))
         )
     tasks_table = (
-        "<table><thead><tr><th>ID</th><th>Título</th><th>Estado</th><th>Story</th><th>Archivos</th><th>Evidencia</th></tr></thead><tbody>%s</tbody></table>" % "".join(tasks)
+        '<div class="table-wrap"><table><thead><tr><th>ID</th><th>Título</th><th>Estado</th><th>Story</th><th>Archivos</th><th>Evidencia</th></tr></thead><tbody>%s</tbody></table></div>' % "".join(tasks)
         if tasks
         else '<div class="card empty">Sin tareas registradas (*_tasks.md).</div>'
     )
@@ -338,10 +345,25 @@ def proposal_page(proposal):
         "sí" if proposal["has_delta_specs"] else "no",
         esc(proposal["path"]),
     )
+    content_text = proposal.get("content") or ""
+    content_text = re.sub(r"^# [^\n]*\n?", "", content_text, count=1)
+    rendered_content = render_markdown(content_text) if content_text else '<div class="empty">Sin contenido de propuesta.</div>'
+    mermaid_count = rendered_content.count('data-testid="mermaid-block"')
+    mermaid_script = _mermaid_lazy_script() if mermaid_count else ""
     return (
-        '<h1>%s</h1><p class="sub"><a href="/proposals">← Propuestas</a> · %s</p>'
+        '<h1 data-testid="proposal-title">%s</h1><p class="sub"><a href="/proposals">← Propuestas</a> · %s</p>'
+        '<div class="card md-content" data-testid="proposal-content" data-mermaid-count="%s">%s</div>%s'
         '<div class="two"><div><h2>User stories</h2>%s<h2>Tareas</h2>%s</div><div>%s</div></div>'
-        % (esc(proposal["title"]), esc(proposal["slug"]), stories_table, tasks_table, meta)
+        % (
+            esc(proposal["title"]),
+            esc(proposal["slug"]),
+            mermaid_count,
+            rendered_content,
+            mermaid_script,
+            stories_table,
+            tasks_table,
+            meta,
+        )
     )
 
 
@@ -388,11 +410,12 @@ def tasks_page(summary, q=""):
         )
     search = (
         '<form method="get" style="margin-bottom:12px;display:flex;gap:8px;">'
-        '<input name="q" value="%s" placeholder="Buscar tareas..." style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);">'
+        '<label for="task-search" style="position:absolute;left:-9999px;">Buscar tareas</label>'
+        '<input id="task-search" name="q" data-testid="task-search" value="%s" placeholder="Buscar tareas..." style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);">'
         '<button type="submit" style="padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);cursor:pointer;">Buscar</button>'
         '</form>' % esc(q)
     )
-    return "<h1>Tareas</h1><p class=\"sub\">Vista kanban multi-propuesta%s</p>%s<div class=\"kanban\">%s</div>" % (
+    return "<h1>Tareas</h1><p class=\"sub\">Vista kanban multi-propuesta%s</p>%s<div class=\"kanban\" data-testid=\"task-list\">%s</div>" % (
         (" (filtro: %s)" % esc(q)) if q else "",
         search,
         "".join(rendered),
@@ -472,7 +495,7 @@ def task_page(task, proposal):
         len(evidence),
         evidence_items,
     )
-    return '<h1>%s</h1><p class="sub"><a href="/tasks">← Tareas</a> · %s</p><div class="two"><div>%s</div></div>' % (
+    return '<h1 data-testid="task-title">%s</h1><p class="sub"><a href="/tasks">← Tareas</a> · %s</p><div class="two"><div data-testid="task-content">%s</div></div>' % (
         esc(task.get("id", "")),
         esc(proposal.get("title", "")),
         meta,
@@ -559,7 +582,7 @@ def render_markdown(text):
             i += 1
             code = "\n".join(code_lines)
             if lang == "mermaid":
-                out.append('<div class="mermaid">%s</div>' % html.escape(code))
+                out.append('<div class="mermaid" data-testid="mermaid-block" data-mermaid-state="pending">%s</div>' % html.escape(code))
             else:
                 out.append("<pre><code>%s</code></pre>" % html.escape(code))
             continue
@@ -607,7 +630,7 @@ def render_markdown(text):
             body_html = "".join(
                 "<tr>%s</tr>" % "".join("<td>%s</td>" % _inline_markdown(html.escape(c)) for c in row) for row in rows
             )
-            out.append("<table><thead><tr>%s</tr></thead><tbody>%s</tbody></table>" % (head_html, body_html))
+            out.append('<div class="table-wrap"><table><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>' % (head_html, body_html))
             continue
         para = []
         while i < n and lines[i].strip() != "" and not _is_block_start(lines[i].strip()):
@@ -624,7 +647,7 @@ def _mermaid_lazy_script():
     return (
         '<script async src="/static/mermaid.min.js" onload="window.__mermaidReady=true;if(window.__mermaidInit)window.__mermaidInit();"></script>'
         '<script>var __mermaidLoaded=false;function __loadMermaid(){if(__mermaidLoaded||window.__mermaidReady)window.__mermaidInit&&window.__mermaidInit();else{var s=document.createElement("link");s.rel="preload";s.as="script";s.href="/static/mermaid.min.js";document.head.appendChild(s);setTimeout(function(){if(window.__mermaidReady)window.__mermaidInit&&window.__mermaidInit();},800);}}'
-        'window.__mermaidInit=function(){try{if(!window.mermaid)return;mermaid.initialize({startOnLoad:false,theme:document.body.classList.contains("light")?"default":"dark"});document.querySelectorAll("div.mermaid").forEach(function(el){try{mermaid.run({nodes:[el]});}catch(e){}});}catch(e){}};'
+        'window.__mermaidInit=function(){try{if(!window.mermaid)return;mermaid.initialize({startOnLoad:false,theme:document.body.classList.contains("light")?"default":"dark"});document.querySelectorAll("div.mermaid").forEach(function(el){el.setAttribute("data-mermaid-state","pending");try{var result=mermaid.run({nodes:[el]});Promise.resolve(result).then(function(){el.setAttribute("data-mermaid-state",el.querySelector("svg")?"rendered":"error");}).catch(function(){el.setAttribute("data-mermaid-state","error");});}catch(e){el.setAttribute("data-mermaid-state","error");}});}catch(e){document.querySelectorAll("div.mermaid").forEach(function(el){el.setAttribute("data-mermaid-state","error");});}};'
         'window.addEventListener("load",function(){var blocks=document.querySelectorAll("div.mermaid");if(!blocks.length)return;if("IntersectionObserver"in window){var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){__loadMermaid();io.disconnect();}});});blocks.forEach(function(b){io.observe(b);});}else{__loadMermaid();}});</script>'
     )
 

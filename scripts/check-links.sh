@@ -86,7 +86,9 @@ while IFS= read -r -d '' md_file; do
         fi
     done < <(grep -oE '\[[^]]*\]\([^)]+\)' "$md_file" 2>/dev/null | sed -E 's/.*\(([^)]+)\)/\1/' || true)
 done < <(find "$PROJECT_ROOT" -maxdepth 1 -name "*.md" -print0 2>/dev/null; \
-         find "$PROJECT_ROOT/agent-dist" "$PROJECT_ROOT/docs" "$PROJECT_ROOT/examples" "$PROJECT_ROOT/extensions" -name "*.md" -print0 2>/dev/null)
+         find "$PROJECT_ROOT/agent-dist" "$PROJECT_ROOT/docs" "$PROJECT_ROOT/examples" "$PROJECT_ROOT/extensions" \
+             \( -type d \( -name node_modules -o -name __pycache__ -o -name .git -o -name .pytest_cache \) -prune \) \
+             -o \( -name "*.md" -print0 \) 2>/dev/null)
 
 echo ""
 echo "=========================================="

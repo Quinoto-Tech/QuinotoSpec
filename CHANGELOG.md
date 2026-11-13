@@ -39,6 +39,8 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/), y es
 - **Búsqueda real**: `quinotospec-search/search.py` delega en el índice BM25 de Mimir con filtros por tipo, prefijo, fecha y estado (`--json`, `--cite`).
 - **Paridad README**: `scripts/check-readme-parity.py` valida estructura ES/EN y está integrado en `validate-all.sh`.
 - **UI Fase 1 (read-only)**: `agent-dist/ui/` con `readers.py`, `templates.py` y `server.py` (solo stdlib); dashboard local con panel, propuestas, kanban de tareas, changelog, discovery, constitución y `/api/summary`. Skill `quinotospec-ui` + workflow `@quinotospec.ui` y suite `tests/test-ui.sh`.
+- **Playwright Review (experimental)**: flag `--playwright` en `@quinotospec.review`; doctor de dependencias (`playwright_doctor.py`), onboarding para instalar Playwright app o configurar MCP, orquestador con arranque/parada de la UI, evidencia JSON/Markdown, screenshots, harness E2E en `agent-dist/skills/quinotospec-review/e2e/`, selectores `data-testid` y estado observable de Mermaid, y job de CI condicionado.
+- **Instalador y validadores**: el payload excluye `node_modules` y respeta `node_modules` ajenos; `check-links.sh` y el conteo de skills ignoran `node_modules`; nueva suite `tests/test-review-playwright.sh` (29 suites en total).
 
 ### Changed
 - **Inventario**: 48 workflows y 94 skills; umbrales sincronizados y **derivados de `manifest.json`** en `install.sh` y `validate-all.sh`; badges de README ES/EN actualizados.

@@ -377,6 +377,7 @@ Acciones: Lee contexto → Confirma branch y worktree → Aísla y ejecuta basel
 | **Fix** | `@quinotospec.fix` | Resuelve bugs y fixes menores sin propuesta formal — rápido, documentado, con tests |
 | **Help** | `@quinotospec.help` | Inspecciona `.quinoto-spec/` y recomienda el siguiente comando exacto |
 | **UI** | `@quinotospec.ui` | Dashboard web local read-only: propuestas, tareas, changelog, discovery y constitución *(en desarrollo)* |
+| **Review visual** | `@quinotospec.review --playwright` | Revisa el render de la propuesta con Playwright; ofrece instalar la app o configurar MCP *(experimental)* — ver [docs/PLAYWRIGHT-REVIEW.md](docs/PLAYWRIGHT-REVIEW.md) |
 | **Quick Dev** | `@quinotospec.quick-dev` | Vía rápida para cambios Simple: tech-spec ligera + TDD sin user stories |
 | **Flow** | `@quinotospec.flow` | Orquestador Enterprise: SDLC completo con constitution gates, compliance y aprobación humana |
 | **Agent Config** | `@quinotospec.agent-config` | Configura agentes con merge 3-layer (defaults → team → personal) |

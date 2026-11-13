@@ -69,6 +69,7 @@ run_suite "Portabilidad (Linux/macOS)" "$SCRIPT_DIR/test-portability.sh"
 run_suite "Higiene de CI" "$SCRIPT_DIR/test-ci-config.sh"
 run_suite "Comandos en documentacion" "$SCRIPT_DIR/test-docs-consistency.sh"
 run_suite "UI (read-only)" "$SCRIPT_DIR/test-ui.sh"
+run_suite "Review con Playwright" "$SCRIPT_DIR/test-review-playwright.sh"
 
 # Verificar que todas las suites test-*.sh en disco hayan sido ejecutadas
 for disk_suite in "$SCRIPT_DIR"/test-*.sh; do

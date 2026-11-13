@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "tool": "playwright",
+  "browser": "chromium",
+  "base_url": "http://127.0.0.1:59693",
+  "proposal": "2026-11-13-playwright-proposal-review",
+  "task_id": null,
+  "dependency": {
+    "app": {
+      "available": true,
+      "version": "1.65.0",
+      "source": "local",
+      "chromium": true
+    },
+    "mcp": {
+      "configured": true,
+      "detected_in": [
+        "~/.config/opencode/opencode.json"
+      ],
+      "package": "@playwright/mcp"
+    },
+    "selected_backend": "app",
+    "install_action": "none",
+    "consent": "none"
+  },
+  "viewports": [
+    "1440x900",
+    "768x1024",
+    "390x844"
+  ],
+  "checks": [
+    {
+      "id": "http-status",
+      "status": "pass",
+      "detail": "200"
+    },
+    {
+      "id": "proposal-title",
+      "status": "pass",
+      "detail": "titulo de propuesta"
+    },
+    {
+      "id": "proposal-content",
+      "status": "pass",
+      "detail": "contenido Markdown de la propuesta"
+    },
+    {
+      "id": "proposal-text",
+      "status": "pass",
+      "detail": "contenido no vacio"
+    },
+    {
+      "id": "mermaid",
+      "status": "pass",
+      "detail": "2/2 bloques renderizados"
+    },
+    {
+      "id": "overflow-desktop",
+      "status": "pass",
+      "detail": "sin overflow horizontal"
+    },
+    {
+      "id": "overflow-tablet",
+      "status": "pass",
+      "detail": "sin overflow horizontal"
+    },
+    {
+      "id": "overflow-mobile",
+      "status": "pass",
+      "detail": "sin overflow horizontal"
+    },
+    {
+      "id": "a11y-h1",
+      "status": "pass",
+      "detail": "1 h1"
+    }
+  ],
+  "console_errors": [],
+  "page_errors": [],
+  "failed_requests": [],
+  "screenshots": [
+    ".quinoto-spec/reviews/.artifacts/2026-11-13-playwright-proposal-review-playwright/screenshots/desktop.png",
+    ".quinoto-spec/reviews/.artifacts/2026-11-13-playwright-proposal-review-playwright/screenshots/tablet.png",
+    ".quinoto-spec/reviews/.artifacts/2026-11-13-playwright-proposal-review-playwright/screenshots/mobile.png"
+  ],
+  "result": "pass",
+  "generated_at": "2026-11-13T17:12:45+00:00",
+  "playwright": {
+    "exit_code": 0,
+    "e2e_dir": "agent-dist/skills/quinotospec-review/e2e",
+    "raw": ".quinoto-spec/reviews/.artifacts/2026-11-13-playwright-proposal-review-playwright/playwright-raw.json",
+    "stdout_tail": "\nRunning 1 test using 1 worker\n\n  ✓  1 [chromium] › proposal-review.spec.js:34:1 › proposal renders correctly in the local UI (7.5s)\n\n  1 passed (8.7s)\n",
+    "stderr_tail": ""
+  }
+}

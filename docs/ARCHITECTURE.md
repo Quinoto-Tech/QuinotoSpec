@@ -85,6 +85,7 @@ Los estados significan lo siguiente:
 | Huginn & Muninn | Beta | Gate CI | Calcula entropía real con stdlib; aún no persiste histórico ni contract drift |
 | Norns / Skald | Beta | Scripts | `norns.py` detecta drift sin escribir; `sync-readme.sh` sincroniza badges y valida paridad de tablas |
 | Bifrost | Experimental | Git externo | Requiere dry-run, confirmación y allowlist de remotos |
+| Playwright Review | Experimental | Workflow + Python + Playwright dev-only | Requiere Node y navegador opcionales; el backend MCP depende del IDE y puede requerir reinicio |
 | Battle Frenzy / Blood-Bond | Experimental | Orquestación + datos locales | Requiere aislamiento de worktrees y política de privacidad |
 | Installer / backup | Beta | Bash transaccional + Python backup engine | Staging, ownership manifest y rollback implementados; disaster recovery multi-repo queda pendiente |
 

@@ -35,9 +35,10 @@ echo ""
 WC_CHECKOUT="${WC_CHECKOUT:-7}"
 WC_SETUP_PYTHON="${WC_SETUP_PYTHON:-7}"
 WC_GH_RELEASE="${WC_GH_RELEASE:-3}"
+WC_SETUP_NODE="${WC_SETUP_NODE:-7}"
 
 scan_actions() {
-    python3 -B - "$PROJECT_ROOT" "$WC_CHECKOUT" "$WC_SETUP_PYTHON" "$WC_GH_RELEASE" <<'PY'
+    python3 -B - "$PROJECT_ROOT" "$WC_CHECKOUT" "$WC_SETUP_PYTHON" "$WC_GH_RELEASE" "$WC_SETUP_NODE" <<'PY'
 import os
 import re
 import sys
@@ -47,6 +48,7 @@ minimums = {
     "actions/checkout": int(sys.argv[2]),
     "actions/setup-python": int(sys.argv[3]),
     "softprops/action-gh-release": int(sys.argv[4]),
+    "actions/setup-node": int(sys.argv[5]),
 }
 
 problems = []
@@ -94,7 +96,7 @@ PY
 }
 
 scan_actions
-check "actions/checkout, setup-python y action-gh-release en majors sin Node deprecado" "$?"
+check "checkout, setup-python, setup-node y action-gh-release en majors sin Node deprecado" "$?"
 
 # La suite completa tiene que cubrir el Python declarado como minimo y el actual.
 RC=0

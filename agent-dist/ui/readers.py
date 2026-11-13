@@ -204,6 +204,7 @@ def read_proposal(root, proposal_dir, archived=False):
     return {
         "slug": proposal_dir.name,
         "title": title,
+        "content": text,
         "prefix": fields.get("prefijo", ""),
         "date": fields.get("fecha de creación", fields.get("fecha de creacion", "")),
         "status": normalize_status(fields.get("estado", "")),

@@ -178,6 +178,15 @@ check "--stop existe en ayuda" "$RC"
 grep -q "IntersectionObserver\|__mermaid" "$UI_DIR/templates.py"
 check "Mermaid lazy (IntersectionObserver) en templates" "$?"
 
+grep -q 'data-testid="proposal-title"' "$UI_DIR/templates.py"
+check "selector E2E estable para titulo de propuesta" "$?"
+
+grep -q 'data-testid="proposal-content"' "$UI_DIR/templates.py"
+check "selector E2E estable para contenido de propuesta" "$?"
+
+grep -q 'data-mermaid-state' "$UI_DIR/templates.py"
+check "estado observable de Mermaid" "$?"
+
 python3 -B "$PROJECT_ROOT/agent-dist/skills/quinotospec-rules-enforce/constitution_validate.py" --root "$PROJECT_ROOT" --json | grep -q '"valid": true'
 check "constitution gate presente y activo" "$?"
 

@@ -141,7 +141,8 @@ PY
         count="${expected##*:}"
         case "$dir" in
             skills)
-                actual=$(find "$PROJECT_ROOT/agent-dist/$dir" -type f -name "SKILL.md" 2>/dev/null | wc -l)
+                actual=$(find "$PROJECT_ROOT/agent-dist/$dir" -type f -name "SKILL.md" \
+                    -not -path '*/node_modules/*' 2>/dev/null | wc -l)
                 ;;
             rules)
                 actual=$(grep -c '^# ' "$PROJECT_ROOT/agent-dist/rules/quinotospec-rules.md" 2>/dev/null || true)
