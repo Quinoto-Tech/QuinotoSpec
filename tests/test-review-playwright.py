@@ -228,7 +228,8 @@ class ReviewTests(unittest.TestCase):
         self.assertFalse(result["sudo"])
         self.assertEqual([call[0][0] for call in calls], ["/usr/bin/npm", "/usr/bin/npx"])
         self.assertNotIn("sudo", [part for call in calls for part in call[0]])
-        self.assertTrue(all(call[1] == str(e2e) for call in calls))
+        # macOS: /var es symlink a /private/var; el codigo resuelve el path
+        self.assertTrue(all(Path(call[1]).resolve() == e2e.resolve() for call in calls))
 
     def test_install_playwright_app_failure_is_actionable(self):
         with tempfile.TemporaryDirectory() as tmp:
