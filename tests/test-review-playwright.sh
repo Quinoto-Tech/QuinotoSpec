@@ -50,11 +50,20 @@ for artifact in \
     check "existe $(basename "$artifact")" "$?"
 done
 
-python3 -B "$SCRIPT_DIR/test-playwright-doctor.py" >/dev/null 2>&1
-check "tests del doctor" "$?"
+# En fallo se muestra el detalle: sin esto, un error en macOS/CI es invisible.
+DOCTOR_OUT="$(python3 -B "$SCRIPT_DIR/test-playwright-doctor.py" 2>&1)"
+DOCTOR_RC=$?
+if [ "$DOCTOR_RC" -ne 0 ]; then
+    echo "$DOCTOR_OUT" | tail -25
+fi
+check "tests del doctor" "$DOCTOR_RC"
 
-python3 -B "$SCRIPT_DIR/test-review-playwright.py" >/dev/null 2>&1
-check "tests del orquestador" "$?"
+REVIEW_OUT="$(python3 -B "$SCRIPT_DIR/test-review-playwright.py" 2>&1)"
+REVIEW_RC=$?
+if [ "$REVIEW_RC" -ne 0 ]; then
+    echo "$REVIEW_OUT" | tail -25
+fi
+check "tests del orquestador" "$REVIEW_RC"
 
 if command -v node >/dev/null 2>&1; then
     (
