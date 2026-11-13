@@ -1,29 +1,32 @@
-# Acuerdos de Producto y de Trabajo
+# Acuerdos de Producto y de Trabajo: QuinotoSpec
 
-> **Discovery Date:** 2026-11-08
+Plantilla de visión, objetivos y acuerdos de trabajo que el equipo humano debe completar.
+
+Guardar en: `.quinoto-spec/discovery/08-product-and-agreements.md`
+
+**Discovery Date:** 2026-11-13
+**Estado:** Plantilla sin completar — requiere intervención humana
+
+> **Nota:** este archivo es una plantilla vacía. Debe ser completado por el equipo humano (Product Owner, maintainers y desarrollo) antes de ejecutar `@quinotospec.create-proposal`. El gate **Product Agreement Check** bloquea la creación de propuestas mientras DoR y DoD no tengan contenido real.
 
 ## Visión de Producto
 
-QuinotoSpec es una metodología + sistema de configuración de agentes para que el desarrollo asistido por IA sea Proposal First, trazable y verificable, sin depender de que el agente “lea AGENTS.md por su cuenta”.
+<!-- Completar: propósito del producto, problema que resuelve, para quién y qué lo diferencia. -->
 
 ## Business Goals / KPIs
 
-- % de cambios que pasan por propuesta antes de código (objetivo >80% en dogfooding).
-- 0 regresiones por falta de validación en releases (medido por `validate-all.sh --strict` + suites verdes).
-- Tiempo medio propuesta → archive < 14 días.
-- Adopción: nº de proyectos con `.quinoto-spec/` activo y `contract validate --strict` en verde.
+-
+-
+-
 
 ## Definition of Ready (DoR)
 
-- Discovery fresco (<30 días) y `08-product-and-agreements.md` sin placeholders.
-- `contract.py validate --root . --strict` en verde.
-- Prefijo registrado en `prefix-registry.md`.
-- Propuesta con `**ID:**`, `**Prefijo:**`, `**Fecha de Creación:**`, `**Estado:**`, `**Prioridad:**`, `**Complejidad:**`, `**Servicios Afectados:**`.
+<!-- Completar con los acuerdos del equipo. -->
 
 ## Definition of Done (DoD)
 
-- Gates mecánicos en verde: TDD (si aplica), evidencia fresca (`evidence_validate.py`), `verify-before-done`.
-- Tests, lint y typecheck del stack (`01-stack-profile.md`) en verde.
-- Changelog v2 append-only con `quinotospec-update-changelog`.
-- `Norns --check` sin drift; `validate-all.sh --strict` + `run-all-tests.sh` en verde.
-- Marcas: UI *(en desarrollo)* donde aplique hasta promoción a `beta`.
+<!-- Completar con los acuerdos del equipo. -->
+
+## Nota
+
+Este documento debe ser definido y aprobado por **Humanos**. No se generan listas de chequeo predefinidas: el equipo decide sus propios criterios de entrada y salida.

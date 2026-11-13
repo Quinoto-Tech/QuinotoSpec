@@ -1,208 +1,405 @@
 # DevOps, CI y Seguridad: QuinotoSpec
 
-**Discovery Date:** 2026-11-08
+Entornos, pipelines, automatización, auditoría de dependencias, postura de seguridad y estrategia de backup.
 
-Guardar en: .quinoto-spec/discovery/06-devops-ci-security.md
+Guardar en: `.quinoto-spec/discovery/06-devops-ci-security.md`
 
-## Entorno de desarrollo
+**Discovery Date:** 2026-11-13
+**Versión:** 3.4.0 — *Hird Edition*
 
-### Requisitos verificados por el instalador
+## Resumen
+
+QuinotoSpec se distribuye como **tarball versionado** y se instala con un **script Bash transaccional**. La integración continua corre en **GitHub Actions** con matriz de sistema operativo (Ubuntu/macOS) y de Python (3.8/3.11/3.13). No hay contenedores, Kubernetes, base de datos ni secretos de aplicación.
+
+| Área | Estado |
+|---|---|
+| Contenedores | No hay `Dockerfile` ni `docker-compose.yml` |
+| CI | 3 workflows: `ci.yml`, `release.yml`, `huginn-muninn.yml` |
+| Release | Tag `v*` → validación → tarball + SHA-256 → GitHub Release |
+| Cron | Diario 06:00 UTC para entropía |
+| Secretos requeridos | Ninguno |
+| Variables obligatorias | Ninguna |
+| Auditoría de dependencias | Manual; no está en CI |
+
+## Configuración de entorno de desarrollo
+
+### Requisitos
 
 ```bash
-bash >= 4.0    # install.sh:513-520
-git  >= 2.0    # install.sh:523-531
-python3 >= 3.8 # install.sh:533-545
+bash --version    # >= 4.0
+git --version     # >= 2.0
+python3 --version # >= 3.8
+node --version    # opcional, solo para validar plugins
+shellcheck --version
 ```
-
-Opcionales: `node` (solo `node --check` del plugin), `shellcheck` (solo CI).
 
 ### Variables de entorno
 
-**El paquete no requiere ninguna variable de entorno.** No hay `.env`, ni `.env.example`, ni
-referencias a tokens o claves. El instalador no lee el entorno más allá de `$HOME`.
+| Variable | Obligatoria | Uso |
+|---|---|---|
+| `QUINOTOSPEC_ALLOW_NO_NODE` | No | Con `true`, la ausencia de Node no es fatal en `--strict` |
+| `QUINOTOSPEC_HOOK_PLATFORM` | No | `claude`, `cursor` o `generic` para `session-start.sh` |
+| `PLUGIN_ROOT` | No | Raíz del payload para el hook |
+| `QUINOTOSPEC_OPENCODE_MAJOR` | No | Fuerza `1` o `2` para pruebas/instalación |
+| `BASH_PATH` | No | Bash alternativo en CI de macOS |
+| `CI`, `GITHUB_*` | No | Provistas por GitHub Actions |
 
-Variables que el *instalador* define internamente (`install.sh:8-21`), no de entrada:
+**No hay `.env`, tokens, claves de API ni credenciales en el repositorio.** El paquete no hace llamadas de red en su operación normal.
 
-| Var | Propósito |
-|---|---|
-| `INSTALLER_VERSION` | `3.2.0`; se escribe en el ownership manifest |
-| `DIR` / `PROJECT_ROOT` / `TARGET_ROOT` | source vs destino |
-| `TRANSACTION_DIR` | staging hermano (`mktemp -d`) |
-| `FINAL_CONFIG_DIR` | directorio real del IDE |
-| `TRANSACTION_COMMITTED` | flag de commit; gobierna el rollback |
-| `AGENTS_MANAGED` | si el instalador es dueño del `AGENTS.md` |
-
-### Variables deEntorno de test (inyección de fallos)
+### Setup local
 
 ```bash
-QUINOTOSPEC_INSTALL_TEST_MODE=true
-QUINOTOSPEC_INSTALL_FAIL_STAGE=after-config   # fuerza un fallo post-commit
-```
+git clone https://github.com/Quinoto-Tech/QuinotoSpec.git
+cd QuinotoSpec
+chmod +x install.sh
 
-Ejercita el rollback en `tests/test-install-e2e.sh:193-202`. **Solo para tests**: si se exportan en
-producción, rompen la instalación a propósito.
+# Instalar hooks de desarrollo (opcional)
+bash scripts/install-hooks.sh
+
+# Verificar entorno
+./install.sh --version
+bash tests/run-all-tests.sh
+```
 
 ## Pipelines de CI/CD
 
-### `.github/workflows/ci.yml` — quality gate principal
+### CI — `.github/workflows/ci.yml`
 
-**Triggers**: `push` a `master`/`main`/`release-*`; `pull_request` a `master`/`main`.
+Disparadores: `push` a `master`, `main` y `release-*`; `pull_request` a `master`/`main`.
 
-| Job | Runner | Qué hace |
-|---|---|---|
-| `test` | ubuntu + macos (matrix) | `validate-all.sh --strict` (suite completa). En macOS instala solo `bash` 5 (el lint corre en `lint-shell`) |
-| `compatibility` | Python 3.8, 3.11 y 3.13 | `validate-all.sh --strict` en cada versión |
-| `package-smoke` | Python 3.13 | `package-release.sh` + `smoke-release.sh` sobre el tarball |
-| `lint-shell` | ubuntu | `scripts/lint-shell.sh`: shellcheck fijado en `.shellcheck-version` sobre `install.sh`, `hooks/*.sh`, `scripts/*.sh`, `tests/*.sh`, `.githooks/*` |
-| `lint-runtime` | ubuntu | `json.tool` en hooks + `node --check` en el plugin |
-| `lint-docs` | ubuntu | `check-links.sh --internal-only` + convenciones de nombres (warnings no fatales) |
-| `structure` | ubuntu | `REQUIRED_DIRS` incluye `agent-dist/plugins`; `REQUIRED_FILES` incluye el plugin y `hooks-opencode.json` |
+| Job | Runner | Qué hace | Bloquea merge |
+|---|---|---|---|
+| `test` | Ubuntu + macOS | `scripts/validate-all.sh --strict` (suite completa + gates) | Sí |
+| `compatibility` | Ubuntu, Python 3.8 / 3.11 / 3.13 | Mismo gate en versiones soportadas | Sí |
+| `package-smoke` | Ubuntu, Python 3.13 | Construye tarball y corre smoke de install/verify/uninstall | Sí |
+| `example-playground` | Ubuntu, Python 3.13 | `pip install -r examples/python-fastapi/requirements.txt` + `pytest` | Sí |
+| `lint-shell` | Ubuntu | Instala `shellcheck` fijado y corre `scripts/lint-shell.sh` | Sí |
+| `lint-runtime` | Ubuntu | Valida JSON de hooks/plugin y sintaxis JS con `node --check` | Sí |
+| `lint-docs` | Ubuntu | Links internos, naming de workflows/skills/agents, templates | Sí |
+| `structure` | Ubuntu | Directorios y archivos críticos presentes | Sí |
 
-**Bloquea el merge.** `test` y `compatibility` ejecutan la suite completa vía `validate-all.sh --strict`.
+### Pipeline de CI
 
-### `.github/workflows/release.yml` — publicación
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dev as "Desarrollador"
+    participant Git as "GitHub"
+    participant CI as "ci.yml"
+    participant Tests as "validate-all.sh"
+    participant Pkg as "package-release.sh"
+    participant Smoke as "smoke-release.sh"
 
-**Trigger**: tags `v*`. Un solo job en `ubuntu-latest`, `permissions: contents: write`.
+    Dev->>Git: push / pull_request
+    Git->>CI: Dispara workflow
+    par Matriz de tests
+        CI->>Tests: Ubuntu + macOS
+        Tests-->>CI: 28 suites + gates
+    and Compatibilidad Python
+        CI->>Tests: Python 3.8 / 3.11 / 3.13
+        Tests-->>CI: Resultado
+    and Lint y estructura
+        CI->>CI: shellcheck + node --check + JSON + links
+    end
+    CI->>Pkg: package-smoke
+    Pkg-->>CI: Tarball + SHA-256
+    CI->>Smoke: Extrae e instala en sandbox
+    Smoke-->>CI: install / verify / uninstall OK
+    CI-->>Git: Checks verdes o rojos
+```
 
-1. Checkout `fetch-depth: 0` + Python 3.11
-2. **Cross-check de versión en 4 lugares** (`:25-56`): tag == `.version` == `manifest.json` ==
-   `install.sh:INSTALLER_VERSION` == `.cursor-plugin/plugin.json`, y `CHANGELOG.md` tiene `## [$VERSION]`
-3. `release_status: "beta-rc"` ⇒ `prerelease: true`
-4. **`validate-all.sh --strict`** (`:69`) — gate duro
-5. `package-release.sh` → tarball + `.sha256`
-6. `smoke-release.sh` — install/verify/uninstall sobre el tarball extraído
-7. `softprops/action-gh-release@v3` con el tarball y su checksum
+### Release — `.github/workflows/release.yml`
 
-### `.github/workflows/huginn-muninn.yml` — observabilidad de entropía
+Disparador: push de tag `v*`.
 
-**Triggers**: `pull_request` (todas), `push` a `master`/`main`, **cron diario 06:00 UTC**, manual.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Maintainer
+    participant Git as "GitHub"
+    participant Rel as "release.yml"
+    participant Gate as "validate-all.sh"
+    participant Pkg as "package-release.sh"
+    participant Smoke as "smoke-release.sh"
+    participant GH as "GitHub Release"
 
-- `validate-all.sh --strict 2>&1 | head -n 100 || true` — **explícitamente no bloqueante**
-- Corre `huginn-muninn/check.sh --json`
-- **Único bloqueo**: falla el job si `S_final >= 0.76`, indicando ejecutar Tiwaz Rune y Mjolnir
+    Maintainer->>Git: git tag v3.4.0 && git push --tags
+    Git->>Rel: Dispara release
+    Rel->>Rel: Verifica tag == .version == manifest == install.sh == plugin
+    Rel->>Rel: Verifica CHANGELOG.md
+    Rel->>Gate: Corre gates estrictos
+    alt Gate falla
+        Gate-->>Rel: Error
+        Rel-->>Maintainer: Release abortada
+    else Gate OK
+        Rel->>Pkg: Construye tarball + .sha256
+        Rel->>Smoke: Instala y desinstala el tarball
+        Smoke-->>Rel: OK
+        Rel->>GH: Publica release (prerelease si beta-rc)
+    end
+```
+
+**Pasos del release:**
+
+1. Verificar que el tag coincide con `.version`, `manifest.json`, `INSTALLER_VERSION` y `.cursor-plugin/plugin.json`.
+2. Verificar que `CHANGELOG.md` tiene la sección de la versión.
+3. Determinar `prerelease` a partir de `manifest.json` (`beta-rc` ⇒ prerelease).
+4. Ejecutar `validate-all.sh --strict`.
+5. Generar notas desde `CHANGELOG.md`.
+6. Construir `quinotospec-<version>.tar.gz` y su `.sha256`.
+7. Smoke test del tarball.
+8. Publicar en GitHub Releases con ambos artefactos.
+
+### Entropía — `.github/workflows/huginn-muninn.yml`
+
+| Aspecto | Valor |
+|---|---|
+| Disparadores | `pull_request`, `push` a `master`/`main`, `schedule`, `workflow_dispatch` |
+| Cron | `0 6 * * *` (06:00 UTC diario) |
+| Comando | `agent-dist/skills/quinotospec-huginn-muninn/check.sh --json` |
+| Gate | Falla si `S_final >= 0.76` |
+| Permisos | `contents: read`, `pull-requests: write` |
+| Salida | JSON + historial en `.quinoto-spec/metrics/entropy-history.jsonl` |
+
+> El gate es una señal heurística de entropía, no una medida completa de calidad. Un `S_final` bajo no garantiza ausencia de bugs.
 
 ## Scripts de automatización
 
-| Script | Propósito |
+| Script | Propósito | Cuándo se ejecuta |
+|---|---|---|
+| `scripts/validate-all.sh` | Gate completo del paquete | CI, release, pre-push manual |
+| `scripts/package-release.sh` | Construye tarball + checksum, excluye caches | Release y smoke |
+| `scripts/smoke-release.sh` | Instala/verifica/desinstala el tarball | CI y release |
+| `scripts/update-version.sh` | Sincroniza versión en todos los archivos | Bump de versión |
+| `scripts/lint-shell.sh` | Shellcheck con versión fijada | CI, pre-commit |
+| `scripts/check-links.sh` | Links internos y externos | CI, validación |
+| `scripts/check-readme-parity.py` | Paridad estructural ES/EN | CI, validación |
+| `scripts/check-readme-commands.py` | Comandos citados existen | CI, validación |
+| `scripts/check-skill-workflow-drift.py` | Drift skill ↔ workflow | CI, validación |
+| `scripts/install-hooks.sh` | Instala `.githooks` en `.git/hooks` | Setup local |
+| `scripts/cleanup-temp.sh` | Limpia scripts/artefactos temporales | Mantenimiento |
+
+### Git hooks
+
+| Hook | Qué valida |
 |---|---|
-| `scripts/validate-all.sh` | Gate de 7 validaciones (`--strict`) |
-| `scripts/package-release.sh` | Empaqueta tarball + SHA-256 (verifica el checksum al escribirlo) |
-| `scripts/smoke-release.sh` | install → verify → manifest → uninstall sobre el tarball |
-| `scripts/update-version.sh` | Bump de versión sincronizado en los 4 lugares; `--dry-run` soportado |
-| `scripts/check-links.sh` | Enlaces internos rotos; `--internal-only` |
-| `scripts/cleanup-temp.sh` | Limpieza de scripts temporales |
-| `scripts/install-hooks.sh` | Instala los git hooks (distinto del instalador de IDEs) |
+| `.githooks/pre-commit` | Frontmatter/H1 en workflows y skills, `name` en skills, sintaxis de `install.sh`, shellcheck de scripts modificados |
+| `.githooks/pre-push` | Ejecuta `tests/run-all-tests.sh` completo |
 
 ### Cron jobs
 
-Ninguno en el paquete. El único cron es el de `huginn-muninn.yml` (06:00 UTC diario), que es
-observabilidad, no parte del runtime.
+| Job | Frecuencia | Propósito |
+|---|---|---|
+| `huginn-muninn.yml` | Diario 06:00 UTC | Calcular entropía y bloquear si `S_final >= 0.76` |
+| Backups | **No automatizados** | El backup es explícito mediante `backup.py` |
 
-## Revisión de seguridad
+## Revisión rápida de seguridad
 
-### ✅ Lo que está bien
+### Fortalezas observadas
 
-| Control | Implementación |
-|---|---|
-| **Ownership por hash** | `uninstall` aborta si un archivo propio fue modificado (`:908-944`) |
-| **No borra archivos ajenos** | Solo toca `owned`; prune de directorios con `rmdir` (`:989-997`) |
-| **Refuse-to-overwrite** | `check_agents_conflict` (`:222-265`) + `prepare_candidate` (`:123-177`) |
-| **Symlinks rechazados en territory gestionado** | Allow-list explícita (`:191-207`); los symlinks ajenos se preservan |
-| **Rollback automático** | `trap EXIT` + `restore_transaction` |
-| **Fail-closed en gobernanza** | Las reglas BLOCKING detienen el workflow |
-| **Exclusión de secretos en backup** | `.env`, `credentials`, `id_rsa`, `id_ed25519` (`backup.py:19`) |
-| **Aprobación humana registrada** | `.quinoto-spec/approvals/*.json` con match exacto de subject+action |
-| **Documentos de contexto privilegiado** | Las instrucciones se marcan privileged en v2 |
-| **Sin superficie de red** | No hay `urllib`/`socket`/`http`; superficie de ataque remota = 0 |
+1. **Sin secretos en el repositorio**: no hay `.env`, tokens ni claves; CI no requiere secrets.
+2. **Instalador transaccional**: staging + verificación + `mv`; `EXIT trap` restaura ante fallo.
+3. **Ownership por hash**: `uninstall` no borra archivos modificados por el usuario.
+4. **Rechazo de symlinks** en rutas gestionadas, con allow-list explícita para configuración ajena.
+5. **Path traversal mitigado** en UI: `/static/`, `/discovery/` y `/specs/` resuelven y comparan contra el directorio base.
+6. **UI read-only**: no escribe en `.quinoto-spec/`; no hay endpoints de escritura.
+7. **Binding loopback por defecto**: `--host 127.0.0.1`.
+8. **Sin CORS abierto**: no se emiten cabeceras `Access-Control-Allow-*`.
+9. **Validación de JSON** de hooks y plugins en CI.
+10. **Shellcheck fijado** por versión para evitar falsos positivos entre releases.
 
-### ⚠️ Superficie de ataque real
+### Riesgos y brechas
 
-| Vector | Evaluación |
-|---|---|
-| **Ejecución de código vía config del proyecto** | `install.sh` ejecuta `python3 -B update_agents.py` con `--config "$TARGET_ROOT/.quinoto-spec/config.yaml"`. Ese YAML se parsea con el parser reducido o PyYAML. **No se ejecuta código**, pero un config malicioso controla el contenido del `AGENTS.md` generado (que es *instrucción* para el agente ⇒ vector de prompt injection) |
-| **Prompt injection vía artefactos** | proposals, stories y `AGENTS.md` son texto que el agente lee. Es el riesgo estructural del dominio, no un bug |
-| **Escritura fuera del target** | `update_agents.py:202-206` exige que el output esté bajo `--root` salvo `--allow-external-output`. El instalador **sí** lo pasa (`:1197`) porque escribe a staging |
-| **Race / concurrencia** | No hay lock. Dos instalaciones simultáneas al mismo target colisionarían. El staging es `mktemp -d` (único) pero el commit `mv` no es atómico entre los dos pasos (`:1216-1222`) |
-| **TOCTOU en verificación de ownership** | Se hashea, luego se borra. Ventana pequeña, impacto bajo |
+| Riesgo | Severidad | Evidencia | Mitigación recomendada |
+|---|---|---|---|
+| UI sin autenticación ni TLS | 🟠 Media | `server.py` no implementa auth; `--host` configurable | Documentar uso local; añadir advertencia si `--host != 127.0.0.1`; proxy con auth para remoto |
+| Sin cabeceras de seguridad HTTP | 🟠 Media | `_send()` solo define `Content-Type`, `Content-Length`, `Cache-Control` | Añadir CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` |
+| Estado compartido en UI | 🟡 Baja | `State` usa atributos de clase con `ThreadingHTTPServer` | Hacer el estado por request o añadir lock |
+| Acciones de GitHub por tag, no SHA | 🟠 Media | `actions/checkout@v7`, `setup-python@v7`, `action-gh-release@v3` | Pinning por SHA + Dependabot/Renovate |
+| Asset vendorizado sin integridad | 🟠 Media | `agent-dist/ui/static/mermaid.min.js` (3.2 MB) | Fijar versión, documentar licencia y verificar hash en CI |
+| Release sin firma | 🟡 Baja | Solo `.tar.gz.sha256` | Firmar con Sigstore/cosign o GPG; publicar procedencia |
+| Auditorías de dependencias manuales | 🟠 Media | No hay job de `pip-audit`/`npm audit`/`cargo audit` | Añadir jobs de auditoría |
+| Sin escaneo de secretos | 🟡 Baja | No hay gitleaks/trufflehog en CI | Añadir escaneo en pre-commit/CI |
+| `--host 0.0.0.0` expone datos | 🟠 Media | UI sirve todo `.quinoto-spec/` | Bloquear por defecto o exigir confirmación explícita |
+| Sin rate limiting | 🟡 Baja | `ThreadingHTTPServer` sin límites | Solo relevante si se expone en red |
 
-### 🔴 Hallazgo crítico de seguridad de despliegue
+### Superficie de ataque
 
-`install.sh` **no consulta la versión del IDE de destino**. Es la causa directa del incidente
-documentado en `07-findings-and-recommendations.md`: el instalador escribió un plugin con contrato v1
-en un host que ya corría OpenCode v2 (contrato v2), y **no había forma de que el instalador lo supiera
-ni lo advirtiese**. Un chequeo de versión en el paso de pre-flight habría convertido un fallo
-silencioso en un error accionable.
+| Superficie | Entrada | Validación |
+|---|---|---|
+| `install.sh` | Flags, rutas, entorno | Comprobación de dependencias, symlinks, locks, staging |
+| Hooks/plugins | Eventos del IDE | Lectura de bootstrap, marcador de idempotencia |
+| UI HTTP | Path/query | Path traversal mitigado; sin auth |
+| Scripts Python | Argumentos CLI y archivos | Parsers propios; validadores de evidencia/aprobación |
+| Git hooks | Archivos staged | Frontmatter, shellcheck, suite completa |
+| CI | Código del PR | Gates, shellcheck, node check, links, estructura |
 
 ## Auditoría de dependencias
 
-### Resultado: sin superficie de supply-chain vulnerable
+### Paquete QuinotoSpec
+
+**No tiene dependencias obligatorias de terceros.** No hay `package.json`, `requirements.txt`, `pyproject.toml` ni `Cargo.toml` en la raíz. Por lo tanto:
+
+- `pip-audit` sobre el paquete: **N/A**.
+- `npm audit` sobre el paquete: **N/A**.
+- `cargo audit` sobre el paquete: **N/A**.
+
+La única dependencia opcional es PyYAML (soft-import) y Node.js (solo para `node --check`).
+
+### Ejemplo Python (`examples/python-fastapi`)
 
 ```bash
-# No hay package manager. No aplica npm audit / pip-audit / bundle audit.
+pip-audit -r examples/python-fastapi/requirements.txt
 ```
 
-| Ecosistema | Superficie | Hallazgos |
-|---|---|---|
-| Python (paquete) | **0 dependencias obligatorias** | ✅ Ninguna. Los 15 scripts son stdlib puro |
-| Python (opcional) | `PyYAML` — soft import en `extension_manager.py:148` | ⚠️ Ver nota abajo |
-| Node | Sin `package.json` en el paquete. El plugin usa solo `node:fs`/`node:path` | ✅ Ninguna |
-| Shell | Sin gestor de paquetes. Herramientas del sistema | ⚠️ No auditadas (fuera de alcance) |
-| Sistema | Depende de `git` y `python3` del PATH | ⚠️ No auditadas |
+**Resultado observado:**
 
-> **Nota sobre PyYAML**: es un import opcional dentro de `try/except ImportError` con fallback a un
-> parser reducido hecho a mano. **PyYAML no es necesario** para que el paquete funcione. Si se
-> instala, es responsabilidad del usuario. No hay `requirements.txt` que lo fije, así que no hay
-> versión pineada — este es el único punto de exposición real.
+```text
+Found 2 known vulnerabilities in 1 package
+Name   Version ID              Fix Versions
+pytest 8.4.2   PYSEC-2026-1845  9.0.3
+pytest 8.4.2   PYSEC-2026-1845  9.0.3
+```
 
-### Fixtures que sí tienen dependencias (no ejecutadas)
+| Paquete | Versión | Advisory | Severidad | Fix | Alcance |
+|---|---|---|---|---|---|
+| `pytest` | 8.4.2 | `PYSEC-2026-1845` | No reportada por `pip-audit` (sin CVSS) | `9.0.3` | **Solo ejemplo/desarrollo**, no runtime del paquete |
 
-`tests/fixtures/python-project/requirements.txt` importa `fastapi`/`pytest`, y
-`examples/python-fastapi/requirements.txt` y `examples/rust-axum/Cargo.toml` existen. **Ninguno lo
-ejecuta `run-all-tests.sh`** — son material de ejemplo para stack-detect. No deben contarse como
-dependencias del paquete.
+> `pytest` está declarado como `>=8,<9` en el playground. El instalador del paquete no lo usa. Recomendación: actualizar el rango del ejemplo a `pytest>=9.0.3,<10` cuando sea compatible, o aceptar el riesgo documentado por ser dependencia de test.
 
-## Estrategia de backup, versionado y recuperación
+### Ejemplo Node (`examples/node-express`)
+
+El ejemplo no versiona `package-lock.json`. Para auditar se generó un lock temporal en `/tmp/opencode/npm-audit`:
+
+```bash
+mkdir -p /tmp/opencode/npm-audit
+cp examples/node-express/package.json /tmp/opencode/npm-audit/
+cd /tmp/opencode/npm-audit
+npm install --package-lock-only
+npm audit
+```
+
+**Resultado observado:**
+
+```text
+6 low severity vulnerabilities
+```
+
+| Paquete | Severidad | Advisory | Alcance |
+|---|---|---|---|
+| `deepmerge` | Low | Prototype poisoning en `mergeObject()` | Transitiva de `jest-config` (dev) |
+| `jest`, `jest-cli`, `jest-config`, `@jest/core`, `create-jest` | Low | Dependen de `deepmerge` vulnerable | Dev/test |
+
+**No se encontraron vulnerabilidades `moderate`, `high` ni `critical`.**
+
+### Ejemplo Rust (`examples/rust-axum`)
+
+```bash
+# Requiere instalar la herramienta
+cargo install cargo-audit
+cd examples/rust-axum
+cargo audit
+```
+
+**Estado:** no ejecutado en este discovery porque `cargo` no está instalado en el entorno. Se requiere toolchain Rust y acceso a la base de advisories.
+
+### Recomendación de automatización
+
+```yaml
+# Ejemplo de jobs a añadir a ci.yml
+dependency-audit-python:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@<sha>
+    - run: pip install pip-audit
+    - run: pip-audit -r examples/python-fastapi/requirements.txt
+
+dependency-audit-node:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@<sha>
+    - run: cd examples/node-express && npm install --package-lock-only && npm audit --audit-level=high
+
+dependency-audit-rust:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@<sha>
+    - run: cargo install cargo-audit && cd examples/rust-axum && cargo audit
+```
+
+## Backup, versionado y recuperación
 
 ### Versionado
 
-Semver (`3.2.0`), replicado en **4 archivos** y validado en `validate-all.sh:70-86` y
-`release.yml:25-56`. `manifest.json:6` marca `release_status: "beta-rc"` ⇒ el tag se publica como
-**prerelease** automáticamente.
-
-La herramienta de versionado es `scripts/update-version.sh`, con `--dry-run` (testeado en
-`test-checkers.sh`), preservando `rules:` y `templates:` (verificado en `test-constitution.sh:68`).
+- **SemVer** con tags `v*`.
+- Versión replicada en 4 archivos y verificada en CI/release.
+- Changelog de release en `CHANGELOG.md`; changelog operativo en `.quinoto-spec/changelog/` (append-only).
+- `scripts/update-version.sh` sincroniza todos los archivos y valida drift con Norns.
 
 ### Backup
 
 ```bash
-python3 agent-dist/skills/quinotospec-backup/backup.py create --type full
-python3 agent-dist/skills/quinotospec-backup/backup.py verify --backup <id>
-python3 agent-dist/skills/quinotospec-backup/backup.py restore --backup <id> --yes
+# Crear backup completo
+python3 -B agent-dist/skills/quinotospec-backup/backup.py create --root . --type full --json
+
+# Verificar integridad
+python3 -B agent-dist/skills/quinotospec-backup/backup.py verify --backup <BACKUP_ID> --json
+
+# Listar
+python3 -B agent-dist/skills/quinotospec-backup/backup.py list --root . --json
+
+# Restaurar (transaccional, requiere confirmación)
+python3 -B agent-dist/skills/quinotospec-backup/backup.py restore --backup <BACKUP_ID> --yes
+
+# Limpiar (dry-run por defecto)
+python3 -B agent-dist/skills/quinotospec-backup/backup.py cleanup --keep 5 --dry-run
 ```
 
-4 tipos (`full`/`incremental`/`proposals`/`discovery`), manifest SHA-256, restauración fail-safe
-(verifica antes de tocar, y hace backup de seguridad del estado actual).
+Características:
 
-### Recuperación ante desastre
+- Store por defecto: `.quinoto-spec-backups/`.
+- SHA-256 por archivo y manifiesto.
+- Restore staged con swap.
+- Backups `full`, `incremental`, `proposals`, `discovery`.
+- Bifrost DR: `bifrost.py --backup` genera un `tar.gz` federado; el restore es manual.
 
-| Escenario | Mecanismo |
-|---|---|
-| Instalación a medias | Rollback automático por `trap EXIT` |
-| Artefactos corruptos | `backup.py verify` detecta, `restore` recupera |
-| Release defectuosa | `smoke-release.sh` la detiene antes de publicar |
-| Archivos propios alterados | `uninstall --verify` lo detecta y **aborta** en vez de borrar |
-| `.quinoto-spec` perdido | Es texto en git; `git checkout` basta. Los backups son para estado no versionado |
+### Recuperación ante desastres
 
-## Costura detectada: el gate depende de Node
+| Escenario | Procedimiento | Automatizado |
+|---|---|---|
+| Corrupción de `.quinoto-spec/` | `backup.py restore --backup <ID> --yes` | Parcial |
+| Instalación fallida | El `EXIT trap` restaura; reinstalar con `install.sh` | Sí |
+| Archivo gestionado modificado | `--verify` detecta hash distinto; reinstalar | Sí |
+| Pérdida de un repo federado | Restaurar desde backup Bifrost manualmente | No |
+| Pérdida del repositorio Git | Clonar desde GitHub y restaurar `.quinoto-spec/` desde backup | No |
+| Release incorrecta | Revertir tag y publicar nueva versión | Manual |
 
-`validate-all.sh:156-159` degrada a **warning** si falta Node, pero `:191` vuelve **fatal** cualquier
-warning bajo `--strict`. Como `ci.yml:26` y `ci.yml:42` usan `--strict`, en la práctica **el gate
-exige Node** aunque el paquete declare Node como opcional. Inconsistencia de contrato documentada en
-`07-findings-and-recommendations.md`.
+### Brechas de recuperación
+
+- No hay cron de backups.
+- No hay retención automática fuera de `cleanup`.
+- No hay restore automatizado multi-repo (Bifrost).
+- No hay prueba de restore completo en CI (solo create/verify/list/restore en tests unitarios con fixtures).
+
+## Checklist de DevOps
+
+- [ ] Mantener `validate-all.sh --strict` verde antes de cada push.
+- [ ] Ejecutar `bash tests/run-all-tests.sh` (el pre-push ya lo hace).
+- [ ] Fijar GitHub Actions por SHA y activar Dependabot/Renovate.
+- [ ] Añadir `pip-audit`, `npm audit` y `cargo audit` a CI.
+- [ ] Añadir escaneo de secretos (`gitleaks`) a CI/pre-commit.
+- [ ] Añadir cabeceras de seguridad a la UI y advertencia con `--host != 127.0.0.1`.
+- [ ] Documentar versión, licencia y hash de `mermaid.min.js`.
+- [ ] Firmar artefactos de release y publicar procedencia.
+- [ ] Programar backups y probar restore en un sandbox.
+- [ ] Documentar el runbook de recuperación multi-repo.
 
 ## 🔗 Referencias
 
-- `04-endpoints-and-openapi.md` — superficies de CLI
-- `07-findings-and-recommendations.md` — auditoría de dependencias y hallazgos
-- `.github/workflows/ci.yml` — definición de CI
-- `docs/ARCHITECTURE.md` — modelo transaccional
+- `.github/workflows/ci.yml` — CI
+- `.github/workflows/release.yml` — release
+- `.github/workflows/huginn-muninn.yml` — entropía
+- `scripts/validate-all.sh` — gate completo
+- `scripts/package-release.sh` / `smoke-release.sh` — artefactos
+- `agent-dist/skills/quinotospec-backup/` — backup y restore
+- `docs/TROUBLESHOOTING.md` — problemas operativos

@@ -1,173 +1,274 @@
 # Arquitectura: QuinotoSpec
 
-**Discovery Date:** 2026-11-08
+Capas, módulos, patrones y flujos de datos del paquete y de su integración con los IDEs.
 
-Guardar en: .quinoto-spec/discovery/03-architecture.md
+Guardar en: `.quinoto-spec/discovery/03-architecture.md`
+
+**Discovery Date:** 2026-11-13
+**Versión:** 3.4.0 — *Hird Edition*
+
+## Resumen
+
+QuinotoSpec se organiza en **seis capas** con responsabilidades separadas:
+
+1. **Distribución**: el paquete fuente (`agent-dist/` + `scripts/` + `install.sh`).
+2. **Instalación**: adaptación del payload al directorio y al mecanismo de carga de cada IDE.
+3. **Host del agente**: OpenCode, Cursor, Claude Code, Cline o Antigravity.
+4. **Artefactos**: el estado del proyecto en `.quinoto-spec/` (Markdown + JSON + YAML).
+5. **Gobernanza**: contrato, reglas, evidencia, aprobaciones, constitución y entropía.
+6. **Observabilidad**: dashboard local read-only y gates de CI.
+
+No hay servidor de negocio ni base de datos. El "estado" es el sistema de archivos del proyecto.
 
 ## Diagrama conceptual
 
-> Placeholder — diagrama de arquitectura de capas. Completar cuando se modele el sistema como
-> servicio distribuido. Para el estado actual ver "Capas" y "Flujo de instalación" abajo, que es
-> la arquitectura real (instalador transaccional + payload declarativo).
-
 ```mermaid
-graph TD
-    subgraph Repo["Repositorio quinotospec-package"]
-        INST["install.sh<br/>instalador transaccional"]
-        DIST["agent-dist/<br/>payload declarativo"]
-        VAL["scripts/validate-all.sh<br/>gate de release"]
+flowchart TB
+    subgraph Fuente["Paquete fuente"]
+        INSTALL["install.sh<br/>instalador transaccional"]
+        DIST["agent-dist/<br/>workflows · skills · agents<br/>rules · templates · bootstrap"]
+        SCRIPTS["scripts/<br/>validate · release · checks"]
+        TESTS["tests/<br/>28 suites + 7 unittest"]
     end
-    subgraph Target["Directorio del IDE"]
-        CFG["skills/ agents/ commands/<br/>rules/ templates/"]
-        BOOT["bootstrap/<br/>hooks/"]
-        MNF[".quinoto-spec/ownership.json<br/>SHA-256 por archivo"]
+
+    subgraph Instalacion["Instalación"]
+        STAGE["Staging hermano<br/>verificación + ownership SHA-256"]
+        TARGET["Directorio del IDE<br/>.opencode · .cursor · .claude ..."]
     end
-    subgraph Host["Host / IDE"]
-        AGENT["Agente de IA"]
-        RULES["AGENTS.md generado"]
+
+    subgraph Host["Host del agente"]
+        IDE["IDE / runtime del agente"]
+        BOOT["Bootstrap de sesión<br/>plugin v1/v2 u hook"]
     end
-    INST -->|copia transaccional| CFG
-    INST -->|genera| RULES
-    INST -->|escribe| MNF
-    DIST --> INST
-    VAL -->|verifica| CFG
-    CFG --> AGENT
-    BOOT --> AGENT
-    RULES --> AGENT
+
+    subgraph Estado["Estado del proyecto"]
+        QSPEC[".quinoto-spec/<br/>discovery · proposals · specs<br/>evidence · approvals · changelog"]
+        MIMIR["mimir/index.json<br/>búsqueda BM25"]
+        BACKUP[".quinoto-spec-backups/<br/>manifiestos SHA-256"]
+    end
+
+    subgraph Gobernanza["Gobernanza"]
+        CONTRACT["contract.py"]
+        RULES["rules_enforce.py"]
+        EVIDENCE["evidence_validate.py"]
+        APPROVAL["approval_validate.py"]
+    end
+
+    subgraph Observabilidad["Observabilidad"]
+        UI["agent-dist/ui/<br/>dashboard read-only"]
+        CI["GitHub Actions<br/>gates + entropía"]
+    end
+
+    INSTALL --> STAGE --> TARGET
+    DIST --> STAGE
+    TARGET --> IDE
+    IDE --> BOOT
+    IDE --> QSPEC
+    QSPEC --> CONTRACT
+    QSPEC --> RULES
+    QSPEC --> EVIDENCE
+    QSPEC --> APPROVAL
+    QSPEC --> MIMIR
+    QSPEC --> BACKUP
+    UI --> QSPEC
+    SCRIPTS --> QSPEC
+    TESTS --> SCRIPTS
+    CI --> TESTS
 ```
 
-## Capas
+> **Placeholder — runtime interno del IDE:** no es posible inferir con certeza cómo cada versión de OpenCode, Cursor o Claude Code carga plugins, hooks y comandos. Este diagrama debe completarse con la documentación oficial de cada IDE y con una prueba de sesión real: orden de carga, prioridad entre `AGENTS.md` y hooks, y comportamiento ante compactación.
 
-QuinotoSpec tiene **tres capas con responsabilidades estrictamente separadas**, y ninguna depende
-de otra en tiempo de ejecución.
+## Capas y módulos
 
-### Capa 1 — Payload (`agent-dist/`)
-
-Contenido **declarativo**: 86 skills, 43 workflows, 9 agentes, 18 reglas, 13 templates, 1 bootstrap,
-4 hooks y 1 plugin. Casi todo es Markdown con frontmatter YAML. No se ejecuta; se instala y lo
-interpreta el IDE.
-
-Excepción: 15 scripts Python con stdlib, que exponen CLIs invocadas por los agentes.
-
-### Capa 2 — Instalador (`install.sh`)
-
-El **único componente con lógica de escritura sobre el sistema del usuario**. 1278 líneas de Bash
-transaccional. Responsabilidades:
-
-1. Resolver el directorio de destino por IDE y alcance (`get_config_dir`, `:821-845`).
-2. Construir la instalación completa en un **staging hermano** (mismo filesystem → rename atómico).
-3. Verificar el staging **antes** de tocar el destino vivo (`:1211-1214`).
-4. Commitear con `mv` (`:1216-1242`).
-5. Registrar ownership con SHA-256 (`:267-384`).
-6. Generar `AGENTS.md` desde `config.yaml` (`:1183-1201`).
-7. Rollback automático ante cualquier fallo, vía `trap EXIT` (`:59-96`).
-
-### Capa 3 — Gobernanza (scripts + reglas)
-
-`scripts/validate-all.sh` orquesta 7 validaciones; `agent-dist/skills/quinotospec-rules-enforce/`
-aplica las 18 reglas como checks ejecutables y de solo lectura. Esta capa **nunca escribe** en el
-código del proyecto: reporta.
+| Capa | Módulo / ruta | Responsabilidad | Entradas | Salidas |
+|---|---|---|---|---|
+| Distribución | `agent-dist/workflows/` | Slash commands que orquestan el ciclo | Invocación del usuario | Instrucciones para el agente |
+| Distribución | `agent-dist/skills/` | Capacidades especializadas y scripts | Contexto del workflow | Archivos, validaciones, reportes |
+| Distribución | `agent-dist/rules/` | 18 reglas inmutables de gobernanza | Contexto del agente | Restricciones y gates |
+| Distribución | `agent-dist/templates/` | Plantillas canónicas de artefactos | Variables del workflow | Markdown/YAML generado |
+| Distribución | `agent-dist/bootstrap/` | Contexto de inicio de sesión | `session.start` | Texto inyectado al modelo |
+| Instalación | `install.sh` | Staging, verificación, ownership, rollback | Flags de IDE y target | Configuración instalada |
+| Adaptadores | `agent-dist/plugins/` | Integración con OpenCode v1/v2 | Hooks del runtime | Bootstrap inyectado |
+| Adaptadores | `agent-dist/hooks/` | Integración con Cursor/Claude | `SessionStart` | JSON con `additionalContext` |
+| Estado | `.quinoto-spec/` | Artefactos del proyecto | Workflows, scripts | Fuente de verdad legible |
+| Gobernanza | `agent-dist/skills/quinotospec-contract/` | Modelo normalizado de artefactos | Markdown | JSON inspeccionable/validable |
+| Gobernanza | `agent-dist/skills/quinotospec-rules-enforce/` | Dispatcher read-only de checks | Perfil, acción, paths | Exit code + JSON |
+| Observabilidad | `agent-dist/ui/` | Dashboard local read-only | `.quinoto-spec/` | HTML/JSON/TUI |
+| Automatización | `scripts/` | Validación, release, versionado, higiene | Repo | Artefactos y reportes |
+| Calidad | `tests/` | Regresión funcional y E2E | Repo y fixtures | Exit code |
 
 ## Patrones de diseño observados
 
-| Patrón | Dónde | Evidencia |
+| Patrón | Dónde se ve | Por qué importa |
 |---|---|---|
-| **Transactional install / staged commit** | `install.sh:98-124`, `1216-1242` | Staging hermano con `mktemp -d`, backup `cp -a`, commit por `mv` |
-| **Rollback via EXIT trap** | `install.sh:59-96` | `cleanup_transaction` restaura si `TRANSACTION_COMMITTED != true` |
-| **Ownership manifest / content hash** | `install.sh:267-436` | SHA-256 por archivo; aborta si el contenido fue modificado fuera |
-| **Refuse-to-overwrite (fail closed)** | `install.sh:123-177`, `908-944` | Ante conflicto se aborta todo; nunca se sobrescribe a ciegas |
-| **Adapter / Strategy por IDE** | `install.sh:718-818` | `case "$ide"` con 3 ramas específicas + default genérico |
-| **Fail-closed security gates** | `rules_enforce.py` | Semántica de error explícita por cada regla; dispatcher read-only |
-| **Append-only log** | `.quinoto-spec/changelog/` | Un archivo por entrada → sin conflictos de merge |
-| **Four-layer resolution** | `template_resolver.py` | overrides → presets → extensions → core |
-| **Plugin monolith (deuda)** | `quinotospec-plugin.js` | 115 líneas, 3 responsabilidades (config, transform de mensajes, aliases) |
+| **Adapter** | `agent-dist/plugins/` y `agent-dist/hooks/` | Aísla las diferencias entre IDEs y versiones de OpenCode. |
+| **Transactional staging** | `install.sh` (`begin_transaction`, `prepare_candidate`) | Evita dejar una instalación a medias; el `EXIT trap` restaura. |
+| **Repository / Reader** | `agent-dist/ui/readers.py` | Centraliza la lectura de artefactos y evita escrituras desde la UI. |
+| **Policy engine read-only** | `rules_enforce.py` | Separa la decisión de gobernanza de la ejecución real. |
+| **Layered configuration** | `agent_config.py` | Merge `defaults → team → personal`, con la última capa ganando. |
+| **Template Method** | Workflows + `templates/` | El workflow define el proceso; la plantilla define la forma del artefacto. |
+| **Append-only event log** | `.quinoto-spec/changelog/` | Evita conflictos de merge y conserva historia completa. |
+| **Contract-first** | `contract.py` + `docs/ARTIFACT-CONTRACT.md` | Un solo parser para productores y consumidores. |
+| **Strategy / router** | `quinotospec-complexity-router/router.py` | Deriva Quick Fix, Simple, Complex o Enterprise según el cambio. |
+| **Plugin** | OpenCode v1/v2 y Cursor plugin | Permite extender el host sin modificarlo. |
 
-## Flujo de instalación (secuencia real)
+## Flujo de datos principal: dashboard UI
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor U as Usuario
-    participant I as install.sh
-    participant S as Staging<br/>(.quinotospec-install.XXXX)
-    participant L as Destino vivo<br/>(~/.config/opencode)
-    participant U_ as update_agents.py
-    participant V as verify_installation
+    actor Usuario
+    participant Browser as "Navegador"
+    participant Server as "server.py<br/>ThreadingHTTPServer"
+    participant State as "State.refresh()"
+    participant Readers as "readers.py"
+    participant FS as ".quinoto-spec/"
 
-    U->>I: ./install.sh --opencode --global
-    I->>I: check_dependencies (bash≥4, git, py≥3.8)
-    I->>I: get_config_dir → ~/.config/opencode
-    I->>I: check_agents_conflict
-
-    rect rgb(245, 245, 255)
-    Note over I,S: FASE DE STAGING (nada toca el destino aún)
-    I->>S: begin_transaction — mktemp -d hermano
-    S->>S: cp -a destino vivo → candidate (backup completo)
-    I->>S: prepare_candidate — borra solo archivos propios<br/>con SHA-256 intacto
-    I->>S: reject_candidate_symlinks (allow-list)
-    I->>S: cp -rf agent-dist/. → candidate/
-    I->>S: workflows/ → commands/ (rename)
-    I->>S: install_runtime_components<br/>(bootstrap, hooks, plugin)
-    I->>U_: update_agents.py --output candidate-root/AGENTS.md
-    U_-->>I: AGENTS.md generado
-    I->>S: write_ownership_manifest (SHA-256 por archivo)
-    I->>V: verify_installation(candidate)  %% gate PRE-COMMIT
-    V-->>I: OK
-    end
-
-    rect rgb(240, 255, 240)
-    Note over I,L: FASE DE COMMIT (atómica por rename)
-    I->>L: mv destino → previous-live (backup)
-    I->>L: mv candidate → destino  %% swap atómico
-    I->>L: mv AGENTS.md → $TARGET_ROOT/AGENTS.md
-    I->>I: TRANSACTION_COMMITTED=true
-    end
-
-    I->>V: verify_installation(destino)  %% POST-COMMIT
-    V-->>I: "Installation verified successfully"
-    I-->>U: Banner de ubicación
-
-    Note over I,L: Cualquier fallo antes de TRANSACTION_COMMITTED<br/>→ trap EXIT → restore_transaction
+    Usuario->>Browser: Abre http://127.0.0.1:8765/proposals
+    Browser->>Server: GET /proposals?q=...
+    Server->>State: refresh(project)
+    State->>Readers: build_summary(root)
+    Readers->>FS: Lee discovery, proposals, tasks, specs, evidence, changelog
+    FS-->>Readers: Contenido Markdown/JSON
+    Readers-->>State: Resumen JSON-serializable
+    State-->>Server: summary
+    Server->>Server: templates.proposals_page(summary, q)
+    Server-->>Browser: HTML 200
+    Browser-->>Usuario: Tabla de propuestas filtrada
 ```
 
-## Integración con el host: el punto frágil
+**Características del flujo:**
 
-Cada IDE recibe el payload por un mecanismo **nativo y distinto**. Esto es la causa raíz de que el
-plugin de OpenCode sea la pieza más delicada del sistema:
+- Solo lectura: `readers.py` no escribe en disco.
+- El resumen se reconstruye por request; no hay caché persistente.
+- `?project=` selecciona un root en modo multi-proyecto (`--roots`).
+- Errores de archivos mal formados se capturan y devuelven HTTP 500 sin tumbar el servidor.
 
-| IDE | Mecanismo de Bootstrap | Estado en v2 |
-|---|---|---|
-| Cursor | Hook `sessionStart` mutando `hooks.json` | Depende del IDE |
-| Claude Code | Hook `SessionStart` mutando `settings.json` | Depende del IDE |
-| **OpenCode** | **Plugin JS** | 🔴 **Roto** — el contrato cambió en v2 |
+## Flujo de instalación transaccional
 
-Además, el payload *en sí* se apoya en descubrimiento nativo de rutas:
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Usuario
+    participant Installer as "install.sh"
+    participant Deps as "check_dependencies"
+    participant Stage as "Staging hermano"
+    participant Manifest as "ownership.json"
+    participant Target as "Directorio del IDE"
 
-| Artefacto | Ruta instalada | ¿Descubierto nativamente? |
-|---|---|---|
-| Skills | `skills/` | ✅ (global `~/.config/opencode/skills`) |
-| Agents | `agents/*.md` | ✅ |
-| Commands | `commands/*.md` | ✅ (desde `workflows/`, renombrado en `:1162-1171`) |
-| Rules | `rules/quinotospec-rules.md` | ❌ **no** — requiere `AGENTS.md` o plugin |
-| Bootstrap | `bootstrap/quinotospec-bootstrap.md` | ❌ **no** — requiere `AGENTS.md` o plugin |
+    Usuario->>Installer: ./install.sh --opencode --global
+    Installer->>Deps: Verifica bash, git, python3, node opcional
+    alt Falta un requisito obligatorio
+        Deps-->>Installer: Error
+        Installer-->>Usuario: exit 1
+    else Requisitos OK
+        Installer->>Installer: begin_transaction + lock
+        Installer->>Stage: prepare_candidate (copia y poda)
+        Installer->>Stage: Copia payload agent-dist
+        Installer->>Stage: install_runtime_components
+        Installer->>Manifest: SHA-256 por archivo gestionado
+        Installer->>Stage: verify_installation
+        alt Verificación falla
+            Installer->>Target: restore_transaction
+            Installer-->>Usuario: exit 1
+        else Verificación OK
+            Installer->>Target: mv staging → destino
+            Installer->>Target: Escribe AGENTS.md gestionado
+            Installer-->>Usuario: Instalación OK
+        end
+    end
+```
 
-Es decir: en OpenCode v2 el plugin era el **único** mecanismo que hacía llegar `rules/` y
-`bootstrap/` al agente. Y su función `config()` apoyaba en `config.instructions`, que la
-documentación de v2 declara explícitamente como **no-op**.
+## Flujo de gobernanza: Apply con evidencia
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dev as "Desarrollador"
+    participant Agent as "Agente / IDE"
+    participant Workflow as "workflow apply"
+    participant Contract as "contract.py"
+    participant TDD as "quinotospec-tdd"
+    participant Evidence as "evidence_validate.py"
+    participant Changelog as "update-changelog"
+    participant Done as "mark-done"
+
+    Dev->>Agent: @quinotospec.apply TASK_ID
+    Agent->>Workflow: Ejecuta instrucciones
+    Workflow->>Contract: validate --root . --strict
+    Contract-->>Workflow: OK o errores BLOCKING
+    Workflow->>Contract: inspect --root . --json
+    Contract-->>Workflow: canonical_id + story_id
+    Workflow->>Workflow: Lee specs, constitución y discovery
+    Workflow->>Agent: Baseline de tests
+    Workflow->>TDD: RED → GREEN → REFACTOR
+    TDD-->>Evidence: tdd.json
+    Workflow->>Evidence: validate --kind tdd --require
+    alt Evidencia inválida o stale
+        Evidence-->>Workflow: exit 1
+        Workflow-->>Dev: Detiene Apply
+    else Evidencia OK
+        Workflow->>Evidence: verify-before-done.json
+        Workflow->>Changelog: Entrada append-only v2
+        Workflow->>Done: Actualiza tarea, story y propuesta
+        Done-->>Dev: Tarea completada + siguiente sugerencia
+    end
+```
 
 ## Componentes reutilizables
 
-| Componente | Reutilizable en | Nota |
+| Componente | Ruta | Reutilizado por |
 |---|---|---|
-| `update_agents.py` | Todos los IDEs | Generación de `AGENTS.md`; agnóstico de IDE |
-| `backup.py` | Todos | Motor de backup con verificación SHA-256; agnóstico |
-| `contract.py` | Todos | Contrato de artefactos; la fuente de verdad del formato |
-| `rules_enforce.py` | Todos | Dispatcher de gobernanza; lee paths, no conoce IDEs |
-| `session-start.sh` | Cursor, Claude, genérico | Emite JSON por plataforma; ya tiene modo `--platform` |
-| `extension_manager.py` | Todos | Ciclo de vida de extensiones/presets |
+| Helpers comunes | `agent-dist/lib/quinotospec_common.py` | Varios scripts Python (`resolve_root`, carga de módulos) |
+| Contrato de artefactos | `agent-dist/skills/quinotospec-contract/contract.py` | Apply, review, archive, UI, Mimir, Valkyrie |
+| Validador de evidencia | `.../quinotospec-rules-enforce/evidence_validate.py` | TDD, debug, verify-before-done |
+| Validador de aprobaciones | `.../quinotospec-rules-enforce/approval_validate.py` | Apply, archive, constitution |
+| Plantillas | `agent-dist/templates/` | Propuestas, historias, tareas, specs, changelog, constitución |
+| Bootstrap | `agent-dist/bootstrap/quinotospec-bootstrap.md` | Plugins y hooks de todos los IDEs |
+| Configuración de agentes | `agent-dist/config/agent-defaults.toml` | `agent_config.py`, generación de `AGENTS.md` |
+| Resolver de templates | `.../quinotospec-template-resolver/template_resolver.py` | Overrides → presets → extensions → core |
+| Índice BM25 | `agent-dist/skills/quinotospec-mimir/index.py` | `search.py`, `quinotospec-search`, create-proposal |
+
+## Integraciones internas
+
+| Integración | Mecanismo | Riesgo |
+|---|---|---|
+| Installer → payload | Copia selectiva de `agent-dist/*` a `commands/`, `skills/`, `plugins/`, etc. | Un cambio de layout requiere actualizar `install.sh`, `manifest.json` y tests |
+| Workflows → skills | Referencias por nombre en Markdown | Drift detectado por `check-skill-workflow-drift.py` |
+| Skills → scripts | Rutas `agent-dist/skills/.../*.py` | Cambiar una ruta rompe workflows; cubierto parcialmente |
+| UI → `.quinoto-spec` | Lectura directa por `readers.py` | Archivos mal formados degradan la vista, no el servidor |
+| Mimir → artefactos | Indexación de discovery, specs y propuestas | Índice puede quedar stale; `search.py --check` lo detecta |
+| Norns → versiones | Detección de drift entre `.version`, manifest, README, changelog | Cambios manuales pueden desincronizar |
+| Huginn → CI | Entropía determinista y umbral `S_final >= 0.76` | El gate es heurístico, no una medida completa de calidad |
+
+## Integraciones externas
+
+| Integración | Tipo | Propósito | Dónde |
+|---|---|---|---|
+| OpenCode v1 | Plugin CJS | Inyectar bootstrap en mensajes/sistema | `agent-dist/plugins/opencode/` |
+| OpenCode v2 | Plugin ESM | Hooks `context` y `compaction` | `agent-dist/plugins/opencode-v2/` |
+| Cursor | Hook `sessionStart` + plugin staging | Inyectar contexto y descubrir skills | `agent-dist/hooks/hooks-cursor.json` |
+| Claude Code | Hook `SessionStart` | Inyectar `additionalContext` | `agent-dist/hooks/hooks.json` |
+| Cline / Antigravity | Archivos de configuración | Cargar workflows/skills como referencia | `install.sh` |
+| Git | CLI | Branches, worktrees, notas federadas (Bifrost) | Skills y hooks |
+| GitHub Actions | CI/CD | Tests, lint, release, entropía | `.github/workflows/` |
+| Navegador | UI local | Dashboard read-only | `agent-dist/ui/` |
+
+**No hay integraciones de red en runtime**: ni APIs de terceros, ni SDKs, ni bases de datos, ni colas.
+
+## Decisiones arquitectónicas clave
+
+1. **Archivos sobre servicios**: el estado es legible por humanos y versionable con Git; no hay migraciones de base de datos.
+2. **Read-only por defecto**: la UI y los validadores no escriben; solo los workflows y scripts explícitos modifican artefactos.
+3. **Gobernanza separada de ejecución**: `rules_enforce.py` decide con archivos; la ejecución real queda en el agente.
+4. **Adaptadores por IDE**: el núcleo no depende de un IDE; los plugins/hooks son reemplazables.
+5. **Cero dependencias obligatorias**: reduce superficie de ataque y facilita portabilidad.
+6. **Append-only**: changelog y evidencia conservan historia; una reversión agrega, no borra.
 
 ## 🔗 Referencias
 
-- `02-overview.md` — estructura de carpetas y comandos
-- `05-data-and-services.md` — modelo de datos de artefactos
-- `07-findings-and-recommendations.md` — deuda priorizada
+- `docs/ARCHITECTURE.md` — arquitectura oficial y matriz de madurez
+- `docs/ARTIFACT-CONTRACT.md` — contrato de artefactos
+- `install.sh` — transacción de instalación
+- `agent-dist/ui/server.py` — rutas y servidor local
+- `agent-dist/skills/quinotospec-contract/contract.py` — parser canónico

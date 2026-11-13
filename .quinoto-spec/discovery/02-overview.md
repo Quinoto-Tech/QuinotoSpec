@@ -1,149 +1,227 @@
 # Resumen Ejecutivo del Proyecto: QuinotoSpec
 
-**Discovery Date:** 2026-11-08
+Vista general del paquete: qué hace, cómo se estructura, cómo se ejecuta y cuáles son sus riesgos principales.
 
-Guardar en: .quinoto-spec/discovery/02-overview.md
+Guardar en: `.quinoto-spec/discovery/02-overview.md`
+
+**Discovery Date:** 2026-11-13
+**Versión:** 3.4.0 — *Warband: Hird Edition*
+**Estado de release:** `beta-rc`
 
 ## Resumen
 
-**QuinotoSpec** (v3.2.0, *Hird Edition*, estado `beta-rc`) es un **paquete de configuración de
-agentes de IA**. No es una aplicación: no tiene servidor, ni base de datos, ni proceso en runtime.
+**QuinotoSpec** es una metodología y un sistema de configuración de agentes para desarrollo asistido por IA. Su flujo central es **Proposal First / Context Slicing**: entender el proyecto, escribir una propuesta técnica, desglosarla en user stories y tareas atómicas, implementar con gates de TDD y evidencia, y archivar con trazabilidad.
 
-Su función es distribuir una **metodología de desarrollo** llamada *Proposal First* (y el sistema de
-artefactos que la sostiene) hacia los directorios de configuración de los IDEs que usan agentes:
+El repositorio **no es una aplicación de negocio**. Es un paquete distribuible que instala instrucciones, workflows, skills, agentes, reglas y plantillas dentro del directorio de configuración del IDE que usa el agente:
 
-| IDE | Directorio global | Directorio de proyecto |
+| IDE | Instalación global | Instalación local |
 |---|---|---|
-| **OpenCode** | `~/.config/opencode/` | `<proyecto>/.opencode/` |
+| OpenCode | `~/.config/opencode/` | `<proyecto>/.opencode/` |
 | Cursor | `~/.cursor/` | `<proyecto>/.cursor/` |
 | Claude Code | `~/.claude/` | `<proyecto>/.claude/` |
 | Cline | `~/.config/cline/` | `<proyecto>/.cline/` |
 | Antigravity | `~/.gemini/config/` | `<proyecto>/.agents/` |
 | Genérico | `~/.config/agent/` | `<proyecto>/.agent/` |
 
-Lo que instala son **instrucciones, skills, comandos, agentes, reglas y plantillas** que el IDE carga
-de forma nativa, más un `AGENTS.md` generado a medida del proyecto.
+El valor del producto está en tres mecanismos:
 
-## Qué problema resuelve
+1. **Bootstrap de sesión**: el contexto de QuinotoSpec se inyecta al iniciar cada sesión (plugin en OpenCode v1/v2, hook en Cursor y Claude Code).
+2. **Artefactos estructurados**: propuestas, historias y tareas con IDs canónicos, estados normalizados y DAG de dependencias.
+3. **Gobernanza ejecutable**: reglas que se validan con scripts (contrato, evidencia TDD, aprobación humana, constitución, entropía).
 
-Los agentes de IA arrancan sin contexto. Sin Bootstrap de sesión, el agente ignora el proyecto y
-opina sin criterio. La respuesta ingenua ("que el agente lea `AGENTS.md` por su cuenta") es frágil:
-`V3_ROADMAP.md:70` lo dice textualmente — *"QuinotoSpec depende de que el agente lea `AGENTS.md` por su
-propia cuenta. Si el agente lo ignora, no hay QuinotoSpec."*
+## Información del repositorio
 
-QuinotoSpec ataca eso con tres mecanismos:
+### Estructura principal
 
-1. **Bootstrap de sesión** — se inyecta automáticamente el contexto al iniciar cada sesión
-   (mecanismo distinto por IDE: plugin JS en OpenCode, hook `sessionStart` en Cursor, hook
-   `SessionStart` en Claude Code).
-2. **Artefactos estructurados** — propuestas, user stories y tareas con IDs canónicos
-   (`US-MNEM-suffix-NNN`), estados validados y DAG de dependencias.
-3. **Gobernanza ejecutable** — reglas que se aplican de verdad (no solo prosa): TDD antes de
-   producción, evidencia fresca antes de dar por terminado, aprobación humana registrada.
-
-## Estructura del repositorio
-
-```
+```text
 quinotospec-package/
-├── install.sh              # instalador transaccional multi-IDE (1278 líneas) ← entry point
-├── manifest.json           # inventario + feature flags de máquina
-├── .version                # "3.2.0" (fuente de verdad simple)
-├── AGENTS.md               # guía para agentes (hand-maintained, referencia offline)
-├── README.md / README_EN.md# docs principales bilingües (es/en), ~40 KB cada uno
-├── V3_ROADMAP.md           # 1585 líneas, plan por fases (Gate 0, F1.1, F2.4, F3.2, F4.x)
-├── CHANGELOG.md            # changelog v1 (legado, single-file)
+├── install.sh                 # Instalador multi-IDE transaccional (1.723 líneas)
+├── manifest.json              # Inventario y feature flags (fuente de verdad de conteos)
+├── .version                   # 3.4.0
+├── AGENTS.md                  # Guía de agentes (referencia offline)
+├── README.md / README_EN.md   # Documentación bilingüe
+├── CHANGELOG.md               # Changelog de release (Keep a Changelog)
+├── V3_ROADMAP.md              # Roadmap por fases
 │
-├── agent-dist/             # ← EL PAYLOAD: lo que se instala en el IDE
-│   ├── skills/             #   86 skills (SKILL.md + 12 con scripts propios)
-│   ├── workflows/          #   43 workflows → se renombran a commands/ al instalar
-│   ├── agents/             #   9 agentes especializados
-│   ├── rules/              #   1 archivo, 18 reglas
-│   ├── templates/          #   13 plantillas
-│   ├── bootstrap/          #   1 payload de contexto de sesión
-│   ├── hooks/              #   session-start.sh + 3 manifiestos de hook por IDE
-│   └── plugins/            #   1 plugin JS (solo OpenCode)
+├── agent-dist/                # PAYLOAD que se instala en el IDE
+│   ├── workflows/             # 49 workflows → se instalan como commands/
+│   ├── skills/                # 95 skills; 25 con scripts o referencias
+│   ├── agents/                # 9 agentes especializados
+│   ├── rules/                 # 18 reglas de gobernanza
+│   ├── templates/             # 13 plantillas de artefactos
+│   ├── bootstrap/             # Contexto de inicio de sesión
+│   ├── hooks/                 # Hook compartido + manifiestos por IDE
+│   ├── plugins/               # Adaptadores OpenCode v1 y v2
+│   ├── config/                # agent-defaults.toml (3-layer config)
+│   ├── lib/                   # Helpers Python compartidos
+│   └── ui/                    # Dashboard web local read-only
 │
-├── scripts/                # 7 scripts: validate-all, package-release, smoke-release, ...
-├── tests/                  # 20 suites bash + 7 unittest python + 5 fixtures
-├── docs/                   # 8 documentos técnicos + 8 imágenes + 2 posts
-├── .quinoto-spec/          # dogfooding: changelog v2, prefix-registry, proposals/
-├── .github/workflows/      # 3 workflows
-├── .githooks/              # pre-commit (frontmatter), pre-push (suite completa)
-└── examples/               # proyectos de ejemplo (FastAPI, Rust, Node)
+├── scripts/                   # 11 scripts de validación, release y automatización
+├── tests/                     # 28 suites shell + 7 suites unittest + fixtures
+├── docs/                      # Arquitectura, contrato, guías y troubleshooting
+├── examples/                  # Playgrounds FastAPI, Express y Axum
+├── .github/workflows/         # ci.yml, release.yml, huginn-muninn.yml
+├── .githooks/                 # pre-commit y pre-push
+└── .quinoto-spec/             # Dogfooding: discovery, specs, changelog, approvals
+```
+
+### Archivos de entrada
+
+| Punto de entrada | Propósito |
+|---|---|
+| `install.sh` | Instalar, verificar o desinstalar el paquete en un IDE |
+| `agent-dist/bootstrap/quinotospec-bootstrap.md` | Contexto que recibe el agente al iniciar sesión |
+| `agent-dist/plugins/opencode-v2/index.js` | Adaptador recomendado para OpenCode v2 |
+| `agent-dist/plugins/opencode/quinotospec-plugin.js` | Adaptador legacy para OpenCode v1 |
+| `agent-dist/hooks/session-start.sh` | Hook de sesión para Cursor y Claude Code |
+| `agent-dist/ui/server.py` | Dashboard local read-only |
+| `scripts/validate-all.sh` | Gate completo del paquete |
+| `tests/run-all-tests.sh` | Runner de las 28 suites |
+
+## Flujo de uso del paquete
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dev as "Desarrollador"
+    participant IDE as "IDE + agente"
+    participant Bootstrap as "Bootstrap de sesión"
+    participant Workflow as "Workflow"
+    participant Skill as "Skill / script"
+    participant Artifacts as ".quinoto-spec/"
+
+    Dev->>IDE: Abre el proyecto e inicia sesión
+    IDE->>Bootstrap: Carga contexto (plugin u hook)
+    Bootstrap-->>IDE: Inyecta Proposal First + reglas
+    Dev->>Workflow: @quinotospec.create-proposal
+    Workflow->>Artifacts: Lee discovery y specs
+    Workflow->>Skill: Valida contrato y prefijo
+    Skill-->>Workflow: OK o error BLOCKING
+    Workflow->>Artifacts: Escribe proposal.md
+    Dev->>Workflow: @quinotospec.apply
+    Workflow->>Skill: TDD + evidencia + verificación
+    Skill-->>Workflow: Evidencia fresca
+    Workflow->>Artifacts: Actualiza tarea, changelog y estados
+    Artifacts-->>Dev: Trazabilidad completa
 ```
 
 ## Comandos básicos
 
+> No hay `dev`, `build` o `test` de una aplicación web. Los equivalentes para este paquete son los siguientes.
+
+### Instalación y desarrollo
+
 ```bash
-# Instalación (interactiva por defecto; el path es el target)
-./install.sh --opencode --global        # OpenCode → ~/.config/opencode/
-./install.sh --cursor --global          # Cursor    → ~/.cursor/
-./install.sh --claude --global          # Claude    → ~/.claude/
-./install.sh --opencode --yes           # no interactivo, target = cwd
+# Instalación global por IDE
+./install.sh --opencode --global
+./install.sh --cursor --global
+./install.sh --claude --global
+./install.sh --cline --global
+./install.sh --antigravity --global
 
-# Verificación / desinstalación
-./install.sh --verify --opencode --yes
-./install.sh --uninstall --opencode --yes
+# Instalación local (target = directorio actual)
+./install.sh --opencode --yes
 
-# Desarrollo
-bash tests/run-all-tests.sh             # suite completa
-bash scripts/validate-all.sh --strict   # gate de release
+# Verificar o desinstalar
+./install.sh --verify --opencode --global
+./install.sh --uninstall --opencode --global
 
-# Release
-bash scripts/package-release.sh 3.2.0 /tmp/quinotospec-dist
-bash scripts/smoke-release.sh /tmp/quinotospec-dist/quinotospec-3.2.0.tar.gz
+# Dashboard local read-only
+python3 -B agent-dist/ui/server.py --root . --port 8765
+python3 -B agent-dist/ui/server.py --root . --json
+python3 -B agent-dist/ui/server.py --root . --tui
+python3 -B agent-dist/ui/server.py --stop
+```
+
+### Test
+
+```bash
+bash tests/run-all-tests.sh
+bash scripts/validate-all.sh --strict
+bash scripts/validate-all.sh --strict --allow-no-node
+bash tests/test-install-e2e.sh
+```
+
+### Build / release
+
+```bash
+# Construir el tarball de release + checksum
+bash scripts/package-release.sh 3.4.0 /tmp/quinotospec-dist
+
+# Smoke test del artefacto
+bash scripts/smoke-release.sh /tmp/quinotospec-dist/quinotospec-3.4.0.tar.gz
+
+# Sincronizar versión en todos los archivos
+bash scripts/update-version.sh 3.4.0
+```
+
+### Playground de 5 minutos
+
+```bash
+cd examples/python-fastapi
+pip install -r requirements.txt
+pytest -v
+uvicorn app.main:app --reload
 ```
 
 ## Prerrequisitos de entorno
 
-| Requisito | Mínimo | Verificado por |
-|---|---|---|
-| `bash` | 4.0 | `install.sh:513-520` |
-| `git` | 2.0 | `install.sh:523-531` |
-| `python3` | 3.8 | `install.sh:533-545` |
-| `node` | cualquiera | Opcional. Solo `node --check` del plugin |
-| `shellcheck` | — | Solo en CI (`ci.yml:57-72`); el runner ya lo trae |
+| Requisito | Mínimo | Obligatorio | Verificado por |
+|---|---|---|---|
+| `bash` | 4.0 | Sí | `install.sh` |
+| `git` | 2.0 | Sí | `install.sh` |
+| `python3` | 3.8 | Sí | `install.sh` y scripts |
+| `node` | cualquiera | No | Solo `node --check` del plugin; su ausencia genera warning |
+| `shellcheck` | versión de `.shellcheck-version` | No | CI y `scripts/lint-shell.sh` |
+| Navegador | moderno | No | Solo para la UI; existe `--tui` y `--json` |
 
-**No hay variables de entorno requeridas.** No hay `.env`, ni claves, ni tokens. El paquete no hace
-llamadas de red.
+**No hay variables de entorno obligatorias, secretos, tokens ni `.env`.** El paquete no realiza llamadas de red en su camino crítico.
+
+Variables opcionales observadas:
+
+| Variable | Uso |
+|---|---|
+| `QUINOTOSPEC_ALLOW_NO_NODE` | Evita que la ausencia de Node sea fatal con `--strict` |
+| `QUINOTOSPEC_HOOK_PLATFORM` | Plataforma del hook (`claude`, `cursor`, `generic`) |
+| `PLUGIN_ROOT` | Raíz del payload para `session-start.sh` |
+| `QUINOTOSPEC_OPENCODE_MAJOR` | Fuerza la detección de OpenCode v1/v2 en tests o instalación |
 
 ## Superficie del paquete
 
 | Métrica | Valor |
-|---|---|
-| Líneas en `agent-dist` + `scripts` + `tests` | ~28 900 |
-| Skills | 86 (los 86 tienen `SKILL.md`; solo 12 traen scripts/referencias) |
-| Workflows (slash commands) | 43 |
+|---|---:|
+| Líneas en `install.sh` | 1.723 |
+| Líneas en `agent-dist/ui/` | 1.569 |
+| Scripts Python del payload | 32 |
+| Workflows | 49 |
+| Skills | 95 |
 | Agentes | 9 |
 | Reglas | 18 |
 | Templates | 13 |
-| Scripts Python | 15 (agent-dist) + 7 (tests) |
-| Dependencias de terceros | **0 obligatorias** |
-| Comandos de CLI públicos | 1 instalador + 15 CLIs de script |
+| Suites de test shell | 28 |
+| Suites unittest | 7 |
+| Dependencias obligatorias | 0 |
 
-## Riesgos y puntos críticos
+## Riesgos y puntos críticos identificados
 
 | # | Riesgo | Severidad | Detalle |
 |---|---|---|---|
-| 1 | **Plugin de OpenCode incompatible con OpenCode v2** | 🔴 Alta | El runtime v2.0.16 exige `default` = objeto `{id, effect|setup}`; el plugin exporta el contrato v1. Falla en **cada arranque** del servidor. Ver `07-findings-and-recommendations.md` |
-| 2 | **`AGENTS.md` global se escribe en la ruta que OpenCode no lee** | 🔴 Alta | Con `--opencode --global`, el archivo queda en `~/.config/AGENTS.md`; OpenCode v2 solo carga `~/.config/opencode/AGENTS.md`. Verificado empíricamente |
-| 3 | Superficie de tests acoplada al plugin | 🟠 Media | 5 asserts en 3 suites + 2 checks de `validate-all.sh` + 2 jobs de CI fallan si el plugin desaparece |
-| 4 | Tests sin auto-descubrimiento | 🟠 Media | Suite hardcodeada; un test nuevo no se ejecuta sin editar el registro |
-| 5 | `__pycache__/*.pyc` versionados | 🟡 Baja | 13 `.pyc` (cpython-314) presentes en el árbol de skills |
-| 6 | Fixtures muertos | 🟡 Baja | `tests/fixtures/{node-project,python-project,empty-project}` no los usa ningún test |
-| 7 | `external_config` nunca se lee | 🟡 Baja | Se escribe en el manifest (`:337-351`) y nadie lo consume; uninstall usa `hook_commands` |
-| 8 | `--strict` requiere Node | 🟡 Baja | Sin Node, el warning de `validate-all.sh:158` vuelve fatal el gate por `:191` |
+| 1 | **Cobertura del paquete no medida** | 🔴 Alta | Las 28 suites pasan, pero no hay `coverage` sobre `agent-dist/`; no se conoce el porcentaje real ni hay umbral que bloquee regresiones. |
+| 2 | **Cadena de suministro de CI y assets** | 🔴 Alta | GitHub Actions se referencian por tag mayor (`@v7`), no por SHA; `mermaid.min.js` (3.2 MB) está vendorizado sin verificación de integridad. |
+| 3 | **Auditorías de dependencias fuera de CI** | 🟠 Media | No hay job de `pip-audit`/`npm audit`; hoy hay 2 avisos en `pytest` del ejemplo y 6 vulnerabilidades `low` en el árbol npm de Jest. |
+| 4 | **Endurecimiento de la UI local** | 🟠 Media | Sin autenticación, sin CSP ni cabeceras de seguridad; por defecto escucha en `127.0.0.1`, pero `--host 0.0.0.0` expone todo `.quinoto-spec/`. |
+| 5 | **Acuerdos de producto vacíos** | 🟠 Media | `08-product-and-agreements.md` es una plantilla vacía por diseño; el gate de `create-proposal` se bloqueará hasta que un humano complete DoR/DoD. |
+| 6 | **Recuperación ante desastres parcial** | 🟠 Media | Hay backup verificable de `.quinoto-spec` y restore transaccional, pero el restore federado de Bifrost es manual y no hay cron de backup. |
+| 7 | **Contrato JSON de CLIs no versionado** | 🟡 Baja | Los scripts con `--json` no comparten un schema formal; los agentes consumen claves por convención. |
+| 8 | **Rendimiento de la UI en proyectos grandes** | 🟡 Baja | `State.refresh()` reconstruye el resumen completo en cada request y `ThreadingHTTPServer` comparte estado de clase. |
 
 ## Conclusión
 
-El paquete está **maduro en gobernanza y testing** (ownership por hash, transacciones con rollback,
-20 suites, CI en 2 SO × 2 versiones de Python) y ** frágil en su integración con el host**. El
-contrato del plugin de OpenCode quedó desactualizado respecto al runtime, y el mecanismo de
-instrucciones global apunta a una ruta que el IDE no lee. Ambos son fallos del *adaptador al host*,
-no de la metodología — que es la parte que funciona bien.
+El paquete está **maduro en gobernanza, instalación y pruebas funcionales**: ownership por hash, staging con rollback, 28 suites verdes, CI multi-SO y multi-Python, release con checksum y contrato de artefactos. Las brechas principales no están en la metodología sino en **medición de cobertura**, **cadena de suministro**, **endurecimiento de la UI** y **operación de recuperación**. El detalle priorizado está en `07-findings-and-recommendations.md`.
 
 ## 🔗 Referencias
 
-- `01-stack-profile.md` — detalle del stack y comandos de test
-- `03-architecture.md` — capas y flujo de instalación
+- `01-stack-profile.md` — stack, comandos y estándares
+- `03-architecture.md` — capas y flujos
+- `06-devops-ci-security.md` — CI, seguridad y auditorías
 - `07-findings-and-recommendations.md` — deuda técnica priorizada
