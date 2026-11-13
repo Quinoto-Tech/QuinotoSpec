@@ -50,10 +50,10 @@ producción, rompen la instalación a propósito.
 
 | Job | Runner | Qué hace |
 |---|---|---|
-| `test` | ubuntu + macos (matrix) | `validate-all.sh --strict` (suite completa). En macOS instala `shellcheck` |
-| `compatibility` | Python 3.8 y 3.11 | `validate-all.sh --strict` en ambas versiones |
-| `package-smoke` | Python 3.8 | `package-release.sh` + `smoke-release.sh` sobre el tarball |
-| `lint-shell` | ubuntu | `shellcheck -e SC2329 -x` sobre `install.sh`, `hooks/*.sh`, `scripts/*.sh`, `tests/*.sh`, `.githooks/*` |
+| `test` | ubuntu + macos (matrix) | `validate-all.sh --strict` (suite completa). En macOS instala solo `bash` 5 (el lint corre en `lint-shell`) |
+| `compatibility` | Python 3.8, 3.11 y 3.13 | `validate-all.sh --strict` en cada versión |
+| `package-smoke` | Python 3.13 | `package-release.sh` + `smoke-release.sh` sobre el tarball |
+| `lint-shell` | ubuntu | `scripts/lint-shell.sh`: shellcheck fijado en `.shellcheck-version` sobre `install.sh`, `hooks/*.sh`, `scripts/*.sh`, `tests/*.sh`, `.githooks/*` |
 | `lint-runtime` | ubuntu | `json.tool` en hooks + `node --check` en el plugin |
 | `lint-docs` | ubuntu | `check-links.sh --internal-only` + convenciones de nombres (warnings no fatales) |
 | `structure` | ubuntu | `REQUIRED_DIRS` incluye `agent-dist/plugins`; `REQUIRED_FILES` incluye el plugin y `hooks-opencode.json` |
@@ -71,7 +71,7 @@ producción, rompen la instalación a propósito.
 4. **`validate-all.sh --strict`** (`:69`) — gate duro
 5. `package-release.sh` → tarball + `.sha256`
 6. `smoke-release.sh` — install/verify/uninstall sobre el tarball extraído
-7. `softprops/action-gh-release@v2` con el tarball y su checksum
+7. `softprops/action-gh-release@v3` con el tarball y su checksum
 
 ### `.github/workflows/huginn-muninn.yml` — observabilidad de entropía
 

@@ -62,7 +62,7 @@ jobs:
   entropy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: ./scripts/validate-all.sh --internal-only
       - run: bash agent-dist/skills/quinotospec-huginn-muninn/check.sh --json
 ```

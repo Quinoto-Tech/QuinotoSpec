@@ -14,12 +14,14 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Install shellcheck + bash 5 (macOS)
+      - name: Install bash 5 (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install shellcheck bash
+          # Solo bash: el linteo de shellcheck corre en el job `lint-shell` con
+          # la version fijada en .shellcheck-version, no hace falta aca.
+          brew install bash
           echo "BASH_PATH=$(brew --prefix)/bin/bash" >> $GITHUB_ENV
 
       - name: Run package gates
@@ -29,11 +31,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.11"]
+        python-version: ["3.8", "3.11", "3.13"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Verify Python version
@@ -44,10 +46,10 @@ jobs:
   package-smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
-          python-version: "3.8"
+          python-version: "3.13"
       - name: Build and smoke-test release archive
         run: |
           VERSION="$(python3 -c 'import json; print(json.load(open("manifest.json"))["version"])')"
@@ -57,7 +59,7 @@ jobs:
   lint-shell:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Version fijada en .shellcheck-version: el runner trae una version distinta
       # y el set de checks cambia entre releases (falsos positivos como SC2317).
@@ -77,7 +79,7 @@ jobs:
   lint-runtime:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Validate runtime JSON
         run: |
@@ -94,7 +96,7 @@ jobs:
   lint-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check internal links
         run: ./scripts/check-links.sh --internal-only
@@ -142,7 +144,7 @@ jobs:
   structure:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Verify directory structure
         run: |
@@ -157,7 +159,7 @@ jobs:
 
       - name: Verify critical files
         run: |
-          REQUIRED_FILES="install.sh AGENTS.md README.md LICENSE agent-dist/rules/quinotospec-rules.md agent-dist/bootstrap/quinotospec-bootstrap.md agent-dist/hooks/session-start.sh agent-dist/hooks/hooks.json agent-dist/hooks/hooks-cursor.json agent-dist/hooks/hooks-opencode.json agent-dist/plugins/opencode/quinotospec-plugin.js agent-dist/workflows/quinotospec.constitution.md agent-dist/skills/quinotospec-constitution/SKILL.md agent-dist/skills/quinotospec-receive-review/SKILL.md agent-dist/skills/quinotospec-worktree/SKILL.md agent-dist/skills/quinotospec-rules-enforce/rules_enforce.py agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py agent-dist/skills/quinotospec-rules-enforce/approval_validate.py agent-dist/skills/quinotospec-backup/backup.py agent-dist/templates/constitution-template.md .cursor-plugin/plugin.json .shellcheck-version scripts/lint-shell.sh tests/test-portability.sh"
+          REQUIRED_FILES="install.sh AGENTS.md README.md LICENSE agent-dist/rules/quinotospec-rules.md agent-dist/bootstrap/quinotospec-bootstrap.md agent-dist/hooks/session-start.sh agent-dist/hooks/hooks.json agent-dist/hooks/hooks-cursor.json agent-dist/hooks/hooks-opencode.json agent-dist/plugins/opencode/quinotospec-plugin.js agent-dist/workflows/quinotospec.constitution.md agent-dist/skills/quinotospec-constitution/SKILL.md agent-dist/skills/quinotospec-receive-review/SKILL.md agent-dist/skills/quinotospec-worktree/SKILL.md agent-dist/skills/quinotospec-rules-enforce/rules_enforce.py agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py agent-dist/skills/quinotospec-rules-enforce/approval_validate.py agent-dist/skills/quinotospec-backup/backup.py agent-dist/templates/constitution-template.md .cursor-plugin/plugin.json .shellcheck-version scripts/lint-shell.sh tests/test-portability.sh tests/test-ci-config.sh"
           for file in $REQUIRED_FILES; do
             if [ ! -f "$file" ]; then
               echo "ERROR: Required file missing: $file"
