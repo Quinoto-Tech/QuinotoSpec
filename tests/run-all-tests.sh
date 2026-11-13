@@ -67,6 +67,7 @@ run_suite "Help, Router y Agent Config" "$SCRIPT_DIR/test-help-and-routing.sh"
 run_suite "Skill-Workflow Drift" "$SCRIPT_DIR/test-skill-workflow-drift.sh"
 run_suite "Portabilidad (Linux/macOS)" "$SCRIPT_DIR/test-portability.sh"
 run_suite "Higiene de CI" "$SCRIPT_DIR/test-ci-config.sh"
+run_suite "Comandos en documentacion" "$SCRIPT_DIR/test-docs-consistency.sh"
 run_suite "UI (read-only)" "$SCRIPT_DIR/test-ui.sh"
 
 # Verificar que todas las suites test-*.sh en disco hayan sido ejecutadas

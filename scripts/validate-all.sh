@@ -191,6 +191,16 @@ else
 fi
 echo ""
 
+# 5d. Validar que los comandos citados en README/docs existan
+echo "--- Documentation Commands ---"
+if python3 -B "$SCRIPT_DIR/check-readme-commands.py" --root "$PROJECT_ROOT" --include docs --include examples; then
+    echo "  Commands check OK"
+else
+    echo "  DEAD COMMANDS: la documentacion cita comandos que no existen"
+    ERRORS=$((ERRORS + 1))
+fi
+echo ""
+
 # 6. Validar runtime de bootstrap
 RUNTIME_FILES=(
     "agent-dist/bootstrap/quinotospec-bootstrap.md"
