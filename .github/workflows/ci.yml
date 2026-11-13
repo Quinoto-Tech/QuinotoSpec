@@ -56,6 +56,21 @@ jobs:
           bash scripts/package-release.sh "$VERSION" "$RUNNER_TEMP/quinotospec-dist"
           bash scripts/smoke-release.sh "$RUNNER_TEMP/quinotospec-dist/quinotospec-$VERSION.tar.gz"
 
+  example-playground:
+    # El README manda al playground: si deja de instalarse, es la primera
+    # impresion del producto. Lo probamos en el Python actual del runner.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Install playground dependencies
+        run: python -m pip install -q -r examples/python-fastapi/requirements.txt
+      - name: Run playground tests
+        working-directory: examples/python-fastapi
+        run: python -m pytest -q
+
   lint-shell:
     runs-on: ubuntu-latest
     steps:
