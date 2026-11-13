@@ -313,6 +313,17 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(clean["dependency"]["mcp"]["detected_in"][0][:1], "~")
         self.assertEqual(clean["playwright"]["e2e_dir"], "agent-dist/e2e")
 
+    def test_evidence_paths_work_under_symlinked_root(self):
+        """macOS resuelve /var -> /private/var: root sin resolver no debe romper la sanitizacion."""
+        with tempfile.TemporaryDirectory() as tmp:
+            real = Path(tmp) / "real-root"
+            real.mkdir()
+            link = Path(tmp) / "link-root"
+            link.symlink_to(real, target_is_directory=True)
+            data = {"screenshots": [str(real / "reviews" / "desktop.png")], "dependency": {"mcp": {"detected_in": []}}}
+            clean = self.review.sanitize_paths(data, link)
+        self.assertEqual(clean["screenshots"], ["reviews/desktop.png"])
+
 
 if __name__ == "__main__":
     unittest.main()

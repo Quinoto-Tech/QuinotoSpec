@@ -270,8 +270,11 @@ def display_path(path: Any, root: Path) -> Any:
         return path
     candidate = Path(path)
     if candidate.is_absolute():
+        # En macOS /var es symlink a /private/var: comparar sin resolver deja la
+        # ruta absoluta (y filtra el home) aunque este dentro del repo.
+        resolved_root = Path(root).resolve()
         try:
-            return str(candidate.resolve().relative_to(root))
+            return str(candidate.resolve().relative_to(resolved_root))
         except (ValueError, OSError):
             try:
                 return "~/" + str(candidate.resolve().relative_to(Path.home()))

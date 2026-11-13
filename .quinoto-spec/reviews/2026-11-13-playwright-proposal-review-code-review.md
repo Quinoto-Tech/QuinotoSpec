@@ -141,3 +141,11 @@ Se aplicaron los BLOCKING y los WARN de bajo costo, con test RED antes del fix:
 | W-09 aprobación humana del override DoR | ⏳ Pendiente | Requiere tu decisión explícita para registrar `.quinoto-spec/approvals/` |
 
 **Gates post-fix:** contrato OK · `lint-shell` 42 scripts clean · **29/29 suites** · `validate-all --strict` 0/0 · `test-review-playwright.sh` 19 checks · orquestador 13/13 · doctor 6/6 · dogfooding Playwright `pass` (9 checks, 2/2 Mermaid, 3 viewports, 0 console errors).
+
+### Follow-up: macOS `/var` -> `/private/var` (run 43480704090)
+
+El primer push dejo `test (macos-latest)` rojo: comparar `str(path)` con un path resuelto falla en macOS porque `/var` es symlink. Era relevante de verdad: `display_path` (el fix de W-03) devolvia rutas **absolutas** en macOS en vez de relativas, o sea la fuga de privacidad seguia viva en Mac.
+
+- `display_path` resuelve `root` antes de comparar.
+- Tests comparan con `.resolve()`; nuevo `test_evidence_paths_work_under_symlinked_root` (reproducible en Linux).
+- La suite ahora imprime el traceback cuando los unit tests fallan.

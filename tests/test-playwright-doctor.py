@@ -60,7 +60,7 @@ class DoctorTests(unittest.TestCase):
             with mock.patch.object(self.doctor.shutil, "which", return_value=None):
                 env = self.doctor.check_environment(root, home=root / "home", module_dir=root / "module")
         self.assertTrue(env["mcp"]["configured"])
-        self.assertIn(str(config), env["mcp"]["detected_in"])
+        self.assertIn(str(config.resolve()), [str(Path(item).resolve()) for item in env["mcp"]["detected_in"]])
         self.assertEqual(env["recommended"], "mcp")
 
     def test_cli_json_shape(self):
