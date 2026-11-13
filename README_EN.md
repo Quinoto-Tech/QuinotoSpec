@@ -68,6 +68,27 @@ cd QuinotoSpec
 @quinotospec.create-proposal
 ```
 
+### Try it in 5 minutes (nothing to install)
+
+The repo ships a playground with the pipeline already generated — discovery (8 files), proposal, stories, tasks and changelog:
+
+```bash
+cd examples/python-fastapi
+pip install -r requirements.txt && pytest -v          # green suite
+cat .quinoto-spec/proposals/users-api/proposal.md    # what a proposal looks like
+cat .quinoto-spec/changelog/*.md                     # what the delivery log looks like
+```
+
+See [`examples/README.md`](examples/README.md) for the guided tour.
+
+### Not every change deserves the full pipeline
+
+The gate is proportional to the change, not to the ceremony:
+
+- **Quick Fix** (typo, config, one file): `@quinotospec.fix`
+- **Simple** (2-3 files, one service): `@quinotospec.quick-dev` — light tech-spec + TDD, no user stories
+- **Complex / Enterprise**: discovery → proposal → stories → tasks (`@quinotospec.create-proposal`)
+
 ## Table of Contents
 
 - [The Problem](#the-problem)

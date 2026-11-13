@@ -69,6 +69,27 @@ cd QuinotoSpec
 @quinotospec.create-proposal
 ```
 
+### Probalo en 5 minutos (sin instalar nada)
+
+El repo trae un playground con el pipeline ya generado — discovery (8 archivos), propuesta, historias, tareas y changelog:
+
+```bash
+cd examples/python-fastapi
+pip install -r requirements.txt && pytest -v          # suite verde
+cat .quinoto-spec/proposals/users-api/proposal.md    # como se ve una propuesta
+cat .quinoto-spec/changelog/*.md                     # como se ve el registro de entrega
+```
+
+Recorrido guiado en [`examples/README.md`](examples/README.md).
+
+### No todo cambio merece el pipeline completo
+
+La barrera es proporcional al cambio, no al ritual:
+
+- **Quick Fix** (typo, config, un archivo): `@quinotospec.fix`
+- **Simple** (2-3 archivos, un servicio): `@quinotospec.quick-dev` — tech-spec ligera + TDD, sin user stories
+- **Complex / Enterprise**: discovery → propuesta → historias → tareas (`@quinotospec.create-proposal`)
+
 ## Tabla de Contenido
 
 - [El Problema](#el-problema)
