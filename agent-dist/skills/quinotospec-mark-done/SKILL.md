@@ -15,9 +15,10 @@ Usa esta skill cuando el usuario indica que una tarea técnica (`TSK-MNEM-suffix
 
 1. Ejecuta `quinotospec-verify-before-done` con el `TASK_ID` y la evidencia de la tarea.
 2. Valida `.quinoto-spec/evidence/{{TASK_ID}}/verify-before-done.json` con `evidence_validate.py --kind verify-before-done --require --json`.
-3. Revisa cada criterio DoD, tests, lint, typecheck y el diff.
-4. Si falta evidencia o una verificación falla, detén el proceso y mantén la tarea en `in_progress` o `blocked`.
-5. Solo después de un gate exitoso continúa marcando el checkbox o moviendo archivos.
+3. Ejecuta la pasada Goldfish con un subagente sin contexto (solo propuesta + tareas) y valida `.quinoto-spec/evidence/{{TASK_ID}}/goldfish.json` con `evidence_validate.py --kind goldfish --require --json`.
+4. Revisa cada criterio DoD, tests, lint, typecheck y el diff.
+5. Si falta evidencia, el Goldfish no explica el alcance o una verificación falla, detén el proceso y mantén la tarea en `in_progress` o `blocked`.
+6. Solo después de un gate exitoso continúa marcando el checkbox o moviendo archivos.
 
 #### Paso 1 — Marcar la tarea como completada
 
@@ -52,7 +53,7 @@ Ejecuta la skill `quinotospec-update-changelog` con:
 
 #### Paso 0 — Verificar el lote
 
-Ejecuta `quinotospec-verify-before-done` y valida `evidence_validate.py` para cada tarea antes de modificar cualquier checkbox. Si una tarea falla el gate, procesa solo las tareas permitidas y reporta el bloqueo de las demás.
+Ejecuta `quinotospec-verify-before-done` y valida `evidence_validate.py` para cada tarea, tanto `verify-before-done` como `goldfish`, antes de modificar cualquier checkbox. Si una tarea falla el gate, procesa solo las tareas permitidas y reporta el bloqueo de las demás.
 
 Usa `--bulk` o `-b` para marcar múltiples tareas a la vez:
 
@@ -99,7 +100,7 @@ La validación completa se delega a `quinotospec-verify-before-done` y al contra
 4. Asocia cada criterio DoD con evidencia fresca.
 5. Si una comprobación falla o no puede ejecutarse, detén el cambio de estado y reporta el bloqueo.
 
-`--skip-tests` solo puede usarse para una comprobación secundaria con confirmación explícita; nunca omite `quinotospec-verify-before-done`. Las tareas de documentación o configuración usan una validación determinista equivalente y deben justificar por qué no requieren un test de comportamiento.
+`--skip-tests` solo puede usarse para una comprobación secundaria con confirmación explícita; nunca omite `quinotospec-verify-before-done` ni la evidencia `goldfish`. Las tareas de documentación o configuración usan una validación determinista equivalente y deben justificar por qué no requieren un test de comportamiento.
 ## Flags
 
 | Flag | Descripcion |

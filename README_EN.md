@@ -495,7 +495,16 @@ Unlike `--party` (shared context, seeks consensus), `--goldfish` isolates contex
 
 - If `--party` and `--goldfish` are both passed, run **`--party` first** (enrich) and **`--goldfish` after** (audit). Never in parallel.
 - `--goldfish` requires fresh subagents. If the IDE cannot create them, only that layer is skipped (`fix`/`quick-dev`) or the Goldfish layer stops (`review`); it is never simulated.
-- Both are optional: without flags, the base flow is unchanged.
+- Both are optional while drafting or reviewing: without flags, the base flow is unchanged. The exception is completion (see **Goldfish gate** below).
+
+**Goldfish gate (mandatory before completing a task):**
+
+Even though `--goldfish` is optional while drafting or reviewing, closing a task requires a fresh-context pass: a subagent reads **only** the proposal and the tasks and explains the scope, the out-of-scope items, and the criterion that proves them. If it cannot, the gap belongs to the document and is fixed there, not answered on the reviewer's behalf. The result is recorded in `.quinoto-spec/evidence/<TASK_ID>/goldfish.json` and validated as evidence, so `quinotospec-mark-done` cannot complete without it.
+
+```bash
+python3 -B agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py validate \
+  --root . --kind goldfish --task-id TSK-AUTH-a1b2-001 --require --json
+```
 
 #### Blood-Bond (Proactive Prediction)
 

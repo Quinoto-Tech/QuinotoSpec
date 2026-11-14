@@ -39,8 +39,8 @@ else
     fail "debug method incomplete"
 fi
 
-if grep -q "Gate de cinco pasos" "$ROOT/agent-dist/skills/quinotospec-verify-before-done/SKILL.md" && grep -q "evidencia fresca" "$ROOT/agent-dist/skills/quinotospec-verify-before-done/SKILL.md"; then
-    pass "verify-before-done gate and evidence"
+if grep -q "Gate de seis pasos" "$ROOT/agent-dist/skills/quinotospec-verify-before-done/SKILL.md" && grep -q "evidencia fresca" "$ROOT/agent-dist/skills/quinotospec-verify-before-done/SKILL.md" && grep -q "Goldfish gate" "$ROOT/agent-dist/skills/quinotospec-verify-before-done/SKILL.md"; then
+    pass "verify-before-done gate, evidence and goldfish gate"
 else
     fail "verify-before-done gate incomplete"
 fi

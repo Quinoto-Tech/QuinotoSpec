@@ -28,6 +28,7 @@ ALL_CHECKS = (
     "tdd",
     "debug",
     "verify-before-done",
+    "goldfish",
     "human-approval",
 )
 ACTIONS = {"preflight", "create-proposal", "apply", "archive", "review", "refactor", "constitution", "mjolnir-refactor"}
@@ -556,6 +557,7 @@ def add_evidence_checks(
         "tdd": (14, "TDD evidence requires a fresh structured record"),
         "debug": (15, "Debug evidence requires reproduction, hypothesis, root cause and regression"),
         "verify-before-done": (16, "Verify evidence requires fresh tests, quality commands and DoD checks"),
+        "goldfish": (16, "Goldfish evidence requires a fresh agent that explained the scope from the docs alone"),
     }
     applicable_actions = {"apply", "review", "refactor"}
     for kind, (rule, reason) in definitions.items():

@@ -45,7 +45,8 @@ No hay migraciones de esquema relacional ni seeds de base de datos. La "migraci�
 │   └── <TASK_ID>/
 │       ├── tdd.json
 │       ├── debug.json
-│       └── verify-before-done.json
+│       ├── verify-before-done.json
+│       └── goldfish.json
 ├── approvals/
 │   └── <APPROVAL_ID>.json
 ├── changelog/
@@ -199,6 +200,7 @@ Archivo: `.quinoto-spec/evidence/<TASK_ID>/<kind>.json`
 | `tdd` | Test RED observado antes de producción | `tests/test-evidence.py`, Apply |
 | `debug` | Reproducción, hipótesis y causa raíz | Debug workflow |
 | `verify-before-done` | Evidencia fresca antes de cerrar | Mark Done / Apply |
+| `goldfish` | Un agente sin contexto explicó el alcance desde propuesta + tareas | Mark Done / Verify Before Done |
 
 Campos observados: `task_id`, `kind`, `created_at`, `result`, `command`, `output` o `output_hash`, `notes`. El validador `evidence_validate.py` exige frescura y estructura.
 

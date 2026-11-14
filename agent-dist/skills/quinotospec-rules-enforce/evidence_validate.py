@@ -11,7 +11,11 @@ sys.dont_write_bytecode = True
 
 SCHEMA_VERSION = 1
 TASK_PATTERN = re.compile(r"^(?:US|TSK)-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$")
-KINDS = ("tdd", "debug", "verify-before-done")
+KINDS = ("tdd", "debug", "verify-before-done", "goldfish")
+GOLDFISH_LENSES = ("comprehension", "critic", "readiness")
+GOLDFISH_VERDICTS = ("pass", "changes_required")
+GOLDFISH_SEVERITIES = ("blocking", "warn", "info")
+GOLDFISH_STATUSES = ("open", "resolved")
 
 
 class EvidenceError(Exception):
@@ -91,7 +95,64 @@ def validate_verify(data: Dict[str, Any]) -> None:
     validate_run(data.get("diff"), "diff", "passed")
 
 
-def validate_evidence(path: Path, kind: str, task_id: str, max_age: int) -> Dict[str, Any]:
+def validate_goldfish(data: Dict[str, Any], root: Path) -> None:
+    lenses = data.get("lenses")
+    if not isinstance(lenses, list) or not lenses:
+        raise EvidenceError("lenses must be a non-empty list")
+    for index, lens in enumerate(lenses):
+        if lens not in GOLDFISH_LENSES:
+            raise EvidenceError(
+                "lenses[" + str(index) + "] must be one of " + ", ".join(GOLDFISH_LENSES)
+            )
+    if "comprehension" not in lenses:
+        raise EvidenceError("lenses must include comprehension: the gate exists to prove a fresh agent understood the scope")
+    if data.get("fresh_context") is not True:
+        raise EvidenceError("fresh_context must be true; a review that reuses the drafting context is not a goldfish review")
+    inputs = data.get("inputs")
+    if not isinstance(inputs, list) or not inputs:
+        raise EvidenceError("inputs must be a non-empty list of documents the goldfish read")
+    recorded = parse_timestamp(data.get("recorded_at"))
+    for index, item in enumerate(inputs):
+        field = "inputs[" + str(index) + "]"
+        reference = nonempty(item, field)
+        candidate = Path(reference)
+        resolved = candidate.resolve() if candidate.is_absolute() else (root / candidate).resolve()
+        if resolved != root and root not in resolved.parents:
+            raise EvidenceError(field + " must live inside the project root")
+        if resolved.is_symlink() or not resolved.is_file():
+            raise EvidenceError(field + " does not reference a readable file: " + reference)
+        modified = datetime.fromtimestamp(resolved.stat().st_mtime, timezone.utc)
+        if modified > recorded:
+            raise EvidenceError(field + " changed after the goldfish review; re-run the gate: " + reference)
+    comprehension = data.get("comprehension")
+    if not isinstance(comprehension, dict):
+        raise EvidenceError("comprehension must be an object")
+    if comprehension.get("explained_scope") is not True:
+        raise EvidenceError("comprehension.explained_scope must be true; a goldfish that cannot explain the scope fails the gate")
+    nonempty(comprehension.get("summary"), "comprehension.summary")
+    verdict = data.get("verdict")
+    if verdict not in GOLDFISH_VERDICTS:
+        raise EvidenceError("verdict must be one of " + ", ".join(GOLDFISH_VERDICTS))
+    if verdict != "pass":
+        raise EvidenceError("verdict must be pass to close the goldfish gate")
+    findings = data.get("findings")
+    if not isinstance(findings, list):
+        raise EvidenceError("findings must be a list")
+    for index, item in enumerate(findings):
+        if not isinstance(item, dict):
+            raise EvidenceError("findings[" + str(index) + "] must be an object")
+        severity = item.get("severity")
+        if severity not in GOLDFISH_SEVERITIES:
+            raise EvidenceError("findings[" + str(index) + "].severity must be one of " + ", ".join(GOLDFISH_SEVERITIES))
+        status = item.get("status")
+        if status not in GOLDFISH_STATUSES:
+            raise EvidenceError("findings[" + str(index) + "].status must be one of " + ", ".join(GOLDFISH_STATUSES))
+        nonempty(item.get("detail"), "findings[" + str(index) + "].detail")
+        if severity == "blocking" and status != "resolved":
+            raise EvidenceError("findings[" + str(index) + "] is blocking and unresolved")
+
+
+def validate_evidence(path: Path, kind: str, task_id: str, max_age: int, root: Path) -> Dict[str, Any]:
     if not path.is_file() or path.is_symlink():
         raise EvidenceError("evidence file not found: " + str(path))
     try:
@@ -116,6 +177,8 @@ def validate_evidence(path: Path, kind: str, task_id: str, max_age: int) -> Dict
         validate_tdd(data)
     elif kind == "debug":
         validate_debug(data)
+    elif kind == "goldfish":
+        validate_goldfish(data, root)
     else:
         validate_verify(data)
     return {
@@ -162,7 +225,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         evidence_dir = root / evidence_dir
     evidence_path = evidence_dir / task_id / (args.kind + ".json")
     try:
-        result = validate_evidence(evidence_path, args.kind, task_id, args.max_age)
+        result = validate_evidence(evidence_path, args.kind, task_id, args.max_age, root)
         code = 0
     except EvidenceError as error:
         result = {"schema_version": SCHEMA_VERSION, "valid": False, "kind": args.kind, "task_id": task_id, "path": str(evidence_path), "error": str(error)}

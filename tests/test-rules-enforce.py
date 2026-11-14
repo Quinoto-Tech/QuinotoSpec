@@ -108,6 +108,7 @@ class RulesEnforceTests(unittest.TestCase):
         deferred_ids = {item["id"] for item in result["deferred"]}
         self.assertIn("tdd", deferred_ids)
         self.assertIn("verify-before-done", deferred_ids)
+        self.assertIn("goldfish", deferred_ids)
 
     def test_gate_is_read_only_and_operation_errors_are_json(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -171,7 +171,33 @@ Reglas:
 
 - Si se pasan ambos, ejecutar `--party` primero (enriquece) y `--goldfish` despues (audita); nunca en paralelo.
 - `--goldfish` necesita subagentes frescos; si el IDE no puede crearlos, se omite solo esa capa (o se detiene en `review`), sin simularla.
-- Sin flags, el flujo base no cambia.
+- Sin flags, el flujo base no cambia al redactar. Al cerrar, el Goldfish gate si es obligatorio.
+
+### Goldfish gate (cierre de tarea)
+
+`verify-before-done` y `mark-done` exigen una pasada con contexto limpio: un subagente lee solo la propuesta y las tareas y explica alcance, fuera de alcance y criterio de aceptacion. Si no puede, falta contexto en el documento; se corrige el documento y se repite. El resultado se registra como evidencia y se valida antes de cambiar el estado:
+
+```json
+{
+  "schema_version": 1,
+  "kind": "goldfish",
+  "task_id": "TSK-AUTH-a1b2-001",
+  "recorded_at": "2026-01-31T12:00:00+00:00",
+  "fresh_context": true,
+  "lenses": ["comprehension"],
+  "inputs": [".quinoto-spec/proposals/<slug>/proposal.md", ".quinoto-spec/proposals/<slug>/US-AUTH-a1b2-001_tasks.md"],
+  "comprehension": {"explained_scope": true, "summary": "Alta de usuario con validacion de email; sin update/delete."},
+  "verdict": "pass",
+  "findings": []
+}
+```
+
+```bash
+python3 -B agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py validate \
+  --root . --kind goldfish --task-id TSK-AUTH-a1b2-001 --require --json
+```
+
+El validador rechaza `fresh_context` falso, veredictos distintos de `pass`, documentos inexistentes o modificados despues de la revision (revision stale) y hallazgos `blocking` sin resolver.
 
 La version en ingles esta documentada en `README_EN.md` (seccion *Elephant-Goldfish*).
 

@@ -221,7 +221,7 @@ sequenceDiagram
 |---|---|---|
 | Helpers comunes | `agent-dist/lib/quinotospec_common.py` | Varios scripts Python (`resolve_root`, carga de módulos) |
 | Contrato de artefactos | `agent-dist/skills/quinotospec-contract/contract.py` | Apply, review, archive, UI, Mimir, Valkyrie |
-| Validador de evidencia | `.../quinotospec-rules-enforce/evidence_validate.py` | TDD, debug, verify-before-done |
+| Validador de evidencia | `.../quinotospec-rules-enforce/evidence_validate.py` | TDD, debug, verify-before-done, goldfish |
 | Validador de aprobaciones | `.../quinotospec-rules-enforce/approval_validate.py` | Apply, archive, constitution |
 | Plantillas | `agent-dist/templates/` | Propuestas, historias, tareas, specs, changelog, constitución |
 | Bootstrap | `agent-dist/bootstrap/quinotospec-bootstrap.md` | Plugins y hooks de todos los IDEs |

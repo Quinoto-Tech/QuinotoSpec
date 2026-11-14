@@ -96,6 +96,8 @@ trigger: always_on
 - Esta regla es prompt-level; el workflow debe detener el claim cuando la evidencia falte.
 - **ANTES** de cambiar el estado de una tarea o moverla a `_archived/`, ejecuta `quinotospec-verify-before-done`.
 - Exige evidencia fresca de tests, lint, typecheck y criterios de aceptación aplicables.
+- Antes de completar, exige una pasada **Goldfish** con contexto limpio: un agente sin hilo previo debe explicar el alcance leyendo solo la propuesta y las tareas. Registra el resultado en `.quinoto-spec/evidence/{{TASK_ID}}/goldfish.json` y valídalo con `python3 -B agent-dist/skills/quinotospec-rules-enforce/evidence_validate.py validate --root . --kind goldfish --task-id {{TASK_ID}} --require --json`.
+- Si el Goldfish no puede explicar el alcance, el hueco es del documento: complétalo y repetí la pasada. Nunca respondas por el revisor ni simules la revisión con el mismo contexto.
 - `--force` solo puede forzar el archivado; no elimina la evidencia ni permite declarar `completed` sin verificación.
 - Si falta una comprobación, deja la tarea en `in_progress` o `blocked` y reporta el bloqueo.
 
