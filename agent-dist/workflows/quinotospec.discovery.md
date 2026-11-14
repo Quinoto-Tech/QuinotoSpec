@@ -69,10 +69,11 @@ Contenido por archivo:
 - Checklist de seguimiento y owner sugerido para cada ítem.
 
 8) 08-product-and-agreements.md
+- **Preservación (BLOQUEANTE)**: Si `08-product-and-agreements.md` ya existe y contiene contenido más allá de encabezados/placeholders (DoR/DoD completados por humanos), NO lo regeneres: presérvalo intacto y omítelo de esta pasada del discovery. Solo genera la plantilla vacía si el archivo no existe. Si el usuario pide explícitamente regenerarlo, crea primero un backup en `.quinoto-spec/discovery/_archived/` y solicita confirmación antes de sobrescribir.
 - **Visión de Producto**: Encabezado y espacio vacío (o breve placeholder) para describir el propósito.
 - **Business Goals/KPIs**: Encabezado y bullet points vacíos para que el equipo complete.
 - **Definition of Ready (DoR) / Definition of Done (DoD)**: Solo los títulos de sección. NO generes las listas de chequeo predefinidas. Debe quedar vacío para que el equipo defina sus propios acuerdos.
-- **Nota**: Este archivo es una plantilla vacía para ser completada por "Humanos".
+- **Nota**: Este archivo es una plantilla vacía para ser completada por "Humanos" (solo en la generación inicial).
 
 Al final del prompt:
 - Especifica que cada archivo se guarde exactamente en .quinoto-spec/discovery/ con los nombres arriba indicados.
