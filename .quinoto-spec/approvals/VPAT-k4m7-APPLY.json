@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "approval_id": "VPAT-k4m7-APPLY",
+  "subject": "2026-11-17-validator-path-resolution (propuesta VPAT-k4m7 — tareas TSK-VPAT-k4m7-001..010)",
+  "action": "apply",
+  "decision": "approved",
+  "requested_by": "agente QuinotoSpec (sesion apply validator-path-resolution)",
+  "decided_by": "barba (maintainer de QuinotoSpec)",
+  "rationale": "El maintainer confirmo explicitamente la instruccion 'aplicalas' para implementar las 10 tareas de la propuesta VPAT-k4m7. La propuesta documento excepcion DoR/DoD (F-05: 08-product-and-agreements.md es plantilla vacia) con override confirmado por el usuario en la generacion. Esta aprobacion habilita el Apply de codigo de producción sin branch nuevo ni worktree, segun las decisiones registradas en la sesion.",
+  "scope": "install.sh (fase normalize_staged_paths), agent-dist/skills/quinotospec-update-agents/update_agents.py, agent-dist/skills/quinotospec-template-resolver/template_resolver.py, tests/test-installed-paths.sh, scripts/smoke-release.sh, changelog y evidencia. Sin cambios de esquema de artefactos ni de runtime de plugins.",
+  "decided_at": "2026-11-17T00:00:00+00:00"
+}

@@ -1228,6 +1228,48 @@ get_agents_root() {
     fi
 }
 
+# Rewrites payload-relative documentation paths (agent-dist/...) to absolute
+# paths under the final install root, so validators referenced by installed
+# docs resolve in any project. Markdown only: code (.py/.sh/.js/.json) keeps
+# resolving its payload via its own location (quinotospec_common convention).
+# MUST run after payload staging and BEFORE the ownership manifest digests.
+normalize_staged_paths() {
+    local candidate="$1"
+    local install_root="$2"
+    if ! PYTHONDONTWRITEBYTECODE=1 python3 - "$candidate" "$install_root" <<'PY'
+import re
+import sys
+from pathlib import Path
+
+candidate = Path(sys.argv[1])
+install_root = sys.argv[2].rstrip("/").replace("\\", "\\\\")
+
+subdirs = ("rules", "skills", "agents", "templates", "config", "bootstrap", "ui", "workflows", "commands")
+slash = re.compile(r"(?<![A-Za-z0-9_.\-])agent-dist/")
+bare = re.compile(r"(?<![A-Za-z0-9_./\-])agent-dist(?![A-Za-z0-9_\-])")
+
+changed = 0
+for sub in subdirs:
+    base = candidate / sub
+    if not base.is_dir():
+        continue
+    for path in base.rglob("*.md"):
+        if not path.is_file() or path.is_symlink():
+            continue
+        text = path.read_text(encoding="utf-8")
+        normalized = bare.sub(install_root, slash.sub(install_root + "/", text))
+        if normalized != text:
+            path.write_text(normalized, encoding="utf-8")
+            changed += 1
+
+print("normalize_staged_paths: " + str(changed) + " file(s) rewritten")
+PY
+    then
+        print_error "Could not normalize staged documentation paths"
+        return 1
+    fi
+}
+
 uninstall() {
     local ide="$1"
     local config_dir
@@ -1624,6 +1666,10 @@ case "$IDE_CHOICE" in
         install_runtime_components "$config_dir" "generic" "$FINAL_CONFIG_DIR"
         ;;
 esac
+
+if ! normalize_staged_paths "$config_dir" "$FINAL_CONFIG_DIR"; then
+    exit 1
+fi
 
 STAGED_AGENTS="$TRANSACTION_DIR/candidate-root/AGENTS.md"
 INSTALL_CONFIG="$TARGET_ROOT/.quinoto-spec/config.yaml"

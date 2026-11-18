@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "kind": "verify-before-done",
+  "task_id": "TSK-VPAT-k4m7-002",
+  "recorded_at": "2026-11-17T23:55:42+00:00",
+  "checks": [
+    {
+      "criterion": "0 referencias agent-dist/ en .md instalados (check A)",
+      "run": {
+        "status": "passed",
+        "command": "bash tests/test-installed-paths.sh; bash scripts/smoke-release.sh /tmp/opencode/vpat-dist/quinotospec-3.4.0.tar.gz",
+        "exit_code": 0,
+        "output": "installed-paths 9/9 checks; smoke 5 IDEs OK"
+      }
+    },
+    {
+      "criterion": "Preflight del bootstrap instalado corre exit 0 desde proyecto sin agent-dist/ (check B)",
+      "run": {
+        "status": "passed",
+        "command": "bash tests/test-installed-paths.sh; bash scripts/smoke-release.sh /tmp/opencode/vpat-dist/quinotospec-3.4.0.tar.gz",
+        "exit_code": 0,
+        "output": "installed-paths 9/9 checks; smoke 5 IDEs OK"
+      }
+    },
+    {
+      "criterion": "Rewrite idempotente y tolerante a espacios/& (checks F y G)",
+      "run": {
+        "status": "passed",
+        "command": "bash tests/test-installed-paths.sh; bash scripts/smoke-release.sh /tmp/opencode/vpat-dist/quinotospec-3.4.0.tar.gz",
+        "exit_code": 0,
+        "output": "installed-paths 9/9 checks; smoke 5 IDEs OK"
+      }
+    }
+  ],
+  "tests": {
+    "status": "passed",
+    "command": "bash tests/run-all-tests.sh",
+    "exit_code": 0,
+    "output": "31/31 suites verdes"
+  },
+  "lint": {
+    "status": "passed",
+    "command": "bash scripts/validate-all.sh --strict",
+    "exit_code": 0,
+    "output": "0 errores, 0 warnings"
+  },
+  "typecheck": {
+    "status": "not_applicable",
+    "justification": "Proyecto Bash/Python stdlib sin typecheck configurado"
+  },
+  "diff": {
+    "status": "passed",
+    "command": "git diff --check",
+    "exit_code": 0,
+    "output": "sin errores de whitespace"
+  }
+}

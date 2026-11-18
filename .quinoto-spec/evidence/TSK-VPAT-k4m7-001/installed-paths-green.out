@@ -1,0 +1,21 @@
+▶ Instalando QuinotoSpec en /tmp/quinotospec-installed-paths.3sZTIj/app (instalacion local OpenCode)
+▶ Check A: referencias agent-dist/ en .md instalados
+  [32m✅ ningun .md instalado referencia agent-dist/[0m
+▶ Check B: preflight del bootstrap instalado es ejecutable
+  [32m✅ preflight del bootstrap corre desde proyecto sin agent-dist/ (/tmp/quinotospec-installed-paths.3sZTIj/app/.opencode/skills/quinotospec-contract/contract.py)[0m
+▶ Check C: update_agents.py con fallback a la raiz de instalacion
+  [32m✅ update_agents.py genera AGENTS.md con inventario real desde proyecto instalado[0m
+▶ Check D: template_resolver.py con fallback a la raiz de instalacion
+  [32m✅ template_resolver.py resuelve skill core desde proyecto instalado (/tmp/quinotospec-installed-paths.3sZTIj/app/.opencode/skills/quinotospec-contract/SKILL.md)[0m
+▶ Check E: regresion cero cuando root/agent-dist existe
+  [32m✅ con root/agent-dist presente, update_agents y template_resolver siguen resolviendo por root (regresion cero)[0m
+▶ Check F: reinstall idempotente
+  [32m✅ reinstall sobre instalacion normalizada mantiene 0 referencias agent-dist/[0m
+▶ Check G: instalacion en ruta con espacios y &
+  [32m✅ rewrite correcto en ruta con espacio y &[0m
+▶ Check H: codigo instalado byte-intacto
+  [32m✅ ningun .py/.sh/.js/.json instalado difiere del source[0m
+▶ Check I: uninstall coherente
+  [32m✅ uninstall remueve los archivos gestionados reescritos sin conflictos[0m
+
+[32m✅ installed-paths: todos los checks pasaron[0m

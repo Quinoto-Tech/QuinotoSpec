@@ -35,6 +35,23 @@ assert manifest.get("opencode_major") == 2, manifest.get("opencode_major")
 assert Path(".opencode/.quinoto-spec/ownership.json").is_file()
 PY
 
+# Invariant VPAT: los .md instalados referencian rutas ejecutables, nunca agent-dist/
+python3 - <<'PY'
+import re
+from pathlib import Path
+
+installed = Path(".opencode")
+broken = sorted(str(p.relative_to(installed)) for p in installed.rglob("*.md") if "agent-dist" in p.read_text(encoding="utf-8"))
+assert not broken, "installed .md still reference agent-dist/: " + ", ".join(broken[:5])
+
+bootstrap = (installed / "bootstrap/quinotospec-bootstrap.md").read_text(encoding="utf-8")
+match = re.search(r"python3 (?:-B )?(\S*skills/quinotospec-contract/contract\.py)", bootstrap)
+assert match, "bootstrap does not declare a contract.py preflight"
+preflight = Path(match.group(1))
+assert preflight.is_absolute(), "preflight path not resolved to install root: " + str(preflight)
+assert preflight.is_file(), "preflight script missing: " + str(preflight)
+PY
+
 QUINOTOSPEC_OPENCODE_MAJOR=2 bash "$TEMP_ROOT/install.sh" --uninstall --opencode --yes >/dev/null
 if [ -e ".opencode" ]; then
     printf 'ERROR: uninstall left an empty managed directory (opencode)\n' >&2

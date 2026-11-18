@@ -90,12 +90,33 @@ def candidate_paths(root: Path, kind: str, name: str) -> List[Tuple[str, Path]]:
             else:
                 candidates.extend([("extension", extension / "skills" / name / "SKILL.md"), ("extension", extension / "skills" / (name + ".md"))])
     if kind == "template":
-        candidates.append(("core", root / "agent-dist/templates" / name))
+        candidates.append(("core", resolve_package_dir(root, "templates") / name))
     elif kind == "command":
-        candidates.append(("core", root / "agent-dist/workflows" / name))
+        candidates.append(("core", resolve_package_dir(root, "workflows") / name))
     else:
-        candidates.append(("core", root / "agent-dist/skills" / name / "SKILL.md"))
+        candidates.append(("core", resolve_package_dir(root, "skills") / name / "SKILL.md"))
     return candidates
+
+
+def resolve_package_dir(user_root: Path, name: str) -> Path:
+    """Resuelve el directorio de assets ``name`` (templates/workflows/skills).
+
+    Orden: layout fuente del usuario (``root/agent-dist/<name>``), luego el
+    layout plano instalado junto al propio script (``<install>/<name>``). Los
+    comandos pueden estar instalados como ``commands/`` segun el IDE.
+    """
+    fallback_root = Path(__file__).resolve().parents[2]
+    source = user_root / "agent-dist" / name
+    if source.is_dir():
+        return source
+    installed = fallback_root / name
+    if installed.is_dir():
+        return installed
+    if name == "workflows":
+        commands = fallback_root / "commands"
+        if commands.is_dir():
+            return commands
+    return source
 
 
 def resolve(root: Path, kind: str, name: str) -> Dict[str, Any]:

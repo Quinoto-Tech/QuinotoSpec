@@ -1,0 +1,22 @@
+▶ Instalando QuinotoSpec en /tmp/quinotospec-installed-paths.h9hfLg/app (instalacion local OpenCode)
+▶ Check A: referencias agent-dist/ en .md instalados
+  [31m❌ 85 archivo(s) .md instalados todavia referencian agent-dist/ (rutas rotas)[0m
+      /tmp/quinotospec-installed-paths.h9hfLg/app/.opencode/skills/quinotospec-ui/SKILL.md
+      /tmp/quinotospec-installed-paths.h9hfLg/app/.opencode/skills/quinotospec-changelog-view/SKILL.md
+      /tmp/quinotospec-installed-paths.h9hfLg/app/.opencode/skills/quinotospec-verify-before-done/SKILL.md
+      /tmp/quinotospec-installed-paths.h9hfLg/app/.opencode/skills/quinotospec-blood-bond-monitor/SKILL.md
+      /tmp/quinotospec-installed-paths.h9hfLg/app/.opencode/skills/quinotospec-apply/SKILL.md
+▶ Check B: preflight del bootstrap instalado es ejecutable
+  [31m❌ preflight del bootstrap corre desde proyecto sin agent-dist/ (script referenciado: agent-dist/skills/quinotospec-contract/contract.py)[0m
+▶ Check C: update_agents.py con fallback a la raiz de instalacion
+  [31m❌ update_agents.py genera AGENTS.md con inventario real desde proyecto instalado (hoy: config/agent-dist ausentes)[0m
+▶ Check D: template_resolver.py con fallback a la raiz de instalacion
+  [31m❌ template_resolver.py resuelve skill core desde proyecto instalado (hoy: root/agent-dist ausente)[0m
+▶ Check E: regresion cero cuando root/agent-dist existe
+  [32m✅ con root/agent-dist presente, update_agents y template_resolver siguen resolviendo por root (regresion cero)[0m
+
+[31m❌ installed-paths: 4 check(s) fallaron:[0m
+   - 85 archivo(s) .md instalados todavia referencian agent-dist/ (rutas rotas)
+   - preflight del bootstrap corre desde proyecto sin agent-dist/ (script referenciado: agent-dist/skills/quinotospec-contract/contract.py)
+   - update_agents.py genera AGENTS.md con inventario real desde proyecto instalado (hoy: config/agent-dist ausentes)
+   - template_resolver.py resuelve skill core desde proyecto instalado (hoy: root/agent-dist ausente)

@@ -21,6 +21,41 @@ class AgentsError(Exception):
     pass
 
 
+def resolve_package_root(user_root: Path) -> Path:
+    """Devuelve la raiz que contiene ``agent-dist/``.
+
+    Es la raiz del usuario cuando la tiene (repo fuente o instalacion local
+    con layout fuente); en su defecto, la raiz de instalacion del propio
+    script (convencion de ``agent-dist/lib/quinotospec_common.py``). El
+    ``--root`` del usuario nunca cambia de significado: solo indica donde
+    buscar los assets del paquete cuando el proyecto no los contiene.
+    """
+    if (user_root / "agent-dist").is_dir():
+        return user_root
+    return Path(__file__).resolve().parents[2]
+
+
+def resolve_package_dir(user_root: Path, name: str) -> Path:
+    """Resuelve el directorio de assets ``name`` (workflows/skills/rules/templates).
+
+    Orden: layout fuente del usuario (``root/agent-dist/<name>``), luego el
+    layout plano instalado junto al propio script (``<install>/<name>``). Los
+    workflows pueden estar instalados como ``commands/`` segun el IDE.
+    """
+    fallback_root = Path(__file__).resolve().parents[2]
+    source = user_root / "agent-dist" / name
+    if source.is_dir():
+        return source
+    installed = fallback_root / name
+    if installed.is_dir():
+        return installed
+    if name == "workflows":
+        commands = fallback_root / "commands"
+        if commands.is_dir():
+            return commands
+    return source
+
+
 def read_document(path: Path) -> Dict[str, Any]:
     if load_document is not None:
         try:
@@ -67,7 +102,7 @@ def installed_extensions(root: Path) -> List[str]:
 
 
 def core_workflows(root: Path) -> List[str]:
-    directory = root / "agent-dist/workflows"
+    directory = resolve_package_dir(root, "workflows")
     if not directory.is_dir():
         return []
     aliases = {
@@ -85,14 +120,14 @@ def core_workflows(root: Path) -> List[str]:
 
 
 def core_skills(root: Path) -> List[str]:
-    directory = root / "agent-dist/skills"
+    directory = resolve_package_dir(root, "skills")
     if not directory.is_dir():
         return []
     return sorted(path.name for path in directory.iterdir() if path.is_dir() and (path / "SKILL.md").is_file())
 
 
 def core_rules(root: Path) -> List[str]:
-    path = root / "agent-dist/rules/quinotospec-rules.md"
+    path = resolve_package_dir(root, "rules") / "quinotospec-rules.md"
     if not path.is_file() or path.is_symlink():
         return []
     values = []
@@ -192,8 +227,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if not config_path.is_absolute():
             config_path = root / config_path
         if not config_path.is_file() and args.config is None:
-            config_path = root / "agent-dist/templates/config-template.yml"
-        template_path = Path(args.template) if args.template else root / "agent-dist/templates/AGENTS-template.md"
+            config_path = resolve_package_dir(root, "templates") / "config-template.yml"
+        template_path = Path(args.template) if args.template else resolve_package_dir(root, "templates") / "AGENTS-template.md"
         if not template_path.is_absolute():
             template_path = root / template_path
         output_path = Path(args.output)

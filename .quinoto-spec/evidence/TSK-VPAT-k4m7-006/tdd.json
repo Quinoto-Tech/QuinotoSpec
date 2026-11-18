@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "kind": "tdd",
+  "task_id": "TSK-VPAT-k4m7-006",
+  "recorded_at": "2026-11-17T23:55:42+00:00",
+  "change": "orden transaccional: normalizacion antes del ownership manifest; uninstall coherente; codigo byte-intacto",
+  "red": {
+    "status": "failed",
+    "command": "bash tests/test-installed-paths.sh (version pre-fix)",
+    "exit_code": 1,
+    "output": "4 check(s) en RED: A) 85 .md instalados referencian agent-dist/; B) preflight del bootstrap apunta a ruta relativa inexistente en proyecto; C) update_agents.py sin inventario (agent-dist ausente); D) template_resolver.py sin core skills"
+  },
+  "expected_failure": "Antes del fix, la instalacion deja .md con rutas agent-dist/ rotas y los entrypoints Python no resuelven su payload desde un proyecto instalado.",
+  "observed_failure": "4 check(s) en RED: A) 85 .md instalados referencian agent-dist/; B) preflight del bootstrap apunta a ruta relativa inexistente en proyecto; C) update_agents.py sin inventario (agent-dist ausente); D) template_resolver.py sin core skills (evidencia cruda: red-suite-before-fix.out)",
+  "green": {
+    "status": "passed",
+    "command": "bash tests/test-installed-paths.sh",
+    "exit_code": 0,
+    "output": "9/9 checks (A-I) en verde: rewrite, preflight E2E, fallbacks, idempotencia, espacios/& , byte-intacto, uninstall"
+  },
+  "suite": {
+    "status": "passed",
+    "command": "bash tests/run-all-tests.sh",
+    "exit_code": 0,
+    "output": "31/31 suites verdes (30 baseline + test-installed-paths)"
+  },
+  "refactor": {
+    "status": "passed",
+    "command": "bash scripts/lint-shell.sh && python3 -m py_compile update_agents.py template_resolver.py",
+    "exit_code": 0,
+    "output": "shellcheck 44 scripts clean; py_compile OK"
+  }
+}
