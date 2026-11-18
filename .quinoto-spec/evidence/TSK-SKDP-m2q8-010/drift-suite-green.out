@@ -1,0 +1,16 @@
+
+==========================================
+Test: Skill <-> Workflow Drift (delegación)
+==========================================
+
+  ✅ checker existe
+  ✅ el paquete delega 48/49 pares sin drift (review diferido)
+  ✅ los 48 comandos son el stub canónico generado
+  ✅ deja pasar un stub correcto con su skill
+  ✅ detecta prompt duplicado en el workflow
+  ✅ skill sin workflow pareado no rompe el gate
+
+==========================================
+Resultados: 6 checks, 0 errores
+==========================================
+✅ Drift checker funciona correctamente

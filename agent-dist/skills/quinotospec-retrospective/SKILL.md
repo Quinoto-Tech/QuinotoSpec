@@ -3,6 +3,8 @@ name: quinotospec-retrospective
 description: Genera una retrospectiva del proyecto analizando propuestas completadas, métricas de tiempo y patrones de trabajo. Identifica qué funcionó bien y qué mejorar del flujo QuinotoSpec.
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.retrospective` delega aquí por archivo.
+
 Objetivo: aprender de las propuestas completadas para mejorar la adopción de la metodología, la precisión de estimaciones y la calidad del proceso.
 
 ## Precondiciones
@@ -15,7 +17,6 @@ Objetivo: aprender de las propuestas completadas para mejorar la adopción de la
 
 ### Paso 1 — Recolectar datos de propuestas completadas
 
-0. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para obtener entradas normalizadas de v1/v2 antes de cruzar duraciones.
 1. Listar todas las carpetas en `.quinoto-spec/proposals/_archived/`.
 2. Para cada propuesta archivada, leer `proposal.md` y extraer:
    - **Título**, **Prioridad**, **Complejidad**
@@ -25,7 +26,7 @@ Objetivo: aprender de las propuestas completadas para mejorar la adopción de la
 
 ### Paso 2 — Extraer métricas del changelog
 
-1. Ejecutar `@quinotospec.changelog-view --json` para obtener todas las entradas (auto-detecta formato v1/v2).
+1. Ejecutar `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para obtener entradas normalizadas de v1/v2.
 2. Para cada propuesta archivada, filtrar sus entradas del JSON resultante.
 3. Extraer de cada entrada:
    - `**Tiempo Ahorrado**: ~{Tiempo Humano} (IA: {Tiempo IA} vs Humano: {Tiempo Humano})`

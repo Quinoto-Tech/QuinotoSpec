@@ -3,7 +3,9 @@ name: quinotospec-cleanup
 description: Limpia branches stale, scripts temporales y propuestas inactivas. Modo dry-run por defecto — nunca borra sin confirmación.
 ---
 
-# Workflow: Cleanup
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.cleanup` delega aquí por archivo.
+
+# Skill: Cleanup
 
 Objetivo: eliminar artefactos acumulados que ya no son necesarios: branches mergeados, scripts temporales viejos y propuestas sin actividad.
 

@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Test: check-skill-workflow-drift.py
-# Verifica que el checker detecte drift funcional real y deje pasar el paquete intacto.
+# Test: check-skill-workflow-drift.py (contrato SKDP-m2q8: delegación comando→skill)
+# Verifica que el checker acepte stubs canónicos, detecte prompts duplicados
+# y reporte skills huérfanas como INFO sin romper el gate.
 
 set -e
 
@@ -26,34 +27,31 @@ check() {
 
 echo ""
 echo "=========================================="
-echo "Test: Skill <-> Workflow Drift"
+echo "Test: Skill <-> Workflow Drift (delegación)"
 echo "=========================================="
 echo ""
 
-CHECKER_RC=0
-if [ ! -f "$CHECKER" ]; then CHECKER_RC=1; fi
-check "checker existe" "$CHECKER_RC"
+RC=0
+if [ ! -f "$CHECKER" ]; then RC=1; fi
+check "checker existe" "$RC"
 
-CHECK_RC=0
-python3 -B "$CHECKER" --root "$PROJECT_ROOT" --warnings-as-errors >/dev/null 2>&1 || CHECK_RC=$?
-check "el paquete no tiene drift funcional skill<->workflow" "$CHECK_RC"
+RC=0
+python3 -B "$CHECKER" --root "$PROJECT_ROOT" --warnings-as-errors >/dev/null 2>&1 || RC=$?
+check "el paquete delega 48/49 pares sin drift (review diferido)" "$RC"
+
+RC=0
+python3 -B "$PROJECT_ROOT/scripts/generate-command-stubs.py" --root "$PROJECT_ROOT" --check >/dev/null 2>&1 || RC=$?
+check "los 48 comandos son el stub canónico generado" "$RC"
 
 FIXTURE="$(mktemp -d "$SCRIPT_DIR/temp_drift.XXXXXX")"
 trap 'rm -rf "$FIXTURE"' EXIT INT TERM
+mkdir -p "$FIXTURE/agent-dist/workflows" "$FIXTURE/agent-dist/skills/quinotospec-demo" "$FIXTURE/scripts"
+cp "$PROJECT_ROOT/scripts/generate-command-stubs.py" "$FIXTURE/scripts/"
 
-mkdir -p "$FIXTURE/agent-dist/workflows" "$FIXTURE/agent-dist/skills/quinotospec-demo"
+STUB="$FIXTURE/agent-dist/workflows/quinotospec.demo.md"
+SKILL="$FIXTURE/agent-dist/skills/quinotospec-demo/SKILL.md"
 
-cat > "$FIXTURE/agent-dist/workflows/quinotospec.demo.md" <<'EOF'
----
-description: Demo workflow
----
-
-# Workflow: Demo
-
-Ejecuta `scripts/validator.py` antes de continuar.
-EOF
-
-cat > "$FIXTURE/agent-dist/skills/quinotospec-demo/SKILL.md" <<'EOF'
+cat > "$SKILL" <<'EOF'
 ---
 name: quinotospec-demo
 description: Demo skill
@@ -61,21 +59,37 @@ description: Demo skill
 
 # Skill: Demo
 
-Sin pasos de ejecucion.
+Ejecuta `scripts/validator.py` antes de continuar.
 EOF
+
+python3 -B "$PROJECT_ROOT/scripts/generate-command-stubs.py" --root "$FIXTURE" --render demo > "$STUB"
+cp "$STUB" "$FIXTURE/stub.good.md"
 
 RC=0
 python3 -B "$CHECKER" --root "$FIXTURE" >/dev/null 2>&1 || RC=$?
-[ "$RC" -eq 1 ]
-check "detecta drift cuando la skill omite un script del workflow" "$?"
+check "deja pasar un stub correcto con su skill" "$RC"
 
-cat >> "$FIXTURE/agent-dist/skills/quinotospec-demo/SKILL.md" <<'EOF'
+# Regresión: prompt duplicado dentro del comando
+cat > "$STUB" <<'EOF'
+---
+description: Demo workflow
+---
 
-Ejecuta `scripts/validator.py`.
+# Skill: Demo
+
+Ejecuta `scripts/validator.py` antes de continuar.
 EOF
+RC=0
+python3 -B "$CHECKER" --root "$FIXTURE" >/dev/null 2>&1 || RC=$?
+if [ "$RC" -ne 0 ]; then check "detecta prompt duplicado en el workflow" 0; else check "detecta prompt duplicado en el workflow" 1; fi
 
-python3 -B "$CHECKER" --root "$FIXTURE" >/dev/null 2>&1
-check "deja pasar el par cuando los scripts coinciden" "$?"
+# Skill sin workflow pareado: INFO, no error
+cp "$FIXTURE/stub.good.md" "$STUB"
+mkdir -p "$FIXTURE/agent-dist/skills/quinotospec-orphan"
+printf '%s\n' '---' 'name: quinotospec-orphan' 'description: huérfana' '---' '# Skill huérfana' > "$FIXTURE/agent-dist/skills/quinotospec-orphan/SKILL.md"
+RC=0
+python3 -B "$CHECKER" --root "$FIXTURE" >/dev/null 2>&1 || RC=$?
+check "skill sin workflow pareado no rompe el gate" "$RC"
 
 echo ""
 echo "=========================================="

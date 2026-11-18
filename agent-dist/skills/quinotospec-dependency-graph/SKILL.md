@@ -3,6 +3,8 @@ name: quinotospec-dependency-graph
 description: Genera un mapa de dependencias inter-servicio y detecta contract drift entre los componentes del sistema distribuido
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.dependency-graph` delega aquí por archivo.
+
 Este workflow analiza cómo los servicios del sistema se comunican entre sí, detecta dependencias ocultas y alerta sobre contratos de API inconsistentes.
 
 **Precondición**: Todos los sub-proyectos deben tener su `*/.quinoto-spec/discovery/` actualizado. Ejecutar `quinotospec.stack-discovery` si es necesario.

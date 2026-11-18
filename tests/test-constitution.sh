@@ -33,13 +33,13 @@ else
     fail "constitution template placeholders invalid"
 fi
 
-if grep -q "discovery/01-stack-profile" "$WORKFLOW" && grep -Eq "reglas.*globales|globales.*reglas" "$WORKFLOW" && grep -q "aprobación explícita" "$WORKFLOW"; then
+if grep -q "discovery/01-stack-profile" "$SKILL" && grep -Eq "reglas.*globales|globales.*reglas" "$SKILL" && grep -q "aprobación explícita" "$SKILL"; then
     pass "constitution workflow gates"
 else
     fail "constitution workflow gates incomplete"
 fi
 
-for file in "$ROOT/agent-dist/workflows/quinotospec.apply.md" "$ROOT/agent-dist/skills/quinotospec-apply/SKILL.md" "$ROOT/agent-dist/workflows/quinotospec.review.md" "$ROOT/agent-dist/skills/quinotospec-review/SKILL.md" "$ROOT/agent-dist/workflows/quinotospec.archive.md" "$ROOT/agent-dist/skills/quinotospec-archive/SKILL.md"; do
+for file in "$ROOT/agent-dist/skills/quinotospec-apply/SKILL.md" "$ROOT/agent-dist/skills/quinotospec-review/SKILL.md" "$ROOT/agent-dist/skills/quinotospec-archive/SKILL.md"; do
     if grep -q "constitution" "$file"; then
         pass "constitution gate referenced in $(basename "$(dirname "$file")")"
     else

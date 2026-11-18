@@ -3,23 +3,23 @@ name: quinotospec-create-proposal
 description: crear una propuesta independiente
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.create-proposal` delega aquí por archivo.
+
 # Skill: Create Proposal
 
-> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.create-proposal.md`. Esta skill es la versión invocable; si agrega pasos al workflow, sincronizalos aqui.
+Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `01-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `08-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global y **detectar posibles conflictos o solapamientos** de alcance (mismos archivos, dominios o flujos afectados); si detectas alguno, documéntalo al inicio de la propuesta bajo `**⚠️ Conflictos Detectados:**`.
+El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
 
 ## Extension hooks
 
 Consulta los hooks `before_proposal` y `after_proposal` con `extension_manager.py hooks --point <point> --json`. Ejecuta únicamente hooks `auto` con `--run --yes` y reporta su exit code antes de continuar.
 
-Analiza exhaustivamente la información del Discovery (`.quinoto-spec/discovery/`), poniendo atención especial a `01-stack-profile.md` para adaptar la arquitectura y el código al stack del proyecto, y a `08-product-and-agreements.md` para alinear la propuesta con la visión de producto y los acuerdos de trabajo (DoR/DoD). También revisa otras propuestas existentes en `.quinoto-spec/proposals/` para asegurar consistencia global y **detectar posibles conflictos o solapamientos** de alcance (mismos archivos, dominios o flujos afectados); si detectas alguno, documéntalo al inicio de la propuesta bajo `**⚠️ Conflictos Detectados:**`.
-El objetivo es generar una Propuesta Técnica específica para: "**{{PROPOSAL_DESCRIPTION}}**".
-
 **Flags:**
 - `--party [agents]`: Ejecuta Party Mode con los agentes especificados ANTES de generar la propuesta. El debate multi-agente enriquece la propuesta con perspectivas cruzadas. Si no se especifican agentes, se auto-seleccionan los mas relevantes segun el tema.
+- `--party-output <path>`: Donde guardar la transcripcion del Party Mode (default: `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/party-analysis.md`)
 - `--goldfish`: ejecuta el Shootdown multi-lente con subagentes aislados antes de redactar (opcional, desactivado por defecto).
 
-**Interacción `--party` + `--goldfish`:** complementarios. `--party` comparte contexto y busca consenso; `--goldfish` aísla contexto y busca puntos ciegos. Si se pasan ambos: primero `--party`, después `--goldfish` sobre el brief. No en paralelo.
-- `--party-output <path>`: Donde guardar la transcripcion del Party Mode (default: `.quinoto-spec/proposals/{{DATE_PREFIX}}-{{PROPOSAL_SLUG}}/party-analysis.md`)
+**Interacción `--party` + `--goldfish`:** son complementarios. `--party` comparte contexto y busca consenso; `--goldfish` aísla contexto y busca puntos ciegos. Si se pasan ambos, ejecuta **primero `--party`** (enriquece la idea) y **después `--goldfish`** sobre el brief resultante (lo audita sin sesgo). No los ejecutes en paralelo ni dupliques la ronda: suma coste sin valor.
 
 PROPOSAL_NAME: deriva un nombre a partir de PROPOSAL_DESCRIPTION. Debe estar en español o inglés técnico, en Title Case, descriptivo y conciso (ej. `Rewards Stabilization`, `Payment Timeout Fix`, `Refactor Auth Layer`).
 PROPOSAL_SLUG: derivar de PROPOSAL_NAME en lowercase con palabras separadas por guión (ej. `rewards-stabilization`, `payment-timeout-fix`).
@@ -70,7 +70,19 @@ No es bloqueante — si no hay índice (`--check` falla o el archivo no existe),
 
 **Paso Previo (opcional, solo si `--goldfish`) — Shootdown multi-lente (Elephant-Goldfish):**
 
-Si no se pasó `--goldfish`, omite este paso. Si se pasó, intenta **derribar la idea** con lentes fijos (subagentes aislados o party-mode): simplicidad/YAGNI, reuso, escalabilidad, fallos, seguridad, coste operativo y reversibilidad. Salida: `concepts_brief.md` con hipótesis, veredicto (GO / PIVOT / KILL) y cambios incorporados. Si el veredicto es KILL, detén la generación.
+Si no se pasó `--goldfish`, omite este paso. Si se pasó, intenta **derribar la idea** con lentes fijos (subagentes aislados o `@quinotospec.party-mode`):
+
+| Lente | Pregunta |
+|-------|----------|
+| Simplicidad / YAGNI | ¿Existe una solución más pequeña que resuelva el 80%? |
+| Reuso | ¿Ya hay infraestructura o skills que cubren esto? |
+| Escalabilidad | ¿Qué pasa con 10× volumen o 10× repos? |
+| Fallos | ¿Cuál es el modo de fallo más probable y cómo se detecta? |
+| Seguridad | ¿Qué superficie nueva expone? |
+| Coste operativo | ¿Quién lo mantiene, cuánto cuesta por ejecución? |
+| Reversibilidad | ¿Se puede deshacer sin migración dolorosa? |
+
+Salida: `concepts_brief.md` con hipótesis, veredicto (GO / PIVOT / KILL) y los cambios incorporados a la propuesta. Si el veredicto es KILL, detén la generación. Al ser opcional, no afecta el flujo si no se pasa `--goldfish`.
 
 **Paso 0 — Party Mode (opcional, solo si `--party`):**
 

@@ -3,7 +3,9 @@ name: quinotospec-specs-init
 description: Inicializa el directorio specs/ desde discovery o propuestas existentes
 ---
 
-# Workflow: Specs Init
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.specs-init` delega aquí por archivo.
+
+# Skill: Specs Init
 
 Inicializa el directorio `specs/` con requerimientos extraidos del discovery o de propuestas activas. Util para proyectos que ya usaban QuinotoSpec antes de delta-specs, o para crear la base inicial de specs desde cero.
 

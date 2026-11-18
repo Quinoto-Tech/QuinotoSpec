@@ -12,7 +12,6 @@ fail() { FAIL=$((FAIL + 1)); echo "  [FAIL] $1"; }
 SKILL="$ROOT/agent-dist/skills/quinotospec-receive-review/SKILL.md"
 REVIEW_WORKFLOW="$ROOT/agent-dist/workflows/quinotospec.review.md"
 REVIEW_SKILL="$ROOT/agent-dist/skills/quinotospec-review/SKILL.md"
-APPLY_WORKFLOW="$ROOT/agent-dist/workflows/quinotospec.apply.md"
 APPLY_SKILL="$ROOT/agent-dist/skills/quinotospec-apply/SKILL.md"
 
 if [ -f "$SKILL" ]; then
@@ -67,7 +66,7 @@ else
     fail "review integration missing"
 fi
 
-if grep -q "quinotospec-receive-review" "$APPLY_WORKFLOW" && grep -q "quinotospec-receive-review" "$APPLY_SKILL"; then
+if grep -q "quinotospec-receive-review" "$APPLY_SKILL"; then
     pass "apply delegation"
 else
     fail "apply delegation missing"

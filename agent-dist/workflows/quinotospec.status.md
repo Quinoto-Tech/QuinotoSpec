@@ -2,74 +2,9 @@
 description: Genera un Panel de Control (Dashboard) del estado del proyecto
 ---
 
-# Workflow: Status
+# Command: status
 
-Este workflow genera un archivo `PROJECT_STATUS.md` en la raíz del proyecto que resume el progreso global, las métricas de valor y el estado de las iniciativas.
+Lee la skill `quinotospec-status` (archivo `SKILL.md`) y ejecuta su contenido como instrucciones, pasando `$ARGUMENTS` como contexto.
 
-### Instrucciones de Ejecución:
-
-1. **Análisis de Propuestas**:
-     - Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json`.
-     - Escanea el directorio `.quinoto-spec/proposals/` (activas) y `.quinoto-spec/proposals/_archived/` (archivadas).
-     - Clasifica estados normalizados: `proposed`, `in_progress`, `completed` y `archived`.
-     - Extrae prioridad, complejidad, prefijo e ID canónico de cada `proposal.md`.
-     - Registra el conteo total: activas vs archivadas.
-     - Lee `**Discovery Date:**` en `.quinoto-spec/discovery/01-stack-profile.md`. Si han pasado más de 30 días desde esa fecha → marcarlo como alerta en la sección `🚨 Alertas y Bloqueos` con el mensaje: *"⏰ El discovery tiene [N] días de antigüedad. Considera ejecutar `@quinotospec.refresh-discovery`."*
-
-2. **Cálculo de Progreso y Velocidad**:
-     - Usa el snapshot del contrato para contar estados `completed`, `pending`, `in_progress`, `blocked` y `unknown`; no interpretes tablas manualmente.
-     - Para cada propuesta activa, busca archivos `*_tasks.md` primarios; excluye `all_tasks.md` del conteo.
-     - Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` y filtra por fecha para estimar la velocidad del equipo.
-
-3. **Métricas de Valor**:
-     - Ejecuta `@quinotospec.changelog-view --json` para obtener todas las entradas.
-     - Suma todos los valores de `Human Time` ahorrados para dar un total de "Valor Generado por IA". Si el campo no existe en alguna entrada, registrar `N/D` y continuar sin interrumpir el proceso.
-
-4. **Alertas y Bloqueos**:
-     - Ejecuta `@quinotospec.changelog-view --days 14 --json` para detectar inactividad.
-     - Identifica propuestas activas sin cambios en changelog en los últimos 14 días.
-     - Detecta historias con todas sus tareas pendientes (`[ ]`) sin ningún progreso.
-     - Detecta conflictos de propuestas registrados con `⚠️ Conflictos Detectados:`.
-
-5. **Estado de Artefactos por Propuesta (Artifact DAG)**:
-     - Para cada propuesta activa, invocar skill `quinotospec-artifact-engine --status --change {{slug}}`.
-     - Incluir en el dashboard una seccion `## 🔀 Estado de Artefactos` con la tabla de estado (done/ready/blocked) para cada propuesta.
-     - Destacar artefactos `ready` como acciones inmediatas sugeridas.
-     - Si el schema no existe, mostrar: `Schema no encontrado — ejecuta @quinotospec.schema-fork para crear uno.`
-
-6. **Prioridad Valhalla (Valkyrie)**:
-     - Ejecutar `python3 agent-dist/skills/quinotospec-valkyrie/rank.py --root . --json`.
-     - Incluir en el dashboard una sección `## 🏆 Prioridad Valhalla` con la tabla rankeada (`#`, Propuesta, Score, Impact, ΔS, Conflictos, Next Action) que devuelve Valkyrie.
-     - Si Valkyrie reporta `cycle_detected: true`, destacar el bloqueo como alerta **BLOCKING** también en `## 🚨 Alertas y Bloqueos`.
-     - Si no hay propuestas activas o no existe `.quinoto-spec/proposals/`, omitir la sección con la nota: `Sin propuestas activas para rankear.`
-
-7. **Actividad Reciente**:
-     - Ejecutar `@quinotospec.changelog-view --limit 5` para obtener los últimos 5 cambios.
-     - Mostrar en la sección `## 🕐 Actividad Reciente`.
-
-8. **Salud de la Metodología**:
-     - Verifica la existencia y contenido de los siguientes artefactos:
-         - ✅/❌ `.quinoto-spec/discovery/` existe y tiene los 8 archivos esperados.
-         - ✅/❌ `08-product-and-agreements.md` tiene contenido más allá de los encabezados.
-         - ✅/❌ `.quinoto-spec/prefix-registry.md` está actualizado y sin duplicados.
-         - ✅/❌ `.quinoto-spec/schema.yaml` existe y es valido.
-         - ✅/❌ `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict` pasa sin errores.
-
-9. **Próximos Pasos Sugeridos** (Blood-Bond):
-
-10. **Generación del Dashboard**:
-    - Crea o actualiza `PROJECT_STATUS.md` con las siguientes secciones en orden:
-        - `# 📊 Dashboard de Proyecto`
-        - `## 📈 Resumen Ejecutivo` (Métricas de Valor Ahorrado + velocidad)
-        - `## 🔀 Estado de Artefactos` (Tabla de estado DAG por propuesta activa)
-        - `## 🏆 Prioridad Valhalla` (Ranking de propuestas vía Valkyrie)
-        - `## 🗺️ Mapa de Ruta y Estado de Iniciativas` (Tabla de Propuestas activas + contador de archivadas)
-        - `## 🚨 Alertas y Bloqueos` (propuestas estancadas, conflictos detectados)
-     - `## 🛠️ Salud de la Metodología` (checks explícitos con ✅/❌)
-     - `## 🕐 Actividad Reciente` (Últimos 5 cambios vía `@quinotospec.changelog-view --limit 5`)
-     - `## ⏭️ Próximos Pasos Sugeridos` (Top 3 acciones recomendadas)
-
-**Instrucción Final OBLIGATORIA (Changelog):**
-Una vez generado el dashboard, DEBES ejecutar la skill `quinotospec-update-changelog`.
-- **Título de la Acción**: Dashboard Updated
-- **Resumen**: Se generó/actualizó el archivo `PROJECT_STATUS.md` con las métricas y estado actual del proyecto.
+Resuelve la ruta en este orden: `agent-dist/skills/quinotospec-status/SKILL.md` (repo fuente), `.opencode/skills/quinotospec-status/SKILL.md`, `.cursor/skills/quinotospec-status/SKILL.md`, `.claude/skills/quinotospec-status/SKILL.md`, `.agent/skills/quinotospec-status/SKILL.md` (instalación local), `~/.config/opencode/skills/quinotospec-status/SKILL.md`, `~/.cursor/skills/quinotospec-status/SKILL.md`, `~/.claude/skills/quinotospec-status/SKILL.md` (global).
+Si no existe, detén y reporta las rutas intentadas. No resumas ni reescribas la skill: aplícala textualmente.

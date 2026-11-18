@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "kind": "tdd",
+  "task_id": "TSK-SKDP-m2q8-009",
+  "recorded_at": "2026-11-18T00:39:27+00:00",
+  "change": "checker invertido: delegacion en vez de paridad",
+  "red": {
+    "status": "failed",
+    "command": "bash tests/test-skill-workflow-drift.sh (pre-checker SKDP)",
+    "exit_code": 1,
+    "output": "5 checks, 1 error: detecta prompt duplicado en el workflow (RED)"
+  },
+  "expected_failure": "El checker original no detecta prompts duplicados en los comandos y los workflows repetían el prompt de las skills.",
+  "observed_failure": "5 checks, 1 error: detecta prompt duplicado en el workflow (evidencia red-suite-before-fix.out)",
+  "green": {
+    "status": "passed",
+    "command": "bash tests/test-skill-workflow-drift.sh",
+    "exit_code": 0,
+    "output": "6 checks, 0 errores; checker valida delegacion de 48 pares"
+  },
+  "suite": {
+    "status": "passed",
+    "command": "bash tests/run-all-tests.sh",
+    "exit_code": 0,
+    "output": "31/31 suites verdes"
+  },
+  "refactor": {
+    "status": "passed",
+    "command": "python3 -B scripts/generate-command-stubs.py --root . --check",
+    "exit_code": 0,
+    "output": "48 comandos son el stub canonico"
+  }
+}

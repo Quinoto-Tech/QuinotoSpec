@@ -2,50 +2,9 @@
 description: Crea la estructura de un nuevo sprint con configuración vacía
 ---
 
-Este workflow crea un nuevo sprint con su configuración inicial.
+# Command: sprint.create
 
-**Parámetros Requeridos:**
-- `SPRINT_ID`: Identificador del sprint (ej. `1`)
-- `NOMBRE_SPRINT`: Nombre del sprint (ej. `Integración Rapiboy`)
+Lee la skill `quinotospec-sprint-create` (archivo `SKILL.md`) y ejecuta su contenido como instrucciones, pasando `$ARGUMENTS` como contexto.
 
----
-
-## Paso 1 — Crear estructura de carpetas
-
-1. Verifica si existe `.quinoto-spec/sprints/`. Si no existe, ejecuta `@quinotospec.sprints.init` primero.
-2. Crea la carpeta `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/`.
-3. Crea la subcarpeta `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/proposals/`.
-
----
-
-## Paso 2 — Crear configuración del sprint
-
-Verifica si existe `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-config.yml`:
-
-### A. Si el archivo NO existe:
-- Créalo con el esquema de referencia.
-
-```yaml
-# Detalles del Sprint específico
-id_sprint: {{SPRINT_ID}}
-nombre_sprint: "{{NOMBRE_SPRINT}}"
-duracion_semanas: 2
-fecha_inicio: YYYY-MM-DD
-
-# Prioridad de propuestas (slugs en orden de importancia)
-prioridad_propuestas:
-  - ""
-```
-
-- Notifica al usuario: "Se ha creado la estructura del Sprint {{SPRINT_ID}}: '{{NOMBRE_SPRINT}}'. Archivo de configuración: `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-config.yml`. Por favor, completa la información de fechas y prioridad de propuestas."
-- **Instrucción Final OBLIGATORIA (Changelog):** DEBES ejecutar la skill `quinotospec-update-changelog`.
-  - **Título de la Acción**: Sprint Creado: Sprint {{SPRINT_ID}} — {{NOMBRE_SPRINT}}
-  - **Resumen**: Se creó la estructura del Sprint {{SPRINT_ID}} ('{{NOMBRE_SPRINT}}') en `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/`.
-
-### B. Si el archivo ya existe:
-- Notifica al usuario: "El Sprint {{SPRINT_ID}} ya existe. Archivo: `.quinoto-spec/sprints/sprint-{{SPRINT_ID}}/sprint-config.yml`"
-- No hubo cambios de estado — omite el registro en changelog.
-
----
-
-**Próximo paso:** Usar `@quinotospec.sprint.plan` para planificar las tareas del sprint.
+Resuelve la ruta en este orden: `agent-dist/skills/quinotospec-sprint-create/SKILL.md` (repo fuente), `.opencode/skills/quinotospec-sprint-create/SKILL.md`, `.cursor/skills/quinotospec-sprint-create/SKILL.md`, `.claude/skills/quinotospec-sprint-create/SKILL.md`, `.agent/skills/quinotospec-sprint-create/SKILL.md` (instalación local), `~/.config/opencode/skills/quinotospec-sprint-create/SKILL.md`, `~/.cursor/skills/quinotospec-sprint-create/SKILL.md`, `~/.claude/skills/quinotospec-sprint-create/SKILL.md` (global).
+Si no existe, detén y reporta las rutas intentadas. No resumas ni reescribas la skill: aplícala textualmente.

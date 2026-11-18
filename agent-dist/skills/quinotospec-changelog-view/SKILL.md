@@ -3,11 +3,13 @@ name: quinotospec-changelog-view
 description: Muestra el changelog consolidado del proyecto, combinando entradas del formato v2 (changelog/) y v1 (quinoto-spec-changelog.md). Ofrece filtros por fecha, prefijo y tipo.
 ---
 
-# Workflow: Changelog View
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.changelog-view` delega aquí por archivo.
+
+# Skill: Changelog View
 
 Workflow para visualizar el historial de cambios del proyecto de forma consolidada. Detecta automáticamente si el proyecto usa formato v1 (archivo único) o v2 (directorio `changelog/`) o ambos.
 
-La fuente de verdad para la lectura normalizada es `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json`. No interpretes manualmente fechas, títulos o `Tiempo Ahorrado` antes de consultar ese comando.
+La fuente de verdad de lectura es `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json`. No interpretes manualmente los archivos antes de consultar el parser.
 
 ## Precondiciones
 
@@ -29,19 +31,12 @@ La fuente de verdad para la lectura normalizada es `python3 agent-dist/skills/qu
 
 ### Paso 2 — Recolectar entradas
 
-#### Si v2 activo (o híbrido):
-1. Listar archivos en `.quinoto-spec/changelog/` que coincidan con `*.md`, excluyendo `INDEX.md`.
-2. Para cada archivo:
-   - Usa el parser común para obtener fecha, título, resumen, prefijo y tiempo ahorrado.
-   - Acepta headings `## [Fecha: YYYY-MM-DD] - Título` y `## [YYYY-MM-DD] - Título`.
-   - Acepta `Tiempo Ahorrado` y `Time Saved`.
-   - Excluye `INDEX.md` y deduplica por fecha + título, priorizando v2.
-3. Ordenar por fecha descendente (más reciente primero).
+Ejecuta:
+```bash
+python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json
+```
 
-#### Si v1 activo (o híbrido):
-1. Usa el mismo parser para leer `.quinoto-spec/quinoto-spec-changelog.md` si existe.
-2. Combina las entradas con v2 y reporta cualquier duplicado.
-3. Si ambos formatos existen, v2 es la fuente prioritaria.
+Usa la salida para ordenar por fecha descendente, filtrar y deduplicar. Acepta headings con y sin `Fecha:`, `Resumen`/`Summary` y `Tiempo Ahorrado`/`Time Saved`.
 
 ---
 

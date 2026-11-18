@@ -3,7 +3,9 @@ name: quinotospec-refresh-discovery
 description: Refresca solo los archivos de discovery afectados por cambios recientes en el proyecto, sin regenerar los 8 archivos completos
 ---
 
-# Workflow: Refresh Discovery
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.refresh-discovery` delega aquí por archivo.
+
+# Skill: Refresh Discovery
 
 Este workflow detecta qué ha cambiado en el proyecto desde el último discovery y actualiza únicamente los archivos de `.quinoto-spec/discovery/` afectados.
 

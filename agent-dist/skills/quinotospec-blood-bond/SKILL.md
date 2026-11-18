@@ -3,7 +3,9 @@ name: quinotospec-blood-bond
 description: Analiza patrones de trabajo y predice siguientes acciones proactivamente
 ---
 
-# Blood-Bond: Sistema de Predicción Proactiva
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.blood-bond` delega aquí por archivo.
+
+# Skill: Blood Bond
 
 Blood-Bond analiza tu historial de trabajo y predice qué necesitas hacer a continuación, sugiriendo proactivamente cuando detecta inactividad.
 
@@ -17,6 +19,10 @@ Blood-Bond forma un "vínculo de sangre" con tu patrón de trabajo:
 - Predice qué viene después
 - Te avisa proactivamente cuando llevas mucho sin actividad
 
+## Arquitectura
+
+Los 4 entrypoints (`blood-bond`, `-analyzer`, `-predictor`, `-monitor`) comparten `agent-dist/lib/quinotospec_common.py` (`resolve_root`, `load_contract_module`); cada uno solo aporta su CLI y su lógica de dominio. No copies helpers: reutiliza el módulo común.
+
 ---
 
 ## Comandos
@@ -29,19 +35,6 @@ Blood-Bond forma un "vínculo de sangre" con tu patrón de trabajo:
 | `@quinotospec.blood-bond --alerts` | Solo alertas de estancamiento |
 
 ---
-
-## Arquitectura (4 entrypoints, código compartido)
-
-Las 4 skills `quinotospec-blood-bond{,-analyzer,-predictor,-monitor}` son **entrypoints con disparadores distintos** sobre una misma implementación; no son features duplicadas:
-
-| Entrypoint | Responsabilidad |
-|---|---|
-| `quinotospec-blood-bond` | Orquesta (`--suggest`, `--profile`, `--alerts`) |
-| `-analyzer` | Construye `.quinoto-spec/blood-bond/analysis.json` |
-| `-predictor` | Aplica reglas y genera `suggestions.md` |
-| `-monitor` | Detecta inactividad y decide `should_remind` |
-
-`resolve_root()` y `load_contract_module()` viven en `agent-dist/lib/quinotospec_common.py`; cada entrypoint solo aporta su CLI y su lógica de dominio. Si agregas un quinto entrypoint, reutiliza ese módulo — no copies helpers.
 
 ## Flujo de Ejecución (--suggest)
 
@@ -156,3 +149,17 @@ Si el proyecto tiene menos de 5 entradas en el changelog:
 
 💡 Sugerencia: `@quinotospec.apply TSK-AUTH-007` para continuar
 ```
+
+
+## Arquitectura (4 entrypoints, código compartido)
+
+Las 4 skills `quinotospec-blood-bond{,-analyzer,-predictor,-monitor}` son **entrypoints con disparadores distintos** sobre una misma implementación; no son features duplicadas:
+
+| Entrypoint | Responsabilidad |
+|---|---|
+| `quinotospec-blood-bond` | Orquesta (`--suggest`, `--profile`, `--alerts`) |
+| `-analyzer` | Construye `.quinoto-spec/blood-bond/analysis.json` |
+| `-predictor` | Aplica reglas y genera `suggestions.md` |
+| `-monitor` | Detecta inactividad y decide `should_remind` |
+
+`resolve_root()` y `load_contract_module()` viven en `agent-dist/lib/quinotospec_common.py`; cada entrypoint solo aporta su CLI y su lógica de dominio. Si agregas un quinto entrypoint, reutiliza ese módulo — no copies helpers.

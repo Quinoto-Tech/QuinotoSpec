@@ -3,6 +3,8 @@ name: quinotospec-sprint-create
 description: Crea la estructura de un nuevo sprint con configuración vacía
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.sprint-create` delega aquí por archivo.
+
 Este workflow crea un nuevo sprint con su configuración inicial.
 
 **Parámetros Requeridos:**

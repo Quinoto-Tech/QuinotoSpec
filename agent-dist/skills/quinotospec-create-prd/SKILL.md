@@ -3,7 +3,9 @@ name: quinotospec-create-prd
 description: Crear un Product Requirements Document (PRD) para validar ideas de producto antes de comprometer recursos de desarrollo
 ---
 
-# Workflow: Create PRD
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.create-prd` delega aquí por archivo.
+
+# Skill: Create Prd
 
 Este workflow te guía en la creación de un Product Requirements Document (PRD) estructurado para validar ideas de producto antes de comprometer recursos de desarrollo. El PRD es un documento vivo que evoluciona durante la sesión de trabajo.
 

@@ -3,7 +3,9 @@ name: quinotospec-schema-fork
 description: Crea una copia personalizada del schema de artefactos para adaptarlo al flujo del proyecto
 ---
 
-# Workflow: Schema Fork
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.schema-fork` delega aquí por archivo.
+
+# Skill: Schema Fork
 
 Permite crear una version personalizada del schema de artefactos (`schema.yaml`) adaptada al flujo de trabajo especifico del proyecto. Util cuando el schema default no se ajusta al proceso del equipo.
 

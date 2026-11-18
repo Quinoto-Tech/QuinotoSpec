@@ -10,7 +10,6 @@ pass() { PASS=$((PASS + 1)); echo "  [PASS] $1"; }
 fail() { FAIL=$((FAIL + 1)); echo "  [FAIL] $1"; }
 
 SKILL="$ROOT/agent-dist/skills/quinotospec-worktree/SKILL.md"
-APPLY_WORKFLOW="$ROOT/agent-dist/workflows/quinotospec.apply.md"
 APPLY_SKILL="$ROOT/agent-dist/skills/quinotospec-apply/SKILL.md"
 BOOTSTRAP="$ROOT/agent-dist/bootstrap/quinotospec-bootstrap.md"
 
@@ -78,13 +77,13 @@ else
     fail "destructive operation safeguards missing"
 fi
 
-if grep -q 'quinotospec-worktree' "$APPLY_WORKFLOW" && grep -q 'USE_WORKTREE=true' "$APPLY_WORKFLOW" && grep -q 'quinotospec-worktree' "$APPLY_SKILL" && grep -q 'USE_WORKTREE=true' "$APPLY_SKILL"; then
+if grep -q 'quinotospec-worktree' "$APPLY_SKILL" && grep -q 'USE_WORKTREE=true' "$APPLY_SKILL"; then
     pass "Apply integration"
 else
     fail "Apply integration missing"
 fi
 
-if grep -q 'quinotospec-tdd' "$APPLY_WORKFLOW" && grep -q 'quinotospec-mark-done' "$APPLY_WORKFLOW" && grep -q 'No implementes en el checkout original' "$APPLY_WORKFLOW"; then
+if grep -q 'quinotospec-tdd' "$APPLY_SKILL" && grep -q 'quinotospec-mark-done' "$APPLY_SKILL" && grep -q 'No implementes en el checkout original' "$APPLY_SKILL"; then
     pass "Apply context and lifecycle safeguards"
 else
     fail "Apply context safeguards missing"

@@ -1,0 +1,14 @@
+
+==========================================
+Test: Skill <-> Workflow Drift
+==========================================
+
+  ✅ checker existe
+  ✅ el paquete no tiene drift funcional skill<->workflow
+  ✅ detecta drift cuando la skill omite un script del workflow
+  ✅ deja pasar el par cuando los scripts coinciden
+  ❌ detecta prompt duplicado en el workflow (SKDP)
+
+==========================================
+Resultados: 5 checks, 1 errores
+==========================================

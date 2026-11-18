@@ -7,3 +7,4 @@ Cada propuesta debe registrar aquí su prefijo único: mnemónico de 4 letras + 
 | QSPE-a7f3 | Consolidación v2.7.0 (drift docs + version sync) | 2026-09-05 |
 | PWRE-9f2c | Playwright Proposal Review | 2026-11-13 |
 | VPAT-k4m7 | Validator Path Resolution | 2026-11-17 |
+| SKDP-m2q8 | Command-to-Skill Delegation | 2026-11-18 |

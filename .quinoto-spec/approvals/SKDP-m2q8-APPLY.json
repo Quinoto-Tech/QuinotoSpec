@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "approval_id": "SKDP-m2q8-APPLY",
+  "subject": "2026-11-18-command-to-skill-delegation (propuesta SKDP-m2q8 — tareas TSK-SKDP-m2q8-001..012)",
+  "action": "apply",
+  "decision": "approved",
+  "requested_by": "agente QuinotoSpec (sesion apply command-to-skill-delegation)",
+  "decided_by": "barba (maintainer de QuinotoSpec)",
+  "rationale": "El maintainer confirmo explicitamente 'aplica todas' para implementar las 12 tareas de la propuesta SKDP-m2q8. Excepcion DoR/DoD (F-05) documentada en la propuesta con override de sesion. Decision de ejecucion: se reutiliza la eleccion de la sesion de no crear branch nuevo ni worktree. El par review queda excluido de la conversion mientras PWRE-9f2c este En Curso, con deuda registrada segun TSK-008.",
+  "scope": "49 workflows convertidos a stubs (48 ahora, review diferido), 10 skills consolidadas, scripts/generate-command-stubs.py, scripts/check-skill-workflow-drift.py, tests, documentacion de fuente de verdad, approvals/evidence/changelog. Sin cambios de esquema de artefactos.",
+  "decided_at": "2026-11-18T00:00:00+00:00"
+}

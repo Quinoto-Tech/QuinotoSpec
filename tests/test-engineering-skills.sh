@@ -45,7 +45,7 @@ else
     fail "verify-before-done gate incomplete"
 fi
 
-for file in "$ROOT/agent-dist/rules/quinotospec-rules.md" "$ROOT/agent-dist/workflows/quinotospec.apply.md" "$ROOT/agent-dist/skills/quinotospec-apply/SKILL.md"; do
+for file in "$ROOT/agent-dist/rules/quinotospec-rules.md" "$ROOT/agent-dist/skills/quinotospec-apply/SKILL.md"; do
     if grep -q "quinotospec-tdd" "$file" && grep -q "quinotospec-debug" "$file" && grep -q "quinotospec-verify-before-done" "$file"; then
         pass "engineering gates referenced in $(basename "$(dirname "$file")")"
     else

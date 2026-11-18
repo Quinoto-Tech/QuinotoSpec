@@ -3,6 +3,8 @@ name: quinotospec-onboard
 description: Genera un documento de onboarding personalizado por rol para nuevos integrantes del equipo, basado en el discovery y el estado actual del proyecto.
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.onboard` delega aquí por archivo.
+
 Este workflow lee la documentación existente del proyecto y genera un archivo de onboarding completo, contextualizado y accionable para que una persona nueva pueda ponerse al día sin depender de otro compañero.
 
 **Parámetros Opcionales:**

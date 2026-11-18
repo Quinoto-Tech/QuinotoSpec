@@ -3,6 +3,8 @@ name: quinotospec-agent-train
 description: Ayudar al desarrollador a crear agentes abstractos especializados basados en el discovery y estructura del proyecto
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.agent-train` delega aquí por archivo.
+
 [INSTRUCCIÓN MAESTRA]
 
 # Workflow: Agent Train

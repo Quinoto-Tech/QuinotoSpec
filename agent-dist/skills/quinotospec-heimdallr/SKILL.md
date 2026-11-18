@@ -3,7 +3,9 @@ name: quinotospec-heimdallr
 description: Ejecuta un análisis exhaustivo de amenazas con STRIDE y evaluación de riesgo con DREAD
 ---
 
-# Workflow: Heimdallr
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.heimdallr` delega aquí por archivo.
+
+# Skill: Heimdallr
 
 Actúa como un Ingeniero de Seguridad de Software Senior y Experto en Modelado de Amenazas.
 Tu objetivo es realizar un análisis de seguridad exhaustivo utilizando las metodologías STRIDE y DREAD para el sistema descrito por el usuario.
@@ -170,5 +172,3 @@ Si alguna amenaza tiene `Riesgo Total >= 8.0` (clasificada como 🔴 Crítico):
 Una vez completado el análisis y guardado el reporte, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Heimdallr Threat Model Executed
 - **Resumen**: Se ejecutó un análisis de amenazas STRIDE + DREAD sobre el sistema indicado y se generó matriz de riesgos priorizada con mitigaciones críticas. Reporte guardado en `.quinoto-spec/threat-analysis/`.
-
-

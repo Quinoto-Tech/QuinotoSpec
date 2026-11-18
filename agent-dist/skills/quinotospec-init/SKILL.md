@@ -3,6 +3,8 @@ name: quinotospec-init
 description: Inicializa la estructura .quinoto-spec/ desde cero sin ejecutar discovery completo. Crea directorios, archivos template y prepara el proyecto para usar QuinotoSpec. Si el proyecto está vacío, ofrece un wizard interactivo para generar un scaffold con el stack tecnológico deseado.
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.init` delega aquí por archivo.
+
 Objetivo: crear la estructura base de `.quinoto-spec/` en un proyecto nuevo, dejándolo listo para ejecutar `@quinotospec.discovery` como siguiente paso. No ejecuta discovery ni analiza el código — solo crea el esqueleto de directorios y archivos mínimos. Si el directorio está vacío (sin código ni archivos de configuración), el workflow ofrece generar un scaffold del proyecto.
 
 ## Precondiciones

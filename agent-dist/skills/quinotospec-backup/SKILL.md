@@ -3,7 +3,9 @@ name: quinotospec-backup
 description: Crear, verificar y restaurar backups verificables de .quinoto-spec con SHA-256, staging y rollback seguro.
 ---
 
-# Skill: QuinotoSpec Backup
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.backup` delega aquí por archivo.
+
+# Skill: Backup
 
 Usa el motor ejecutable `backup.py` para proteger `.quinoto-spec/` antes de refactors, migraciones y operaciones destructivas.
 

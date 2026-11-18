@@ -1,0 +1,475 @@
+{
+  "schema_version": 1,
+  "task_id": "TSK-SKDP-m2q8-001",
+  "pairs": [
+    {
+      "pair": "agent-config",
+      "skill": "agent-dist/skills/quinotospec-agent-config/SKILL.md",
+      "similarity": 0.29,
+      "workflow_only_h2": [
+        "Paso 1 — Mostrar la configuracion actual",
+        "Paso 2 — Determinar la capa destino",
+        "Paso 3 — Escribir el override",
+        "Paso 4 — Verificar el merge",
+        "Paso 5 — Dejar rastro"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "agent-train",
+      "skill": "agent-dist/skills/quinotospec-agent-train/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "apply",
+      "skill": "agent-dist/skills/quinotospec-apply/SKILL.md",
+      "similarity": 0.93,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "archive",
+      "skill": "agent-dist/skills/quinotospec-archive/SKILL.md",
+      "similarity": 0.91,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "backup",
+      "skill": "agent-dist/skills/quinotospec-backup/SKILL.md",
+      "similarity": 0.98,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "battle-frenzy",
+      "skill": "agent-dist/skills/quinotospec-battle-frenzy/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "blood-bond",
+      "skill": "agent-dist/skills/quinotospec-blood-bond/SKILL.md",
+      "similarity": 0.94,
+      "workflow_only_h2": [
+        "Arquitectura"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "changelog-view",
+      "skill": "agent-dist/skills/quinotospec-changelog-view/SKILL.md",
+      "similarity": 0.94,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "cleanup",
+      "skill": "agent-dist/skills/quinotospec-cleanup/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "constitution",
+      "skill": "agent-dist/skills/quinotospec-constitution/SKILL.md",
+      "similarity": 0.23,
+      "workflow_only_h2": [
+        "Errores",
+        "Gates de consumidores",
+        "Output",
+        "Parámetros",
+        "Paso 0 — Preflight",
+        "Paso 1 — Definir principios",
+        "Paso 2 — Generar constitution.md",
+        "Paso 3 — Validar",
+        "Paso 4 — Aprobación y enmiendas"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "create-prd",
+      "skill": "agent-dist/skills/quinotospec-create-prd/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "create-proposal",
+      "skill": "agent-dist/skills/quinotospec-create-proposal/SKILL.md",
+      "similarity": 0.93,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "create-rfc",
+      "skill": "agent-dist/skills/quinotospec-create-rfc/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "create-tasks",
+      "skill": "agent-dist/skills/quinotospec-create-tasks/SKILL.md",
+      "similarity": 0.97,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "create-user-stories",
+      "skill": "agent-dist/skills/quinotospec-create-user-stories/SKILL.md",
+      "similarity": 0.92,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "dependency-graph",
+      "skill": "agent-dist/skills/quinotospec-dependency-graph/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "discovery",
+      "skill": "agent-dist/skills/quinotospec-discovery/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "distribute",
+      "skill": "agent-dist/skills/quinotospec-distribute/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "export",
+      "skill": "agent-dist/skills/quinotospec-export/SKILL.md",
+      "similarity": 0.99,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "extension-install",
+      "skill": "agent-dist/skills/quinotospec-extension-install/SKILL.md",
+      "similarity": 0.51,
+      "workflow_only_h2": [
+        "Errores",
+        "Pasos"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "fix",
+      "skill": "agent-dist/skills/quinotospec-fix/SKILL.md",
+      "similarity": 0.97,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "flow",
+      "skill": "agent-dist/skills/quinotospec-flow/SKILL.md",
+      "similarity": 0.16,
+      "workflow_only_h2": [
+        "Manejo de errores",
+        "Paso 0 — Preflight y routing",
+        "Paso 1 — Constitution gate (BLOQUEANTE)",
+        "Paso 2 — Contexto (Discovery)",
+        "Paso 3 — Propuesta",
+        "Paso 4 — Desglose",
+        "Paso 5 — Aprobación humana (BLOQUEANTE)",
+        "Paso 6 — Ejecución (loop por tarea)",
+        "Paso 7 — Compliance",
+        "Paso 8 — Cierre",
+        "Reglas"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "health",
+      "skill": "agent-dist/skills/quinotospec-health/SKILL.md",
+      "similarity": 0.96,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "heimdallr",
+      "skill": "agent-dist/skills/quinotospec-heimdallr/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "help",
+      "skill": "agent-dist/skills/quinotospec-help/SKILL.md",
+      "similarity": 0.3,
+      "workflow_only_h2": [
+        "Paso 1 — Ejecutar el recomendador",
+        "Paso 2 — Interpretar el estado",
+        "Paso 3 — Responder al usuario"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "import",
+      "skill": "agent-dist/skills/quinotospec-import/SKILL.md",
+      "similarity": 0.97,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "init",
+      "skill": "agent-dist/skills/quinotospec-init/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "migrate",
+      "skill": "agent-dist/skills/quinotospec-migrate/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "mjolnir-refactor",
+      "skill": "agent-dist/skills/quinotospec-mjolnir-refactor/SKILL.md",
+      "similarity": 0.99,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "onboard",
+      "skill": "agent-dist/skills/quinotospec-onboard/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "party-mode",
+      "skill": "agent-dist/skills/quinotospec-party-mode/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "pre-commit",
+      "skill": "agent-dist/skills/quinotospec-pre-commit/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "preset-install",
+      "skill": "agent-dist/skills/quinotospec-preset-install/SKILL.md",
+      "similarity": 0.44,
+      "workflow_only_h2": [
+        "Errores",
+        "Pasos"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "quick-dev",
+      "skill": "agent-dist/skills/quinotospec-quick-dev/SKILL.md",
+      "similarity": 0.4,
+      "workflow_only_h2": [
+        "Paso 0 — Routing y contexto",
+        "Paso 1 — Tech-spec ligera",
+        "Paso 2 — TDD",
+        "Paso 3 — Verificación",
+        "Paso 4 — Cierre"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "refresh-discovery",
+      "skill": "agent-dist/skills/quinotospec-refresh-discovery/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "release",
+      "skill": "agent-dist/skills/quinotospec-release/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "retrospective",
+      "skill": "agent-dist/skills/quinotospec-retrospective/SKILL.md",
+      "similarity": 0.99,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "review-handoff",
+      "skill": "agent-dist/skills/quinotospec-review-handoff/SKILL.md",
+      "similarity": 0.29,
+      "workflow_only_h2": [
+        "1. Resumen para el reviewer",
+        "10. Riesgos y areas sensibles",
+        "11. Como reportar feedback",
+        "2. User Stories y criterios de aceptacion",
+        "3. Tareas ejecutadas",
+        "4. Cambios en Git",
+        "5. Historial del changelog (prefijo {{PREFIX}})",
+        "6. Evidencia de verificacion",
+        "7. Delta de requerimientos (si aplica)",
+        "8. Como verificar el cambio",
+        "9. Checklist de revision (marca el resultado)",
+        "Instrucciones de Ejecucion"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "review",
+      "skill": "agent-dist/skills/quinotospec-review/SKILL.md",
+      "similarity": 0.7,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "schema-fork",
+      "skill": "agent-dist/skills/quinotospec-schema-fork/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "specs-init",
+      "skill": "agent-dist/skills/quinotospec-specs-init/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "sprint.create",
+      "skill": "agent-dist/skills/quinotospec-sprint-create/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "sprint.plan",
+      "skill": "agent-dist/skills/quinotospec-sprint-plan/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "sprints.init",
+      "skill": "agent-dist/skills/quinotospec-sprints-init/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "stack-discovery",
+      "skill": "agent-dist/skills/quinotospec-stack-discovery/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "status",
+      "skill": "agent-dist/skills/quinotospec-status/SKILL.md",
+      "similarity": 0.81,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "tiwaz-rune",
+      "skill": "agent-dist/skills/quinotospec-tiwaz-rune/SKILL.md",
+      "similarity": 1.0,
+      "workflow_only_h2": [],
+      "workflow_only_scripts": [],
+      "needs_consolidation": false
+    },
+    {
+      "pair": "ui",
+      "skill": "agent-dist/skills/quinotospec-ui/SKILL.md",
+      "similarity": 0.3,
+      "workflow_only_h2": [
+        "Parámetros",
+        "Paso 1 — Verificar el proyecto",
+        "Paso 2 — Lanzar el servidor",
+        "Paso 3 — Navegar",
+        "Paso 4 — Cierre",
+        "Reglas"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    },
+    {
+      "pair": "update-agents",
+      "skill": "agent-dist/skills/quinotospec-update-agents/SKILL.md",
+      "similarity": 0.48,
+      "workflow_only_h2": [
+        "Errores",
+        "Pasos"
+      ],
+      "workflow_only_scripts": [],
+      "needs_consolidation": true
+    }
+  ],
+  "totals": {
+    "pairs": 49,
+    "duplicates_similarity_ge_07": 39,
+    "needs_consolidation": 11
+  },
+  "excluded": {
+    "review": "PWRE-9f2c activa (En Curso) — TSK-008 la migra al cierre o registra deuda"
+  }
+}

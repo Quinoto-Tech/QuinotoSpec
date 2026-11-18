@@ -147,6 +147,9 @@ Usuario -> IDE -> Agente -> Workflow -> Skills -> .quinoto-spec/
 
 ## Runtime de sesión F1.1
 
+### Delegación comando → skill (SKDP)
+Los workflows (`agent-dist/workflows/`) ya no duplican el prompt de las skills: se generan como stubs con `scripts/generate-command-stubs.py` que resuelven el `SKILL.md` por archivo (repo fuente → instalación local → global) y pasan `$ARGUMENTS`. La skill pareada es la fuente de verdad del prompt; `scripts/check-skill-workflow-drift.py` verifica la delegación y detecta prompts duplicados. El par `review` permanece diferido mientras PWRE-9f2c esté activa (deuda en `.quinoto-spec/reviews/SKDP-m2q8-review-pair-debt.md`).
+
 `agent-dist/bootstrap/quinotospec-bootstrap.md` es la instrucción de contexto común. `agent-dist/hooks/session-start.sh` la entrega como JSON para Claude Code y Cursor; `agent-dist/plugins/opencode/quinotospec-plugin.js` la inyecta en el primer mensaje de OpenCode v1. Para OpenCode v2, `agent-dist/plugins/opencode-v2/index.js` (plugin ESM sin dependencias externas) registra hooks `session.hook("context")` y `session.hook("compaction")` que inyectan el bootstrap en cada petición al modelo. `install.sh` detecta el major version de OpenCode (v1/v2) y copia el payload correspondiente al target del IDE, conservando las configuraciones JSON existentes cuando agrega una entrada de hook.
 
 El target de Claude Code es `.claude/` o `~/.claude/`; el de Cursor es `.cursor/` o `~/.cursor/`. OpenCode usa `.opencode/` (local) o `~/.config/opencode/` (global). Las versiones de IDE que no soportan hooks reciben los archivos como referencia y siguen usando `AGENTS.md`.

@@ -3,7 +3,9 @@ name: quinotospec-export
 description: Exportar propuestas, tareas y user stories a formatos externos (JSON, CSV, Markdown consolidado)
 ---
 
-# Workflow: Export
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.export` delega aquí por archivo.
+
+# Skill: Export
 
 Exporta datos de `.quinoto-spec/` a formatos externos para integracion con herramientas de gestion de proyectos (Jira, GitHub Projects) o para reportes.
 
@@ -23,7 +25,7 @@ Recibe parametros:
 
 ### Paso 2 - Recopilar Datos
 
-Primero ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json` y usa su snapshot normalizado. Excluye `all_tasks.md` de las fuentes primarias y conserva `raw_id` junto con `canonical_id`.
+Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json` y usa el snapshot normalizado. Excluye `all_tasks.md` de las fuentes primarias.
 
 Segun el alcance:
 
@@ -68,7 +70,7 @@ story,US-AUTH-a1b2-001,Login endpoint,in_progress,auth-jwt,...
 task,TSK-AUTH-a1b2-001,Crear endpoint POST /login,completed,auth-jwt,...
 ```
 
-Escapa celdas que comiencen con `=`, `+`, `-` o `@` para evitar fórmulas al abrir el CSV.
+Escapa celdas que comiencen con `=`, `+`, `-` o `@` para evitar fórmulas ejecutables al abrir el CSV.
 
 **Jira CSV (para import en Jira):**
 ```csv

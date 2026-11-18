@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "kind": "verify-before-done",
+  "task_id": "TSK-SKDP-m2q8-010",
+  "recorded_at": "2026-11-18T00:39:27+00:00",
+  "checks": [
+    {
+      "criterion": "6/6 checks de drift + 11/11 checks de installed-paths (local y global)",
+      "run": {
+        "status": "passed",
+        "command": "bash tests/test-skill-workflow-drift.sh; python3 -B scripts/generate-command-stubs.py --root . --check",
+        "exit_code": 0,
+        "output": "drift 6/6; 48 stubs canonicos"
+      }
+    }
+  ],
+  "tests": {
+    "status": "passed",
+    "command": "bash tests/run-all-tests.sh",
+    "exit_code": 0,
+    "output": "31/31 suites verdes"
+  },
+  "lint": {
+    "status": "passed",
+    "command": "bash scripts/validate-all.sh --strict",
+    "exit_code": 0,
+    "output": "0 errores, 0 warnings"
+  },
+  "typecheck": {
+    "status": "not_applicable",
+    "justification": "Proyecto Bash/Python stdlib sin typecheck configurado"
+  },
+  "diff": {
+    "status": "passed",
+    "command": "git diff --check",
+    "exit_code": 0,
+    "output": "sin errores de whitespace"
+  }
+}

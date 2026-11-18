@@ -3,7 +3,9 @@ name: quinotospec-battle-frenzy
 description: Ejecución paralela de múltiples agentes para tareas masivas
 ---
 
-# Battle Frenzy: Swarm Mode
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.battle-frenzy` delega aquí por archivo.
+
+# Skill: Battle Frenzy
 
 Ejecuta múltiples subagentes en paralelo para tareas masivas.
 

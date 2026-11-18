@@ -4,6 +4,7 @@
 # Regresión: el workflow leía 01 y 08 pero no mapeaba 02-07 a las secciones
 # técnicas de la propuesta, por lo que el agente omitía arquitectura, endpoints,
 # datos, CI/seguridad y deuda técnica.
+# Tras SKDP-m2q8 el prompt vive SOLO en la skill; el comando delega por archivo.
 
 set -e
 
@@ -11,7 +12,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 SKILL="$PROJECT_ROOT/agent-dist/skills/quinotospec-create-proposal/SKILL.md"
-WORKFLOW="$PROJECT_ROOT/agent-dist/workflows/quinotospec.create-proposal.md"
 
 REQUIRED_DISCOVERY_DOCS=(
     "02-overview"
@@ -29,7 +29,8 @@ echo "Test: Fuentes de Discovery en create-proposal"
 echo "=========================================="
 echo ""
 
-for target in "$SKILL" "$WORKFLOW"; do
+targets=("$SKILL")
+for target in "${targets[@]}"; do
     name="${target#"$PROJECT_ROOT"/}"
 
     if [ ! -f "$target" ]; then
@@ -58,7 +59,6 @@ for target in "$SKILL" "$WORKFLOW"; do
     if [ "$ERRORS" -eq 0 ]; then
         echo "✅ $name"
     fi
-done
 
 echo ""
 echo "=========================================="
@@ -71,3 +71,4 @@ fi
 
 echo "✅ create-proposal declara las fuentes del discovery por sección"
 exit 0
+done

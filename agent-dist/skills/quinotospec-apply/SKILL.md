@@ -3,9 +3,9 @@ name: quinotospec-apply
 description: aplicar la tarea correspondiente
 ---
 
-# Skill: Apply
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.apply` delega aquí por archivo.
 
-> **Fuente de verdad de ejecución:** `agent-dist/workflows/quinotospec.apply.md`. Esta skill es la versión invocable; si agrega pasos al workflow, sincronizalos aqui.
+# Skill: Apply
 
 [INSTRUCCIÓN MAESTRA]
 Debes ejecutar la tarea técnica especificada por el usuario y documentar EXACTAMENTE los cambios realizados en el archivo de registro.
@@ -13,10 +13,6 @@ Debes ejecutar la tarea técnica especificada por el usuario y documentar EXACTA
 ## Extension hooks
 
 Consulta `before_apply` y `after_apply` con `extension_manager.py hooks --point <point> --json`. Ejecuta únicamente hooks automáticos con `--run --yes`; un fallo bloquea el cierre y se registra en evidencia.
-
-## Routing de complejidad
-
-Antes de implementar, ejecuta `python3 -B agent-dist/skills/quinotospec-complexity-router/router.py --files {N} --services {N} --json`. Si el track resultante es `quick_fix`, sugiere `/quinotospec.fix`; si es `simple`, sugiere `/quinotospec.quick-dev` en lugar de este workflow.
 
 **Tarea a realizar:**
 `{{TASK_ID}}` — {{TASK_DESCRIPTION}}
@@ -33,17 +29,18 @@ Antes de realizar cualquier cambio:
 2. Consulta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json`; localiza el `canonical_id` de `{{TASK_ID}}` y usa `story_id` como contexto, sin derivar la story por número.
 3. Lee el archivo `*_tasks.md` que contiene la tarea, la story asociada y la proposal.md de la propuesta.
 4. Lee `.quinoto-spec/discovery/` para comprender el estado actual del proyecto (especialmente `01-stack-profile.md` para conocer el stack, comandos de test y convenciones).
-4b. **Specs vigentes**: si existe `.quinoto-spec/specs/`, lee los `spec.md` de los dominios afectados y verifica que la implementación se alinee con los requirements consolidados; si hay contradicción, detén el Apply y solicita actualizar el spec (vía delta-specs) o una enmienda explícita.
+4b. **Specs vigentes**: si existe `.quinoto-spec/specs/`, lee los `spec.md` de los dominios afectados por la tarea (según `Servicios Afectados` de la propuesta o el dominio de la story) y verifica que la implementación se alinee con los requirements consolidados; si hay contradicción, detén el Apply y solicita actualizar el spec (vía delta-specs en la propuesta) o una enmienda explícita.
 4c. **Implementation Readiness (Elephant-Goldfish)**: verifica que la tarea/propuesta declaren archivos objetivo, comando de test y criterios de aceptación verificables. Si falta alguno y el track no es `quick_fix`, detén el Apply y pide completar el DoR (o registra la excepción en `.quinoto-spec/reviews/{{TASK_ID}}-readiness.md`).
-5. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
-6. Si existe `.quinoto-spec/constitution.md` con estado `active`, lee sus principios y verifica que la tarea pueda cumplirlos; si no puede, detén el Apply y solicita una enmienda o decisión explícita.
+5. **Routing de complejidad**: ejecuta `python3 -B agent-dist/skills/quinotospec-complexity-router/router.py --files {N} --services {N} --json`. Si el track resultante es `quick_fix`, sugiere `/quinotospec.fix`; si es `simple`, sugiere `/quinotospec.quick-dev` en lugar de este workflow.
+6. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
+7. Si existe `.quinoto-spec/constitution.md` con estado `active`, lee sus principios y verifica que la tarea pueda cumplirlos; si no puede, detén el Apply y solicita una enmienda o decisión explícita.
 
 **Instrucciones de Ejecución:**
 1. **Confirmación requerida**: pregunta separadamente si se debe crear un branch nuevo y si se desea usar un worktree. Resuelve `BRANCH_NAME` y `BASE_REF`; no los inventes.
 2. **Constitution Gate**: si existe `.quinoto-spec/constitution.md` activo, verifica cada principio aplicable antes de modificar producción; si hay violación, detén el Apply.
+2b. **Human Approval Gate**: para configuración crítica, recuperación de archivo archivado u otra decisión humana, registra `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` después de la confirmación explícita y valida `human-approval` con `rules_enforce.py --require-approval --approval-id {{APPROVAL_ID}} --approval-subject {{SUBJECT}} --approval-action apply`; una confirmación conversacional no basta.
 2c. **Specs Gate**: si existe `.quinoto-spec/specs/` para los dominios afectados, verifica que la tarea no contradiga los requirements consolidados; si la tarea implica un cambio de comportamiento respecto al spec vigente, asegúrate de que la propuesta incluya el `delta-specs/` correspondiente (ADDED/MODIFIED/REMOVED) o solicita actualizar el spec antes de continuar.
 2d. **Readiness Gate**: confirma que la tarea declara archivos objetivo, comando de test y criterios verificables; si no, detén el Apply (salvo `quick_fix`) y registra el faltante.
-2b. **Human Approval Gate**: para configuración crítica, recuperación de archivo archivado u otra decisión humana, registra `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` después de la confirmación explícita y valida `human-approval` con `rules_enforce.py --require-approval --approval-id {{APPROVAL_ID}} --approval-subject {{SUBJECT}} --approval-action apply`; una confirmación conversacional no basta.
 3. **Worktree Gate (opcional)**: si `USE_WORKTREE=true` y el usuario confirma, invoca `quinotospec-worktree` con `TASK_ID`, `BRANCH_NAME`, `BASE_REF` y `WORKTREE_PATH` opcional. La skill reutiliza un aislamiento existente o crea uno seguro. Si el usuario lo rechaza, continúa en el checkout actual.
 4. Si `USE_WORKTREE=false` y el usuario confirmó crear un branch, usa `quinotospec-generate-github-branch`. Si `USE_WORKTREE=true`, no dupliques la creación del branch con `git checkout -b`.
 5. **Baseline y contexto**: después de crear o reutilizar un worktree, verifica su raíz, branch y disponibilidad de los artefactos; ejecuta la baseline de tests definida por `01-stack-profile.md`. Una baseline fallida bloquea TDD y activa `quinotospec-debug`.
@@ -127,3 +124,67 @@ Después de completar una tarea y ejecutar `quinotospec-mark-done`, DEBES buscar
    - Si todas las tareas de la propuesta están completas: *"¡Felicidades! Todas las tareas de la propuesta '{{PROPOSAL_SLUG}}' han sido completadas."*
 
 **Nota**: Si el archivo de tareas no existe o no se puede determinar la siguiente tarea, omite esta sugerencia silenciosamente.
+
+
+## Routing de complejidad
+
+Antes de implementar, ejecuta `python3 -B agent-dist/skills/quinotospec-complexity-router/router.py --files {N} --services {N} --json`. Si el track resultante es `quick_fix`, sugiere `/quinotospec.fix`; si es `simple`, sugiere `/quinotospec.quick-dev` en lugar de este workflow.
+
+**Tarea a realizar:**
+`{{TASK_ID}}` — {{TASK_DESCRIPTION}}
+
+**Opciones opcionales de aislamiento:**
+- `USE_WORKTREE`: por defecto `false`; el usuario puede activarlo con `--worktree`.
+- `WORKTREE_PATH`: ruta opcional, activada con `--worktree-path`.
+- `BASE_REF`: referencia base explícita para crear el worktree; no la adivines.
+- Si `USE_WORKTREE=true`, invoca `quinotospec-worktree` y realiza todos los cambios, tests, changelog y mark-done dentro del worktree resultante.
+
+**Contexto Global OBLIGATORIO:**
+Antes de realizar cualquier cambio:
+1. Ejecuta `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict` y detén el workflow ante errores.
+2. Consulta `python3 agent-dist/skills/quinotospec-contract/contract.py inspect --root . --json`; localiza el `canonical_id` de `{{TASK_ID}}` y usa `story_id` como contexto, sin derivar la story por número.
+3. Lee el archivo `*_tasks.md` que contiene la tarea, la story asociada y la proposal.md de la propuesta.
+4. Lee `.quinoto-spec/discovery/` para comprender el estado actual del proyecto (especialmente `01-stack-profile.md` para conocer el stack, comandos de test y convenciones).
+4b. **Specs vigentes**: si existe `.quinoto-spec/specs/`, lee los `spec.md` de los dominios afectados y verifica que la implementación se alinee con los requirements consolidados; si hay contradicción, detén el Apply y solicita actualizar el spec (vía delta-specs) o una enmienda explícita.
+4c. **Implementation Readiness (Elephant-Goldfish)**: verifica que la tarea/propuesta declaren archivos objetivo, comando de test y criterios de aceptación verificables. Si falta alguno y el track no es `quick_fix`, detén el Apply y pide completar el DoR (o registra la excepción en `.quinoto-spec/reviews/{{TASK_ID}}-readiness.md`).
+5. Asegúrate de que esta tarea contribuya coherentemente a la arquitectura global.
+6. Si existe `.quinoto-spec/constitution.md` con estado `active`, lee sus principios y verifica que la tarea pueda cumplirlos; si no puede, detén el Apply y solicita una enmienda o decisión explícita.
+
+**Instrucciones de Ejecución:**
+1. **Confirmación requerida**: pregunta separadamente si se debe crear un branch nuevo y si se desea usar un worktree. Resuelve `BRANCH_NAME` y `BASE_REF`; no los inventes.
+2. **Constitution Gate**: si existe `.quinoto-spec/constitution.md` activo, verifica cada principio aplicable antes de modificar producción; si hay violación, detén el Apply.
+2c. **Specs Gate**: si existe `.quinoto-spec/specs/` para los dominios afectados, verifica que la tarea no contradiga los requirements consolidados; si la tarea implica un cambio de comportamiento respecto al spec vigente, asegúrate de que la propuesta incluya el `delta-specs/` correspondiente (ADDED/MODIFIED/REMOVED) o solicita actualizar el spec antes de continuar.
+2d. **Readiness Gate**: confirma que la tarea declara archivos objetivo, comando de test y criterios verificables; si no, detén el Apply (salvo `quick_fix`) y registra el faltante.
+2b. **Human Approval Gate**: para configuración crítica, recuperación de archivo archivado u otra decisión humana, registra `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` después de la confirmación explícita y valida `human-approval` con `rules_enforce.py --require-approval --approval-id {{APPROVAL_ID}} --approval-subject {{SUBJECT}} --approval-action apply`; una confirmación conversacional no basta.
+3. **Worktree Gate (opcional)**: si `USE_WORKTREE=true` y el usuario confirma, invoca `quinotospec-worktree` con `TASK_ID`, `BRANCH_NAME`, `BASE_REF` y `WORKTREE_PATH` opcional. La skill reutiliza un aislamiento existente o crea uno seguro. Si el usuario lo rechaza, continúa en el checkout actual.
+4. Si `USE_WORKTREE=false` y el usuario confirmó crear un branch, usa `quinotospec-generate-github-branch`. Si `USE_WORKTREE=true`, no dupliques la creación del branch con `git checkout -b`.
+5. **Baseline y contexto**: después de crear o reutilizar un worktree, verifica su raíz, branch y disponibilidad de los artefactos; ejecuta la baseline de tests definida por `01-stack-profile.md`. Una baseline fallida bloquea TDD y activa `quinotospec-debug`.
+6. Si el cambio proviene de feedback de review, ejecuta primero `quinotospec-receive-review` y aplica solo los puntos verificados.
+7. **RED obligatorio**: para código de producción, ejecuta `quinotospec-tdd`, escribe el test mínimo y registra el fallo esperado antes de modificar producción. Guarda `.quinoto-spec/evidence/{{TASK_ID}}/tdd.json` y valida con `evidence_validate.py --kind tdd --require --json`.
+8. **GREEN mínimo**: implementa solo el comportamiento requerido, ejecuta el test focalizado y confirma que pasa.
+9. **REFACTOR**: mejora la estructura sin cambiar el comportamiento y vuelve a ejecutar los tests afectados.
+10. Si aparece un fallo después de implementar, cambia a `quinotospec-debug`; registra `.quinoto-spec/evidence/{{TASK_ID}}/debug.json` y valida con `evidence_validate.py --kind debug --require --json` antes del hotfix.
+11. **Verificación de Criterios de Aceptación (DoD)**: revisa uno a uno los criterios definidos en la tarea/historia y asocia a cada uno un comando o evidencia.
+12. **Calidad del stack**: ejecuta tests, lint y typecheck disponibles usando `01-stack-profile.md`; corrige regresiones antes de continuar.
+13. Ejecuta `quinotospec-verify-before-done`, guarda `.quinoto-spec/evidence/{{TASK_ID}}/verify-before-done.json` y valida con `evidence_validate.py --kind verify-before-done --require --json`; no continúes al changelog si la evidencia no está fresca.
+14. **Revisión recomendada (opcional)**: si se creó un branch, sugiere `@quinotospec.review` con `TASK_ID={{TASK_ID}}` y `BRANCH_NAME={{BRANCH_NAME}}` antes de mergear.
+
+Para documentación, configuración o migración sin comportamiento ejecutable, reemplaza el gate RED por una validación determinista equivalente y documenta la excepción. No implementes en el checkout original después de activar un worktree.
+
+**Instrucciones de Documentación (Changelog):**
+Una vez aplicados los cambios, DEBES ejecutar la skill `quinotospec-update-changelog`.
+- **Título de la Acción**: Tarea: {{TASK_ID}} — {{TASK_DESCRIPTION}}
+- **Resumen**:
+  - Lista de archivos modificados con el siguiente formato por cada uno:
+    - `ruta/relativa/al/archivo` — [creado | modificado | eliminado] — motivo del cambio
+  - Resumen técnico de la solución implementada.
+  - Estado de los criterios de aceptación (DoD): ✅ cumplidos / ⚠️ excepciones documentadas.
+
+**Instrucción Final OBLIGATORIA (Mark Done):**
+Una vez completado y documentado el changelog, DEBES ejecutar la skill `quinotospec-mark-done` pasando:
+- `TASK_ID`: el ID de la tarea completada.
+Esto actualizará el estado de la tarea, la historia y la propuesta correspondiente.
+
+IMPORTANTE: Los pasos de documentación y mark-done son OBLIGATORIOS. No termines la ejecución sin completarlos.
+
+---

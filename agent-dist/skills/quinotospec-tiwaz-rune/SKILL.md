@@ -3,7 +3,9 @@ name: quinotospec-tiwaz-rune
 description: The Tiwaz Rune — Análisis formal de entropía de un microservicio (Shannon v2 + proxies v1)
 ---
 
-# Workflow: The Tiwaz Rune
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.tiwaz-rune` delega aquí por archivo.
+
+# Skill: Tiwaz Rune
 
 Eres un arquitecto de software especializado en métricas de complejidad y entropía de sistemas.
 Tu tarea es analizar un microservicio y generar un reporte de entropía con soluciones concretas.
@@ -301,5 +303,3 @@ Si `S_final >= 0.51`:
 Una vez completado el análisis y guardado el reporte, DEBES ejecutar la skill `quinotospec-update-changelog`.
 - **Título de la Acción**: Tiwaz Rune Entropy Analysis Executed
 - **Resumen**: Se ejecutó análisis de entropía (v2 formal + v1 proxy) sobre `{service_path}`. S_final: {score} ({classification}). Reporte en `.quinoto-spec/tiwaz-rune/`.
-
-

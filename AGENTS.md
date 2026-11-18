@@ -56,6 +56,9 @@ bash scripts/smoke-release.sh /tmp/quinotospec-dist/quinotospec-3.2.0.tar.gz
 
 ## 2. Convenciones de Código
 
+### Delegación comando → skill (fuente de verdad)
+Los comandos (`agent-dist/workflows/quinotospec.*.md`, instalados como `commands/`) son **stubs de delegación**: no contienen el prompt. Cada stub indica leer la skill pareada por ruta de archivo (`agent-dist/skills/...` en el repo fuente; `<config-dir>/skills/...` tras instalar) y aplicarla textualmente con `$ARGUMENTS`. La **skill es la única fuente del prompt**; no se sincronizan copias. Para generar o verificar los stubs: `python3 -B scripts/generate-command-stubs.py --root . --check` (o `--write`). `scripts/check-skill-workflow-drift.py` valida esta delegación en CI.
+
 ### Principios Fundamentales
 - **Proposal First**: Siempre crear una propuesta técnica antes de escribir código
 - **Context Slicing**: Discovery → Propuesta → User Stories → Tareas

@@ -3,6 +3,8 @@ name: quinotospec-sprints-init
 description: Inicializa la estructura de configuración de sprints del proyecto
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.sprints-init` delega aquí por archivo.
+
 Este workflow configura la estructura base de sprints para el proyecto.
 
 ---

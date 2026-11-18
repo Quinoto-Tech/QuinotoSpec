@@ -200,6 +200,37 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# Check J: el stub del comando resuelve su skill en instalacion local
+# ---------------------------------------------------------------------------
+echo "▶ Check J: stub -> skill en instalacion local"
+LOCAL_CMD="$APP_SPACES/.opencode/commands/quinotospec.status.md"
+LOCAL_SKILL="$APP_SPACES/.opencode/skills/quinotospec-status/SKILL.md"
+if [ -f "$LOCAL_CMD" ] && [ -f "$LOCAL_SKILL" ] \
+    && grep -q '[$]ARGUMENTS' "$LOCAL_CMD" \
+    && grep -q 'skills/quinotospec-status/SKILL.md' "$LOCAL_CMD" \
+    && ! grep -q '^# Workflow:' "$LOCAL_CMD"; then
+    pass_check "comando instalado delega en SKILL.md local con \$ARGUMENTS"
+else
+    fail_check "comando instalado delega en SKILL.md local con \$ARGUMENTS"
+fi
+
+# ---------------------------------------------------------------------------
+# Check K: lo mismo en instalacion GLOBAL (HOME aislado en temp dir)
+# ---------------------------------------------------------------------------
+echo "▶ Check K: stub -> skill en instalacion global"
+HOME_DIR="$TMP_ROOT/home"
+mkdir -p "$HOME_DIR"
+if HOME="$HOME_DIR" bash "$APP_DIR/install.sh" --opencode --global --yes >/dev/null 2>&1 \
+    && [ -f "$HOME_DIR/.config/opencode/commands/quinotospec.status.md" ] \
+    && [ -f "$HOME_DIR/.config/opencode/skills/quinotospec-status/SKILL.md" ] \
+    && grep -q '[$]ARGUMENTS' "$HOME_DIR/.config/opencode/commands/quinotospec.status.md" \
+    && grep -q 'skills/quinotospec-status/SKILL.md' "$HOME_DIR/.config/opencode/commands/quinotospec.status.md"; then
+    pass_check "comando global delega en SKILL.md global con \$ARGUMENTS"
+else
+    fail_check "comando global delega en SKILL.md global con \$ARGUMENTS"
+fi
+
+# ---------------------------------------------------------------------------
 echo ""
 if [ "$FAILURES" -eq 0 ]; then
     printf '\033[32m✅ installed-paths: todos los checks pasaron\033[0m\n'

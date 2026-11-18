@@ -3,7 +3,9 @@ name: quinotospec-create-rfc
 description: Crear un Request for Comments (RFC) en modo conversacional, compatible con create-tasks --from-rfc
 ---
 
-# Workflow: Create Rfc
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.create-rfc` delega aquí por archivo.
+
+# Skill: Create Rfc
 
 Objetivo: crear un RFC nuevo usando el template oficial, guiando al usuario con preguntas iterativas y dejandolo listo para derivar una propuesta QuinotoSpec.
 

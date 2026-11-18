@@ -3,7 +3,9 @@ name: quinotospec-stack-discovery
 description: Generar documentación de descubrimiento del stack consolidado para proyectos distribuidos en múltiples sub-carpetas
 ---
 
-# Workflow: Stack Discovery
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.stack-discovery` delega aquí por archivo.
+
+# Skill: Stack Discovery
 
 Este workflow consolida los discoveries de múltiples sub-proyectos en un único `.quinoto-spec/discovery/`.
 

@@ -3,7 +3,9 @@ name: quinotospec-release
 description: Automatiza el proceso de release: version bump, consolidación de changelog, tagging y publicación
 ---
 
-# Workflow: Release
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.release` delega aquí por archivo.
+
+# Skill: Release
 
 Objetivo: automatizar el proceso de release de QuinotoSpec o de cualquier proyecto que use la metodología. Sigue el proceso documentado en `CONTRIBUTING.md`.
 

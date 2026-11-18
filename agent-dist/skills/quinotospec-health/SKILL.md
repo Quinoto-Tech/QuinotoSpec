@@ -3,6 +3,8 @@ name: quinotospec-health
 description: Detecta archivos huérfanos, inconsistencias entre _archived/ y propuestas activas, y problemas de integridad en la estructura .quinoto-spec/. Para dashboard ejecutivo ver @quinotospec.status.
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.health` delega aquí por archivo.
+
 Objetivo: ejecutar un chequeo técnico completo de integridad del sistema QuinotoSpec. Este workflow se enfoca en la **integridad estructural** (archivos, referencias, huérfanos). Para métricas de progreso y velocidad, usar `@quinotospec.status`.
 
 ## Precondiciones
@@ -72,9 +74,16 @@ Objetivo: ejecutar un chequeo técnico completo de integridad del sistema Quinot
 
 1. Leer `**Discovery Date:**` de `01-stack-profile.md`.
 2. Si > 30 días: *"⏰ Discovery desactualizado ({{N}} días). Ejecutar @quinotospec.refresh-discovery."*
-3. Ejecutar `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict` y registrar los errores del contrato.
-4. Consultar `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json`; usa la última entrada de cualquier formato.
+3. Ejecutar `python3 agent-dist/skills/quinotospec-contract/contract.py validate --root . --strict`.
+4. Consultar `python3 agent-dist/skills/quinotospec-contract/contract.py changelog --root . --json` para la última entrada v1/v2.
 5. Si > 14 días sin entradas: *"⚠️ Sin actividad en changelog por {{N}} días."*
+
+### Paso 5b — Drift docs↔código (Elephant-Goldfish)
+
+1. Comparar rutas, símbolos y comandos citados en `specs/`, `discovery/`, `README*.md` y `docs/` contra el código real.
+2. Clasificar hallazgos: `INFO` (referencia menor), `WARN` (ruta o comando desactualizado), `BLOCKING` (spec aprobado contradice el código).
+3. Escribir `.quinoto-spec/reviews/drift-report.md` y, si hay `--json`, `.quinoto-spec/reviews/drift-report.json`.
+4. No corregir automáticamente: reportar y sugerir `@quinotospec.refresh-discovery` o actualizar el doc.
 
 ### Paso 6 — Chequear branches (requiere git)
 

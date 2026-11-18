@@ -3,7 +3,9 @@ name: quinotospec-mjolnir-refactor
 description: Flujo para generar una Propuesta de Refactor "Mjolnir" que reescribe módulos enteros bajo demanda.
 ---
 
-# Workflow: Mjolnir Refactor
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.mjolnir-refactor` delega aquí por archivo.
+
+# Skill: Mjolnir Refactor
 
 Flujo para generar una Propuesta de Refactor "Mjolnir" que reescribe módulos enteros bajo demanda. Este workflow usa el sistema estándar de proposals de QuinotoSpec (`.quinoto-spec/proposals/{slug}/`) en lugar de una estructura paralela.
 
@@ -34,7 +36,7 @@ Completa los campos con los datos provistos. El campo `ultimo_paso_completado` s
 
 > **⚠️ Verificación humana requerida**: Solicitar confirmación del usuario antes de continuar al paso 2. El usuario puede editar el `.yml` antes de aprobar.
 
-Después de la confirmación, registra la decisión en `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` y valida `human-approval` para el subject `.quinoto-spec/proposals/{{SLUG}}/mjolnir-refactor.yml` y action `mjolnir-refactor` antes de continuar.
+Después de la confirmación, registra la decisión en `.quinoto-spec/approvals/{{APPROVAL_ID}}.json` y valida el gate `human-approval` para el subject `.quinoto-spec/proposals/{{SLUG}}/mjolnir-refactor.yml` y action `mjolnir-refactor` antes de continuar.
 
 Una vez confirmado, ejecuta `quinotospec-update-changelog`:
 - **Título**: Mjolnir Init: {nombre}

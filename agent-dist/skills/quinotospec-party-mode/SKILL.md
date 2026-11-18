@@ -3,7 +3,9 @@ name: quinotospec-party-mode
 description: Mesa redonda multi-agente — los agentes discuten, debaten y colaboran en caracter sobre un tema
 ---
 
-# Party Mode: Mesa Redonda Multi-Agente
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.party-mode` delega aquí por archivo.
+
+# Skill: Party Mode
 
 Reune a los agentes especializados de QuinotoSpec en una mesa redonda para discutir un tema desde multiples perspectivas. Los agentes interactuan en caracter — debaten, desafian, construyen sobre las ideas de otros, y llegan a conclusiones mas robustas que cualquier agente individual.
 

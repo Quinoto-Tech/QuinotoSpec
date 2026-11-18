@@ -3,7 +3,9 @@ name: quinotospec-pre-commit
 description: Check rápido pre-commit que ejecuta tests del stack + validación de sintaxis + enforcement de reglas
 ---
 
-# Workflow: Pre Commit
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.pre-commit` delega aquí por archivo.
+
+# Skill: Pre Commit
 
 Objetivo: ejecutar una verificación pre-commit rápida antes de hacer push o crear un PR. No reemplaza CI completo, pero detecta problemas comunes antes de que lleguen al repo.
 

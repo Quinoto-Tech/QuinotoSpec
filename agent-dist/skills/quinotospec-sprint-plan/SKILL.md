@@ -3,6 +3,8 @@ name: quinotospec-sprint-plan
 description: Genera el plan de sprint óptimo basado en el estado actual, prioridades y estimaciones
 ---
 
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.sprint-plan` delega aquí por archivo.
+
 Este workflow analiza el estado del proyecto y genera una propuesta de Sprint Plan para el equipo.
 
 **Parámetros Requeridos:**

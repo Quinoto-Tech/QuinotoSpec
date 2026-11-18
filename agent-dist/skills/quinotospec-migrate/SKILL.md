@@ -3,7 +3,9 @@ name: quinotospec-migrate
 description: Migrar entre versiones de QuinotoSpec con deteccion de breaking changes y backup automatico
 ---
 
-# Workflow: Migrate
+> **Fuente de verdad:** esta skill contiene el prompt canónico; el comando `/quinotospec.migrate` delega aquí por archivo.
+
+# Skill: Migrate
 
 Migra la estructura `.quinoto-spec/` de una version de QuinotoSpec a otra. Detecta breaking changes, genera backup automatico y valida post-migracion.
 
